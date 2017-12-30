@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rosrun tfr_utilities tfr_utilities-test
+rosrun tfr_sensor tfr_sensor-test

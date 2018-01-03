@@ -2,7 +2,6 @@
   <!-- Gazebo simulation properties -->
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
-  <!-- To disable the GUI and run headless, set these to false and true instead -->
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>

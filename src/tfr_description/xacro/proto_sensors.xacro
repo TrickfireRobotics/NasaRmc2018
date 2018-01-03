@@ -33,7 +33,7 @@
         <imageTopicName>image_raw</imageTopicName>
         <cameraInfoTopicName>camera_info</cameraInfoTopicName>
         <frameName>stereo_link</frameName>
-        <hackBaseline>0.025</hackBaseline>
+        <hackBaseline>-0.025</hackBaseline>
         <distortionK1>0.0</distortionK1>
         <distortionK2>0.0</distortionK2>
         <distortionK3>0.0</distortionK3>

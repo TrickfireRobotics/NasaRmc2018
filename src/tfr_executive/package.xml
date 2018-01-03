@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tfr_executive</name>
+  <version>0.0.0</version>
+  <description>The tfr_executive package</description>
+
+  <!-- If you are the actual maintainer of this package, please say so here. -->
+  <maintainer email="ryan.berge@trickfirerobotics.com">Ryan Berge</maintainer>
+  <license>BSD</license>
+  <url type="website">http://www.trickfirerobotics.com/</url>
+  <author email="ryan.berge@trickfirerobotics.com">Ryan Berge</author>
+  <!-- <author email="another.author@example.com">Jane Doe</author> -->
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <test_depend>gtest</test_depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>tfr_utilities</depend>
+
+</package>

@@ -1,0 +1,6 @@
+<launch>
+  <!--spawn the model w/gui-->
+  <include file="$(find tfr_gazebo)/launch/proto_world.launch" />
+  <!--spawn the controller-->
+  <include file="$(find tfr_gazebo)/launch/proto_controller.launch" />
+</launch> 

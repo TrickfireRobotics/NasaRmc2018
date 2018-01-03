@@ -1,0 +1,13 @@
+<launch>
+	<node pkg="tf2_ros" type="static_transform_publisher" name="pc_broadcaster" args="0 0 0 -1.5708 0 1.5708 camera_link stereo_link" />
+	<group ns="duo3d_driver">
+		<node pkg="nodelet" type="nodelet" name="stereo_proc_manager" args="manager"/>
+
+		<include file="$(find stereo_image_proc)/launch/stereo_image_proc.launch" >
+      <!--simulating duo 3d formatted stereo output-->
+			<arg name="manager" value="/duo3d_driver/stereo_proc_manager"/>
+			<rosparam command="load" file="$(find tfr_gazebo)/params/proto_disparity_params.yaml"/>
+		</include>
+    <!--TODO remap poincloud topic to correct value here-->
+	</group>
+</launch>

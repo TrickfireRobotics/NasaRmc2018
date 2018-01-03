@@ -1,0 +1,39 @@
+<launch>
+  <!-- Gazebo simulation properties -->
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <!-- To disable the GUI and run headless, set these to false and true instead -->
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+
+  <!-- Load all of the motor controllers -->
+  <rosparam file="$(find tfr_control)/config/proto_control_params.yaml" command="load"/>
+
+  <!-- Include the default Gazebo empty world launch file -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!-- If we want to use a different world you can change it here -->
+    <arg name="world_name" value="$(find tfr_gazebo)/worlds/proto.world"/>
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="headless" value="$(arg headless)"/>
+  </include>
+
+  <!-- Load the URDF into the ROS Parameter Server, processing macros as we do -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find tfr_description)/urdf/proto.xacro'" />
+
+  <!-- Spawn the URDF in Gazebo using a service call -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model excavator -param robot_description joint_state_controller"/>
+
+  <!-- Publishes the states of the joints on the robot (this is what lets the wheels be seen in TF) -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+
+  <!-- Publishes the state of the robot to TF for Rviz or other usages -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen" />
+
+  <include file="$(find tfr_gazebo)/launch/proto_stereo.launch"/>
+
+
+</launch>

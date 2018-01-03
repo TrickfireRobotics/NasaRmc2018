@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="proto">
+
+  <!--DRIVEBASE-->
+  <!-- A macro for creating a wheel with a link, joint, and transmission -->
+  <xacro:macro name="wheel" params="name fb lr">
+    <link name="${name}">
+      <visual>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}" />
+        </geometry>
+        <origin rpy="${pi/2} 0 0" />
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}" />
+        </geometry>
+        <origin rpy="${pi/2} 0 0" />
+      </collision>
+      <inertial>
+        <origin xyz="0 ${wheel_width/2} 0" rpy="0 0 0"/>
+        <mass value="${wheel_mass}"/> 
+        <inertia ixx="${(wheel_mass*wheel_radius**2)/2}" ixy="0.0" ixz="0.0" iyy="${(wheel_mass*wheel_width**2)/12}" iyz="0.0" izz="${(wheel_mass*wheel_radius**2)/2}"/> 
+      </inertial>
+    </link>
+    <joint name="${name}_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${name}"/>      
+      <origin xyz="${fb*base_length/2 - 16*fb*itom} ${lr*base_width/2 + lr*wheel_width/2} ${-base_height/2}"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="100.0"  velocity="100.0"/>
+      <dynamics damping="0.7"/>
+    </joint>
+    <transmission name="${name}_tran">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${name}_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${name}_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        <motorTorqueConstant>1</motorTorqueConstant>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+  <xacro:wheel name="wheel_fr" fb="1" lr="-1" />
+  <xacro:wheel name="wheel_fl" fb="1" lr="1" />
+  <xacro:wheel name="wheel_rr" fb="-1" lr="-1" />
+  <xacro:wheel name="wheel_rl" fb="-1" lr="1" />
+
+  <!--GOD-->
+  <link name="god" /> <!-- This is necessary because Gazebo complains about the base link having inertia, for some reason -->
+  <link name="base_link" >
+    <visual>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}" />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="${base_mass}"/>       
+      <inertia ixx="${base_mass/12*(base_width**2+base_depth**2)}" ixy="0.0" ixz="0.0" iyy="${base_mass/12*(base_depth**2+base_height**2)}" iyz="0.0" izz="${base_mass/12*(base_width**2+base_height**2)}"/> 
+    </inertial>
+  </link>
+  <joint name="god_to_base" type="fixed">
+    <parent link="god" />
+    <child link="base_link" />
+    <origin xyz="0 0 0" />
+  </joint>
+
+  <!--STEREO CAMERA-->
+  <joint name="camera_joint" type="fixed">
+    <origin xyz="${base_length/2} 0 ${base_height/2}" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+  </joint>
+  <link name="camera_link">
+    <collision>
+      <origin xyz="-${camera_size/2} 0 ${camera_size/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${camera_size} ${camera_size} ${camera_size}"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="-${camera_size/2} 0 ${camera_size/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${camera_size} ${camera_size} ${camera_size}"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <inertial>
+      <mass value="${camera_mass}" />
+      <origin xyz="-${camera_size/2} 0 ${camera_size/2}" rpy="0 0 0"/>
+      <inertia ixx="${(camera_mass*camera_size**2)/6}" ixy="0" ixz="0" iyy="${(camera_mass*camera_size**2)/6}" iyz="0" izz="${(camera_mass*camera_size**2)/6}" />
+    </inertial>
+  </link>
+</robot>

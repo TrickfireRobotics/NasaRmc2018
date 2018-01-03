@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<robot name="proto" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="proto_constants.xacro"/>
+  <xacro:include filename="proto_drivebase_controller.xacro"/>
+  <xacro:include filename="proto_sensors.xacro"/>
+  <xacro:include filename="proto_model.xacro"/>
+</robot>

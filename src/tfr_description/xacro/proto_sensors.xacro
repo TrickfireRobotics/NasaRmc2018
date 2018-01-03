@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="excavator">
+  <xacro:macro name="stereo_cam" params="camera_name pose_info">
+    <camera name="${camera_name}">
+        <pose>${pose_info}</pose>
+        <horizontal_fov>1</horizontal_fov>
+        <image>
+          <width>754</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>10</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.0007</stddev>
+        </noise>
+      </camera>
+  </xacro:macro>
+  
+  <gazebo reference="camera_link">
+      <sensor type="multicamera" name="stereo_camera">
+      <update_rate>45</update_rate>
+      <xacro:stereo_cam camera_name="left" pose_info="0 0 0 0 0 0"/>
+      <xacro:stereo_cam camera_name="right" pose_info="0 0.025  0 0 0 0"/>
+      <plugin name="stereo_camera_controller" filename="libgazebo_ros_multicamera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>45</updateRate>
+        <cameraName>duo3d_driver</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>stereo_link</frameName>
+        <hackBaseline>0.025</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+  			<distortionT2>0.0</distortionT2>
+  			</plugin>
+    </sensor>
+  </gazebo>
+
+</robot>

@@ -22,10 +22,10 @@
   </include>
 
   <!-- Load the URDF into the ROS Parameter Server, processing macros as we do -->
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find tfr_description)/urdf/proto.xacro'" />
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find tfr_description)/xacro/proto.xacro'" />
 
   <!-- Spawn the URDF in Gazebo using a service call -->
-  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model excavator -param robot_description joint_state_controller"/>
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model proto -param robot_description joint_state_controller"/>
 
   <!-- Publishes the states of the joints on the robot (this is what lets the wheels be seen in TF) -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />

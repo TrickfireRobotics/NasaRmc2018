@@ -63,7 +63,7 @@
     </collision>
     <inertial>
       <mass value="${base_mass}"/>       
-      <inertia ixx="${base_mass/12*(base_width**2+base_depth**2)}" ixy="0.0" ixz="0.0" iyy="${base_mass/12*(base_depth**2+base_height**2)}" iyz="0.0" izz="${base_mass/12*(base_width**2+base_height**2)}"/> 
+      <inertia ixx="${base_mass/12*(base_width**2+base_length**2)}" ixy="0.0" ixz="0.0" iyy="${base_mass/12*(base_length**2+base_height**2)}" iyz="0.0" izz="${base_mass/12*(base_width**2+base_height**2)}"/> 
     </inertial>
   </link>
   <joint name="god_to_base" type="fixed">

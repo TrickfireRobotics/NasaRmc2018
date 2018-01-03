@@ -4,7 +4,7 @@
   <xacro:property name="base_width" value="${29*itom}"/>
   <xacro:property name="base_length" value="${58*itom}"/> <!-- Max val: 50" bare minimum -->
   <xacro:property name="base_height" value="${2*itom}"/>   
-  <xacro:property name="base_mass"   value="5"
+  <xacro:property name="base_mass"   value="5"/>
   <xacro:property name="wheel_radius" value="${6*itom}"/>
   <xacro:property name="wheel_width" value="${6*itom}"/>
   <xacro:property name="wheel_mass" value="0.5"/>

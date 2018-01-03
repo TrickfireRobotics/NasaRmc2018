@@ -33,7 +33,7 @@
       <wheelSeparation>${base_width}</wheelSeparation>
       <wheelDiameter>${wheel_radius*2}</wheelDiameter>
       <robotBaseFrame>god</robotBaseFrame>
-      <torque>10</torque>
+      <torque>20</torque>
       <topicName>cmd_vel</topicName>
       <commandTopic>cmd_vel</commandTopic>
       <!-- we are simulating the output of sensor fusion right here -->

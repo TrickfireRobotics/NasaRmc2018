@@ -10,13 +10,13 @@
         <!--trying to match duo mlx specifications-->
         <horizontal_fov>1.57</horizontal_fov>
         <image>
-          <width>754</width>
-          <height>480</height>
+          <width>320</width>
+          <height>240</height>
           <format>R8G8B8</format>
         </image>
         <clip>
           <near>0.02</near>
-          <far>15</far>
+          <far>30</far>
         </clip>
         <noise>
           <type>gaussian</type>
@@ -28,13 +28,13 @@
   
   <gazebo reference="camera_link">
       <sensor type="multicamera" name="stereo_camera">
-      <update_rate>45</update_rate>
+      <update_rate>98</update_rate>
       <!--difference meant to match duo mlx specs-->
       <xacro:stereo_cam camera_name="left" pose_info="0 0 0 0 0 0"/>
       <xacro:stereo_cam camera_name="right" pose_info="0 -0.025  0 0 0 0"/>
       <plugin name="stereo_camera_controller" filename="libgazebo_ros_multicamera.so">
         <alwaysOn>true</alwaysOn>
-        <updateRate>45</updateRate>
+        <updateRate>168</updateRate>
         <cameraName>duo3d_driver</cameraName>
         <imageTopicName>image_raw</imageTopicName>
         <cameraInfoTopicName>camera_info</cameraInfoTopicName>

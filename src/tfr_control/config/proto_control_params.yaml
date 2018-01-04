@@ -1,3 +1,4 @@
+#parameters for the prototype gazebo controllers
 exc:
   # Publish all joint states -----------------------------------
   joint_state_controller:

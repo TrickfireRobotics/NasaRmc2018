@@ -2,8 +2,8 @@
   <!-- Gazebo simulation properties -->
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
-  <arg name="gui" default="true"/>
-  <arg name="headless" default="false"/>
+  <arg name="gui" default="false"/>
+  <arg name="headless" default="true"/>
   <arg name="debug" default="false"/>
 
   <!-- Load all of the motor controllers -->

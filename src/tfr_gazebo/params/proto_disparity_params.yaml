@@ -1,3 +1,3 @@
-min_disparity: -50
-disparity_range: 96
-speckle_size: 300
+min_disparity: -20
+disparity_range: 128 
+speckle_size: 350

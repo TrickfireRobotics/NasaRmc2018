@@ -1,3 +1,6 @@
+/**
+ * Quick and dirty driver station for the prototype gazebo simulation
+ * */
 #include <SFML/Graphics.hpp>
 #include "ros/ros.h"
 #include "std_msgs/Float64.h"

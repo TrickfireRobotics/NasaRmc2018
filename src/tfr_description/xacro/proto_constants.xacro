@@ -1,14 +1,20 @@
 <?xml version="1.0"?>
 <robot name="proto" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!--shared model level constants for the prototype gazebo model-->
+
+  <!--move base parameters-->
   <xacro:property name="itom" value="0.0254" /> <!-- Inches to meters conversion -->
   <xacro:property name="base_width" value="${29*itom}"/>
   <xacro:property name="base_length" value="${58*itom}"/> <!-- Max val: 50" bare minimum -->
   <xacro:property name="base_height" value="${2*itom}"/>   
   <xacro:property name="base_mass"   value="5"/>
+
+  <!--wheel parameters-->
   <xacro:property name="wheel_radius" value="${6*itom}"/>
   <xacro:property name="wheel_width" value="${6*itom}"/>
   <xacro:property name="wheel_mass" value="0.5"/>
 
+  <!--stereo camera parameters-->
   <xacro:property name="camera_size" value="0.05" /> 
   <xacro:property name="camera_mass" value="0.01" /> 
 </robot>

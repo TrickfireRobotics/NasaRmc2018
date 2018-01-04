@@ -43,12 +43,15 @@
       </actuator>
     </transmission>
   </xacro:macro>
+
+  <!--stamp out the wheels-->
   <xacro:wheel name="wheel_fr" fb="1" lr="-1" />
   <xacro:wheel name="wheel_fl" fb="1" lr="1" />
   <xacro:wheel name="wheel_rr" fb="-1" lr="-1" />
   <xacro:wheel name="wheel_rl" fb="-1" lr="1" />
 
-  <!--GOD-->
+
+  <!--CHASSIS-->
   <link name="god" /> <!-- This is necessary because Gazebo complains about the base link having inertia, for some reason -->
   <link name="base_link" >
     <visual>

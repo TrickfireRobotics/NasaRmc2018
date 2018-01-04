@@ -1,23 +1,21 @@
 <!--starts rtabmap and visual odometry-->
 <launch>
   <!-- Visual Odometry -->
-  <node pkg="rtabmap_ros" type="stereo_odometry" name="stereo_odometry" output="screen">
+  <!--  <node pkg="rtabmap_ros" type="stereo_odometry" name="stereo_odometry" output="screen">
 
-    <!-- data remapping from duo-->
-    <remap from="duo3d_driver/left/image_rect"       to="left/image_rect"/>
-    <remap from="duo3d_driver/right/image_rect"      to="right/image_rect"/>
-    <remap from="duo3d_driver/left/camera_info"      to="left/camera_info"/>
-    <remap from="duo3d_driver/right/camera_info"     to="right/camera_info"/>
+    <remap from="left/image_rect"       to="duo3d_driver/left/image_rect"/>
+    <remap from="right/image_rect"      to="duo3d_driver/right/image_rect"/>
+    <remap from="left/camera_info"      to="duo3d_driver/left/camera_info"/>
+    <remap from="right/camera_info"     to="duo3d_driver/right/camera_info"/>
 
-    <!--transforms-->
     <param name="frame_id" type="string" value="base_link"/>
     <param name="odom_frame_id" type="string" value="odom"/>
-    <param name="approx_sync" type="bool" value="false"/>
+    <param name="approx_sync" type="bool" value="true"/>
     <param name="queue_size" type="int" value="5"/>
 
-    <!--parameters from setup tutorial-->
     <param name="Vis/MaxDepth" type="string" value="10"/>
-  </node>     
+    <param name="Vis/InlierDistance" type="string" value="0.05"/>
+  </node>     -->
 
   <group ns="rtabmap">   
     <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
@@ -25,26 +23,30 @@
       <!-- data remapping from duo-->
       <param name="subscribe_stereo" type="bool" value="true"/>
       <param name="subscribe_depth" type="bool" value="false"/>
-      <param name="approx_sync" type="bool" value="false"/>
-      <remap from="duo3d_driver/left/image_rect" to="/stereo_camera/left/image_rect"/>
-      <remap from="duo3d_driver/right/image_rect" to="/stereo_camera/right/image_rect"/>
-      <remap from="duo3d_driver/left/camera_info" to="/stereo_camera/left/camera_info"/>
-      <remap from="duo3d_driver/right/camera_info" to="/stereo_camera/right/camera_info"/>
-      <remap from="fused_odom" to="/stereo_camera/odom"/>
+      <param name="approx_sync" type="bool" value="true"/>
+      <remap from="/rtabmap/left/image_rect" to="/duo3d_driver/left/image_rect"/>
+      <remap from="/rtabmap/right/image_rect" to="/duo3d_driver/right/image_rect"/>
+      <remap from="/rtabmap/left/camera_info" to="/duo3d_driver/left/camera_info"/>
+      <remap from="/rtabmap/right/camera_info" to="/duo3d_driver/right/camera_info"/>
+      <remap from="/rtabmap/odom" to="/fused_odom"/>
 
       <!--transforms-->
       <param name="frame_id" type="string" value="base_link"/>
-      <param name="queue_size" type="int" value="30"/>
+      <param name="queue_size" type="int" value="5"/>
 
       <!--parameters from setup tutorial-->
-      <param name="RGBD/AngularUpdate"        type="string" value="0.01"/>
-      <param name="RGBD/LinearUpdate"         type="string" value="0.01"/>
-      <param name="RGBD/OptimizeFromGraphEnd" type="string" value="false"/>
-      <param name="Reg/Force3DoF"             type="string" value="true"/>
-      <param name="Rtabmap/TimeThr" type="string" value="700"/>
-      <param name="Rtabmap/DetectionRate" type="string" value="1"/>
-      <param name="Vis/MinInliers" type="string" value="5"/>
-      <param name="Vis/InlierDistance" type="string" value="0.05"/>
-    </node>
-  </group>
+			<param name="RGBD/NeighborLinkRefining" type="string" value="true"/>
+			<param name="RGBD/ProximityBySpace"     type="string" value="true"/>
+			<param name="RGBD/AngularUpdate"        type="string" value="0.01"/>
+			<param name="RGBD/LinearUpdate"         type="string" value="0.01"/>
+			<param name="RGBD/OptimizeFromGraphEnd" type="string" value="false"/>
+			<param name="Optimizer/Slam2D"          type="string" value="true"/>
+			<param name="Reg/Strategy"              type="string" value="1"/> <!-- 1=ICP -->
+			<param name="Reg/Force3DoF"             type="string" value="true"/>
+			<param name="Vis/MinInliers"            type="string" value="5"/>
+			<param name="Vis/InlierDistance"        type="string" value="0.1"/>
+			<param name="Rtabmap/TimeThr"           type="string" value="700"/>
+			<param name="Mem/RehearsalSimilarity"   type="string" value="0.45"/>
+		</node>
+	</group>
 </launch>

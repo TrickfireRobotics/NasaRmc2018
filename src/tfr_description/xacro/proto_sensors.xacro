@@ -31,7 +31,7 @@
       <update_rate>45</update_rate>
       <!--difference meant to match duo mlx specs-->
       <xacro:stereo_cam camera_name="left" pose_info="0 0 0 0 0 0"/>
-      <xacro:stereo_cam camera_name="right" pose_info="0 0.025  0 0 0 0"/>
+      <xacro:stereo_cam camera_name="right" pose_info="0 -0.025  0 0 0 0"/>
       <plugin name="stereo_camera_controller" filename="libgazebo_ros_multicamera.so">
         <alwaysOn>true</alwaysOn>
         <updateRate>45</updateRate>
@@ -40,7 +40,7 @@
         <cameraInfoTopicName>camera_info</cameraInfoTopicName>
         <frameName>stereo_link</frameName>
         <!--flipping this value inverts the generated pointcloud-->
-        <hackBaseline>-0.025</hackBaseline>
+        <hackBaseline>0.025</hackBaseline>
         <distortionK1>0.0</distortionK1>
         <distortionK2>0.0</distortionK2>
         <distortionK3>0.0</distortionK3>

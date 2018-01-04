@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /PointCloud21
+        - /Map1
       Splitter Ratio: 0.5
     Tree Height: 843
   - Class: rviz/Selection
@@ -117,6 +118,8 @@ Visualization Manager:
           Value: true
         god:
           Value: true
+        map:
+          Value: true
         odom:
           Value: true
         stereo_link:
@@ -135,20 +138,23 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
+        god:
+          base_link:
+            camera_link:
+              stereo_link:
+                {}
+            wheel_fl:
+              {}
+            wheel_fr:
+              {}
+            wheel_rl:
+              {}
+            wheel_rr:
+              {}
+        map:
+          {}
         odom:
-          god:
-            base_link:
-              camera_link:
-                stereo_link:
-                  {}
-              wheel_fl:
-                {}
-              wheel_fr:
-                {}
-              wheel_rl:
-                {}
-              wheel_rr:
-                {}
+          {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -180,6 +186,16 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
+      Value: true
+    - Alpha: 0.699999988
+      Class: rviz/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic: /rtabmap/grid_map
+      Unreliable: false
+      Use Timestamp: false
       Value: true
   Enabled: true
   Global Options:

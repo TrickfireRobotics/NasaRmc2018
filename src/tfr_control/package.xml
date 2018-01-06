@@ -18,7 +18,8 @@
   <depend>geometry_msgs</depend>
   <depend>tfr_msgs</depend>
   <depend>tfr_utilities</depend>
-  <exec_depend>controller_manager</exec_depend>
   <exec_depend>effort_controllers</exec_depend>
+  <depend>hardware_interface</depend>
+  <depend>controller_manager</depend>
 
 </package>

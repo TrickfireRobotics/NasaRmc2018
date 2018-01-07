@@ -194,4 +194,8 @@ include_directories(
 # endif()
 
 ## Add folders to be run by python nosetests
+<<<<<<< 32b64322b8eab94f887bd93b13c5424ef6d73839
 # catkin_add_nosetests(test)
+=======
+# catkin_add_nosetests(test)
+>>>>>>> Set up extra package structures for URDF modeling

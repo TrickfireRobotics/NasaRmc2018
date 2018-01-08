@@ -6,28 +6,28 @@
 
   <xacro:macro name="stereo_cam" params="camera_name pose_info">
     <camera name="${camera_name}">
-        <pose>${pose_info}</pose>
-        <!--trying to match duo mlx specifications-->
-        <horizontal_fov>1.57</horizontal_fov>
-        <image>
-          <width>320</width>
-          <height>240</height>
-          <format>R8G8B8</format>
-        </image>
-        <clip>
-          <near>0.02</near>
-          <far>30</far>
-        </clip>
-        <noise>
-          <type>gaussian</type>
-          <mean>0.0</mean>
-          <stddev>0.0007</stddev>
-        </noise>
-      </camera>
+      <pose>${pose_info}</pose>
+      <!--trying to match duo mlx specifications-->
+      <horizontal_fov>1.57</horizontal_fov>
+      <image>
+        <width>320</width>
+        <height>240</height>
+        <format>R8G8B8</format>
+      </image>
+      <clip>
+        <near>0.02</near>
+        <far>30</far>
+      </clip>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.0007</stddev>
+      </noise>
+    </camera>
   </xacro:macro>
-  
+
   <gazebo reference="camera_link">
-      <sensor type="multicamera" name="stereo_camera">
+    <sensor type="multicamera" name="stereo_camera">
       <update_rate>98</update_rate>
       <!--difference meant to match duo mlx specs-->
       <xacro:stereo_cam camera_name="left" pose_info="0 0 0 0 0 0"/>
@@ -45,8 +45,8 @@
         <distortionK2>0.0</distortionK2>
         <distortionK3>0.0</distortionK3>
         <distortionT1>0.0</distortionT1>
-  			<distortionT2>0.0</distortionT2>
-  			</plugin>
+        <distortionT2>0.0</distortionT2>
+      </plugin>
     </sensor>
   </gazebo>
 </robot>

@@ -2,7 +2,7 @@
 <package format="2">
   <name>tfr_launch</name>
   <version>0.0.0</version>
-  <description>contains various system level starting configurations to accomplish various tasks</description>
+  <description>Contains system level starting configurations to accomplish various tasks.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

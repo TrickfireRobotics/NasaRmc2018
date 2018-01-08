@@ -2,7 +2,7 @@
 <package format="2">
   <name>tfr_visualization</name>
   <version>0.0.0</version>
-  <description>The tfr_visualization package</description>
+  <description>Package for storing rviz configurations and utility scripts for visualizing data in rviz and other ros visualization software.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

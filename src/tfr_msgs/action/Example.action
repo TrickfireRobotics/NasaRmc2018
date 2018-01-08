@@ -1,0 +1,9 @@
+# Each of these three will be build as a ROS message
+# goal
+string goal
+---
+# result
+float32 result
+---
+# feedback message
+float32 feedback

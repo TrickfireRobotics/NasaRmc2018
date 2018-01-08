@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="excavator">
+
+  <!--DIGGING ARM-->
+  <link name="turntable">
+    <visual>
+      <geometry>
+        <cylinder radius="${base_width/3}" length="${6*itom}" />
+      </geometry>
+      <origin xyz="0 0 ${3*itom}" />
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${base_width/3}" length="${6*itom}" />
+        <origin xyz="0 0 ${3*itom}" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="50"/> <!-- TODO: Update with proper mass, possibly calculated from Solidworks? -->
+      <inertia ixx="100.0" ixy="0.0" ixz="0.0" iyy="100.0" iyz="0.0" izz="100.0"/> <!-- TODO: Update with proper inertial values, possibly calculated from Solidworks? -->
+    </inertial>
+  </link>
+
+  <joint name="turntable_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="turntable" />
+    <origin xyz="${base_length/2-base_width/3-3*itom} 0 ${base_height/2}" />
+    <axis xyz="0 0 1" />
+    <limit effort="10000.0"  velocity="0.25"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <transmission name="turntable_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="turn_to_base">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="turntable_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+      <motorTorqueConstant>1</motorTorqueConstant>
+    </actuator>
+  </transmission>
+  <!-- /fold -->
+
+  <link name="lower_arm">
+    <visual>
+      <geometry>
+        <box size="${4*itom} ${4*itom} ${36*itom}" />
+      </geometry>
+      <origin xyz="0 0 ${18*itom}" />
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${4*itom} ${4*itom} ${36*itom}" />
+      </geometry>
+      <origin xyz="0 0 ${18*itom}" />
+    </collision>
+    <inertial>
+      <mass value="50"/> <!-- TODO: Update with proper mass, possibly calculated from Solidworks? -->
+      <inertia ixx="100.0" ixy="0.0" ixz="0.0" iyy="100.0" iyz="0.0" izz="100.0"/> <!-- TODO: Update with proper inertial values, possibly calculated from Solidworks? -->
+    </inertial>
+  </link>
+  <joint name="lower_arm_joint" type="revolute">
+    <parent link="turntable" />
+    <child link="lower_arm" />
+    <axis xyz="0 1 0" />
+    <origin xyz="0 0 ${6*itom}" />
+    <limit effort="10000.0"  velocity="0.25" lower="${-pi/6}" upper="${3*pi/8}"/>
+    <dynamics damping="5.0"/>
+  </joint>
+  <transmission name="lower_arm_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="lower_to_turn">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="lower_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+      <motorTorqueConstant>1</motorTorqueConstant>
+    </actuator>
+  </transmission>
+
+
+  <link name="upper_arm">
+    <visual>
+      <geometry>
+        <box size="${4*itom} ${4*itom} ${36*itom}" />
+      </geometry>
+      <origin xyz="0 0 ${18*itom}" />
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${4*itom} ${4*itom} ${36*itom}" />
+      </geometry>
+      <origin xyz="0 0 ${18*itom}" />
+    </collision>
+    <inertial>
+      <mass value="50"/> <!-- TODO: Update with proper mass, possibly calculated from Solidworks? -->
+      <inertia ixx="100.0" ixy="0.0" ixz="0.0" iyy="100.0" iyz="0.0" izz="100.0"/> <!-- TODO: Update with proper inertial values, possibly calculated from Solidworks? -->
+    </inertial>
+  </link>
+  <joint name="upper_arm_joint" type="revolute">
+    <parent link="lower_arm" />
+    <child link="upper_arm" />
+    <axis xyz="0 1 0" />
+    <origin xyz="0 0 ${36*itom}" />
+    <limit effort="10000.0"  velocity="0.25" lower="0.0" upper="${3*pi/8}"/>
+    <dynamics damping="5.0"/>
+  </joint>
+  <transmission name="upper_arm_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="upper_to_lower">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="upper_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+      <motorTorqueConstant>1</motorTorqueConstant>
+    </actuator>
+  </transmission>
+
+  <link name="scoop" >
+    <visual>
+      <geometry>
+        <box size="${12*itom} ${12*itom} ${4*itom}" />
+      </geometry>
+      <origin xyz="${6*itom} 0 0" />
+    </visual>
+    <inertial>
+      <mass value="50"/> <!-- TODO: Update with proper mass, possibly calculated from Solidworks? -->
+      <inertia ixx="100.0" ixy="0.0" ixz="0.0" iyy="100.0" iyz="0.0" izz="100.0"/> <!-- TODO: Update with proper inertial values, possibly calculated from Solidworks? -->
+    </inertial>
+  </link>
+  <joint name="scoop_joint" type="revolute">
+    <parent link="upper_arm" />
+    <child link="scoop" />
+    <origin xyz="0 0 ${36*itom}" />
+    <axis xyz="0 1 0" />
+    <limit effort="10000.0" velocity="0.25" lower="${-3*pi/8}" upper="${pi/4}" />
+    <dynamics damping="5.0"/>
+  </joint>
+  <transmission name="scoop_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="end_to_arm">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="end_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+      <motorTorqueConstant>1</motorTorqueConstant>
+    </actuator>
+  </transmission>
+</robot>

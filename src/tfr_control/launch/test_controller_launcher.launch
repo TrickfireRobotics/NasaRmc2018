@@ -2,6 +2,12 @@
   <!-- Load all of the motor controllers -->
   <rosparam file="$(find tfr_control)/config/controllers.yaml" command="load"/>
 
+  <!-- Load the URDF into the ROS Parameter Server, processing macros as we do -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find tfr_description)/xacro/model.xacro'" />
+  
+  <!-- Publishes the state of the robot to TF for Rviz or other usages -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen" />
+
   <!-- Load the controller manager plugin for the drivebase -->
   <node name="controller_launcher" pkg="tfr_control" type="controller_launcher" />
 

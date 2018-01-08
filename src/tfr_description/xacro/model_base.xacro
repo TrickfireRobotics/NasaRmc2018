@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="excavator">
+
+  <!--DRIVEBASE-->
+  <!-- A macro for creating a wheel with a link, joint, and transmission -->
+  <xacro:macro name="wheel" params="name fb lr">
+    <link name="${name}">
+      <visual>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}" />
+        </geometry>
+        <origin rpy="${pi/2} 0 0" />
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}" />
+        </geometry>
+        <origin rpy="${pi/2} 0 0" />
+      </collision>
+      <inertial>
+        <origin xyz="0 ${wheel_width/2} 0" rpy="0 0 0"/>
+        <mass value="${wheel_mass}"/> 
+        <inertia ixx="${(wheel_mass*wheel_radius**2)/2}" ixy="0.0" ixz="0.0" iyy="${(wheel_mass*wheel_width**2)/12}" iyz="0.0" izz="${(wheel_mass*wheel_radius**2)/2}"/> 
+      </inertial>
+    </link>
+    <joint name="${name}_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${name}"/>      
+      <origin xyz="${fb*base_length/2 - 16*fb*itom} ${lr*base_width/2 + lr*wheel_width/2} ${-base_height/2}"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="100.0"  velocity="100.0"/>
+      <dynamics damping="0.7"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="wheel_tran" params="name">
+    <transmission name="${name}_tran">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${name}_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${name}_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        <motorTorqueConstant>1</motorTorqueConstant>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
+  <!--stamp out the "treads" (just individual wheels) -->
+  <xacro:wheel name="left_tread" fb="0" lr="1" />
+  <xacro:wheel_tran name="left_tread" />
+  <xacro:wheel name="right_tread" fb = "0" lr="-1" />
+  <xacro:wheel_tran name="right_tread" />
+
+  <!-- add extra, free-spinning wheels so the robot doesn't wobble in simulation -->
+  <xacro:wheel name="left_tread_f" fb="1" lr="1" />
+  <xacro:wheel name="left_tread_b" fb="-1" lr="1" />
+  <xacro:wheel name="right_tread_f" fb="1" lr="-1" />
+  <xacro:wheel name="right_tread_b" fb="-1" lr="-1" />
+
+  <!--CHASSIS-->
+  <link name="base_link" >
+    <visual>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}" />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="${base_mass}"/>       
+      <inertia ixx="${base_mass/12*(base_width**2+base_length**2)}" ixy="0.0" ixz="0.0" iyy="${base_mass/12*(base_length**2+base_height**2)}" iyz="0.0" izz="${base_mass/12*(base_width**2+base_height**2)}"/> 
+    </inertial>
+  </link>
+
+  <!--BIN-->
+  <link name="bin" >
+    <visual>
+      <geometry>
+        <box size="${base_length/3} ${base_width*5/6} ${12*itom}" />
+      </geometry>
+      <origin xyz="${base_length/6} 0 ${6*itom}" />
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${base_length/3} ${base_width*5/6} ${12*itom}" />
+      </geometry>
+      <origin xyz="${base_length/6} 0 ${6*itom}" />
+    </collision>
+    <!--TODO: has to be updated with proper values!-->
+    <inertial>
+      <mass value="${base_mass}"/>
+      <inertia ixx="${base_mass/12*(base_width**2+base_length**2)}" ixy="0.0" ixz="0.0" iyy="${base_mass/12*(base_length**2+base_height**2)}" iyz="0.0" izz="${base_mass/12*(base_width**2+base_height**2)}"/> 
+    </inertial>
+  </link>
+  <joint name="bin_joint" type="revolute">
+    <parent link="base_link" />
+    <child link="bin" />
+    <axis xyz="0 1 0" />
+    <origin xyz="${-base_length/2} 0 ${base_height/2}" />
+    <limit effort="10000.0"  velocity="0.25" lower="0.0" upper="${-pi/4}"/>
+    <dynamics damping="5.0"/>
+  </joint>
+</robot>

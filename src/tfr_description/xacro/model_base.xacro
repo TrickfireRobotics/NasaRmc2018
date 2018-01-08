@@ -100,9 +100,9 @@
   <joint name="bin_joint" type="revolute">
     <parent link="base_link" />
     <child link="bin" />
-    <axis xyz="0 1 0" />
+    <axis xyz="0 -1 0" />
     <origin xyz="${-base_length/2} 0 ${base_height/2}" />
-    <limit effort="10000.0"  velocity="0.25" lower="0.0" upper="${-pi/4}"/>
+    <limit effort="10000.0"  velocity="0.25" lower="0" upper="${pi/4}"/>
     <dynamics damping="5.0"/>
   </joint>
 </robot>

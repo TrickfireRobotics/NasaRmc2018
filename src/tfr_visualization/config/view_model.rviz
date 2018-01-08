@@ -63,10 +63,61 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        god:
+        bin:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
+        left_tread:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        left_tread_b:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        left_tread_f:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        lower_arm:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_tread:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_tread_b:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_tread_f:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        scoop:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        turntable:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        upper_arm:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -83,7 +134,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 238; 238; 238
-    Fixed Frame: god
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:

@@ -1,0 +1,15 @@
+<!--spin up the duo!-->
+<launch>
+  <!--known issue, sometimes pointclouds get inverted-->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="pc_broadcaster" args="0 0 0 1.58 3.14 1.58  camera_link stereo_link" />
+	<group ns="duo3d_driver">
+    <remap from="points2" to="point_cloud/image_raw"/>
+    <remap from="disparity" to="depth/image_raw"/>
+    <!--simulating duo 3d output-->
+    <rosparam command="load" file="$(find tfr_gazebo)/params/proto_disparity_params.yaml"/> 
+    <node pkg="nodelet" type="nodelet" name="stereo_proc_manager" args="manager"/>
+		<include file="$(find stereo_image_proc)/launch/stereo_image_proc.launch" >
+			<arg name="manager" value="/duo3d_driver/stereo_proc_manager"/>
+		</include>
+	</group>
+</launch>

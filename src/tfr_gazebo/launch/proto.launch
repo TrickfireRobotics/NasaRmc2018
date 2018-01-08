@@ -1,0 +1,7 @@
+<!--top level launch file for the prototype gazebo simulator-->
+<launch>
+  <!--spawn the model w/gui-->
+  <include file="$(find tfr_gazebo)/launch/proto_world.launch" />
+  <!--spawn the controller-->
+  <include file="$(find tfr_gazebo)/launch/proto_controller.launch" />
+</launch> 

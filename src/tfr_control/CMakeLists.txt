@@ -10,6 +10,7 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  geometry_msgs
   tfr_msgs
   tfr_utilities
 )
@@ -47,6 +48,11 @@ add_library(${PROJECT_NAME}_library
 # Create executable process/node and link it
 add_executable(control_echo src/control_echo.cpp)
 target_link_libraries(control_echo ${catkin_LIBRARIES} ${PROJECT_NAME}_library)
+
+
+add_executable(proto_driver_station src/proto_driver_station.cpp)
+target_link_libraries(proto_driver_station ${catkin_LIBRARIES} sfml-system sfml-window sfml-graphics ${PROJECT_NAME}_library)
+
 
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")

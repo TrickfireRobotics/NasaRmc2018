@@ -9,6 +9,8 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  tfr_msgs
+  actionlib
 )
 
 find_package(GTest REQUIRED)
@@ -39,6 +41,15 @@ include_directories(
 add_library(${PROJECT_NAME}
   src/placeholder_utility.cpp
 )
+
+add_executable(example_client src/example_action_client.cpp)
+target_link_libraries(example_client ${catkin_LIBRARIES})
+add_dependencies(example_client ${catkin_EXPORTED_TARGETS})
+
+add_executable(example_server src/example_action_server.cpp)
+target_link_libraries(example_server ${catkin_LIBRARIES})
+add_dependencies(example_server ${catkin_EXPORTED_TARGETS})
+
 
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")

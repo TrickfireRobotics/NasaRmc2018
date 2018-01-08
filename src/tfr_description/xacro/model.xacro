@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot name="excavator" xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <!--top level robot description-->
+  <!-- Top-level robot description -->
   <xacro:include filename="model_constants.xacro"/>
   <xacro:include filename="model_base.xacro"/>
   <xacro:include filename="model_arm.xacro"/>

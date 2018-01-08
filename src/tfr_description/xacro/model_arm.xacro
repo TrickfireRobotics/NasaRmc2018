@@ -22,7 +22,7 @@
     <child link="turntable" />
     <origin xyz="${base_length/2-base_width/3-3*itom} 0 ${base_height/2}" />
     <axis xyz="0 0 1" />
-    <limit effort="1.0" velocity="1.0"/>
+    <limit effort="1.0" velocity="1.0" />
   </joint>
   <transmission name="turntable_tran">
     <type>transmission_interface/SimpleTransmission</type>
@@ -55,7 +55,7 @@
     <child link="lower_arm" />
     <axis xyz="0 1 0" />
     <origin xyz="${turntable_radius} 0 ${turntable_height}" />
-    <limit effort="1.0" velocity="1.0" lower="${lower_arm_min}" upper="${lower_arm_max}"/>
+    <limit effort="1.0" velocity="1.0" lower="${lower_arm_min}" upper="${lower_arm_max}" />
   </joint>
   <transmission name="lower_arm_tran">
     <type>transmission_interface/SimpleTransmission</type>
@@ -88,7 +88,7 @@
     <child link="upper_arm" />
     <axis xyz="0 1 0" />
     <origin xyz="0 0 ${lower_arm_length}" />
-    <limit effort="1.0" velocity="1.0" lower="${upper_arm_min}" upper="${upper_arm_max}"/>
+    <limit effort="1.0" velocity="1.0" lower="${upper_arm_min}" upper="${upper_arm_max}" />
   </joint>
   <transmission name="upper_arm_tran">
     <type>transmission_interface/SimpleTransmission</type>

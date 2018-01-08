@@ -4,6 +4,8 @@ namespace tfr_control
 {
     Controller::Controller()
     {
+        // Note: the string parameters in these constructors must match the joint names from the URDF. If one changes, so must the other.
+
         // Connect and register the joint state interfaces
         hardware_interface::JointStateHandle left_tread_state_handle("left_tread_joint", &position_values[0], &velocity_values[0], &effort_values[0]);
         joint_state_interface.registerHandle(left_tread_state_handle);

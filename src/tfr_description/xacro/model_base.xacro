@@ -1,8 +1,21 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="excavator">
+  <!-- CHASSIS -->
+  <link name="base_link" >
+    <visual>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}" />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}" />
+      </geometry>
+    </collision>
+  </link>
 
-  <!--DRIVEBASE-->
-  <!-- A macro for creating a wheel with a link, joint, and transmission -->
+  <!-- DRIVEBASE -->
+  <!-- A macro for creating a wheel with a link and joint -->
   <xacro:macro name="wheel" params="name fb lr">
     <link name="${name}">
       <visual>
@@ -19,14 +32,15 @@
       </collision>
     </link>
     <joint name="${name}_joint" type="continuous">
-      <parent link="base_link"/>
-      <child link="${name}"/>      
-      <origin xyz="${fb*base_length/2 - fb*wheel_radius} ${lr*base_width/2 + lr*wheel_width/2} ${-base_height/2}"/>
+      <parent link="base_link" />
+      <child link="${name}" />
+      <origin xyz="${fb*base_length/2 - fb*wheel_radius} ${lr*base_width/2 + lr*wheel_width/2} ${-base_height/2}" />
       <axis xyz="0 1 0"/>
-      <limit effort="1.0"  velocity="1.0"/>
+      <limit effort="1.0" velocity="1.0" />
     </joint>
   </xacro:macro>
 
+  <!-- A macro for creating a wheel transmission -->
   <xacro:macro name="wheel_tran" params="name">
     <transmission name="${name}_tran">
       <type>transmission_interface/SimpleTransmission</type>
@@ -41,31 +55,17 @@
     </transmission>
   </xacro:macro>
 
-  <!--stamp out the "treads" (just individual wheels) -->
+  <!-- Create the "treads" (just individual wheels) -->
   <xacro:wheel name="left_tread" fb="-1" lr="1" />
   <xacro:wheel_tran name="left_tread" />
   <xacro:wheel name="right_tread" fb = "-1" lr="-1" />
   <xacro:wheel_tran name="right_tread" />
 
-  <!-- add extra, free-spinning wheels so the robot doesn't wobble in simulation -->
+  <!-- Add extra free-spinning wheels for the other end of the robot -->
   <xacro:wheel name="left_tread_f" fb="1" lr="1" />
   <xacro:wheel name="right_tread_f" fb="1" lr="-1" />
 
-  <!--CHASSIS-->
-  <link name="base_link" >
-    <visual>
-      <geometry>
-        <box size="${base_length} ${base_width} ${base_height}" />
-      </geometry>
-    </visual>
-    <collision>
-      <geometry>
-        <box size="${base_length} ${base_width} ${base_height}" />
-      </geometry>
-    </collision>
-  </link>
-
-  <!--BIN-->
+  <!-- BIN -->
   <link name="bin" >
     <visual>
       <geometry>
@@ -85,6 +85,6 @@
     <child link="bin" />
     <axis xyz="0 -1 0" />
     <origin xyz="${-base_length/2} 0 ${base_height/2}" />
-    <limit effort="1.0"  velocity="1.0" lower="0" upper="${pi/4}"/>
+    <limit effort="1.0" velocity="1.0" lower="0" upper="${pi/4}" />
   </joint>
 </robot>

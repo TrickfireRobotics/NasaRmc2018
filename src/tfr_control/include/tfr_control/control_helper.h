@@ -9,7 +9,6 @@ namespace tfr_control
     {
     public:
         ControlHelper();
-        std::string GetEcho();
     private:
 
     };

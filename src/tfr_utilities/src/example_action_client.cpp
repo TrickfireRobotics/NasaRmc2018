@@ -27,13 +27,13 @@
 typedef actionlib::SimpleActionClient<tfr_msgs::ExampleAction> Client;
 
 // Called every time feedback is received for the goal
-void Feedback(const tfr_msgs::ExampleFeedbackConstPtr& feedback)
+void feedback(const tfr_msgs::ExampleFeedbackConstPtr& feedback)
 {
     ROS_INFO("Got Feedback: %f", feedback->feedback);
 }
 
 // Called once when the goal completes
-void Finished(const actionlib::SimpleClientGoalState& state, const tfr_msgs::ExampleResultConstPtr& result)
+void finished(const actionlib::SimpleClientGoalState& state, const tfr_msgs::ExampleResultConstPtr& result)
 {
     ROS_INFO("Finished in state [%s]", state.toString().c_str());
     ROS_INFO("Answer: %f", result->result);
@@ -60,7 +60,7 @@ int main(int argc, char** argv)
     goal.goal = "Do the thing!";
 
     // Callback functions: Result, Start, Feedback
-    client.sendGoal(goal, &Finished, NULL, &Feedback);
+    client.sendGoal(goal, &finished, NULL, &feedback);
 
     ros::spin();
 

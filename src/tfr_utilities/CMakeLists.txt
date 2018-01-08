@@ -44,9 +44,11 @@ add_library(${PROJECT_NAME}
 
 add_executable(example_client src/example_action_client.cpp)
 target_link_libraries(example_client ${catkin_LIBRARIES})
+add_dependencies(example_client ${catkin_EXPORTED_TARGETS})
 
 add_executable(example_server src/example_action_server.cpp)
 target_link_libraries(example_server ${catkin_LIBRARIES})
+add_dependencies(example_server ${catkin_EXPORTED_TARGETS})
 
 
 # This call is sometimes needed and sometimes not and I'm not really clear why

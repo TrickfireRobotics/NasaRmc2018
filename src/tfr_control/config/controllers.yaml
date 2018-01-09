@@ -1,3 +1,8 @@
+# ------------------------------------------------------------
+# This file holds the controller configurations for all controllers
+# on the robot.
+# ------------------------------------------------------------
+
 # Publish all joint states -----------------------------------
 joint_state_controller:
   type: joint_state_controller/JointStateController

@@ -1,5 +1,9 @@
+/**
+ * test_tfr_control.cpp
+ * 
+ * This is the main test class for the tfr_control package.
+ */
 #include <gtest/gtest.h>
-#include "control_helper.h"
 
 int main(int argc, char **argv)
 {

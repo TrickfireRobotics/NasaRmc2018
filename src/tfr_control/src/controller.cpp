@@ -1,3 +1,9 @@
+/**
+ * controller.cpp
+ * 
+ * This class is in charge of handling the physical hardware interface with
+ * the robot itself, and is started by the controller_launcher node.
+ */
 #include "controller.h"
 
 using hardware_interface::JointStateHandle;
@@ -5,56 +11,30 @@ using hardware_interface::JointHandle;
 
 namespace tfr_control
 {
+    void Controller::register_joint(std::string joint, Actuator actuator) {
+        JointStateHandle state_handle(joint, &position_values[actuator],
+        &velocity_values[actuator], &effort_values[actuator]);
+        joint_state_interface.registerHandle(state_handle);
+
+        JointHandle handle(state_handle, &command_values[actuator]);
+        joint_effort_interface.registerHandle(handle);
+    }
+
     Controller::Controller()
     {
-        // Note: the string parameters in these constructors must match the joint names from the URDF. If one changes, so must the other.
+        // Note: the string parameters in these constructors must match the
+        // joint names from the URDF. If one changes, so must the other.
 
-        // Connect and register the joint state interfaces
-        JointStateHandle left_tread_state_handle("left_tread_joint", &position_values[0], &velocity_values[0], &effort_values[0]);
-        joint_state_interface.registerHandle(left_tread_state_handle);
-
-        JointStateHandle right_tread_state_handle("right_tread_joint", &position_values[1], &velocity_values[1], &effort_values[1]);
-        joint_state_interface.registerHandle(right_tread_state_handle);
-
-        JointStateHandle bin_state_handle("bin_joint", &position_values[2], &velocity_values[2], &effort_values[2]);
-        joint_state_interface.registerHandle(bin_state_handle);
-
-        JointStateHandle turntable_state_handle("turntable_joint", &position_values[3], &velocity_values[3], &effort_values[3]);
-        joint_state_interface.registerHandle(turntable_state_handle);
-
-        JointStateHandle lower_arm_state_handle("lower_arm_joint", &position_values[4], &velocity_values[4], &effort_values[4]);
-        joint_state_interface.registerHandle(lower_arm_state_handle);
-
-        JointStateHandle upper_arm_state_handle("upper_arm_joint", &position_values[5], &velocity_values[5], &effort_values[5]);
-        joint_state_interface.registerHandle(upper_arm_state_handle);
-
-        JointStateHandle scoop_state_handle("scoop_joint", &position_values[6], &velocity_values[6], &effort_values[6]);
-        joint_state_interface.registerHandle(scoop_state_handle);
+        // Connect and register the joint state and effort interfaces
+        register_joint("left_tread_joint", Actuator::kLeftTread);
+        register_joint("right_tread_joint", Actuator::kRightTread);
+        register_joint("bin_joint", Actuator::kBin);
+        register_joint("turntable_joint", Actuator::kTurntable);
+        register_joint("lower_arm_joint", Actuator::kLowerArm);
+        register_joint("upper_arm_joint", Actuator::kUpperArm);
+        register_joint("scoop_joint", Actuator::kScoop);
 
         registerInterface(&joint_state_interface);
-
-        // Connect and register the joint effort interfaces
-        JointHandle left_tread_effort_values_handle(joint_state_interface.getHandle("left_tread_joint"), &command_values[0]);
-        joint_effort_interface.registerHandle(left_tread_effort_values_handle);
-
-        JointHandle right_tread_effort_values_handle(joint_state_interface.getHandle("right_tread_joint"), &command_values[1]);
-        joint_effort_interface.registerHandle(right_tread_effort_values_handle);
-
-        JointHandle bin_effort_values_handle(joint_state_interface.getHandle("bin_joint"), &command_values[2]);
-        joint_effort_interface.registerHandle(bin_effort_values_handle);
-
-        JointHandle turntable_effort_values_handle(joint_state_interface.getHandle("turntable_joint"), &command_values[3]);
-        joint_effort_interface.registerHandle(turntable_effort_values_handle);
-
-        JointHandle lower_arm_effort_values_handle(joint_state_interface.getHandle("lower_arm_joint"), &command_values[4]);
-        joint_effort_interface.registerHandle(lower_arm_effort_values_handle);
-        
-        JointHandle upper_arm_effort_values_handle(joint_state_interface.getHandle("upper_arm_joint"), &command_values[5]);
-        joint_effort_interface.registerHandle(upper_arm_effort_values_handle);
-        
-        JointHandle scoop_effort_values_handle(joint_state_interface.getHandle("scoop_joint"), &command_values[6]);
-        joint_effort_interface.registerHandle(scoop_effort_values_handle);
-
         registerInterface(&joint_effort_interface);
     }
 

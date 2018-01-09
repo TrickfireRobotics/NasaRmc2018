@@ -27,10 +27,12 @@
   <transmission name="turntable_tran">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="turn_to_base">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/EffortJointInterface
+      </hardwareInterface>
     </joint>
     <actuator name="turntable_motor">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/EffortJointInterface
+      </hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
       <motorTorqueConstant>1</motorTorqueConstant>
     </actuator>
@@ -39,13 +41,13 @@
   <link name="lower_arm">
     <visual>
       <geometry>
-        <box size="${lower_arm_height} ${lower_arm_width} ${lower_arm_length}" />
+        <box size="${lower_arm_height} ${lower_arm_width} ${lower_arm_length}"/>
       </geometry>
       <origin xyz="${-lower_arm_height/2} 0 ${lower_arm_length/2}" />
     </visual>
     <collision>
       <geometry>
-        <box size="${lower_arm_height} ${lower_arm_width} ${lower_arm_length}" />
+        <box size="${lower_arm_height} ${lower_arm_width} ${lower_arm_length}"/>
       </geometry>
       <origin xyz="${-lower_arm_height/2} 0 ${lower_arm_length/2}" />
     </collision>
@@ -55,15 +57,18 @@
     <child link="lower_arm" />
     <axis xyz="0 1 0" />
     <origin xyz="${turntable_radius} 0 ${turntable_height}" />
-    <limit effort="1.0" velocity="1.0" lower="${lower_arm_min}" upper="${lower_arm_max}" />
+    <limit effort="1.0" velocity="1.0" lower="${lower_arm_min}"
+          upper="${lower_arm_max}" />
   </joint>
   <transmission name="lower_arm_tran">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="lower_to_turn">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/EffortJointInterface
+      </hardwareInterface>
     </joint>
     <actuator name="lower_motor">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/EffortJointInterface
+      </hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
       <motorTorqueConstant>1</motorTorqueConstant>
     </actuator>
@@ -72,13 +77,13 @@
   <link name="upper_arm">
     <visual>
       <geometry>
-        <box size="${upper_arm_height} ${upper_arm_width} ${upper_arm_length}" />
+        <box size="${upper_arm_height} ${upper_arm_width} ${upper_arm_length}"/>
       </geometry>
       <origin xyz="${-upper_arm_height/2} 0 ${upper_arm_length/2}" />
     </visual>
     <collision>
       <geometry>
-        <box size="${upper_arm_height} ${upper_arm_width} ${upper_arm_length}" />
+        <box size="${upper_arm_height} ${upper_arm_width} ${upper_arm_length}"/>
       </geometry>
       <origin xyz="${-upper_arm_height/2} 0 ${upper_arm_length/2}" />
     </collision>
@@ -88,15 +93,18 @@
     <child link="upper_arm" />
     <axis xyz="0 1 0" />
     <origin xyz="0 0 ${lower_arm_length}" />
-    <limit effort="1.0" velocity="1.0" lower="${upper_arm_min}" upper="${upper_arm_max}" />
+    <limit effort="1.0" velocity="1.0" lower="${upper_arm_min}"
+          upper="${upper_arm_max}" />
   </joint>
   <transmission name="upper_arm_tran">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="upper_to_lower">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/EffortJointInterface
+      </hardwareInterface>
     </joint>
     <actuator name="upper_motor">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/EffortJointInterface
+      </hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
       <motorTorqueConstant>1</motorTorqueConstant>
     </actuator>
@@ -121,15 +129,18 @@
     <child link="scoop" />
     <origin xyz="0 0 ${upper_arm_length}" />
     <axis xyz="0 1 0" />
-    <limit effort="1.0" velocity="1.0" lower="${scoop_min}" upper="${scoop_max}" />
+    <limit effort="1.0" velocity="1.0" lower="${scoop_min}"
+          upper="${scoop_max}" />
   </joint>
   <transmission name="scoop_tran">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="end_to_arm">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/EffortJointInterface
+      </hardwareInterface>
     </joint>
     <actuator name="end_motor">
-      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/EffortJointInterface
+      </hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
       <motorTorqueConstant>1</motorTorqueConstant>
     </actuator>

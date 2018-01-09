@@ -34,7 +34,8 @@
     <joint name="${name}_joint" type="continuous">
       <parent link="base_link" />
       <child link="${name}" />
-      <origin xyz="${fb*base_length/2 - fb*wheel_radius} ${lr*base_width/2 + lr*wheel_width/2} ${-base_height/2}" />
+      <origin xyz="${fb*base_length/2 - fb*wheel_radius} 
+                  ${lr*base_width/2 + lr*wheel_width/2} ${-base_height/2}" />
       <axis xyz="0 1 0"/>
       <limit effort="1.0" velocity="1.0" />
     </joint>
@@ -45,10 +46,12 @@
     <transmission name="${name}_tran">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${name}_joint">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface
+        </hardwareInterface>
       </joint>
       <actuator name="${name}_motor">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface
+        </hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
         <motorTorqueConstant>1</motorTorqueConstant>
       </actuator>

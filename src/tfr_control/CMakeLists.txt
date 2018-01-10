@@ -15,6 +15,9 @@ find_package(catkin REQUIRED COMPONENTS
   tfr_utilities
   hardware_interface
   controller_manager
+  joint_state_controller
+  effort_controllers
+  joint_trajectory_controller
 )
 
 find_package(GTest REQUIRED)

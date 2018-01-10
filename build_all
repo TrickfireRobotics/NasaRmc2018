@@ -20,13 +20,16 @@ if [ $? -eq 0 ]; then
 		echo ""
 		echo "--------------------------------- Build Succeeded --------------------------------"
 		echo ""
+		exit 0
 	else
 		echo ""
 		echo "------------------------------- Building Tests Failed ----------------------------"
 		echo ""
+		exit 1
 	fi
 else
 	echo ""
 	echo "---------------------------------- Build Failed ----------------------------------"
 	echo ""
+	exit 1
 fi

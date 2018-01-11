@@ -17,5 +17,7 @@
   <depend>std_msgs</depend>
   <depend>tfr_msgs</depend>
   <depend>tfr_utilities</depend>
+  <depend>xsens_custom_msgs</depend>
+  <depend>xsens_driver</depend>
 
 </package>

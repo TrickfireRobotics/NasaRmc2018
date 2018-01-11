@@ -1,8 +1,9 @@
 <!--spin up the xsens driver on the default usb port-->
 <launch>
 
+    <!--TODO replace with real transform when mounted-->
     <!--PARAMS-->
-	<node pkg="tf2_ros" type="static_transform_publisher" name="xsens_broadcaster" args="0 0 0 3.14 0 0   xsens_link base_link" />
+	<node pkg="tf2_ros" type="static_transform_publisher" name="xsens_broadcaster" args="0 0 0 0 0 0   xsens_link base_link" />
 
 
     <!--DRIVER-->
@@ -10,7 +11,7 @@
 
     <!--DEVICE-->
     <node name="xsens_device" pkg="xsens_driver" type="mtnode.py"> 
-        <param name="device" value="/dev/ttyUSB0"/>
+        <param name="device" value="auto"/>
         <param name="baudrate" value="115200"/>
         <param name="frame_id" value="xsens_link"/>
         <param name="frame_local" value="ENU"/>

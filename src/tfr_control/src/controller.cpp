@@ -11,15 +11,6 @@ using hardware_interface::JointHandle;
 
 namespace tfr_control
 {
-    void Controller::register_joint(std::string joint, Actuator actuator) {
-        JointStateHandle state_handle(joint, &position_values[actuator],
-        &velocity_values[actuator], &effort_values[actuator]);
-        joint_state_interface.registerHandle(state_handle);
-
-        JointHandle handle(state_handle, &command_values[actuator]);
-        joint_effort_interface.registerHandle(handle);
-    }
-
     Controller::Controller()
     {
         // Note: the string parameters in these constructors must match the
@@ -44,5 +35,14 @@ namespace tfr_control
 
     void Controller::write() {
         // TODO: Waiting on further hardware development to implement
+    }
+    
+    void Controller::register_joint(std::string joint, Actuator actuator) {
+        JointStateHandle state_handle(joint, &position_values[actuator],
+        &velocity_values[actuator], &effort_values[actuator]);
+        joint_state_interface.registerHandle(state_handle);
+
+        JointHandle handle(state_handle, &command_values[actuator]);
+        joint_effort_interface.registerHandle(handle);
     }
 }

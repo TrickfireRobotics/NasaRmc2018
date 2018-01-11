@@ -31,6 +31,15 @@ namespace tfr_control {
     private:
         hardware_interface::JointStateInterface joint_state_interface;
         hardware_interface::EffortJointInterface joint_effort_interface;
+
+        // Populated by controller_manager, read in by the write() method
+        double command_values[7] = {};
+        // Populated by sensors, read in by controller_manager
+        double position_values[7] = {};
+        // Populated by sensors, read in by controller_manager
+        double velocity_values[7] = {};
+        // Populated by sensors, read in by controller_manager
+        double effort_values[7] = {};
         
         /**
          * Seven actuators/motors to store data for:
@@ -42,15 +51,6 @@ namespace tfr_control {
          *  - Scoop actuator
          * */
         void register_joint(std::string joint, Actuator actuator);
-
-        // Populated by controller_manager, read in by the write() method
-        double command_values[7];
-        // Populated by sensors, read in by controller_manager
-        double position_values[7];
-        // Populated by sensors, read in by controller_manager
-        double velocity_values[7];
-        // Populated by sensors, read in by controller_manager
-        double effort_values[7];
     };
 }
 

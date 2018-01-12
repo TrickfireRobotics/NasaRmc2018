@@ -1,0 +1,24 @@
+<!--spin up the xsens driver on the default usb port-->
+<launch>
+
+    <!--PARAMS-->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="xsens_broadcaster" 
+        args="0.1651 0.0762 0 0 0 0 base_link xsens_link" />
+
+
+    <!--DRIVER-->
+    <node name="xsens_driver" pkg="xsens_driver" type="mtdevice.py" args="-m 2 -f 50"/>
+
+    <!--DEVICE-->
+    <node name="xsens_device" pkg="xsens_driver" type="mtnode.py"> 
+        <param name="device" value="/dev/ttyUSB0"/>
+        <param name="baudrate" value="115200"/>
+        <param name="frame_id" value="xsens_link"/>
+        <param name="frame_local" value="ENU"/>
+        <param name="frame_local_imu" value="ENU"/>
+        
+    </node>-->
+
+    
+
+</launch>

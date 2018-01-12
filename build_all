@@ -1,15 +1,20 @@
+#! /bin/bash
 echo ""
 echo "------------------------------------ Building ------------------------------------"
 echo ""
 
-catkin_make
+
+ARCH=$(uname -m)
+CMAKE_OPTIONS="-DARCH_DIR=$ARCH"
+
+catkin_make --cmake-args $CMAKE_OPTIONS
 
 if [ $? -eq 0 ]; then
     echo ""
 	echo "--------------------------------- Building Tests ---------------------------------"
 	echo ""
 	
-	catkin_make tests
+	catkin_make tests --cmake-args $CMAKE_OPTIONS
 	
 	if [ $? -eq 0 ]; then
 		echo ""

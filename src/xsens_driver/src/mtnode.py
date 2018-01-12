@@ -196,6 +196,7 @@ class XSensDriver(object):
 				imu_msg.linear_acceleration.x = acc_data['accX']
 				imu_msg.linear_acceleration.y = acc_data['accY']
 				imu_msg.linear_acceleration.z = acc_data['accZ']						
+                                #NOTE COLLIN added covariences
                                 imu_msg.linear_acceleration_covariance=[1e-3,0,0,0,1e-3,0,0,0,1e-3]
 			else:
 				raise MTException("Unsupported message in XDI_AccelerationGroup.")	
@@ -212,6 +213,7 @@ class XSensDriver(object):
 				imu_msg.angular_velocity.x = gyr_data['gyrX']
 				imu_msg.angular_velocity.y = gyr_data['gyrY']
 				imu_msg.angular_velocity.z = gyr_data['gyrZ']
+                                #NOTE COLLIN added covariences
                                 imu_msg.angular_velocity_covariance=[1e-3,0,0,0,1e-3,0,0,0,1e-3]
 			else:
 				raise MTException("Unsupported message in XDI_AngularVelocityGroup.")
@@ -309,6 +311,7 @@ class XSensDriver(object):
 			imu_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
+                        #NOTE COLLIN commented out 
 			#imu_msg.header.stamp.secs = secs
 			#imu_msg.header.stamp.nsecs = nsecs	
 			self.imu_pub.publish(imu_msg)
@@ -325,6 +328,7 @@ class XSensDriver(object):
 			ss_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
+                        #NOTE COLLIN commented out 
 			#ss_msg.header.stamp.secs = secs
 			#ss_msg.header.stamp.nsecs = nsecs	
 			self.ss_pub.publish(ss_msg)
@@ -332,6 +336,7 @@ class XSensDriver(object):
 			baro_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
+                        #NOTE COLLIN commented out 
 			#baro_msg.header.stamp.secs = secs
 			#baro_msg.header.stamp.nsecs = nsecs	
 			self.baro_pub.publish(baro_msg)
@@ -339,6 +344,7 @@ class XSensDriver(object):
 			gnssPvt_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
+                        #NOTE COLLIN commented out 
 			#baro_msg.header.stamp.secs = secs
 			#baro_msg.header.stamp.nsecs = nsecs	
 			self.gnssPvt_pub.publish(gnssPvt_msg)										
@@ -346,6 +352,7 @@ class XSensDriver(object):
 			ori_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
+                        #NOTE COLLIN commented out 
 			#ori_msg.header.stamp.secs = secs
 			#ori_msg.header.stamp.nsecs = nsecs	
 			self.ori_pub.publish(ori_msg)
@@ -353,6 +360,7 @@ class XSensDriver(object):
 			vel_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
+                        #NOTE COLLIN commented out 
 			#vel_msg.header.stamp.secs = secs
 			#vel_msg.header.stamp.nsecs = nsecs	
 			self.vel_pub.publish(vel_msg)
@@ -360,6 +368,7 @@ class XSensDriver(object):
 			pos_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
+                        #NOTE COLLIN commented out 
 			#pos_msg.header.stamp.secs = secs
 			#pos_msg.header.stamp.nsecs = nsecs	
 			self.pos_pub.publish(pos_msg)		

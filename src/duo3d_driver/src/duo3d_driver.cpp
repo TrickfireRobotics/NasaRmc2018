@@ -408,10 +408,14 @@ protected:
                         imu_msg.linear_acceleration.x = pFrame->duoFrame->IMUData[j].accelData[0] * 9.81;
                         imu_msg.linear_acceleration.y = -pFrame->duoFrame->IMUData[j].accelData[1] * 9.81;
                         imu_msg.linear_acceleration.z = -pFrame->duoFrame->IMUData[j].accelData[2] * 9.81;
+                        //NOTE COLLIN added covariences
+                        imu_msg.linear_acceleration_covariance = {5e-3, 0, 0, 0, 5e-3, 0, 0, 0, 5e-3};
                         // Angular velocity should be in rad/sec
                         imu_msg.angular_velocity.x = DEG2RAD(pFrame->duoFrame->IMUData[j].gyroData[0] - _gyro_offset[0]);
                         imu_msg.angular_velocity.y = -DEG2RAD(pFrame->duoFrame->IMUData[j].gyroData[1] - _gyro_offset[1]);
                         imu_msg.angular_velocity.z = -DEG2RAD(pFrame->duoFrame->IMUData[j].gyroData[2] - _gyro_offset[2]);
+                        //NOTE COLLIN added covariences
+                        imu_msg.angular_velocity_covariance = {5e-3, 0, 0, 0, 5e-3, 0, 0, 0, 5e-3};
                         _pub_imu.publish(imu_msg);
                     }
                     if(_num_samples < 101) _num_samples++;

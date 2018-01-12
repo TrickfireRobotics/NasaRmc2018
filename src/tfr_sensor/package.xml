@@ -19,5 +19,6 @@
   <depend>tfr_utilities</depend>
   <depend>xsens_custom_msgs</depend>
   <depend>xsens_driver</depend>
+  <depend>duo3d_driver</depend>
 
 </package>

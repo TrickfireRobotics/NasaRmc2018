@@ -1,0 +1,6 @@
+<launch>
+    <group ns="sensors">
+        <include file="$(find tfr_sensor)/launch/duo3d.launch"/>
+        <include file="$(find tfr_sensor)/launch/xsens.launch"/>
+    </group>
+</launch>

@@ -1,0 +1,23 @@
+<package format="2">
+  <name>xsens_driver</name>
+  <version>3.0.1</version>
+  <description>
+  ROS Driver for publishing mti sensor sample messages (MTi-1/10/100, MTi-G-700 and FMT devices).
+  </description>
+  <maintainer email="support@xsens.com">Xsens</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>tf</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>gps_common</depend>
+  <depend>diagnostic_msgs</depend>
+  <depend>xsens_custom_msgs</depend>
+
+</package>
+
+

@@ -1,0 +1,4 @@
+<launch> 
+    <include file="$(find tfr_sensor)/launch/duo3d.launch"/>
+    <include file="$(find tfr_visualization)/launch/duo3d.launch"/>
+</launch>

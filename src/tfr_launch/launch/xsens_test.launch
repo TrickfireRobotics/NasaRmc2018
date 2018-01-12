@@ -1,0 +1,4 @@
+<launch> 
+    <include file="$(find tfr_sensor)/launch/xsens.launch"/>
+    <include file="$(find tfr_visualization)/launch/xsens.launch"/>
+</launch>

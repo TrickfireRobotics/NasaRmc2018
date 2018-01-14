@@ -13,6 +13,11 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   tfr_msgs
   tfr_utilities
+  hardware_interface
+  controller_manager
+  joint_state_controller
+  effort_controllers
+  joint_trajectory_controller
 )
 
 find_package(GTest REQUIRED)
@@ -34,31 +39,20 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-# Declare a C++ library
-# You can either create libraries like this and link them in the
-# target_link_libraries() call below or include the individual .cpp
-# files in each add_executable() call. I'm not really sure which one
-# is better.
-# Declared libraries can be exported to other dependent packages 
-# in the LIBRARIES part of the catkin_package() call above.
-add_library(${PROJECT_NAME}_library
-  src/control_helper.cpp
-)
-
 # Create executable process/node and link it
-add_executable(control_echo src/control_echo.cpp)
-target_link_libraries(control_echo ${catkin_LIBRARIES} ${PROJECT_NAME}_library)
-
-
 add_executable(proto_driver_station src/proto_driver_station.cpp)
-target_link_libraries(proto_driver_station ${catkin_LIBRARIES} sfml-system sfml-window sfml-graphics ${PROJECT_NAME}_library)
+target_link_libraries(proto_driver_station ${catkin_LIBRARIES} sfml-system
+                        sfml-window sfml-graphics)
 
+add_executable(controller_launcher src/controller_launcher.cpp
+                                   src/controller.cpp)
+target_link_libraries(controller_launcher ${catkin_LIBRARIES})
 
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 # Add gtest based cpp test target and link libraries
 catkin_add_gtest(${PROJECT_NAME}-test test/test_tfr_control.cpp)
-if(TARGET ${PROJECT_NAME}-test)
-  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME}_library)
-endif()
+# if(TARGET ${PROJECT_NAME}-test)
+#   target_link_libraries(${PROJECT_NAME}-test)
+# endif()

@@ -1,20 +1,9 @@
+/**
+ * test_tfr_control.cpp
+ * 
+ * This is the main test class for the tfr_control package.
+ */
 #include <gtest/gtest.h>
-#include "control_helper.h"
-
-TEST(Control, ControlHelper)
-{
-    // Google tests provide no handlers for exceptions
-    try
-    {
-        tfr_control::ControlHelper helper;
-        EXPECT_STREQ("Control System Online", helper.GetEcho().c_str());
-    }
-    catch (std::exception e)
-    {
-        // An unhandled exception was thrown; fail the test
-        ASSERT_TRUE(false);
-    }
-}
 
 int main(int argc, char **argv)
 {

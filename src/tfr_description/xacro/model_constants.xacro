@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<robot name="excavator" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Shared model level constants -->
+  <!-- Inches to meters conversion -->
+  <xacro:property name="itom" value="0.0254" />
+  <!-- Degrees to radians conversion -->
+  <xacro:property name="dtor" value="${pi/180}" />
+
+  <!-- Drivebase parameters -->
+  <xacro:property name="base_width" value="${20*itom}" />
+  <xacro:property name="base_length" value="${50*itom}" />
+  <xacro:property name="base_height" value="${6*itom}" />
+
+  <!-- Wheel parameters -->
+  <xacro:property name="wheel_radius" value="${5.5*itom}" />
+  <xacro:property name="wheel_width" value="${5.75*itom}" />
+
+  <!-- Bin parameters -->
+  <!-- Length of top of bin, length of bottom is 13.86 -->
+  <!-- Using the bigger size as a box instead of making complex angled shape -->
+  <xacro:property name="bin_length" value="${25.78*itom}" />
+  <xacro:property name="bin_width" value="${base_width}" />
+  <xacro:property name="bin_height" value="${12*itom}" />
+
+  <!-- Turntable parameters -->
+  <xacro:property name="turntable_radius" value="${6*itom}" />
+  <!-- 1" in model plus undefined height for mounting and extra components -->
+  <!-- Rounded to 2" for now -->
+  <xacro:property name="turntable_height" value="${2*itom}" />
+
+  <!-- Lower arm parameters -->
+  <xacro:property name="lower_arm_length" value="${22*itom}" />
+  <xacro:property name="lower_arm_width" value="${4*itom}" />
+  <xacro:property name="lower_arm_height" value="${3.5*itom}" />
+  <xacro:property name="lower_arm_min" value="${11.74*dtor}" />
+  <xacro:property name="lower_arm_max" value="${97*dtor}" />
+
+  <!-- Upper arm parameters -->
+  <xacro:property name="upper_arm_length" value="${20*itom}" />
+  <xacro:property name="upper_arm_width" value="${3.61*itom}" />
+  <xacro:property name="upper_arm_height" value="${2.5*itom}" />
+  <xacro:property name="upper_arm_min" value="${0*dtor}" />
+  <xacro:property name="upper_arm_max" value="${107*dtor}" />
+
+  <!-- Scoop parameters -->
+  <xacro:property name="scoop_width" value="${10*itom}" />
+  <xacro:property name="scoop_diameter" value="${10.75*itom}" />
+  <xacro:property name="scoop_min" value="${-50*dtor}" />
+  <xacro:property name="scoop_max" value="${65*dtor}" />
+</robot>

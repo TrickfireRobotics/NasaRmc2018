@@ -6,10 +6,11 @@
 
   <!-- If you are the actual maintainer of this package, please say so here. -->
   <maintainer email="ryan.berge@trickfirerobotics.com">Ryan Berge</maintainer>
+  <maintainer email="adam.krpan@outlook.com">Adam Krpan</maintainer>
   <license>BSD</license>
   <url type="website">http://www.trickfirerobotics.com/</url>
   <author email="ryan.berge@trickfirerobotics.com">Ryan Berge</author>
-  <!-- <author email="another.author@example.com">Jane Doe</author> -->
+  <author email="adam.krpan@outlook.com">Adam Krpan</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <test_depend>gtest</test_depend>
@@ -18,7 +19,9 @@
   <depend>geometry_msgs</depend>
   <depend>tfr_msgs</depend>
   <depend>tfr_utilities</depend>
-  <exec_depend>controller_manager</exec_depend>
-  <exec_depend>effort_controllers</exec_depend>
-
+  <depend>hardware_interface</depend>
+  <depend>controller_manager</depend>
+  <depend>joint_state_controller</depend>
+  <depend>effort_controllers</depend>
+  <depend>joint_trajectory_controller</depend>
 </package>

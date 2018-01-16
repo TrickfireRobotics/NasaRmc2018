@@ -16,5 +16,7 @@
   <test_depend>gtest</test_depend>
   <depend>hector_mapping</depend>
   <depend>hector_geotiff</depend>
+  <depend>rtabmap_ros</depend>
+  <depend>roscpp</depend>
 
 </package>

@@ -9,15 +9,14 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  std_msgs
-  tfr_msgs
+  sensor_msgs
+  stereo_msgs
+  image_transport
   tfr_utilities
 )
 
 find_package(GTest REQUIRED)
 
-# These are all for exporting to dependent packages/projects.
-# Uncomment each if the dependent project requires it
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES tfr_sensor
@@ -25,34 +24,21 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-# Specify additional locations of header files
-# Your package locations should be listed before other locations
 include_directories(
   include/${PROJECT_NAME}
   ${catkin_INCLUDE_DIRS}
   ${GTEST_INCLUDE_DIRS}
 )
 
-# Declare a C++ library
-# You can either create libraries like this and link them in the
-# target_link_libraries() call below or include the individual .cpp
-# files in each add_executable() call. I'm not really sure which one
-# is better.
-# Declared libraries can be exported to other dependent packages 
-# in the LIBRARIES part of the catkin_package() call above.
 add_library(${PROJECT_NAME}_library
-  src/sensor_helper.cpp
+  src/disparity_transformer.cpp
 )
 
-# Create executable process/node and link it
-add_executable(sensor_echo src/sensor_echo.cpp)
-target_link_libraries(sensor_echo ${catkin_LIBRARIES} ${PROJECT_NAME}_library)
+add_executable(disparity_transformer src/disparity_transformer.cpp)
+target_link_libraries(disparity_transformer ${catkin_LIBRARIES} ${PROJECT_NAME}_library)
 
-# This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
-# Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test test/test_tfr_sensor.cpp)
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME}_library)
 endif()

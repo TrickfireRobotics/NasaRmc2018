@@ -2,63 +2,60 @@
 <!--uses "A" configuration from:-->
 <!--http://wiki.ros.org/rtabmap_ros/Tutorials/SetupOnYourRobot-->
 <launch>
-	<!-- Visual Odometry -->
-	<!--  <node pkg="rtabmap_ros" type="stereo_odometry" name="stereo_odometry" output="screen">
+    <!-- Visual Odometry -->
+    <!--    <node pkg="rtabmap_ros" type="stereo_odometry" name="stereo_odometry" output="screen">
 
-		<remap from="left/image_rect"       to="duo3d_driver/left/image_rect"/>
-		<remap from="right/image_rect"      to="duo3d_driver/right/image_rect"/>
-		<remap from="left/camera_info"      to="duo3d_driver/left/camera_info"/>
-		<remap from="right/camera_info"     to="duo3d_driver/right/camera_info"/>
+        <remap from="left/image_rect"       to="duo3d_driver/left/image_rect"/>
+        <remap from="right/image_rect"      to="duo3d_driver/right/image_rect"/>
+        <remap from="left/camera_info"      to="duo3d_driver/left/camera_info"/>
+        <remap from="right/camera_info"     to="duo3d_driver/right/camera_info"/>
 
-		<param name="frame_id" type="string" value="base_link"/>
-		<param name="odom_frame_id" type="string" value="odom"/>
-		<param name="approx_sync" type="bool" value="true"/>
-		<param name="queue_size" type="int" value="5"/>
-
-		<param name="Vis/MaxDepth" type="string" value="10"/>
-		<param name="Vis/InlierDistance" type="string" value="0.05"/>
-	</node>     -->
-
-
-
-<group ns="rtabmap">   
+        <param name="frame_id" type="string" value="base_link"/>
+        <param name="odom_frame_id" type="string" value="odom"/>
+        <param name="approx_sync" type="bool" value="false"/>
+        <param name="queue_size" type="int" value="5"/>
+        <param name="Odom/Strategy" value="1"/>
+		<param name="Vis/CorType" value="1"/>
+        <param name="Vis/MaxDepth" type="string" value="10"/>
+        <param name="Vis/InlierDistance" type="string" value="0.05"/>
+    </node>-->
 
 
-  <node pkg="nodelet" type="nodelet" name="disparity2depth" args="standalone rtabmap_ros/disparity_to_depth">
-    <remap from="/rtabmap/disparity" to="/duo3d_driver/depth/image_raw"/>
-  </node>
-	<node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
-		<!-- data remapping from duo-->
-		<param name="subscribe_stereo" type="bool" value="false"/>
-    <param name="subscribe_depth" type="bool" value="true"/>
-    <param name="approx_sync" type="bool" value="false"/>
-    <remap from="rgb/image" to="/duo3d_driver/left/image_rect"/>
-    <remap from="rgb/camera_info" to="/duo3d_driver/left/camera_info"/>
-    <remap from="depth/image" to="/rtabmap/depth"/>
-    <!--    <remap from="/rtabmap/left/image_rect" to="/duo3d_driver/left/image_rect"/>
-    <remap from="/rtabmap/right/image_rect" to="/duo3d_driver/right/image_rect"/>
-    <remap from="/rtabmap/left/camera_info" to="/duo3d_driver/left/camera_info"/>
-    <remap from="/rtabmap/right/camera_info" to="/duo3d_driver/right/camera_info"/>-->
-    <remap from="/rtabmap/odom" to="/fused_odom"/>
 
-		<!--transforms-->
-		<param name="frame_id" type="string" value="base_link"/>
-		<param name="queue_size" type="int" value="5"/>
+    <group ns="rtabmap">
+        <!--<node pkg="nodelet" type="nodelet" name="disparity2depth" args="standalone
+            rtabmap_ros/disparity_to_depth">
+            <remap from="/rtabmap/disparity" to="/sensors/duo3d/depth/image_raw"/>
+        </node>-->
+        <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
+            <!-- data remapping from duo-->
+            <param name="subscribe_stereo" type="bool" value="true"/>
+            <param name="subscribe_depth" type="bool" value="false"/>
+            
+            <param name="approx_sync" type="bool" value="false"/>
+            <!--<remap from="/rtabmap/depth/image" to="/rtabmap/depth"/>
+            <remap from="/rtabmap/rgb/image" to="/sensors/duo3d/rgb/image_rect"/>
+            <remap from="/rtabmap/rgb/camera_info" to="/sensors/duo3d/rgb/camera_info"/>-->
+            <remap from="/rtabmap/left/image_rect" to="/sensors/duo3d/left/image_rect"/>
+            <remap from="/rtabmap/right/image_rect" to="/sensors/duo3d/right/image_rect"/>
+            <remap from="/rtabmap/left/camera_info" to="/sensors/duo3d/left/camera_info"/>
+            <remap from="/rtabmap/right/camera_info" to="/sensors/duo3d/right/camera_info"/>
+            <!--TODO when fusion finished, integrate fused odometry-->
+            <remap from="/rtabmap/odom" to="/sensors/mti/sensor/imu"/>
+            <!--transforms-->
+            <param name="odom_frame_id" type="string" value="base_frame"/>
+            <param name="frame_id" type="string" value="base_link"/>
+            <param name="queue_size" type="int" value="5"/>
 
-		<!--parameters from setup tutorial-->
-		<param name="RGBD/NeighborLinkRefining" type="string" value="true"/>
-		<param name="RGBD/ProximityBySpace"     type="string" value="true"/>
-		<param name="RGBD/AngularUpdate"        type="string" value="0.005"/>
-		<param name="RGBD/LinearUpdate"         type="string" value="0.005"/>
-		<param name="RGBD/OptimizeFromGraphEnd" type="string" value="false"/>
-		<param name="Reg/Strategy"              type="string" value="0"/> <!-- 0=visual 1=ICP 2=visual+icp-->
-		<param name="Reg/Force3DoF"             type="string" value="true"/>
-		<param name="Vis/MinInliers"            type="string" value="5"/>
-		<param name="Vis/InlierDistance"        type="string" value="0.1"/>
-		<param name="Rtabmap/TimeThr"           type="string" value="250"/>
-    <param name="Rtabmap/DetectionRate" type="string" value="3"/>
-		<param name="Mem/RehearsalSimilarity"   type="string" value="0.45"/>
+			<param name="Rtabmap/TimeThr" type="string" value="300"/>
+			<param name="Rtabmap/DetectionRate" type="string" value="3"/>
 
-	</node>
-</group>
+			<param name="Reg/Force3DoF"    value="true" />
+			<param name="Optimizer/Slam2D" value="true" />
+
+			<param name="Vis/MinInliers" type="string" value="10"/>
+			<param name="Vis/InlierDistance" type="string" value="0.1"/>
+
+		</node>
+	</group>
 </launch>

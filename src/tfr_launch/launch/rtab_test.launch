@@ -1,5 +1,7 @@
 <launch> 
-  <include file="$(find tfr_gazebo)/launch/proto.launch"/>
-  <include file="$(find tfr_navigation)/launch/rtab.launch"/>
-  <include file="$(find tfr_visualization)/launch/mapping.launch"/>
+	<include file="$(find tfr_launch)/launch/core.launch"/>
+	<include file="$(find tfr_sensor)/launch/sensor_platform.launch"/>
+	<include file="$(find tfr_navigation)/launch/rtab.launch"/>
+    <!--	<include file="$(find tfr_visualization)/launch/mapping.launch"/>-->
+    <node name="rtabmapviz" pkg="rtabmap_ros" type="rtabmapviz"/>
 </launch>

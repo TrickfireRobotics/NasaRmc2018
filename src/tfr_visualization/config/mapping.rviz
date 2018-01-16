@@ -64,13 +64,13 @@ Visualization Manager:
       Frames:
         All Enabled: true
         base_footprint:
-          Value: true
+          value: true
         base_link:
-          Value: true
+          value: true
         duo3d/camera_frame:
-          Value: true
+          value: true
         duo3d/frame:
-          Value: true
+          value: true
         duo3d/imu_frame:
           Value: true
         xsens_link:

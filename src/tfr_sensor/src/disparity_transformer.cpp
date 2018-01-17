@@ -17,13 +17,6 @@
  * Published Topics:
  *  -depth/image_raw_transformed
  *
- * Parameters:
- *  -camera_namespace: set by user
- *  -min_disparity: set by duo
- *  -max_disparity: set by duo
- *  -delta_disparity: set by duo
- *  -focal_length: set by duo
- *  -baseline: set by duo
  * */
 
 #include <ros/ros.h>
@@ -33,12 +26,11 @@
 
 namespace settings 
 {
-    const static std::string depth_namespace = "depth/image_raw";
-    float baseline;
-    float focal_length;
-    float min_disparity;
-    float max_disparity;
-    float delta_disparity;
+    float baseline=0.03107;
+    float focal_length=0.002;
+    float min_disparity=0.00;
+    float max_disparity=64.0;
+    float delta_disparity=0.107;
 }
 
 /**
@@ -49,18 +41,23 @@ class Transformer
 {
 
     public:
-        Transformer(ros::NodeHandle &nh) : n{nh}
+        Transformer(ros::NodeHandle n, image_transport::ImageTransport &itr) : 
+            it{itr}
         {
+            //TODO there is something really screwy going on here with
+            //namespaces. I don't know what, this really should be a parameter
             //initialize message passing
-            subscriber = n.subscribe(settings::depth_namespace, 
-                    5, &Transformer::transform_data, this);
+            subscriber = it.subscribe(
+                    "/sensors/duo3d/depth/image_raw", 5, 
+                    &Transformer::transform_data, this);
 
 
             publisher = n.advertise<stereo_msgs::DisparityImage>(
-                    settings::depth_namespace + "_transformed", 5);
+                    "/sensors/duo3d/depth/image_raw_transformed", 5);
 
 
         }
+
         /**
          * Wraps a standard ros disparity image message around a duo3d disparity
          * image
@@ -96,9 +93,9 @@ class Transformer
             publisher.publish(output);
         }    
     private:
-        ros::NodeHandle &n;
+        image_transport::ImageTransport &it;
         ros::Publisher publisher;
-        ros::Subscriber subscriber;
+        image_transport::Subscriber subscriber;
 
         
 
@@ -111,27 +108,24 @@ int main(int argc, char **argv)
     ros::NodeHandle n;
     //get user parameters
 
+
     if (!n.getParam("min_disparity", settings::min_disparity))
-        settings::min_disparity=0.0;
-    ROS_INFO("min_disparity: %f", settings::min_disparity);
+        settings::min_disparity=0;
 
     if (!n.getParam("max_disparity", settings::max_disparity))
-        settings::max_disparity=0.0;
-    ROS_INFO("max_disparity: %f", settings::max_disparity);
+        settings::max_disparity=64;
 
     if (!n.getParam("delta_disparity", settings::delta_disparity))
-        settings::delta_disparity=0.0;
-    ROS_INFO("delta_disparity: %f", settings::delta_disparity);
+        settings::delta_disparity=0.107;
 
     if (!n.getParam("focal_length", settings::focal_length))
-        settings::focal_length=0.0;
-    ROS_INFO("focal_length: %f", settings::focal_length);
+        settings::focal_length=0.002;
 
     if (!n.getParam("baseline", settings::baseline))
-        settings::baseline=0.0;
-    ROS_INFO("baseline: %f", settings::baseline);
+        settings::baseline=0.03107;
 
-
+    image_transport::ImageTransport it(n);
+    Transformer transformer(n,it);
 
     ros::spin();
 }

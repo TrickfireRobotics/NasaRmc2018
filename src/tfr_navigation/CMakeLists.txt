@@ -8,10 +8,6 @@ project(tfr_navigation)
 add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-  tfr_msgs
-  tfr_utilities
 )
 
 find_package(GTest REQUIRED)
@@ -33,26 +29,10 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-# Declare a C++ library
-# You can either create libraries like this and link them in the
-# target_link_libraries() call below or include the individual .cpp
-# files in each add_executable() call. I'm not really sure which one
-# is better.
-# Declared libraries can be exported to other dependent packages 
-# in the LIBRARIES part of the catkin_package() call above.
-add_library(${PROJECT_NAME}_library
-  src/navigation_helper.cpp
-)
-
-# Create executable process/node and link it
-add_executable(navigation_echo src/navigation_echo.cpp)
-target_link_libraries(navigation_echo ${catkin_LIBRARIES} ${PROJECT_NAME}_library)
-
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 # Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test test/test_tfr_navigation.cpp)
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME}_library)
 endif()

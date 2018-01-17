@@ -1,10 +1,13 @@
 <launch>
     <node pkg="tf2_ros" type="static_transform_publisher" name="duo3d_broadcaster" 
         args="0.29845 0 0 0 0 0 base_link /duo3d/frame" />
+
     <node pkg="tf2_ros" type="static_transform_publisher" name="duo3d_camera_broadcaster" 
         args="0 0 0 -1.5707 0 -1.5707 /duo3d/frame /duo3d/camera_frame" />
+
     <node pkg="tf2_ros" type="static_transform_publisher" name="duo3d_imu_broadcaster" 
         args="0 0 0 -1.5707 0 -1.5707 /duo3d/frame /duo3d/imu_frame" />
+
     <node name="duo3d" pkg="duo3d_driver" type="duo3d_driver">
         <param name="frame_rate" value="30.0"/>
         <rosparam param="image_size">[320, 240]</rosparam>
@@ -18,5 +21,7 @@
         <remap from="scan" to="/sensors/duo3d/scan"/>
         <rosparam command="load" file="$(find tfr_sensor)/params/scan_params.yaml"/>
     </node>
+    <node name="disparity_transformer" pkg="tfr_sensor" type="disparity_transformer"/>
+
 
 </launch>

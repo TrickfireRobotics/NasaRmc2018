@@ -64,7 +64,7 @@ Visualization Manager:
       Frames:
         All Enabled: true
         base_footprint:
-          value: true
+          Value: true
         base_link:
           value: true
         duo3d/camera_frame:

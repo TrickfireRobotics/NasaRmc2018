@@ -18,9 +18,5 @@
   <depend>hector_geotiff</depend>
   <depend>rtabmap_ros</depend>
   <depend>gmapping</depend>
-  <depend>roscpp</depend>
-  <depend>std_msgs</depend>
-  <depend>tfr_msgs</depend>
-  <depend>tfr_utilities</depend>
 
 </package>

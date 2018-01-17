@@ -29,7 +29,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -63,7 +63,7 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_frame:
+        base_footprint:
           Value: true
         base_link:
           Value: true
@@ -73,8 +73,6 @@ Visualization Manager:
           Value: true
         duo3d/imu_frame:
           Value: true
-        map:
-          Value: true
         xsens_link:
           Value: true
       Marker Scale: 1
@@ -83,7 +81,7 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        base_frame:
+        base_footprint:
           base_link:
             duo3d/frame:
               duo3d/camera_frame:
@@ -92,8 +90,6 @@ Visualization Manager:
                 {}
             xsens_link:
               {}
-        map:
-          {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -132,7 +128,7 @@ Visualization Manager:
       Draw Behind: false
       Enabled: true
       Name: Map
-      Topic: /rtabmap/grid_map
+      Topic: /height_map
       Unreliable: false
       Use Timestamp: false
       Value: true

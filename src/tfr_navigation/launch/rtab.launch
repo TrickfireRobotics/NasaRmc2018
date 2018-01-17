@@ -55,7 +55,10 @@
 
 			<param name="Vis/MinInliers" type="string" value="10"/>
 			<param name="Vis/InlierDistance" type="string" value="0.1"/>
+<<<<<<< HEAD
 
+=======
+>>>>>>> eb4cfff206fa9a6d20340ba0a12cd336f0e890ed
 		</node>
 	</group>
 </launch>

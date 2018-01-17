@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /PointCloud21
         - /Map1
+        - /LaserScan1
       Splitter Ratio: 0.5
     Tree Height: 843
   - Class: rviz/Selection
@@ -62,6 +63,8 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        base_frame:
+          Value: true
         base_link:
           Value: true
         duo3d/camera_frame:
@@ -80,14 +83,15 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        base_link:
-          duo3d/frame:
-            duo3d/camera_frame:
+        base_frame:
+          base_link:
+            duo3d/frame:
+              duo3d/camera_frame:
+                {}
+              duo3d/imu_frame:
+                {}
+            xsens_link:
               {}
-            duo3d/imu_frame:
-              {}
-          xsens_link:
-            {}
         map:
           {}
       Update Interval: 0
@@ -104,7 +108,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: RGB8
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
@@ -121,7 +125,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 0.699999988
       Class: rviz/Map
       Color Scheme: map
@@ -131,6 +135,36 @@ Visualization Manager:
       Topic: /rtabmap/grid_map
       Unreliable: false
       Use Timestamp: false
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/LaserScan
+      Color: 255; 0; 0
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: true
+      Max Color: 170; 0; 0
+      Max Intensity: 4096
+      Min Color: 0; 170; 0
+      Min Intensity: 0
+      Name: LaserScan
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.00999999978
+      Style: Flat Squares
+      Topic: /sensors/duo3d/scan
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: false
       Value: true
   Enabled: true
   Global Options:
@@ -172,10 +206,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.0297963209
+      Pitch: 0.449796289
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.11042333
+      Yaw: 3.85542274
     Saved: ~
 Window Geometry:
   Displays:

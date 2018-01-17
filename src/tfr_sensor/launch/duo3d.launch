@@ -11,41 +11,12 @@
         <param name="dense3d_license" value="OVMZU-ZHFE2-9K41K-NQL44-WX3DV"/>
         <rosparam command="load" file="$(find tfr_sensor)/params/duo3d.yaml"/>
     </node>
-    <!--	<group ns="duo3d_driver">
-		<remap from="disparity" to="depth/disparity_proc"/>
-		<rosparam command="load" file="$(find tfr_sensor)/params/disparity_params.yaml"/> 
-		<node pkg="nodelet" type="nodelet" name="stereo_proc_manager" args="manager"/>
-		<include file="$(find stereo_image_proc)/launch/stereo_image_proc.launch" >
-			<arg name="manager" value="/duo3d_driver/stereo_proc_manager"/>
-		</include>
-	</group>-->
 
+    <!--fudge a laserscan for hector slam-->
     <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
-
         <remap from="cloud_in" to="/sensors/duo3d/point_cloud/image_raw"/>
         <remap from="scan" to="/sensors/duo3d/scan"/>
-        <rosparam>
-            target_frame: base_footprint  # Leave disabled to output scan in pointcloud frame
-            transform_tolerance: 0.01
-            min_height: 0.05 
-            max_height: 1 
-
-            angle_min: -1.5708 # -M_PI/2
-            angle_max: 1.5708 # M_PI/2
-            angle_increment: 0.0087 # M_PI/360.0
-            scan_time: 0.2
-            range_min: 0.05
-            range_max: 2 
-            use_inf: true
-            inf_epsilon: 1.0
-
-            # Concurrency level, affects number of pointclouds queued for processing and number of threads used
-            # 0 : Detect number of cores
-            # 1 : Single threaded
-            # 2->inf : Parallelism level
-            concurrency_level: 0 
-        </rosparam>
-
+        <rosparam command="load" file="$(find tfr_sensor)/params/scan_params.yaml"/>
     </node>
 
 </launch>

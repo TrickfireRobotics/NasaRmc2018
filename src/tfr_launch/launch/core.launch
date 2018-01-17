@@ -1,0 +1,6 @@
+<!--launch for the core ros services surrounding the rover-->
+<launch>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_broadcaster" 
+        args="0 0 0.28 0 0 0 base_frame base_link"/>
+
+</launch> 

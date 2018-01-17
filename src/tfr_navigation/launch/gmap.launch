@@ -1,0 +1,8 @@
+<launch>
+    <node name="gmap" pkg="gmapping" type="slam_gmapping">
+        <remap from="scan" to="/sensors/duo3d/scan"/>
+        <param name="base_frame" type="string" value="base_frame"/>
+        <param name="map_update_interval" type="double" value="0.33"/>
+    </node>
+
+</launch>

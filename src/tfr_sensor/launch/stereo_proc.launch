@@ -1,0 +1,19 @@
+<launch>
+
+    <arg name="manager" /> <!-- Must be globally qualified -->
+    <arg name="respawn" default="false" />
+    <arg name="left" default="left" />
+    <arg name="right" default="right" />
+    <!-- TODO Arguments for sync policy, etc? -->
+
+    <arg     if="$(arg respawn)" name="bond" value="" />
+    <arg unless="$(arg respawn)" name="bond" value="--no-bond" />
+
+    <!--    <remap from="left/image_rect"   to="/sensors/duo3d/left/image_rect"/>
+    <remap from="left/camera_info"  to="/sensors/duo3d/left/camera_info"/>
+    <remap from="right/image_rect"  to="/sensors/duo3d/right/image_rect"/>
+	<remap from="right/camera_info" to="/sensors/duo3d/right/camera_info"/>-->
+  <node pkg="nodelet" type="nodelet" name="disparity"
+	  args="load stereo_image_proc/disparity $(arg manager) $(arg bond)"
+	  respawn="$(arg respawn)" />
+</launch>

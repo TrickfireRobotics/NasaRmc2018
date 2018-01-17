@@ -9,9 +9,6 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  sensor_msgs
-  stereo_msgs
-  image_transport
   tfr_utilities
 )
 
@@ -30,12 +27,7 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME}_library
-  src/disparity_transformer.cpp
-)
 
-add_executable(disparity_transformer src/disparity_transformer.cpp)
-target_link_libraries(disparity_transformer ${catkin_LIBRARIES} ${PROJECT_NAME}_library)
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 

@@ -23,25 +23,28 @@
 
 
     <group ns="rtabmap">
-        <node pkg="nodelet" type="nodelet" name="disparity2depth" args="standalone
+        <!--        <node pkg="nodelet" type="nodelet" name="disparity2depth" args="standalone
             rtabmap_ros/disparity_to_depth">
             <remap from="disparity" to="/sensors/duo3d/disparity"/>
-        </node>
+        </node>-->
         <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
             <!-- data remapping from duo-->
             <param name="subscribe_stereo" type="bool" value="false"/>
-            <param name="subscribe_depth" type="bool" value="true"/>
+            <param name="subscribe_depth" type="bool" value="false"/>
+            <param name="sucscribe_scan" type="bool" value="true"/>
+            <param name="sucscribe_scan_cloud" type="bool" value="true"/>
             
             <param name="approx_sync" type="bool" value="false"/>
-            <remap from="/rtabmap/depth/image" to="/rtabmap/depth"/>
-            <remap from="/rtabmap/rgb/image" to="/sensors/duo3d/rgb/image_rect"/>
-            <remap from="/rtabmap/rgb/camera_info" to="/sensors/duo3d/rgb/camera_info"/>
+            <!--<remap from="/rtabmap/depth/image" to="/rtabmap/depth"/>-->
             <!--<remap from="/rtabmap/left/image_rect" to="/sensors/duo3d/left/image_rect"/>
             <remap from="/rtabmap/right/image_rect" to="/sensors/duo3d/right/image_rect"/>
             <remap from="/rtabmap/left/camera_info" to="/sensors/duo3d/left/camera_info"/>
             <remap from="/rtabmap/right/camera_info" to="/sensors/duo3d/right/camera_info"/>-->
             <!--TODO when fusion finished, integrate fused odometry-->
-            <remap from="/rtabmap/odom" to="/sensors/mti/sensor/imu"/>
+            <remap from="rgb/image" to="/sensors/duo3d/rgb/image_rect"/>
+            <remap from="rgb/camera_info" to="/sensors/duo3d/rgb/camera_info"/>
+            <remap from="scan" to="/sensors/duo3d/scan"/>
+            <remap from="scan_cloud" to="/sensors/duo3d/point_cloud/image_raw"/>
             <!--transforms-->
             <param name="odom_frame_id" type="string" value="base_frame"/>
             <param name="frame_id" type="string" value="base_link"/>

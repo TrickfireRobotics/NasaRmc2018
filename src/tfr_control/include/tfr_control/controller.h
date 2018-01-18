@@ -25,7 +25,7 @@ namespace tfr_control {
     class Controller : public hardware_interface::RobotHW
     {
     public:
-        Controller();
+        Controller(bool fakes = false);
         void read();
         void write();
     private:
@@ -40,6 +40,18 @@ namespace tfr_control {
         double velocity_values[7] = {};
         // Populated by sensors, read in by controller_manager
         double effort_values[7] = {};
+
+        /**
+         * If false, this will use the actual hardware values.
+         * If true, this will use fake values generated for use in rviz.
+         *  - Said fake values will consist of applying the command to the
+         *    position and velocity values directly as opposed to using sensor
+         *    input.
+         */
+        bool use_fake_values = false;
+
+        // The time of the previous update cycle (update at the end of write)
+        ros::Time prev_time;
         
         /**
          * Seven actuators/motors to store data for:
@@ -49,8 +61,13 @@ namespace tfr_control {
          *  - Lower arm actuator
          *  - Upper arm actuator
          *  - Scoop actuator
-         * */
+         */
         void register_joint(std::string joint, Actuator actuator);
+
+        /**
+         * Gets the time in seconds since the last update cycle
+         */
+        double get_update_time();
     };
 }
 

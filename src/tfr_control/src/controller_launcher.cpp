@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     ros::NodeHandle n;
 
     // The controller that we'll be registering with the controller_manager
-    tfr_control::Controller controller;
+    tfr_control::Controller controller(true); // Use fake values for testing
 
     // Register our controller with the controller_manager
     controller_manager::ControllerManager cm(&controller);

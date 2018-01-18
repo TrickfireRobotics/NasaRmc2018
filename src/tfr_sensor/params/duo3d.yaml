@@ -5,7 +5,7 @@ exposure: 55.0
 gain: 50.0
 gyro_range: 0
 horizontal_flip: false
-image_scale: 3 
+image_scale: 3
 imu_rate: 50.0
 led: 61.0
 num_disparities: 9

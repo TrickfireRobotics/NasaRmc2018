@@ -342,14 +342,25 @@ protected:
             }
             if((i == DEPTH) && pFrame->dense3dDataValid)
             {
-                Mat disp8;
-                Mat(size, CV_32FC1, pFrame->disparityData).convertTo(disp8, CV_8UC1, 255.0/(pFrame->dense3dParams.numDisparities*16.0));
-                Mat rgbDepth;
-                cvtColor(disp8, rgbDepth, cv::COLOR_GRAY2BGR);
-                LUT(rgbDepth, _colorLut, rgbDepth);
-                _pub_image[i].publish(cv_bridge::CvImage(header, sensor_msgs::image_encodings::RGB8, rgbDepth).toImageMsg());
-                _msg_cam_info[i].header = header;
+                //NOTE collin modified the driver to output 32 bit floating
+                //point single channel encoded depth images for compatibility
+                //with the depth image wrapper and rtabmap
+                //NOTE I had to remove color for this to work
+                Mat disp8(size, CV_32FC1, pFrame->disparityData)
+                _pub_image[i].publish(cv_bridge::CvImage(header, sensor_msgs::image_encodings::TYPE_32FC1, disp8).toImageMsg());
                 _pub_cam_info[i].publish(_msg_cam_info[i]);
+//                Mat rgbDepth;
+//                cvtColor(disp8, rgbDepth, cv::COLOR_GRAY2BGR);
+//                LUT(rgbDepth, _colorLut, rgbDepth);
+//                _msg_cam_info[i].header = header;
+                //ORIGINAL
+//                Mat(size, CV_32FC1, pFrame->disparityData).convertTo(disp8, CV_8UC1, 255.0/(pFrame->dense3dParams.numDisparities*16.0));
+//                Mat rgbDepth;
+//                cvtColor(disp8, rgbDepth, cv::COLOR_GRAY2BGR);
+//                LUT(rgbDepth, _colorLut, rgbDepth);
+//                _pub_image[i].publish(cv_bridge::CvImage(header, sensor_msgs::image_encodings::RGB8, rgbDepth).toImageMsg());
+//                _msg_cam_info[i].header = header;
+//                _pub_cam_info[i].publish(_msg_cam_info[i]);
             }
             if((i == POINT_CLOUD) && pFrame->dense3dDataValid)
             {

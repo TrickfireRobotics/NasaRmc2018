@@ -9,7 +9,6 @@ Panels:
         - /TF1
         - /Imu1
         - /PointCloud21
-        - /PointCloud21/Status1
         - /Imu2
         - /Odometry1
       Splitter Ratio: 0.5
@@ -162,7 +161,7 @@ Visualization Manager:
           Value: true
         Value: true
       Enabled: true
-      Keep: 100
+      Keep: 5
       Name: Odometry
       Position Tolerance: 0.100000001
       Shape:
@@ -218,10 +217,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.0753978267
+      Pitch: -0.104601867
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.44039857
+      Yaw: 4.91539717
     Saved: ~
 Window Geometry:
   Displays:

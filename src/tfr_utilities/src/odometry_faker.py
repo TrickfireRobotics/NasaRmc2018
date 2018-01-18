@@ -25,36 +25,15 @@ class OdometryFaker(object):
         self.tf_pub = tf2_ros.TransformBroadcaster()
         self.trans = None
         self.odom = None
-        self.last_time = rospy.get_time()
         self.position = [0,0,0]
         self.lin_vel = [0,0,0]
         self.lin_acc = [0,0,0]
         self.th = 0
+        self.last_time = rospy.get_time()
 
 
     def getVelocities(self, dt, data):
         acc = vector3ListConversion(data.linear_acceleration)
-
-        out = [(x_1 - x_0)/dt for x_1, x_0 in izip(self.lin_acc, acc)]
-        self.linear_acceleration = acc
-        return out
-
-    def updateState(self, data):
-        dt = (rospy.Time.now() - self.last_time).secs
-        self.last_time = rospy.Time.now()
-        self.lin_vel = self.getVelocities(dt, data)
-        dx = (self.lin_vel[0]*cos(self.th) - self.lin_vel[1]*cos(self.th))*dt
-        dy = (self.lin_vel[0]*sin(self.th) - self.lin_vel[1]*cos(self.th))*dt
-        self.position[0] += dx
-        self.position[1] += dy
-        quaternion = (
-                data.orientation.x,
-                data.orientation.y,
-                data.orientation.z,
-                data.orientation.w)
-        euler = tf.transformations.euler_from_quaternion(quaternion)
-        self.th = euler[2]
-        print(self.lin_acc, acc)
         out = [(x_1 - x_0)/dt for x_1, x_0 in izip(self.lin_acc, acc)]
         self.lin_acc = acc
         return out
@@ -71,10 +50,8 @@ class OdometryFaker(object):
         self.th = euler[2]
         dx = (self.lin_vel[0]*cos(self.th) - self.lin_vel[1]*sin(self.th))*dt
         dy = (self.lin_vel[0]*sin(self.th) + self.lin_vel[1]*cos(self.th))*dt
-        print (dt ,dx, dy)
         self.position[0] += dx
         self.position[1] += dy
-
 
     def packagePose(self, data):
         out = PoseWithCovariance()

@@ -16,21 +16,21 @@ class OdometryFaker(object):
                       0,   0,   0,1e-1,   0,   0,
                       0,   0,   0,   0,1e-1,   0,
                       0,   0,   0,   0,   0,1e-1]
+
     def __init__(self):
         rospy.Subscriber("/sensors/mti/sensor/imu", Imu, self.imuCallback)
         self.pub = rospy.Publisher("/fake_odom", Odometry, queue_size=5 )
         self.timer = rospy.Timer(rospy.Duration(0.1), self.odomCallback)
         self.odom = None
-        self.last_time = rospy.get_time()
         self.position = [0,0,0]
         self.lin_vel = [0,0,0]
         self.lin_acc = [0,0,0]
         self.th = 0
+        self.last_time = rospy.get_time()
 
 
     def getVelocities(self, dt, data):
         acc = vector3ListConversion(data.linear_acceleration)
-        print(self.lin_acc, acc)
         out = [(x_1 - x_0)/dt for x_1, x_0 in izip(self.lin_acc, acc)]
         self.lin_acc = acc
         return out
@@ -47,10 +47,8 @@ class OdometryFaker(object):
         self.th = euler[2]
         dx = (self.lin_vel[0]*cos(self.th) - self.lin_vel[1]*sin(self.th))*dt
         dy = (self.lin_vel[0]*sin(self.th) + self.lin_vel[1]*cos(self.th))*dt
-        print (dt ,dx, dy)
         self.position[0] += dx
         self.position[1] += dy
-
 
     def packagePose(self, data):
         out = PoseWithCovariance()

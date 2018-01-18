@@ -3,9 +3,10 @@ import rospy
 from math import sin, cos
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
-from geometry_msgs.msg import PoseWithCovariance, TwistWithCovariance, Quaternion, Vector3
+from geometry_msgs.msg import PoseWithCovariance, TwistWithCovariance, Quaternion, Vector3, TransformStamped
 from itertools import izip
 import tf
+import tf2_ros
 
 
 class OdometryFaker(object):
@@ -20,7 +21,9 @@ class OdometryFaker(object):
     def __init__(self):
         rospy.Subscriber("/sensors/mti/sensor/imu", Imu, self.imuCallback)
         self.pub = rospy.Publisher("/fake_odom", Odometry, queue_size=5 )
-        self.timer = rospy.Timer(rospy.Duration(0.1), self.odomCallback)
+        self.timer = rospy.Timer(rospy.Duration(0.01), self.odomCallback)
+        self.tf_pub = tf2_ros.TransformBroadcaster()
+        self.trans = None
         self.odom = None
         self.last_time = rospy.get_time()
         self.position = [0,0,0]
@@ -57,7 +60,7 @@ class OdometryFaker(object):
         return out
 
     def updateState(self, data):
-        dt = (rospy.get_time()- self.last_time)
+        dt = (rospy.get_time() - self.last_time)
         self.last_time += dt 
         self.lin_vel = self.getVelocities(dt, data)
         quaternion = (  data.orientation.x,
@@ -87,20 +90,39 @@ class OdometryFaker(object):
         out.covariance = OdometryFaker.covariance
         return out
 
+    def setupTransform(self,data):
+        trans = TransformStamped()
+        trans.header.stamp = rospy.Time.now()
+        trans.header.frame_id = "odom"
+        trans.child_frame_id = "base_footprint"
+        trans.transform.translation.x = self.position[0]
+        trans.transform.translation.y = self.position[1]
+        trans.transform.translation.z = self.position[2]
+        rotation = tf.transformations.quaternion_from_euler(0,0,self.th)
+        trans.transform.rotation.x = rotation[0]
+        trans.transform.rotation.y = rotation[1]
+        trans.transform.rotation.z = rotation[2]
+        trans.transform.rotation.w = rotation[3]
+        return trans
+
+    def setupOdometry(self, data):
+        odom = Odometry()
+        odom.header.stamp = rospy.Time.now()
+        odom.header.frame_id = "odom"
+        odom.pose =  self.packagePose(data)
+        odom.twist = self.packageTwist(data)
+        return odom
 
     def imuCallback(self,data):
         """"Makes a super rough estimate of position based on the imu data"""
-        odom = Odometry()
-        odom.header = data.header
-        odom.child_frame_id = "base_footprint"
         self.updateState(data)
-        odom.pose =  self.packagePose(data)
-        odom.twist = self.packageTwist(data)
-        #mark the message as ready
-        self.odom = odom
+        self.trans = self.setupTransform(data) 
+        self.odom = self.setupOdometry(data)
 
     def odomCallback(self,event):
-        if self.odom:
+        if self.odom and self.trans:
+            self.tf_pub.sendTransform(self.trans)
+            self.trans = None
             self.pub.publish(self.odom)
             self.odom = None
 

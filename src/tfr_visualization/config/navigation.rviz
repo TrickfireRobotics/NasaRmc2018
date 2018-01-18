@@ -61,6 +61,8 @@ Visualization Manager:
         All Enabled: true
         base_footprint:
           Value: true
+        base_frame:
+          Value: true
         base_link:
           Value: true
         duo3d/camera_frame:
@@ -68,6 +70,12 @@ Visualization Manager:
         duo3d/frame:
           Value: true
         duo3d/imu_frame:
+          Value: true
+        map:
+          Value: true
+        odom:
+          Value: true
+        scanmatcher_frame:
           Value: true
         xsens_link:
           Value: true
@@ -91,12 +99,12 @@ Visualization Manager:
     - Alpha: 1
       Class: rviz_plugin_tutorials/Imu
       Color: 204; 51; 204
-      Enabled: true
+      Enabled: false
       History Length: 1
       Name: Imu
       Topic: /sensors/duo3d/imu/data_raw
       Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:

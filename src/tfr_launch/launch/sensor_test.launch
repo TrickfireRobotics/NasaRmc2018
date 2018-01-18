@@ -1,4 +1,5 @@
 <launch>
+    <include file="$(find tfr_launch)/launch/core.launch"/>
     <include file="$(find tfr_sensor)/launch/sensor_platform.launch"/>
     <include file="$(find tfr_visualization)/launch/sensor_platform.launch"/>
 </launch>

@@ -1,5 +1,0 @@
-<launch> 
-  <include file="$(find tfr_gazebo)/launch/proto.launch"/>
-  <include file="$(find tfr_navigation)/launch/rtab.launch"/>
-  <include file="$(find tfr_visualization)/launch/mapping.launch"/>
-</launch>

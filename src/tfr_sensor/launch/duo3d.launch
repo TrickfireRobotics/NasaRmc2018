@@ -12,4 +12,11 @@
         <rosparam command="load" file="$(find tfr_sensor)/params/duo3d.yaml"/>
     </node>
 
+    <!--fudge a laserscan for hector slam-->
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
+        <remap from="cloud_in" to="/sensors/duo3d/point_cloud/image_raw"/>
+        <remap from="scan" to="/sensors/duo3d/scan"/>
+        <rosparam command="load" file="$(find tfr_sensor)/params/scan_params.yaml"/>
+    </node>
+
 </launch>

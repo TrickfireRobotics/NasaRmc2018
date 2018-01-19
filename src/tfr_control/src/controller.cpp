@@ -11,7 +11,8 @@ using hardware_interface::JointHandle;
 
 namespace tfr_control
 {
-    Controller::Controller(bool fakes) : use_fake_values(fakes)
+    Controller::Controller(bool fakes, const double *lower_lim, const double *upper_lim) :
+        use_fake_values(fakes), lower_limits(lower_lim), upper_limits(upper_lim)
     {
         // Note: the string parameters in these constructors must match the
         // joint names from the URDF. If one changes, so must the other.
@@ -41,6 +42,10 @@ namespace tfr_control
             for (int i = 0; i < 7; i++) {
                 velocity_values[i] = command_values[i];
                 position_values[i] += velocity_values[i] * get_update_time();
+                // If this joint has limits, clamp the range down
+                if (abs(lower_limits[i]) >= 1E-3 || abs(upper_limits[i]) >= 1E-3) {
+                    position_values[i] = std::max(std::min(position_values[i], upper_limits[i]), lower_limits[i]);
+                }
             }
         }
 

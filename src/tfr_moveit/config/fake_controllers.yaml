@@ -1,0 +1,10 @@
+controller_list:
+  - name: fake_arm_controller
+    joints:
+      - turntable_joint
+      - lower_arm_joint
+      - upper_arm_joint
+      - scoop_joint
+  - name: fake_arm_end_controller
+    joints:
+      - scoop_joint

@@ -12,6 +12,7 @@
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/robot_hw.h>
+#include <algorithm>
 
 namespace tfr_control {
     enum Actuator { kLeftTread, kRightTread, kBin, kTurntable, kLowerArm,
@@ -25,7 +26,7 @@ namespace tfr_control {
     class Controller : public hardware_interface::RobotHW
     {
     public:
-        Controller(bool fakes = false);
+        Controller(bool fakes, const double lower_lim[7], const double upper_lim[7]);
         void read();
         void write();
     private:
@@ -68,6 +69,9 @@ namespace tfr_control {
          * Gets the time in seconds since the last update cycle
          */
         double get_update_time();
+
+        // Holds the lower and upper limits of the URDF model joints
+        const double *lower_limits, *upper_limits;
     };
 }
 

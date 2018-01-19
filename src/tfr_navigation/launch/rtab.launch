@@ -41,17 +41,36 @@
             <remap from="/rtabmap/left/camera_info" to="/sensors/duo3d/left/camera_info"/>
             <remap from="/rtabmap/right/camera_info" to="/sensors/duo3d/right/camera_info"/>-->
             <!--TODO when fusion finished, integrate fused odometry-->
-            <remap from="/rtabmap/odom" to="/sensors/mti/sensor/imu"/>
+            <remap from="scan" to="/sensors/duo3d/scan"/>
+            <!--<remap from="scan_cloud" to="/sensors/duo3d/point_cloud/image_raw"/>-->
             <!--transforms-->
-            <param name="odom_frame_id" type="string" value="base_frame"/>
-            <param name="frame_id" type="string" value="base_link"/>
-            <param name="queue_size" type="int" value="15"/>
-			<param name="Rtabmap/TimeThr" type="string" value="300"/>
-			<param name="Rtabmap/DetectionRate" type="string" value="3"/>
+            <rosparam>
+                subscribe_stereo: true
+                subscribe_depth: false
+                subscribe_scan: true 
+                subscribe_scan_cloud: false
+                approx_sync: false
+                odom_frame_id: base_frame
+                frame_id: base_link
+                queue_size: 5
+                Rtabmap:
+                    TimeThr: 250 
+                    DetectionRate: 3
+                Grid:
+                    FromDepth: true
+                Vis:
+                    EstimationType: 1
+                    RoiRatios: [0,0,0,0.2]
+                GFTT:
+                    QualityLevel: 0.00001
+                Kp:
+                    RoiRatios: [0,0,0,0.2]
 
-			<param name="Reg/Force3DoF"    value="true" />
-			<param name="Optimizer/Slam2D" value="true" />
-
+                Stereo:
+                    MinDisparity: 0 
+                    MaxDisparity: 64 
+                    OpticalFlow: true 
+            </rosparam>
 		</node>
 	</group>
 </launch>

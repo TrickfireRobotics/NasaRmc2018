@@ -26,11 +26,12 @@
 
 namespace settings 
 {
-    float baseline=0.03107;
-    float focal_length=0.002;
-    float min_disparity=0.00;
-    float max_disparity=64.0;
-    float delta_disparity=0.107;
+    std::string image_path{};
+    float baseline{};
+    float focal_length{};
+    float min_disparity{};
+    float max_disparity{};
+    float delta_disparity{};
 }
 
 /**
@@ -44,17 +45,14 @@ class Transformer
         Transformer(ros::NodeHandle n, image_transport::ImageTransport &itr) : 
             it{itr}
         {
-            //TODO there is something really screwy going on here with
-            //namespaces. I don't know what, this really should be a parameter
             //initialize message passing
             subscriber = it.subscribe(
-                    "/sensors/duo3d/depth/image_raw", 5, 
+                    settings::image_path, 5, 
                     &Transformer::transform_data, this);
 
 
             publisher = n.advertise<stereo_msgs::DisparityImage>(
-                    "/sensors/duo3d/depth/image_raw_transformed", 5);
-
+                    settings::image_path + "_wrapped", 5);
 
         }
 
@@ -65,6 +63,7 @@ class Transformer
         void transform_data(const sensor_msgs::ImageConstPtr &msg )
         {
             stereo_msgs::DisparityImage output{};
+
             //package up the image
             output.image = *msg;
             output.header = msg->header;
@@ -106,23 +105,14 @@ int main(int argc, char **argv)
     //node initialization
     ros::init(argc, argv, "disparity_transformer");
     ros::NodeHandle n;
+
     //get user parameters
-
-
-    if (!n.getParam("min_disparity", settings::min_disparity))
-        settings::min_disparity=0;
-
-    if (!n.getParam("max_disparity", settings::max_disparity))
-        settings::max_disparity=64;
-
-    if (!n.getParam("delta_disparity", settings::delta_disparity))
-        settings::delta_disparity=0.107;
-
-    if (!n.getParam("focal_length", settings::focal_length))
-        settings::focal_length=0.002;
-
-    if (!n.getParam("baseline", settings::baseline))
-        settings::baseline=0.03107;
+    ros::param::param<std::string>("~image_path", settings::image_path, "/");
+    ros::param::param<float>("~min_disparity", settings::min_disparity, 0);
+    ros::param::param<float>("~max_disparity", settings::max_disparity, 128);
+    ros::param::param<float>("~delta_disparity", settings::delta_disparity, 0.107);
+    ros::param::param<float>("~focal_length", settings::focal_length, 0.002);
+    ros::param::param<float>("~baseline", settings::baseline, 0.03107);
 
     image_transport::ImageTransport it(n);
     Transformer transformer(n,it);

@@ -21,7 +21,10 @@
         <remap from="scan" to="/sensors/duo3d/scan"/>
         <rosparam command="load" file="$(find tfr_sensor)/params/scan_params.yaml"/>
     </node>
-    <node name="disparity_transformer" pkg="tfr_sensor" type="disparity_transformer"/>
+
+    <node name="disparity_transformer" pkg="tfr_sensor" type="disparity_transformer" output="screen"> 
+        <param name="image_path" type="string" value="/sensors/duo3d/depth/image_raw"/>
+    </node>
 
 
 </launch>

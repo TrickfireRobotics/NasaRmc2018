@@ -346,7 +346,7 @@ protected:
                 //point single channel encoded depth images for compatibility
                 //with the depth image wrapper and rtabmap
                 //NOTE I had to remove color for this to work
-                Mat disp8(size, CV_32FC1, pFrame->disparityData)
+                Mat disp8(size, CV_32FC1, pFrame->disparityData);
                 _pub_image[i].publish(cv_bridge::CvImage(header, sensor_msgs::image_encodings::TYPE_32FC1, disp8).toImageMsg());
                 _pub_cam_info[i].publish(_msg_cam_info[i]);
 //                Mat rgbDepth;

@@ -1,6 +1,6 @@
 <launch>
-
   <param name="~moveit_controller_manager" value="moveit_simple_controller_manager/MoveItSimpleControllerManager"/>
+  <param name="~octomap_resolution" type="double" value="0.05" />
   
   <include file="$(find tfr_moveit)/launch/planning_context.launch" />
 

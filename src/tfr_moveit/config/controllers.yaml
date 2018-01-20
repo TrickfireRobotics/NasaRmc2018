@@ -1,3 +1,4 @@
+# Holds the list of controllers for MoveIt to use for motion planning
 controller_list:
   - name: arm_controller
     action_ns: follow_joint_trajectory

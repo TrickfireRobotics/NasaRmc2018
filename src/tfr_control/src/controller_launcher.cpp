@@ -29,12 +29,13 @@ int main(int argc, char **argv)
     // If we're faking the inputs, we need to know the model constraints on
     // the arm: load them here.
     // If not, just use zeroes, the limits don't matter.
-    double lower_limits[7], upper_limits[7];
+    double lower_limits[7] = {}, upper_limits[7] = {};
 
     if (use_fake_values) {
+        // Get the model description 
         std::string desc;
         n.param<std::string>("robot_description", desc, "");
-
+    
         if (desc.length() == 0) {
             ROS_ERROR("robot_description is empty and controller_launcher is using fake values, quitting.");
             return -1;

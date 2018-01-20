@@ -13,10 +13,10 @@
         <joint name="turntable_joint" />
         <joint name="lower_arm_joint" />
         <joint name="upper_arm_joint" />
-        <group name="arm_end" />
     </group>
     <group name="arm_end">
         <joint name="scoop_joint" />
+        <group name="arm" />
     </group>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="scoop" parent_link="upper_arm" group="arm_end" parent_group="arm" />

@@ -10,3 +10,5 @@ Installing the code requres, in addition to the standard `ros-kinetic-desktop-fu
  * `ros-kinetic-joint-trajectory-controller`
  * `libsfml-dev`
  * `ros-kinetic-gps-common`
+ * `ros-kinetic-moveit`
+ * `ros-kinetic-moveit-ros`

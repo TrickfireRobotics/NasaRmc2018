@@ -10,7 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   geometry_msgs
   actionlib_msgs
-  geometry_msgs
   actionlib
 )
 
@@ -19,6 +18,7 @@ add_message_files(
   FILES
   Echo.msg
   SystemStatus.msg
+  DiggingState.msg
 )
 
 # Generate services in the 'srv' folder
@@ -40,6 +40,7 @@ add_action_files(
   Aruco.action
   Empty.action
   ArucoIntegrate.action
+  ArmMove.action
 )
 
 # Generate added messages and services with any dependencies listed here

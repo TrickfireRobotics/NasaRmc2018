@@ -29,7 +29,7 @@ namespace settings
     float baseline=0.03107;
     float focal_length=0.002;
     float min_disparity=0.00;
-    float max_disparity=64.0;
+    float max_disparity=128.00;
     float delta_disparity=0.107;
 }
 
@@ -54,9 +54,12 @@ class Transformer
 
             publisher = n.advertise<stereo_msgs::DisparityImage>(
                     "/sensors/duo3d/depth/image_raw_transformed", 5);
-
-
         }
+        Transformer(const Transformer&) = delete;
+        Transformer& operator=(const Transformer&) = delete;
+        Transformer(Transformer&&)=delete;
+        Transformer& operator=(const Transformer&&) = delete;
+        ~Transformer() = delete;
 
         /**
          * Wraps a standard ros disparity image message around a duo3d disparity
@@ -113,7 +116,7 @@ int main(int argc, char **argv)
         settings::min_disparity=0;
 
     if (!n.getParam("max_disparity", settings::max_disparity))
-        settings::max_disparity=64;
+        settings::max_disparity=128.00;
 
     if (!n.getParam("delta_disparity", settings::delta_disparity))
         settings::delta_disparity=0.107;

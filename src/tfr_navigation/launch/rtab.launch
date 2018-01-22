@@ -41,9 +41,9 @@
             <remap from="/rtabmap/left/camera_info" to="/sensors/duo3d/left/camera_info"/>
             <remap from="/rtabmap/right/camera_info" to="/sensors/duo3d/right/camera_info"/>-->
             <!--TODO when fusion finished, integrate fused odometry-->
-            <remap from="/rtabmap/odom" to="/sensors/mti/sensor/imu"/>
+            <remap from="/rtabmap/odom" to="odom"/>
             <!--transforms-->
-            <param name="odom_frame_id" type="string" value="base_link"/>
+            <param name="odom_frame_id" type="string" value="base_frame"/>
             <param name="frame_id" type="string" value="/duo3d/frame"/>
             <param name="queue_size" type="int" value="5"/>
 

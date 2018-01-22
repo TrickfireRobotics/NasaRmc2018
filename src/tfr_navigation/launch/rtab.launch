@@ -44,17 +44,15 @@
             <remap from="/rtabmap/odom" to="odom"/>
             <!--transforms-->
             <param name="odom_frame_id" type="string" value="base_frame"/>
-            <param name="frame_id" type="string" value="/duo3d/frame"/>
-            <param name="queue_size" type="int" value="5"/>
 
+            <param name="frame_id" type="string" value="base_link"/>
+            <param name="queue_size" type="int" value="15"/>
 			<param name="Rtabmap/TimeThr" type="string" value="300"/>
 			<param name="Rtabmap/DetectionRate" type="string" value="3"/>
 
 			<param name="Reg/Force3DoF"    value="true" />
 			<param name="Optimizer/Slam2D" value="true" />
 
-            <!--<param name="Vis/MinInliers" type="string" value="10"/>
-            <param name="Vis/InlierDistance" type="string" value="0.1"/>-->
 		</node>
 	</group>
 </launch>

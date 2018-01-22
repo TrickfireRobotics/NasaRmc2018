@@ -1,0 +1,12 @@
+#goal msg
+uint8 cmd_code
+uint8 TO_MINING = 0 #Navigate to the mining zone
+uint8 TO_DUMPING = 1 #Navigate to the dumping zone
+---
+#feedback msg
+uint8 status
+uint8 OK = 0
+---
+#result msg 
+uint8 status
+uint8 OK = 0

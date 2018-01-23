@@ -26,6 +26,10 @@ add_executable(navigation_action_server src/navigation_action_server.cpp)
 target_link_libraries(navigation_action_server ${catkin_LIBRARIES})
 add_dependencies(navigation_action_server ${catkin_EXPORTED_TARGETS})
 
+add_executable(navigation_action_client src/navigation_action_client.cpp)
+target_link_libraries(navigation_action_client ${catkin_LIBRARIES})
+add_dependencies(navigation_action_client ${catkin_EXPORTED_TARGETS})
+
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 if(TARGET ${PROJECT_NAME}-test)

@@ -10,25 +10,21 @@
 
     <node name="duo3d" pkg="duo3d_driver" type="duo3d_driver">
         <param name="frame_rate" value="30.0"/>
-        <rosparam param="image_size">[320, 240]</rosparam>
+        <rosparam param="image_size">[720,480]</rosparam>
         <param name="dense3d_license" value="OVMZU-ZHFE2-9K41K-NQL44-WX3DV"/>
         <rosparam command="load" file="$(find tfr_sensor)/params/duo3d.yaml"/>
     </node>
 
     <!--fudge a laserscan for hector slam-->
-    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
+    <!--    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
         <remap from="cloud_in" to="/sensors/duo3d/point_cloud/image_raw"/>
         <remap from="scan" to="/sensors/duo3d/scan"/>
         <rosparam command="load" file="$(find tfr_sensor)/params/scan_params.yaml"/>
-    </node>
+    </node>-->
 
-    <!--fudge a laserscan for hector slam-->
-    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
-        <remap from="cloud_in" to="/sensors/duo3d/point_cloud/image_raw"/>
-        <remap from="scan" to="/sensors/duo3d/scan"/>
-        <rosparam command="load" file="$(find tfr_sensor)/params/scan_params.yaml"/>
-    </node>
-    <node name="disparity_transformer" pkg="tfr_sensor" type="disparity_transformer"/>
+    <!--    <node name="disparity_transformer" pkg="tfr_sensor" type="disparity_transformer" output="screen"> 
+        <param name="image_path" type="string" value="/sensors/duo3d/depth/image_raw"/>
+    </node>-->
 
 
 </launch>

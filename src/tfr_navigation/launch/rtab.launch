@@ -3,7 +3,7 @@
 <!--http://wiki.ros.org/rtabmap_ros/Tutorials/SetupOnYourRobot-->
 <launch>
     <!-- Visual Odometry -->
-    <!--    <node pkg="rtabmap_ros" type="stereo_odometry" name="stereo_odometry" output="screen">
+    <!--        <node pkg="rtabmap_ros" type="stereo_odometry" name="stereo_odometry" output="screen">
 
         <remap from="left/image_rect"       to="duo3d_driver/left/image_rect"/>
         <remap from="right/image_rect"      to="duo3d_driver/right/image_rect"/>
@@ -11,7 +11,7 @@
         <remap from="right/camera_info"     to="duo3d_driver/right/camera_info"/>
 
         <param name="frame_id" type="string" value="base_link"/>
-        <param name="odom_frame_id" type="string" value="odom"/>
+        <param name="odom_frame_id" type="string" value="/stero_odom"/>
         <param name="approx_sync" type="bool" value="false"/>
         <param name="queue_size" type="int" value="5"/>
         <param name="Odom/Strategy" value="1"/>
@@ -23,53 +23,64 @@
 
 
     <group ns="rtabmap">
-        <node pkg="nodelet" type="nodelet" name="disparity2depth" args="standalone
+        <!--<node pkg="nodelet" type="nodelet" name="disparity2depth" args="standalone
             rtabmap_ros/disparity_to_depth">
-            <remap from="/rtabmap/disparity" to="/sensors/duo3d/depth/image_raw"/>
-        </node>
+            <remap from="/rtabmap/disparity" to="/sensors/duo3d/depth/image_raw_wrapped"/>
+        </node>-->
         <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
             <!-- data remapping from duo-->
-            <param name="subscribe_stereo" type="bool" value="false"/>
-            <param name="subscribe_depth" type="bool" value="true"/>
-            
-            <param name="approx_sync" type="bool" value="false"/>
-            <remap from="/rtabmap/depth/image" to="/rtabmap/depth"/>
+            <!--<remap from="/rtabmap/depth/image" to="/sensors/duo3d/depth/image_raw"/>
             <remap from="/rtabmap/rgb/image" to="/sensors/duo3d/rgb/image_rect"/>
-            <remap from="/rtabmap/rgb/camera_info" to="/sensors/duo3d/rgb/camera_info"/>
-            <!--<remap from="/rtabmap/left/image_rect" to="/sensors/duo3d/left/image_rect"/>
+            <remap from="/rtabmap/rgb/camera_info" to="/sensors/duo3d/rgb/camera_info"/>-->
+            <remap from="/rtabmap/left/image_rect" to="/sensors/duo3d/left/image_rect"/>
             <remap from="/rtabmap/right/image_rect" to="/sensors/duo3d/right/image_rect"/>
             <remap from="/rtabmap/left/camera_info" to="/sensors/duo3d/left/camera_info"/>
-            <remap from="/rtabmap/right/camera_info" to="/sensors/duo3d/right/camera_info"/>-->
+            <remap from="/rtabmap/right/camera_info" to="/sensors/duo3d/right/camera_info"/>
             <!--TODO when fusion finished, integrate fused odometry-->
-            <remap from="scan" to="/sensors/duo3d/scan"/>
+            <!--<remap from="scan" to="/sensors/duo3d/scan"/>-->
             <!--<remap from="scan_cloud" to="/sensors/duo3d/point_cloud/image_raw"/>-->
             <!--transforms-->
+            <remap from="odom" to="/fake_odom"/>
             <rosparam>
-                subscribe_stereo: true
-                subscribe_depth: false
-                subscribe_scan: true 
+                subscribe_stereo: true 
+                subscribe_depth: false 
+                subscribe_scan: false 
                 subscribe_scan_cloud: false
-                approx_sync: false
-                odom_frame_id: base_frame
-                frame_id: base_link
-                queue_size: 5
-                Rtabmap:
-                    TimeThr: 250 
-                    DetectionRate: 3
-                Grid:
-                    FromDepth: true
-                Vis:
-                    EstimationType: 1
-                    RoiRatios: [0,0,0,0.2]
-                GFTT:
-                    QualityLevel: 0.00001
-                Kp:
-                    RoiRatios: [0,0,0,0.2]
-
-                Stereo:
-                    MinDisparity: 0 
-                    MaxDisparity: 64 
-                    OpticalFlow: true 
+                approx_sync: true 
+                frame_id: base_footprint
+                queue_size: 5 
+#                Mem:
+#                    ImagePreDecimation: 2 
+#                    ImagePostDecimation: 2 
+#                    
+#                Kp:
+#                    MinDepth: 0.008
+#                    MaxDepth: 0.4
+#                SURF:
+#                    GpuVersion: true
+#                FAST:
+#                    GpuVersion: true
+#                ORB:
+#                    Gpu: true
+#                Grid:
+#                    3D: false
+#                    GroundIsObstacle: false
+#                    MinDepth: 0.008
+#                    MaxDepth: 0.4 
+#                    NoiseFileteringRadius: 0.1
+#                Rtabmap:
+#                    TimeThr: 300 
+#                    DetectionRate: 2 
+#                Stereo:
+#                    WindowWidth: 15
+#                    WindowHeight: 15 
+#                    OpticalFlow: true 
+#                Vis:
+#                    MinInliers: 10
+#                    MinDepth: 0.008
+#                    MaxDepth: 0.4 
+#                Reg:
+#                    Force3DoF: true
             </rosparam>
 		</node>
 	</group>

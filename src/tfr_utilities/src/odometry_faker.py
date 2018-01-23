@@ -20,9 +20,6 @@ class OdometryFaker(object):
     
     def __init__(self):
         rospy.Subscriber("/sensors/mti/sensor/imu", Imu, self.imuCallback)
-        self.pub = rospy.Publisher("/fake_odom", Odometry, queue_size=5 )
-        self.timer = rospy.Timer(rospy.Duration(0.01), self.odomCallback)
-        self.tf_pub = tf2_ros.TransformBroadcaster()
         self.trans = None
         self.odom = None
         self.position = [0,0,0]
@@ -30,6 +27,9 @@ class OdometryFaker(object):
         self.lin_acc = [0,0,0]
         self.th = 0
         self.last_time = rospy.get_time()
+        self.pub = rospy.Publisher("/fake_odom", Odometry, queue_size=5 )
+        self.timer = rospy.Timer(rospy.Duration(0.01), self.odomCallback)
+        self.tf_pub = tf2_ros.TransformBroadcaster()
 
 
     def getVelocities(self, dt, data):

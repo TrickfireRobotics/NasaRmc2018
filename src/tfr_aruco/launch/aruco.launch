@@ -1,0 +1,4 @@
+<launch>
+  <node name="tfr_aruco" pkg="tfr_aruco_server" type="tfr_aruco"/>
+</launch>
+

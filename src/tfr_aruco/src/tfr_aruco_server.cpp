@@ -40,7 +40,8 @@ void execute(const tfr_msgs::ArucoGoalConstPtr& goal, Server* server)
     boardCorners.push_back(std::vector<cv::Point3f>(1, cv::Point3f(6, 18, 0)));
     
     // add rest of marker from the top left points (all the same size)
-    for(auto &marker : boardCorners) {
+    for(auto &marker : boardCorners) 
+    {
         marker.push_back(marker[0] + cv::Point3f(3.2, 0,   0));
         marker.push_back(marker[0] + cv::Point3f(3.2, 3.2, 0));
         marker.push_back(marker[0] + cv::Point3f(0,   3.2, 0));
@@ -70,10 +71,12 @@ void execute(const tfr_msgs::ArucoGoalConstPtr& goal, Server* server)
 
     // convert ROS message to opencv image
     cv_bridge::CvImagePtr cv_ptr;
-    try {
+    try 
+    {
         cv_ptr = cv_bridge::toCvCopy(goal->image, sensor_msgs::image_encodings::BGR8);
     }
-    catch (cv_bridge::Exception& e) {
+    catch (cv_bridge::Exception& e)
+    {
         ROS_ERROR("cv_bridge exception: %s", e.what());
         return;
     }
@@ -105,7 +108,8 @@ void execute(const tfr_msgs::ArucoGoalConstPtr& goal, Server* server)
     result.number_found = v; // if v = 0, then no marker was detected
     result.position = std::vector<float>(3, 0); // 3 members initialized to 0
     result.rotation = std::vector<float>(3, 0); // 3 members initialized to 0
-    if(v != 0) {
+    if(v != 0) 
+    {
         result.position[0] = boardTransVec[0];
         result.position[1] = boardTransVec[1];
         result.position[2] = boardTransVec[2];

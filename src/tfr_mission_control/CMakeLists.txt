@@ -3,7 +3,7 @@
 # CMake documentation at <http://wiki.ros.org/catkin/CMakeLists.txt>.
 
 cmake_minimum_required(VERSION 2.8.3)
-project(tfr_communication)
+project(tfr_mission_control)
 
 add_compile_options(-std=c++11)
 
@@ -40,19 +40,21 @@ include_directories(
 # is better.
 # Declared libraries can be exported to other dependent packages 
 # in the LIBRARIES part of the catkin_package() call above.
-add_library(${PROJECT_NAME}_library
-  src/communication_helper.cpp
-)
+#add_library(${PROJECT_NAME}_library
+#  
+#)
 
 # Create executable process/node and link it
-add_executable(communication_echo src/communication_echo.cpp)
-target_link_libraries(communication_echo ${catkin_LIBRARIES} ${PROJECT_NAME}_library)
+add_executable(mission_control src/mission_control.cpp)
+target_link_libraries(mission_control ${catkin_LIBRARIES})#${PROJECT_NAME}_library)
+
+add_dependencies(mission_control tfr_msgs_gencpp)
 
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 # Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test test/test_tfr_communication.cpp)
+catkin_add_gtest(${PROJECT_NAME}-test test/test_tfr_mission_control.cpp)
 if(TARGET ${PROJECT_NAME}-test)
-  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME}_library)
+  target_link_libraries(${PROJECT_NAME}-test)# ${PROJECT_NAME}_library)
 endif()

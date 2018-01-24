@@ -6,6 +6,9 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   tfr_msgs
+  geometry_msgs
+  nav_msgs
+  std_msgs
   actionlib
 )
 
@@ -15,23 +18,34 @@ catkin_package(
 )
 
 include_directories(
-  ${catkin_INCLUDE_DIRS}
-  ${GTEST_INCLUDE_DIRS}
+    include/${PROJECT_NAME}
+    ${catkin_INCLUDE_DIRS}
+    ${GTEST_INCLUDE_DIRS}
 )
 
+add_library(navigation_goal_manager src/navigation_goal_manager.cpp)
+target_link_libraries(navigation_goal_manager ${catkin_LIBRARIES}) 
 
-
-
-add_executable(navigation_action_server src/navigation_action_server.cpp)
-target_link_libraries(navigation_action_server ${catkin_LIBRARIES})
+add_executable(navigation_action_server 
+    src/navigation_action_server.cpp
+    src/navigator.cpp
+)
+target_link_libraries(navigation_action_server ${catkin_LIBRARIES} navigation_goal_manager)
 add_dependencies(navigation_action_server ${catkin_EXPORTED_TARGETS})
 
-add_executable(navigation_action_client src/navigation_action_client.cpp)
+add_executable(navigation_action_client 
+    src/navigation_action_client.cpp
+    src/navigation_client.cpp
+)
 target_link_libraries(navigation_action_client ${catkin_LIBRARIES})
 add_dependencies(navigation_action_client ${catkin_EXPORTED_TARGETS})
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
-if(TARGET ${PROJECT_NAME}-test)
-  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME}_library)
+if (CATKIN_ENABLE_TESTING)
+    catkin_add_gtest(${PROJECT_NAME}-test test/test_goal_setting.cpp)
+    target_link_libraries(${PROJECT_NAME}-test ${catkin_LIBRARIES} navigation_goal_manager)
 endif()
+
+
+

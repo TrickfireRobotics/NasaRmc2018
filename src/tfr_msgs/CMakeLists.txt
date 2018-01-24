@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   geometry_msgs
   actionlib_msgs
+  geometry_msgs
   actionlib
 )
 

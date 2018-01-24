@@ -1,12 +1,22 @@
 #goal msg
-uint8 cmd_code
-uint8 TO_MINING = 0 #Navigate to the mining zone
-uint8 TO_DUMPING = 1 #Navigate to the dumping zone
+Header header
+uint8 location_code
+uint8 UNSET = 0 #not specified yet by the user
+uint8 TO_MINING = 1 #Navigate to the mining zone
+uint8 TO_DUMPING = 2 #Navigate to the dumping zone
 ---
 #feedback msg
+Header header
 uint8 status
 uint8 OK = 0
+uint8 ERROR = 1
+geometry_msgs/Pose current
+geometry_msgs/Pose goal
 ---
 #result msg 
+Header header
 uint8 status
 uint8 OK = 0
+uint8 FAILURE = 1
+geometry_msgs/Pose current
+geometry_msgs/Pose goal

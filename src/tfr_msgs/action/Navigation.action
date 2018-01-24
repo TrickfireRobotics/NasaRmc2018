@@ -1,9 +1,9 @@
 #goal msg
 Header header
 uint8 location_code
-uint8 UNSET = 0 #not specified yet by the user
-uint8 TO_MINING = 1 #Navigate to the mining zone
-uint8 TO_DUMPING = 2 #Navigate to the dumping zone
+uint8 UNSET = 0
+uint8 TO_MINING = 1
+uint8 TO_DUMPING = 2
 ---
 #feedback msg
 Header header

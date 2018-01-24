@@ -22,6 +22,12 @@ class Navigator
 { 
     public:
         Navigator(ros::NodeHandle& n, std::string name);
+        ~Navigator(){}
+        Navigator(const Navigator&) = delete;
+        Navigator& operator=(const Navigator&) = delete;
+        Navigator(Navigator&&) = delete;
+        Navigator& operator=(Navigator&&) = delete;
+
     private:
         void navigate(const tfr_msgs::NavigationGoalConstPtr &goal);
 
@@ -41,7 +47,7 @@ class Navigator
        //needed msgs
        tfr_msgs::NavigationFeedback feedback{};
        tfr_msgs::NavigationResult result{};
-       nav_msgs::OdometryConstPtr current_position{};
+       nav_msgs::Odometry current_position{};
 
        //parameters
        std::string frame_id{};

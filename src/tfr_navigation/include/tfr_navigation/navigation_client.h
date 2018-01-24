@@ -19,6 +19,11 @@
 class NavigationClient
 {
     public:
+        enum class Location : uint8_t 
+        {
+            MINING = tfr_msgs::NavigationGoal::TO_MINING,
+            DUMPING = tfr_msgs::NavigationGoal::TO_DUMPING
+        };
         NavigationClient(std::string action_name);
         ~NavigationClient() {} 
 
@@ -27,10 +32,13 @@ class NavigationClient
         NavigationClient& operator=(const NavigationClient&) = delete;
         NavigationClient(NavigationClient&&) = delete;
         NavigationClient& operator=(NavigationClient&&) = delete;
-        void navigate_to_mining();
+
+        //basic utilities
+        void navigate(uint8_t location);
+        void stop_all();
+        actionlib::SimpleClientGoalState get_state();
 
     private:
-        void navigate(uint8_t action);
         void feedback(const tfr_msgs::NavigationFeedbackConstPtr& feedback);
         void finished(const actionlib::SimpleClientGoalState &state, 
                 const tfr_msgs::NavigationResultConstPtr &result);

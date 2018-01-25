@@ -12,7 +12,9 @@ find_package(catkin REQUIRED COMPONENTS
   tfr_msgs
   actionlib
   geometry_msgs
+  tf2
   tf2_ros
+  tf2_geometry_msgs
 )
 
 find_package(GTest REQUIRED)
@@ -21,8 +23,8 @@ find_package(GTest REQUIRED)
 # Uncomment each if the dependent project requires it
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp tfr_msgs actionlib geometry_msgs tf2_ros
+  LIBRARIES ${PROJECT_NAME} tf_utility
+  CATKIN_DEPENDS roscpp tfr_msgs actionlib geometry_msgs tf2 tf2_ros tf2_geometry_msgs
 #  DEPENDS system_lib
 )
 
@@ -45,6 +47,11 @@ add_library(tf_utility
 add_executable(point_broadcaster src/point_broadcaster.cpp)
 target_link_libraries(point_broadcaster ${catkin_LIBRARIES})
 add_dependencies(point_broadcaster ${catkin_EXPORTED_TARGETS})
+
+add_executable(bin_localizer src/bin_localizer.cpp)
+target_link_libraries(bin_localizer tf_utility ${catkin_LIBRARIES})
+add_dependencies(bin_localizer ${catkin_EXPORTED_TARGETS})
+
 
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")

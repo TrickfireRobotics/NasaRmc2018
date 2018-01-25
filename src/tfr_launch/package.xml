@@ -18,4 +18,5 @@
   <buildtool_depend>catkin</buildtool_depend>
   <exec_depend>tfr_navigation</exec_depend>
   <exec_depend>tfr_visualization</exec_depend>
+  <exec_depend>tfr_localization</exec_depend>
 </package>

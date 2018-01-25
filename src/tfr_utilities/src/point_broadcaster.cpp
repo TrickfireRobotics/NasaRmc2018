@@ -9,6 +9,7 @@ PointBroadcaster::PointBroadcaster(ros::NodeHandle& n, const std::string
             &PointBroadcaster::localize_point, this);
     transform.header.frame_id = map_frame;
     transform.child_frame_id = broadcaster_frame;
+    transform.transform.rotation.w = 1;
 }
 
 void PointBroadcaster::broadcast()

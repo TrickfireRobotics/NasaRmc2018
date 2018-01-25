@@ -1,0 +1,11 @@
+<launch>
+    <!--spins up a settable broadcaster for the location of the bin-->
+    <node name="bin_broadcaster" pkg="tfr_utilities" type="point_broadcaster">
+        <rosparam>
+            parent_frame: map
+            point_frame: bin_link
+            service_name: localize_bin
+            hz: 10
+        </rosparam>
+    </node>
+</launch>

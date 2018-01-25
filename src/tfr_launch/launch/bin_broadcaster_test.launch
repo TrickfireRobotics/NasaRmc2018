@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="camera_broadcaster" 
+        args="0.01 -0.01 0 0 0 0.819 0.574 map rear_camera_link" />
+    <include file="$(find tfr_localization)/launch/bin_broadcaster.launch"/>
+
+</launch>

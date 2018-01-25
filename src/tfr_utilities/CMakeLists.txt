@@ -33,15 +33,18 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${GTEST_INCLUDE_DIRS}
 )
+
 add_library(${PROJECT_NAME}
   src/placeholder_utility.cpp
+)
+
+add_library(tf_utility
+    ./src/tf_utility.cpp
 )
 
 add_executable(point_broadcaster src/point_broadcaster.cpp)
 target_link_libraries(point_broadcaster ${catkin_LIBRARIES})
 add_dependencies(point_broadcaster ${catkin_EXPORTED_TARGETS})
-
-
 
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")

@@ -40,19 +40,43 @@ include_directories(
 )
 
 # Create executable process/node and link it
-add_executable(proto_driver_station src/proto_driver_station.cpp)
-target_link_libraries(proto_driver_station ${catkin_LIBRARIES} sfml-system
-                        sfml-window sfml-graphics)
+add_executable(proto_driver_station 
+  src/proto_driver_station.cpp
+)
 
-add_executable(controller_launcher src/controller_launcher.cpp
-                                   src/controller.cpp)
-target_link_libraries(controller_launcher ${catkin_LIBRARIES})
+target_link_libraries(proto_driver_station
+  ${catkin_LIBRARIES} 
+  sfml-system
+  sfml-window sfml-graphics
+)
+
+add_executable(controller_launcher
+  src/controller_launcher.cpp
+  src/controller.cpp
+)
+
+target_link_libraries(controller_launcher
+  ${catkin_LIBRARIES}
+)
+
+add_executable(drivebase
+  src/drivebase.cpp
+  src/drivebase_publisher.cpp
+)
+
+target_link_libraries(drivebase
+  ${catkin_LIBRARIES}
+)
 
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 # Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test test/test_tfr_control.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test)
-# endif()
+catkin_add_gtest(${PROJECT_NAME}-test
+  test/test_tfr_control.cpp
+  src/drivebase_publisher.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}-test
+  ${catkin_LIBRARIES}
+)

@@ -1,0 +1,9 @@
+<launch>
+  <!-- NOTE: This launch file depends on tfr_control's test_moveit.launch
+  (or some other moveit instance) being already running, as it requires
+  parameters loaded there-->
+
+  <!-- Show in Rviz   -->
+  <node name="rviz" pkg="rviz" type="rviz"
+        args="-d $(find tfr_visualization)/config/moveit.rviz"/>
+</launch>

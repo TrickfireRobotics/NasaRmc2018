@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: tfr_description
+    relative_path: xacro/model.xacro
+  SRDF:
+    relative_path: config/excavator.srdf
+  CONFIG:
+    author_name: TrickFire Robotics
+    author_email: trickfirerobotics@gmail.com
+    generated_timestamp: 1516332492

@@ -1,0 +1,18 @@
+# Holds the list of controllers for MoveIt to use for motion planning
+controller_list:
+  - name: arm_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    joints:
+      - turntable_joint
+      - lower_arm_joint
+      - upper_arm_joint
+    constraints:
+      goal_time: 10.0
+  - name: arm_end_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    joints:
+      - scoop_joint
+    constraints:
+      goal_time: 10.0

@@ -1,0 +1,24 @@
+subscribe_stereo: true 
+subscribe_depth: false 
+subscribe_scan: false 
+subscribe_scan_cloud: false
+approx_sync: true 
+frame_id: base_footprint
+queue_size: 30 
+Mem:
+    ImagePreDecimation: 2 
+    ImagePostDecimation:  2
+Grid:
+    3D: false
+    FootprintLength: 0.762
+    FootprintWidth: 0.4572
+    MaxGroundAngle: 30
+Rtabmap:
+    TimeThr: 400 
+    DetectionRate: 2 
+Stereo:
+    WindowWidth: 15 
+    WindowHeight:  15
+    OpticalFlow: false
+Reg:
+    Force3DoF: true

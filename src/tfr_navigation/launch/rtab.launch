@@ -1,0 +1,18 @@
+<!--starts rtabmap and visual odometry-->
+<!--uses "A" configuration from:-->
+<!--http://wiki.ros.org/rtabmap_ros/Tutorials/SetupOnYourRobot-->
+<launch>
+    <!-- Visual Odometry -->
+
+
+    <group ns="rtabmap">
+        <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
+            <remap from="left/image_rect" to="/sensors/duo3d/left/image_rect"/>
+            <remap from="right/image_rect" to="/sensors/duo3d/right/image_rect"/>
+            <remap from="left/camera_info" to="/sensors/duo3d/left/camera_info"/>
+            <remap from="right/camera_info" to="/sensors/duo3d/right/camera_info"/>
+            <remap from="odom" to="/fake_odom"/>
+            <rosparam command="load" file="$(find tfr_navigation)/params/rtab.yaml"/>
+		</node>
+	</group>
+</launch>

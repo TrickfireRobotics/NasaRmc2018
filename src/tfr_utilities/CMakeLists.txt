@@ -9,8 +9,14 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rospy
+  nav_msgs
+  sensor_msgs
+  geometry_msgs
   tfr_msgs
   actionlib
+  tf
+  tf2
 )
 
 find_package(GTest REQUIRED)
@@ -20,7 +26,7 @@ find_package(GTest REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-#  DEPENDS system_lib
+  DEPENDS tf tf2 message_runtime sensor_msgs geometry_msgs nav_msgs
 )
 
 # Specify additional locations of header files

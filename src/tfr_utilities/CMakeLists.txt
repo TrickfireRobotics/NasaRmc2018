@@ -23,7 +23,7 @@ find_package(GTest REQUIRED)
 # Uncomment each if the dependent project requires it
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME} tf_utility
+  LIBRARIES ${PROJECT_NAME} tf_manipulator
   CATKIN_DEPENDS roscpp tfr_msgs actionlib geometry_msgs tf2 tf2_ros tf2_geometry_msgs
 #  DEPENDS system_lib
 )
@@ -40,8 +40,8 @@ add_library(${PROJECT_NAME}
   src/placeholder_utility.cpp
 )
 
-add_library(tf_utility
-    ./src/tf_utility.cpp
+add_library(tf_manipulator
+    ./src/tf_manipulator.cpp
 )
 
 add_executable(point_broadcaster src/point_broadcaster.cpp)
@@ -49,7 +49,7 @@ target_link_libraries(point_broadcaster ${catkin_LIBRARIES})
 add_dependencies(point_broadcaster ${catkin_EXPORTED_TARGETS})
 
 add_executable(bin_localizer src/bin_localizer.cpp)
-target_link_libraries(bin_localizer tf_utility ${catkin_LIBRARIES})
+target_link_libraries(bin_localizer tf_manipulator ${catkin_LIBRARIES})
 add_dependencies(bin_localizer ${catkin_EXPORTED_TARGETS})
 
 

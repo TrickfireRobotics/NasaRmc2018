@@ -26,7 +26,9 @@ namespace tfr_control {
     class Controller : public hardware_interface::RobotHW
     {
     public:
-        Controller(bool fakes, const double lower_lim[7], const double upper_lim[7]);
+        static const int kControllerCount = 7;
+
+        Controller(bool fakes, const double lower_lim[kControllerCount], const double upper_lim[kControllerCount]);
         void read();
         void write();
     private:
@@ -34,13 +36,13 @@ namespace tfr_control {
         hardware_interface::EffortJointInterface joint_effort_interface;
 
         // Populated by controller_manager, read in by the write() method
-        double command_values[7] = {};
+        double command_values[kControllerCount] = {};
         // Populated by sensors, read in by controller_manager
-        double position_values[7] = {};
+        double position_values[kControllerCount] = {};
         // Populated by sensors, read in by controller_manager
-        double velocity_values[7] = {};
+        double velocity_values[kControllerCount] = {};
         // Populated by sensors, read in by controller_manager
-        double effort_values[7] = {};
+        double effort_values[kControllerCount] = {};
 
         /**
          * If false, this will use the actual hardware values.

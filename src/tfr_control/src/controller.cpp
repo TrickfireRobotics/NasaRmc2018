@@ -39,7 +39,7 @@ namespace tfr_control
         if (use_fake_values) {
             // Update all actuators velocity with the command (effort in).
             // Then update the position as derivative of the velocity over time.
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i < kControllerCount; i++) {
                 velocity_values[i] = command_values[i];
                 position_values[i] += velocity_values[i] * get_update_time();
                 // If this joint has limits, clamp the range down

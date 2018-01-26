@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     // If we're faking the inputs, we need to know the model constraints on
     // the arm: load them here.
     // If not, just use zeroes, the limits don't matter.
-    double lower_limits[7] = {}, upper_limits[7] = {};
+    double lower_limits[tfr_control::Controller::kControllerCount] = {}, upper_limits[tfr_control::Controller::kControllerCount] = {};
 
     if (use_fake_values) {
         // Get the model description 

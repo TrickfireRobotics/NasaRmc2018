@@ -342,6 +342,7 @@ namespace duo3d_driver
                 }
                 if((i == DEPTH) && pFrame->dense3dDataValid)
                 {
+                    Mat disp8;
                     Mat(size, CV_32FC1, pFrame->disparityData).convertTo(disp8, CV_8UC1, 255.0/(pFrame->dense3dParams.numDisparities*16.0));
                     Mat rgbDepth;
                     cvtColor(disp8, rgbDepth, cv::COLOR_GRAY2BGR);

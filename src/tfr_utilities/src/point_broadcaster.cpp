@@ -1,5 +1,27 @@
 #include <point_broadcaster.h>
 
+/**
+ *  Utility node
+ *
+ *  Reports information about a moveable point on command.
+ *
+ *  Listens for updates about the point on a specified service. The service
+ *  takes in a tfr_msgs/LocalizePoint.srv
+ *
+ *  It will report (0 0 0) (0 0 0 0) until it is given a proper location
+ *
+ *  parameters:
+ *      parent_frame: the parent frame of this point (type = string default = "")
+ *      point_frame: the name of the frame you want to broadcast (typed = string default = "")
+ *      service_name: the name of the service you want to broadcast (typed =
+ *      string default = "")
+ *      hz: the frequency to pubish at. (type = doulbe default: 5.0)
+ *
+ * */
+
+/*
+ * Initializes the broadcaster and data structures
+ * */
 PointBroadcaster::PointBroadcaster(ros::NodeHandle& n, const std::string
         &point_frame, const std::string &parent_frame, const std::string
         &service) : node{n}, broadcaster_frame{point_frame},
@@ -12,12 +34,18 @@ PointBroadcaster::PointBroadcaster(ros::NodeHandle& n, const std::string
     transform.transform.rotation.w = 1;
 }
 
+/*
+ * Broadcasts point across the transform network
+ * */
 void PointBroadcaster::broadcast()
 {
     transform.header.stamp = ros::Time::now();
     broadcaster.sendTransform(transform);
 }
 
+/*
+ * Gives the point a new origin
+ * */
 bool PointBroadcaster::localize_point(tfr_msgs::LocalizePoint::Request &request,
         tfr_msgs::LocalizePoint::Response &resonse)
 {
@@ -37,6 +65,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "point_broadcaster");
     ros::NodeHandle n;
 
+    //get parameters
     std::string point_frame{}, parent_frame{}, service_name{};
     double hz{};
 
@@ -47,6 +76,7 @@ int main(int argc, char** argv)
 
     PointBroadcaster broadcaster{n, point_frame, parent_frame, service_name};
 
+    //broadcast the point across the network
     ros::Rate rate(hz);
     while(ros::ok())
     {

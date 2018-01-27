@@ -1,5 +1,14 @@
 #include <tf_manipulator.h>
+/**
+ * Collection of utility methods for dealing with transforms in 3d space and
+ * transposing them.
+ * This needs to be a class to make the transform buffers work
+ * */
 
+/*
+ * Starts up the buffer and let's it fill momentarily to help avoid startup
+ * errors
+ * */
 TfManipulator::TfManipulator():buffer(),listener(buffer)
 {
     //sleep for 1/2 a second to fill our transform buffer

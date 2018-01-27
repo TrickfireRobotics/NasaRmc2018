@@ -1,0 +1,49 @@
+map_frame: map              # Defaults to "map" if unspecified
+odom_frame: odom            # Defaults to "odom" if unspecified
+base_link_frame: base_footprint  # Defaults to "base_link" if unspecified
+world_frame: odom           # Defaults to the value of odom_frame if unspecified
+
+print_diagnostics: true
+
+imu0: /sensors/duo3d/imu/data_raw
+imu0_config: [false, false, false,
+              false, false,  false,
+              false, false, false,
+              true,  true,  true,
+              true,  true,  true]
+imu0_differential: true
+imu0_relative: false
+imu0_queue_size: 5
+imu0_pose_rejection_threshold: 0.8                 # Note the difference in parameter names
+imu0_twist_rejection_threshold: 0.8                #
+imu0_linear_acceleration_rejection_threshold: 0.8  #
+imu0_remove_gravitational_acceleration: true
+
+
+imu1: /sensors/mti/sensor/imu
+imu1_config: [false, false, false,
+              true,  true,  true,
+              false, false, false,
+              true,  true,  true,
+              true,  true,  true]
+imu1_differential: false 
+imu1_relative: true
+imu1_queue_size: 5
+imu1_pose_rejection_threshold: 0.8                 # Note the difference in     parameter names
+imu1_twist_rejection_threshold: 0.8                #
+imu1_linear_acceleration_rejection_threshold: 0.8  #
+imu1_remove_gravitational_acceleration: true
+
+#odom0: /fake_odom
+#odom0_config: [true, true, true,
+#               true, true,  true,
+#               false, false, false,
+#               false,  false,  false,
+#               false,  false,  false]
+#odom0_differential: false
+#odom0_relative: true 
+#odom0_queue_size: 5
+#odom0_pose_rejection_threshold: 0.8                 # Note the difference in parameter names
+#odom0_twist_rejection_threshold: 0.8                #
+#odom0_linear_acceleration_rejection_threshold: 0.8  #
+

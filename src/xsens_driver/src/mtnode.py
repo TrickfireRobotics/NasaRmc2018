@@ -193,9 +193,12 @@ class XSensDriver(object):
 				ss_msg.internal.imu.dv.z = acc_data['Delta v.z']											
 			elif 'accX' in acc_data: # found acceleration
 				pub_imu = True
-				imu_msg.linear_acceleration.x = acc_data['accX']
-				imu_msg.linear_acceleration.y = acc_data['accY']
-				imu_msg.linear_acceleration.z = acc_data['accZ']						
+                                #COLLIN changed sign of x
+				imu_msg.linear_acceleration.x = -acc_data['accX']
+                                #COLLIN changes sign of y
+				imu_msg.linear_acceleration.y = -acc_data['accY']
+                                #COLLIN changed sign of z
+				imu_msg.linear_acceleration.z = -acc_data['accZ']						
                                 #NOTE COLLIN added covariences
                                 imu_msg.linear_acceleration_covariance=[1e-3,0,0,0,1e-3,0,0,0,1e-3]
 			else:

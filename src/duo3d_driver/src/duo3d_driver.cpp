@@ -401,23 +401,26 @@ namespace duo3d_driver
                         }
                         else
                         {
-                            // Adjust timestamp
-                            header.stamp = ros::Time(_start_time + (double)pFrame->duoFrame->IMUData[j].timeStamp / 10000.0);
-                            imu_msg.header = header;
-                            // Accelerations should be in m/s^2
-                            imu_msg.linear_acceleration.x = pFrame->duoFrame->IMUData[j].accelData[0] * 9.81;
-                            imu_msg.linear_acceleration.y = -pFrame->duoFrame->IMUData[j].accelData[1] * 9.81;
-                            imu_msg.linear_acceleration.z = -pFrame->duoFrame->IMUData[j].accelData[2] * 9.81;
-                            //NOTE COLLIN added covariences
-                            imu_msg.linear_acceleration_covariance = {5e-3, 0, 0, 0, 5e-3, 0, 0, 0, 5e-3};
-                            // Angular velocity should be in rad/sec
-                            imu_msg.angular_velocity.x = DEG2RAD(pFrame->duoFrame->IMUData[j].gyroData[0] - _gyro_offset[0]);
-                            imu_msg.angular_velocity.y = -DEG2RAD(pFrame->duoFrame->IMUData[j].gyroData[1] - _gyro_offset[1]);
-                            imu_msg.angular_velocity.z = -DEG2RAD(pFrame->duoFrame->IMUData[j].gyroData[2] - _gyro_offset[2]);
-                            //NOTE COLLIN added covariences
-                            imu_msg.angular_velocity_covariance = {5e-3, 0, 0, 0, 5e-3, 0, 0, 0, 5e-3};
-                            _pub_imu.publish(imu_msg);
-                        }
+                        // Adjust timestamp
+                        header.stamp = ros::Time(_start_time + (double)pFrame->duoFrame->IMUData[j].timeStamp / 10000.0);
+                        imu_msg.header = header;
+                        // Accelerations should be in m/s^2
+                        // COLLIN rearranged output order from 0,1,2 to 1,2,0
+                        // our axis system is different
+                        imu_msg.linear_acceleration.x = pFrame->duoFrame->IMUData[j].accelData[2] * 9.81;
+                        //COLLIN flipped sigh of y acceleration, it's backwards
+                        imu_msg.linear_acceleration.y = pFrame->duoFrame->IMUData[j].accelData[0] * 9.81;
+                        imu_msg.linear_acceleration.z = -pFrame->duoFrame->IMUData[j].accelData[1] * 9.81;
+                        //NOTE COLLIN added covariences
+                        imu_msg.linear_acceleration_covariance = {5e-3, 0, 0, 0, 5e-3, 0, 0, 0, 5e-3};
+                        // Angular velocity should be in rad/sec
+                        imu_msg.angular_velocity.x = DEG2RAD(pFrame->duoFrame->IMUData[j].gyroData[0] - _gyro_offset[0]);
+                        imu_msg.angular_velocity.y = -DEG2RAD(pFrame->duoFrame->IMUData[j].gyroData[1] - _gyro_offset[1]);
+                        imu_msg.angular_velocity.z = -DEG2RAD(pFrame->duoFrame->IMUData[j].gyroData[2] - _gyro_offset[2]);
+                        //NOTE COLLIN added covariences
+                        imu_msg.angular_velocity_covariance = {5e-3, 0, 0, 0, 5e-3, 0, 0, 0, 5e-3};
+                        _pub_imu.publish(imu_msg);
+                       }
                         if(_num_samples < 101) _num_samples++;
                     }
                 }

@@ -1,4 +1,5 @@
 <launch>
+    
     <node pkg="tf2_ros" type="static_transform_publisher" name="duo3d_broadcaster" 
         args="0.37 0 0.005 0 0 0 base_link /duo3d/frame" />
 
@@ -6,7 +7,7 @@
         args="0 0 0 -1.5707 0 -1.5707 /duo3d/frame /duo3d/camera_frame" />
 
     <node pkg="tf2_ros" type="static_transform_publisher" name="duo3d_imu_broadcaster" 
-        args="0 0 0 -1.5707 0 -1.5707 /duo3d/frame /duo3d/imu_frame" />
+        args="0 0 0 0 0 0 /duo3d/frame /duo3d/imu_frame" />
 
     <node name="duo3d" pkg="duo3d_driver" type="duo3d_driver">
         <param name="frame_rate" value="35"/>

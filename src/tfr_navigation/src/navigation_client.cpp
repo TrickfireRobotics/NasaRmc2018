@@ -19,6 +19,13 @@ void NavigationClient::navigate(uint8_t location)
 {
     tfr_msgs::NavigationGoal goal;
     goal.location_code= location;
+
+
+    /*Maintenece Note:
+     *  The SimpleActiveCallback() method below doesn't do anything, it's a
+     *  placeholder provided by the library maintainers to pass into the method
+     *  if you don't have a relevant callback to pass in.
+     * */
     client.sendGoal(goal,
             boost::bind(&NavigationClient::finished,this, _1,_2),
             Client::SimpleActiveCallback(),

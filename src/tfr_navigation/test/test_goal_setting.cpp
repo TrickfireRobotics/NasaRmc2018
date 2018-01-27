@@ -5,63 +5,82 @@
 #include <geometry_msgs/Pose.h>
 #include <iostream>
 
-TEST(GoalManager, miningDistance)
+//this is test code so sure whatev global defines are fine
+
+class GoalManager : public ::testing::Test
 {
-    ASSERT_TRUE(NavigationGoalManager::SAFE_MINING_DISTANCE > 0.66);
-    ASSERT_TRUE(NavigationGoalManager::SAFE_MINING_DISTANCE < 5.75);
+    protected:
+
+        virtual void SetUp()
+        {      
+        }
+
+        virtual void TearDown()
+        {
+        }
+        double SAFE_MINING_DISTANCE = 5.1;
+        double MINING_LINE_LENGTH = 2.03;
+        double FINISH_LINE = 0.84;
+
+};
+TEST_F(GoalManager, initializeMiningGoal)
+{
+    NavigationGoalManager::GeometryConstraints 
+        constraints(SAFE_MINING_DISTANCE, 
+                MINING_LINE_LENGTH, 
+                FINISH_LINE);
+    NavigationGoalManager manager(constraints, tfr_msgs::NavigationGoal::TO_MINING);
+    auto nav_goal = manager.initialize_goal();
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
+            SAFE_MINING_DISTANCE);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , 0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.z , 0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
 }
 
-TEST(GoalManager, miningLineLength)
+TEST_F(GoalManager, initializeDumpingGoal)
 {
-    ASSERT_TRUE(NavigationGoalManager::MINING_LINE_LENGTH > 0);
-    ASSERT_TRUE(NavigationGoalManager::MINING_LINE_LENGTH <= 2.03);
+    NavigationGoalManager::GeometryConstraints 
+        constraints(SAFE_MINING_DISTANCE, 
+                MINING_LINE_LENGTH, 
+                FINISH_LINE);
+    NavigationGoalManager manager(constraints,
+            tfr_msgs::NavigationGoal::TO_DUMPING);
+    auto nav_goal = manager.initialize_goal();
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
+            FINISH_LINE);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , 0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.z , 0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
 }
 
-TEST(GoalManager, finishLineLength)
+TEST_F(GoalManager, badConstraints)
 {
-    ASSERT_TRUE(NavigationGoalManager::FINISH_LINE > 0.66);
-    ASSERT_TRUE(NavigationGoalManager::FINISH_LINE <= 6.84);
+    NavigationGoalManager::GeometryConstraints 
+        constraints(-1, 
+                MINING_LINE_LENGTH, 
+                FINISH_LINE);
+    NavigationGoalManager manager(constraints, tfr_msgs::NavigationGoal::TO_MINING);
+    std::cout << "Note: you should have seen a warning when running this" 
+        <<" test case, this is defined behavior." << std::endl;
 }
 
-TEST(GoalManager, defaultConstructor)
-{
-    NavigationGoalManager manager{};
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.x, 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.y, 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.z , 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.x ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.y ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.w ,0);
-}
 
-TEST(GoalManager, constructorAndInitializer)
-{
-    NavigationGoalManager manager(tfr_msgs::NavigationGoal::TO_MINING);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.x ,
-            NavigationGoalManager::SAFE_MINING_DISTANCE);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.y , 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.z , 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.x ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.y ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.w ,0);
-    manager.location_code = tfr_msgs::NavigationGoal::TO_DUMPING;
-    manager.initialize_goal();
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.x ,
-            NavigationGoalManager::FINISH_LINE);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.y , 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.z , 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.x ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.y ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.w ,0);
-}
 
-TEST(GoalManager, adjustMiningGoalNeg)
+TEST_F(GoalManager, adjustMiningGoalNeg)
 {
-    NavigationGoalManager manager(tfr_msgs::NavigationGoal::TO_MINING);
-    geometry_msgs::Pose p;
+    NavigationGoalManager::GeometryConstraints 
+        constraints(SAFE_MINING_DISTANCE, 
+                MINING_LINE_LENGTH, 
+                FINISH_LINE);
+    NavigationGoalManager manager(constraints, tfr_msgs::NavigationGoal::TO_MINING);
+    geometry_msgs::Pose p{};
     p.position.x = 3.4;
     p.position.y = -.05;
     p.position.z = 0.4;
@@ -69,21 +88,26 @@ TEST(GoalManager, adjustMiningGoalNeg)
     p.orientation.y = -.3;
     p.orientation.z = -.5;
     p.orientation.w = 1;
-    manager.update_mining_goal(p);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.x ,
-            NavigationGoalManager::SAFE_MINING_DISTANCE);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.y , -.05);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.z , 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.x ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.y ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.w ,0);
+    auto nav_goal = manager.get_updated_mining_goal(p);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
+            SAFE_MINING_DISTANCE);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , -.05);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.z , 0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
 }
 
 
-TEST(GoalManager, adjustMiningGoalPos)
+TEST_F(GoalManager, adjustMiningGoalPos)
 {
-    NavigationGoalManager manager(tfr_msgs::NavigationGoal::TO_MINING);
+    NavigationGoalManager::GeometryConstraints 
+        constraints(
+                SAFE_MINING_DISTANCE, 
+                MINING_LINE_LENGTH, 
+                FINISH_LINE);
+    NavigationGoalManager manager(constraints, tfr_msgs::NavigationGoal::TO_MINING);
     geometry_msgs::Pose p;
     p.position.x = 3.4;
     p.position.y = 1;
@@ -92,20 +116,24 @@ TEST(GoalManager, adjustMiningGoalPos)
     p.orientation.y = -.3;
     p.orientation.z = -.5;
     p.orientation.w = 1;
-    manager.update_mining_goal(p);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.x ,
-            NavigationGoalManager::SAFE_MINING_DISTANCE);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.y , 1);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.z , 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.x ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.y ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.w ,0);
+    auto nav_goal =  manager.get_updated_mining_goal(p);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
+            SAFE_MINING_DISTANCE);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , 1);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.z , 0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
 }
 
-TEST(GoalManager, adjustMiningGoalBigPos)
+TEST_F(GoalManager, adjustMiningGoalBigPos)
 {
-    NavigationGoalManager manager(tfr_msgs::NavigationGoal::TO_MINING);
+    NavigationGoalManager::GeometryConstraints 
+        constraints(SAFE_MINING_DISTANCE, 
+                MINING_LINE_LENGTH, 
+                FINISH_LINE);
+    NavigationGoalManager manager(constraints, tfr_msgs::NavigationGoal::TO_MINING);
     geometry_msgs::Pose p;
     p.position.x = 3.4;
     p.position.y = 5;
@@ -114,20 +142,24 @@ TEST(GoalManager, adjustMiningGoalBigPos)
     p.orientation.y = -.3;
     p.orientation.z = -.5;
     p.orientation.w = 1;
-    manager.update_mining_goal(p);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.x ,
-            NavigationGoalManager::SAFE_MINING_DISTANCE);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.y , 1.015);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.z , 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.x ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.y ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.w ,0);
+    auto nav_goal = manager.get_updated_mining_goal(p);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
+            SAFE_MINING_DISTANCE);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , 1.015);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.z , 0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
 }
 
-TEST(GoalManager, adjustMiningGoalBigNeg)
+TEST_F(GoalManager, adjustMiningGoalBigNeg)
 {
-    NavigationGoalManager manager(tfr_msgs::NavigationGoal::TO_MINING);
+    NavigationGoalManager::GeometryConstraints 
+        constraints(SAFE_MINING_DISTANCE, 
+                MINING_LINE_LENGTH, 
+                FINISH_LINE);
+    NavigationGoalManager manager(constraints, tfr_msgs::NavigationGoal::TO_MINING);
     geometry_msgs::Pose p;
     p.position.x = 3.4;
     p.position.y = -5;
@@ -136,20 +168,25 @@ TEST(GoalManager, adjustMiningGoalBigNeg)
     p.orientation.y = -.3;
     p.orientation.z = -.5;
     p.orientation.w = 1;
-    manager.update_mining_goal(p);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.x ,
-            NavigationGoalManager::SAFE_MINING_DISTANCE);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.y , -1.015);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.z , 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.x ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.y ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.w ,0);
+    auto nav_goal = manager.get_updated_mining_goal(p);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
+            SAFE_MINING_DISTANCE);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , -1.015);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.z , 0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
 }
 
-TEST(GoalManager, adjustMiningGoalWrongType)
+TEST_F(GoalManager, adjustMiningGoalWrongType)
 {
-    NavigationGoalManager manager(tfr_msgs::NavigationGoal::TO_DUMPING);
+    NavigationGoalManager::GeometryConstraints 
+        constraints(SAFE_MINING_DISTANCE, 
+                MINING_LINE_LENGTH, 
+                FINISH_LINE);
+    NavigationGoalManager manager(constraints,
+            tfr_msgs::NavigationGoal::TO_DUMPING);
     geometry_msgs::Pose p;
     p.position.x = 3.4;
     p.position.y = -5;
@@ -158,15 +195,15 @@ TEST(GoalManager, adjustMiningGoalWrongType)
     p.orientation.y = -.3;
     p.orientation.z = -.5;
     p.orientation.w = 1;
-    manager.update_mining_goal(p);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.x ,
-            NavigationGoalManager::FINISH_LINE);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.y , 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.position.z , 0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.x ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.y ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(manager.nav_goal.target_pose.pose.orientation.w ,0);
+    auto nav_goal = manager.get_updated_mining_goal(p);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
+            FINISH_LINE);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , 0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.z , 0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
     std::cout << "Note: you should have seen a warning when running this" 
         <<" test case, this is defined behavior." << std::endl;
 }

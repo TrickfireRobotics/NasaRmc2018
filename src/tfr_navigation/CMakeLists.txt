@@ -20,12 +20,7 @@ include_directories(
 )
 
 catkin_package(
-    INCLUDE_DIRS include/${PROJECT_NAME}
-    LIBRARIES ${PROJECT_NAME} navigation_server navigation_client
-    CATKIN_DEPENDS  roscpp tfr_msgs actionlib nav_msgs geometry_msgs
 )
-
-
 
 
 add_library( navigation_server
@@ -45,7 +40,6 @@ add_executable(navigation_action_server
 )
 add_dependencies(navigation_action_server ${catkin_EXPORTED_TARGETS})
 target_link_libraries(navigation_action_server navigation_server ${catkin_LIBRARIES})
-
 
 add_executable(navigation_action_client 
     src/navigation_action_client.cpp

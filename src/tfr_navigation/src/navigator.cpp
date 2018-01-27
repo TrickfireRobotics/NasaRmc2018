@@ -4,9 +4,10 @@
  *  constructs the sever and binds it to it's execution callback
  *  displays set parameters and warnings to the user
  * */
-Navigator::Navigator(ros::NodeHandle &n,std::string name) : node{n},  server{n, name,
-    boost::bind(&Navigator::navigate, this, _1) ,false}, action_name{name},
-    goal_manager()
+Navigator::Navigator(ros::NodeHandle &n,
+        const NavigationGoalManager::GeometryConstraints &constraints, 
+        std::string name) : node{n}, goal_manager(constraints),
+        server{n, name, boost::bind(&Navigator::navigate, this, _1) ,false}, action_name{name}
 {
     ROS_DEBUG("Navigation server constructed %f", ros::Time::now().toSec());
     //get parameters
@@ -50,8 +51,8 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
     ROS_INFO("Navigation server started");
 
     //start with initial goal
-    goal_manager.location_code = (*goal).location_code;
-    goal_manager.initialize_goal();
+    goal_manager.location_code = goal->location_code;
+    nav_goal = goal_manager.initialize_goal();
     //TODO send goal to navigation stack 
 
     ros::Rate r(rate);  
@@ -79,7 +80,7 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
             {
                 //MAINTENENCE NOTE this is only safe to do if we are running on
                 //spin or spin once with no threaded callbacks
-                goal_manager.update_mining_goal(current_position.pose.pose);
+                nav_goal = goal_manager.get_updated_mining_goal(current_position.pose.pose);
                 //TODO send updated goal to navigation stack
             }
 
@@ -91,13 +92,11 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
             //MAINTENENCE NOTE this is only safe to do if we are running on
             //spin or spin once with no threaded callbacks
             feedback.current = current_position.pose.pose;
-            feedback.goal = goal_manager.nav_goal.target_pose.pose;
+            feedback.goal = nav_goal.target_pose.pose;
             server.publishFeedback(feedback);
             ROS_INFO("servicing goal, %f", feedback.header.stamp.toSec());
             r.sleep();
             break; //debugging DELETE on integration
-
-
         }
     }
 
@@ -110,7 +109,7 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
         //MAINTENENCE NOTE this is only safe to do if we are running on
         //spin or spin once with no threaded callbacks
         result.current = current_position.pose.pose;
-        result.goal = goal_manager.nav_goal.target_pose.pose;
+        result.goal = nav_goal.target_pose.pose;
         server.setSucceeded(result);
     }
     else if (false)

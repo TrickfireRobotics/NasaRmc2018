@@ -10,25 +10,60 @@
 class NavigationGoalManager
 {
     public:
-        //dist_landing + dist_obstacle + 1/2 robot_length
-        constexpr static double SAFE_MINING_DISTANCE { 1.5 + 2.98 + 1.3/2 };
-        //mining_zone_width - digging_radius
-        constexpr static double MINING_LINE_LENGTH { 3.78 - 1.75 };
-        //length of landing zone
-        constexpr static double FINISH_LINE { 1.5 };
+        /* 
+         * Immutable struct of geometry constraints for the goal selection
+         * algorithm
+         * */
+        struct GeometryConstraints 
+        {
+            public:
+                GeometryConstraints(double d, double l, double f) :
+                    safe_mining_distance{d}, mining_line_length{l},
+                    finish_line{f}{};
 
-        NavigationGoalManager();
-        NavigationGoalManager(uint8_t code);
+                double get_safe_mining_distance() const
+                {
+                    return safe_mining_distance;
+                }
+
+                double get_mining_line_length() const
+                {
+                    return mining_line_length;
+                }
+
+                double get_finish_line() const
+                {
+                    return finish_line;
+                }
+            private:
+                //The distance to travel from the bin
+                double safe_mining_distance;
+                //The length of the varying mining line
+                double mining_line_length;
+                //the distance from the bin the finish line is
+                double finish_line;
+
+        };
+
+
+        NavigationGoalManager(const GeometryConstraints &constraints);
+        NavigationGoalManager(const GeometryConstraints &constraints, uint8_t code);
         NavigationGoalManager(const NavigationGoalManager&) = delete;
         NavigationGoalManager& operator=(const NavigationGoalManager&) = delete;
         NavigationGoalManager(NavigationGoalManager&&) = delete;
         NavigationGoalManager& operator=(NavigationGoalManager&&) = delete;
 
-        void initialize_goal();
-        void update_mining_goal(geometry_msgs::Pose msg);
+        move_base_msgs::MoveBaseGoal initialize_goal();
+        move_base_msgs::MoveBaseGoal get_updated_mining_goal(
+                geometry_msgs::Pose msg);
 
         //delegate initialization to ctor
         uint8_t location_code;
+
+        //the constraints to the problem
+        const GeometryConstraints &constraints;
+    private:
+        //the navigation goal
         move_base_msgs::MoveBaseGoal nav_goal{};
 };
 #endif

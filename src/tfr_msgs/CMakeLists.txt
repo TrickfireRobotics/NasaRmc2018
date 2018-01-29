@@ -7,6 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   message_generation
+  geometry_msgs
   actionlib_msgs
   actionlib
 )
@@ -17,12 +18,11 @@ add_message_files(
   Echo.msg
 )
 
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+# Generate services in the 'srv' folder
+ add_service_files(
+   FILES
+   LocalizePoint.srv
+ )
 
 # Generate actions in the 'action' folder
 add_action_files(
@@ -35,6 +35,7 @@ generate_messages(
   DEPENDENCIES
   std_msgs
   actionlib_msgs
+  geometry_msgs
 )
 
 # These are all for exporting to dependent packages/projects.

@@ -11,6 +11,10 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   tfr_msgs
   actionlib
+  geometry_msgs
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
 )
 
 find_package(GTest REQUIRED)
@@ -19,7 +23,8 @@ find_package(GTest REQUIRED)
 # Uncomment each if the dependent project requires it
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
+  LIBRARIES ${PROJECT_NAME} tf_manipulator
+  CATKIN_DEPENDS roscpp tfr_msgs actionlib geometry_msgs tf2 tf2_ros tf2_geometry_msgs
 #  DEPENDS system_lib
 )
 
@@ -31,31 +36,27 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-# Declare a C++ library
-# You can either create libraries like this and link them in the
-# target_link_libraries() call below or include the individual .cpp
-# files in each add_executable() call. I'm not really sure which one
-# is better.
-# Declared libraries can be exported to other dependent packages 
-# in the LIBRARIES part of the catkin_package() call above.
 add_library(${PROJECT_NAME}
   src/placeholder_utility.cpp
 )
 
-add_executable(example_client src/example_action_client.cpp)
-target_link_libraries(example_client ${catkin_LIBRARIES})
-add_dependencies(example_client ${catkin_EXPORTED_TARGETS})
+add_library(tf_manipulator
+    ./src/tf_manipulator.cpp
+)
 
-add_executable(example_server src/example_action_server.cpp)
-target_link_libraries(example_server ${catkin_LIBRARIES})
-add_dependencies(example_server ${catkin_EXPORTED_TARGETS})
+add_executable(point_broadcaster src/point_broadcaster.cpp)
+target_link_libraries(point_broadcaster ${catkin_LIBRARIES})
+add_dependencies(point_broadcaster ${catkin_EXPORTED_TARGETS})
+
+add_executable(bin_localizer src/bin_localizer.cpp)
+target_link_libraries(bin_localizer tf_manipulator ${catkin_LIBRARIES})
+add_dependencies(bin_localizer ${catkin_EXPORTED_TARGETS})
 
 
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 # Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test test/test_tfr_utilities.cpp)
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 endif()

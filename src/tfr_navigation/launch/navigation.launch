@@ -1,0 +1,10 @@
+<launch>
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <rosparam file="$(find tfr_navigation)/params/move_base.yaml" command="load" />
+        <rosparam file="$(find tfr_navigation)/params/shared_costmap.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find tfr_navigation)/params/shared_costmap.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find tfr_navigation)/params/local_costmap.yaml" command="load" />
+        <rosparam file="$(find tfr_navigation)/params/global_costmap.yaml" command="load" />
+        <rosparam file="$(find tfr_navigation)/params/planner.yaml" command="load" />
+    </node>
+</launch>

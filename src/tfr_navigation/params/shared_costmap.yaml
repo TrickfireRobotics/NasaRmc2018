@@ -1,0 +1,21 @@
+
+obstacle_range: 1.5
+raytrace_range: 2
+footprint: [[-0.375, -0.225],  [0.375, -0.225],[0.375, 0.225],[-0.375, 0.225]]
+observation_sources: point_cloud_sensor
+point_cloud_sensor: {
+    sensor_frame: /duo3d/camera_frame, 
+    data_type: PointCloud2, 
+    topic: /sensors/duo3d/point_cloud/image_raw, 
+    marking: true, 
+    clearing: true
+}
+
+
+update_frequency: 2.0
+publish_frequency: 2.0
+robot_base_frame: /base_footprint
+rolling_window: true  
+
+resolution: 0.1
+transform_tolerance: 0.2

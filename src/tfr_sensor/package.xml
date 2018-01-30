@@ -17,6 +17,7 @@
   <depend>roscpp</depend>
   <depend>cv_bridge</depend>
   <depend>sensor_msgs</depend>
+  <depend>tfr_msgs</depend>
   <exec_depend>tfr_utilities</exec_depend>
   <exec_depend>xsens_driver</exec_depend>
   <exec_depend>duo3d_driver</exec_depend>

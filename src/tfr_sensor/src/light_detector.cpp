@@ -80,8 +80,10 @@ bool LightDetector::is_on()
         return (stats.r_ave + stats.g_ave + stats.b_ave)/3.0;
     };
 
-    int total_ave = ave_brightness(total);
-    int recent_ave = ave_brightness(brightness.front());
-    
+    double total_ave = ave_brightness(total);
+    double recent_ave = ave_brightness(brightness.front());
+
+    ROS_DEBUG("frame_calculated, total brightness: %f, recent brightness: %f",
+            total_ave, recent_ave);
     return (recent_ave - total_ave) > threshold;
 }

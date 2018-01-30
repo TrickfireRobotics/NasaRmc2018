@@ -39,33 +39,45 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-# Create executable process/node and link it
+# proto_driver_station
 add_executable(proto_driver_station 
   src/proto_driver_station.cpp
 )
-
 target_link_libraries(proto_driver_station
   ${catkin_LIBRARIES} 
   sfml-system
   sfml-window sfml-graphics
 )
 
+# controller_launcher
 add_executable(controller_launcher
   src/controller_launcher.cpp
   src/controller.cpp
 )
-
 target_link_libraries(controller_launcher
   ${catkin_LIBRARIES}
 )
 
+# drivebase
 add_executable(drivebase
   src/drivebase.cpp
   src/drivebase_publisher.cpp
 )
-
 target_link_libraries(drivebase
   ${catkin_LIBRARIES}
+)
+
+# bin_controller
+add_executable(bin_controller 
+  src/bin_controller.cpp
+  src/bin_control_server.cpp
+)
+target_link_libraries(bin_controller
+  ${catkin_LIBRARIES}
+)
+add_dependencies(bin_controller
+  ${catkin_EXPORTED_TARGETS}
+  tfr_msgs_gencpp
 )
 
 # This call is sometimes needed and sometimes not and I'm not really clear why

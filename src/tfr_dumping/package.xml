@@ -10,12 +10,7 @@
   <url type="website">http://www.trickfirerobotics.com/</url>
   <author email="ryan.berge@trickfirerobotics.com">Ryan Berge</author>
   <!-- <author email="another.author@example.com">Jane Doe</author> -->
-
   <buildtool_depend>catkin</buildtool_depend>
-  <test_depend>gtest</test_depend>
-  <depend>roscpp</depend>
-  <depend>std_msgs</depend>
-  <depend>tfr_msgs</depend>
-  <depend>tfr_utilities</depend>
+
 
 </package>

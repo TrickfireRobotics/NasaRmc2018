@@ -15,9 +15,10 @@
   <buildtool_depend>catkin</buildtool_depend>
   <test_depend>gtest</test_depend>
   <depend>roscpp</depend>
-  <depend>xsens_custom_msgs</depend>
-  <depend>xsens_driver</depend>
-  <depend>duo3d_driver</depend>
-  <depend>pointcloud_to_laserscan</depend>
+  <depend>cv_bridge</depend>
+  <depend>sensor_msgs</depend>
+  <exec_depend>tfr_utilities</exec_depend>
+  <exec_depend>xsens_driver</exec_depend>
+  <exec_depend>duo3d_driver</exec_depend>
 
 </package>

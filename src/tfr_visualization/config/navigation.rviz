@@ -92,8 +92,12 @@ Visualization Manager:
                   {}
               xsens_link:
                 {}
-          bin_footprint:
-            {}
+              duo3d/imu_frame:
+                {}
+            xsens_link:
+              {}
+        odom:
+          {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -182,22 +186,22 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: LocalCostmap
       Topic: /move_base/local_costmap/costmap
       Unreliable: false
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 0.699999988
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Global Costmap
       Topic: /move_base/global_costmap/costmap
       Unreliable: false
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/Polygon
       Color: 25; 255; 0
@@ -307,10 +311,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.550398052
+      Pitch: 0.210397869
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.89039755
+      Yaw: 1.37539864
     Saved: ~
 Window Geometry:
   Displays:

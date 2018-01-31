@@ -6,8 +6,12 @@
  * */
 Navigator::Navigator(ros::NodeHandle &n,
         const NavigationGoalManager::GeometryConstraints &constraints, 
-        std::string name) : node{n}, goal_manager(constraints),
-        server{n, name, boost::bind(&Navigator::navigate, this, _1) ,false}, action_name{name}
+        std::string name) : node{n}, 
+        goal_manager(constraints),
+        server{n, name, boost::bind(&Navigator::navigate, this, _1) ,false}, 
+        nav_stack{"move_base", true},
+        navigation{navigation_label, true},
+        action_name{name}
 {
     ROS_DEBUG("Navigation server constructed %f", ros::Time::now().toSec());
     //get parameters
@@ -25,9 +29,10 @@ Navigator::Navigator(ros::NodeHandle &n,
     ROS_DEBUG(" odometry_topic: %s", odometry_topic.c_str());
     ROS_DEBUG(" rate:           %f", rate);
 
-
+    ROS_INFO("Navigation server connecting to nav_stack");
+    nav_stack.waitForServer();
+    ROS_INFO("Navigation server connected to nav_stack");
     server.start();
-
     ROS_INFO("Navigation server awaiting connection");
 }
 
@@ -44,7 +49,8 @@ Navigator::Navigator(ros::NodeHandle &n,
  *      -uint8_t code corresponding to the finsal status described in 
  *      Navigation.action in the tfr_msgs package
  *      -Pose describing our final position
- *  NOTE NOT THREAD SAFE
+ *  NOTE careful with the shared pointers in this class if threading becomes
+ *  priority.
  * */
 void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
 {
@@ -53,72 +59,74 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
     //start with initial goal
     goal_manager.location_code = goal->location_code;
     nav_goal = goal_manager.initialize_goal();
-    //TODO send goal to navigation stack 
+    nav_stack.sendGoal(goal);
 
     ros::Rate r(rate);  
     r.sleep(); //this pause is for debugging only DELETE
 
-    bool success = true;
     //test for completion
-    //TODO hook up to navigation stack here
-    while (true)
+    while (nav_stack.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         //Deal with preemption or error
         if (server.isPreemptRequested() || !ros::ok()) 
         {
-            //TODO hook up to navigation stack here
-            //cascade the preemption and wait
             ROS_INFO("%s: preempted", action_name.c_str());
-            server.setPreempted();
+            nav_stack.cancelAllGoals();
+            update_result();
+            server.setPreempted(result);
             success = false;
-            break;
+            return;
         }
         //main case, update nav goal
         else
         {
             if (goal_manager.location_code == tfr_msgs::NavigationGoal::TO_MINING)
             {
-                //MAINTENENCE NOTE this is only safe to do if we are running on
-                //spin or spin once with no threaded callbacks
                 nav_goal = goal_manager.get_updated_mining_goal(current_position.pose.pose);
-                //TODO send updated goal to navigation stack
+                nav_stack.sendGoal(goal);
             }
 
-            //TODO hookup status query to navigation stack here
-
-            feedback.header.stamp = ros::Time::now();
-            feedback.header.frame_id = frame_id;
-            feedback.status = tfr_msgs::NavigationFeedback::OK;
-            //MAINTENENCE NOTE this is only safe to do if we are running on
-            //spin or spin once with no threaded callbacks
-            feedback.current = current_position.pose.pose;
-            feedback.goal = nav_goal.target_pose.pose;
+            update_feedback();
             server.publishFeedback(feedback);
             ROS_INFO("servicing goal, %f", feedback.header.stamp.toSec());
             r.sleep();
-            break; //debugging DELETE on integration
         }
     }
 
-    //TODO hook up to navigation stack here
-    if (success)
+    update_result();
+    if (nav_stack.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
-        result.header.stamp = ros::Time::now();
-        result.header.frame_id = frame_id;
-        result.status = tfr_msgs::NavigationResult::OK;
-        //MAINTENENCE NOTE this is only safe to do if we are running on
-        //spin or spin once with no threaded callbacks
-        result.current = current_position.pose.pose;
-        result.goal = nav_goal.target_pose.pose;
         server.setSucceeded(result);
     }
-    else if (false)
+    else (false)
     {
-        //TODO hook error handling to navigation stack
-        result.status = tfr_msgs::NavigationResult::OK;
+        nav_stack.cancelAllGoals();
         server.setAborted(result);
     }
     ROS_INFO("Navigation server finished");
+}
+
+
+/*
+ * Prepare a feedback message for sending
+ * */
+void Navigatore::update_result()
+{
+    result.header.stamp = ros::Time::now();
+    result.header.frame_id = frame_id;
+    result.current = current_position.pose.pose;
+    result.goal = nav_goal.target_pose.pose;
+}
+
+/*
+ * Prepare a feedback message for sending
+ * */
+void Navigatore::update_feedback()
+{
+    feedback.header.stamp = ros::Time::now();
+    feedback.header.frame_id = frame_id;
+    feedback.current = current_position.pose.pose;
+    feedback.goal = nav_goal.target_pose.pose;
 }
 
 

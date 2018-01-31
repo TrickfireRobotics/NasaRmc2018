@@ -1,7 +1,8 @@
 #include <navigation_goal_manager.h>
 
-NavigationGoalManager::NavigationGoalManager(const GeometryConstraints &c, 
-        uint8_t code): constraints{c}, location_code{code}
+NavigationGoalManager::NavigationGoalManager(const std::string &frame, 
+        const GeometryConstraints &c, 
+        uint8_t code): reference_frame{frame}, constraints{c}, location_code{code}
 {
     initialize_goal();
     //NOTE ros is not really big on runtime exceptions,  I'll post an annoying
@@ -22,8 +23,9 @@ NavigationGoalManager::NavigationGoalManager(const GeometryConstraints &c,
     
 }
 
-NavigationGoalManager::NavigationGoalManager(const GeometryConstraints &c):
-    NavigationGoalManager{c, tfr_msgs::NavigationGoal::UNSET} {}
+NavigationGoalManager::NavigationGoalManager(const std::string &frame, 
+        const GeometryConstraints &c):
+        NavigationGoalManager{frame, c, tfr_msgs::NavigationGoal::UNSET} {}
 
 
 /**
@@ -62,10 +64,10 @@ move_base_msgs::MoveBaseGoal NavigationGoalManager::get_updated_mining_goal(geom
     if (location_code == tfr_msgs::NavigationGoal::TO_MINING){
         nav_goal.target_pose.header.stamp =ros::Time::now();
         //TODO integrate reference frame when bin tf publisher is finished
-        double y_position = msg.position.y; 
-        int sign = (y_position > 0) ? 1 : -1;
+        double v_position = msg.position.y; 
+        int sign = (v_position > 0) ? 1 : -1;
         nav_goal.target_pose.pose.position.y = sign*std::min(
-                constraints.get_mining_line_length()/2, std::abs(y_position));
+                constraints.get_mining_line_length()/2, std::abs(v_position));
     }
     else 
     {
@@ -73,3 +75,5 @@ move_base_msgs::MoveBaseGoal NavigationGoalManager::get_updated_mining_goal(geom
     }
     return nav_goal;
 }
+
+

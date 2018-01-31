@@ -46,8 +46,8 @@ class NavigationGoalManager
         };
 
 
-        NavigationGoalManager(const GeometryConstraints &constraints);
-        NavigationGoalManager(const GeometryConstraints &constraints, uint8_t code);
+        NavigationGoalManager(const std::string &ref_frame, const GeometryConstraints &constraints);
+        NavigationGoalManager(const std::string &ref_frame, const GeometryConstraints &constraints, uint8_t code);
         NavigationGoalManager(const NavigationGoalManager&) = delete;
         NavigationGoalManager& operator=(const NavigationGoalManager&) = delete;
         NavigationGoalManager(NavigationGoalManager&&) = delete;
@@ -65,5 +65,7 @@ class NavigationGoalManager
     private:
         //the navigation goal
         move_base_msgs::MoveBaseGoal nav_goal{};
+
+        const std::string &reference_frame;
 };
 #endif

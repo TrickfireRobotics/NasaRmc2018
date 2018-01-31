@@ -6,7 +6,7 @@
  * */
 Navigator::Navigator(ros::NodeHandle &n,
         const NavigationGoalManager::GeometryConstraints &constraints, 
-        std::string name, std::string bin_frame) : node{n}, 
+        const std::string &name, const std::string &bin_frame) : node{n}, 
         goal_manager(bin_frame,constraints),
         server{n, name, boost::bind(&Navigator::navigate, this, _1) ,false}, 
         nav_stack{"move_base", true},
@@ -57,6 +57,18 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
     ROS_INFO("Navigation server started");
     //start with initial goal
     nav_goal = goal_manager.initialize_goal(code);
+    ROS_INFO("translation: %f,%f,%f  orientation: %f,%f,%f,%f reference: %s", nav_goal.target_pose.pose.position.x,
+            nav_goal.target_pose.pose.position.y,
+            nav_goal.target_pose.pose.position.z,
+            nav_goal.target_pose.pose.orientation.x,
+            nav_goal.target_pose.pose.orientation.y,
+            nav_goal.target_pose.pose.orientation.z,
+            nav_goal.target_pose.pose.orientation.w,
+            nav_goal.target_pose.header.frame_id.c_str());
+
+
+
+
     nav_stack.sendGoal(nav_goal);
 
     ros::Rate r(rate);  

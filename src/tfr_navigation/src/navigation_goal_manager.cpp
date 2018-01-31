@@ -20,7 +20,7 @@ NavigationGoalManager::NavigationGoalManager(const std::string &frame,
         ROS_WARN("    finish_line: %f",
                 constraints.get_finish_line());
     }
-    
+    ROS_INFO("frame: %s", reference_frame.c_str());
 }
 
 /**
@@ -30,15 +30,15 @@ NavigationGoalManager::NavigationGoalManager(const std::string &frame,
 move_base_msgs::MoveBaseGoal NavigationGoalManager::initialize_goal(
         tfr_msgs::LocationCode new_goal) {
     goal = new_goal;
+    //set reference frame
+    nav_goal.target_pose.header.frame_id = reference_frame;
     nav_goal.target_pose.header.stamp = ros::Time::now();
-    //TODO integrate the bin reference frame here, upon completion of
-    //the bin transform publisher
+    //set translation goal
     switch(goal)
     {
         case(tfr_msgs::LocationCode::MINING):
             nav_goal.target_pose.pose.position.x =
                 constraints.get_safe_mining_distance();
-            //TODO 
             break;
         case(tfr_msgs::LocationCode::DUMPING):
             nav_goal.target_pose.pose.position.x = constraints.get_finish_line();
@@ -50,6 +50,11 @@ move_base_msgs::MoveBaseGoal NavigationGoalManager::initialize_goal(
             ROS_WARN("location_code %u not recognized",
                     static_cast<uint8_t>(goal));
     }
+    //set relative rotation (none)
+    nav_goal.target_pose.pose.orientation.x = 0;
+    nav_goal.target_pose.pose.orientation.y = 0;
+    nav_goal.target_pose.pose.orientation.z = 0;
+    nav_goal.target_pose.pose.orientation.w = 1;
     return nav_goal;
 }
 
@@ -61,7 +66,6 @@ move_base_msgs::MoveBaseGoal NavigationGoalManager::get_updated_mining_goal(geom
 {
     if (goal == tfr_msgs::LocationCode::MINING){
         nav_goal.target_pose.header.stamp =ros::Time::now();
-        //TODO integrate reference frame when bin tf publisher is finished
         double v_position = msg.position.y; 
         int sign = (v_position > 0) ? 1 : -1;
         nav_goal.target_pose.pose.position.y = sign*std::min(
@@ -74,5 +78,3 @@ move_base_msgs::MoveBaseGoal NavigationGoalManager::get_updated_mining_goal(geom
     }
     return nav_goal;
 }
-
-

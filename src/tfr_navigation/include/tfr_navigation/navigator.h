@@ -25,7 +25,7 @@ class Navigator
     public:
         Navigator(ros::NodeHandle& n,
                 const NavigationGoalManager::GeometryConstraints &constraints,
-                std::string name, std::string bin_frame);
+                const std::string &name, const std::string &bin_frame);
         ~Navigator(){}
         Navigator(const Navigator&) = delete;
         Navigator& operator=(const Navigator&) = delete;

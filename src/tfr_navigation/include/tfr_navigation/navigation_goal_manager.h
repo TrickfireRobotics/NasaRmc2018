@@ -48,6 +48,7 @@ class NavigationGoalManager
 
 
         NavigationGoalManager(const std::string &ref_frame, const GeometryConstraints &constraints);
+        ~NavigationGoalManager() = default;
         NavigationGoalManager(const NavigationGoalManager&) = delete;
         NavigationGoalManager& operator=(const NavigationGoalManager&) = delete;
         NavigationGoalManager(NavigationGoalManager&&) = delete;

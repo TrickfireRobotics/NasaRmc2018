@@ -39,7 +39,7 @@ TEST_F(GoalManager, initializeMiningGoal)
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,1);
 }
 
 TEST_F(GoalManager, initializeDumpingGoal)
@@ -57,7 +57,7 @@ TEST_F(GoalManager, initializeDumpingGoal)
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,1);
 }
 
 TEST_F(GoalManager, badConstraints)
@@ -97,7 +97,7 @@ TEST_F(GoalManager, adjustMiningGoalNeg)
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,1);
 }
 
 
@@ -126,7 +126,7 @@ TEST_F(GoalManager, adjustMiningGoalPos)
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,1);
 }
 
 TEST_F(GoalManager, adjustMiningGoalBigPos)
@@ -153,7 +153,7 @@ TEST_F(GoalManager, adjustMiningGoalBigPos)
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,1);
 }
 
 TEST_F(GoalManager, adjustMiningGoalBigNeg)
@@ -180,7 +180,7 @@ TEST_F(GoalManager, adjustMiningGoalBigNeg)
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,1);
 }
 
 TEST_F(GoalManager, adjustMiningGoalWrongType)
@@ -207,7 +207,7 @@ TEST_F(GoalManager, adjustMiningGoalWrongType)
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,0);
+    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,1);
     std::cout << "Note: you should have seen a warning when running this" 
         <<" test case, this is defined behavior." << std::endl;
 }

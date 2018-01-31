@@ -5,6 +5,7 @@
   ROS Driver for publishing mti sensor sample messages (MTi-1/10/100, MTi-G-700 and FMT devices).
   </description>
   <maintainer email="support@xsens.com">Xsens</maintainer>
+  <author email="collinsconway@gmail.com">Collin Conway</author>
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>

@@ -1,6 +1,11 @@
 <launch>
-    <include file="$(find tfr_launch)/launch/core.launch"/>
+	<include file="$(find tfr_launch)/launch/core.launch"/>
+    <node name="fake_bin" pkg="tf2_ros" type="static_transform_publisher"
+        args="0.2 -0.2 0 0 0 0 odom bin_footprint"/>
+	<include file="$(find tfr_sensor)/launch/sensor_platform.launch"/>
+    <include file="$(find tfr_utilities)/launch/fake_odom.launch"/>
     <include file="$(find tfr_navigation)/launch/action_client.launch"/>
     <include file="$(find tfr_navigation)/launch/action_server.launch"/>
-
+    <include file="$(find tfr_navigation)/launch/navigation.launch"/>
+    <include file="$(find tfr_visualization)/launch/navigation.launch"/>
 </launch>

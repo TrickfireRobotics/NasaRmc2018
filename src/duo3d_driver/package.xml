@@ -6,6 +6,7 @@
   </description>
   <maintainer email="alexp@duo3d.com">Alexander Popovich</maintainer>
   <author>Alexander Popovich</author>
+  <author email="collinsconway@gmail.com">Collin Conway</author>
   <license>BSD</license>
   <url>http://ros.org/wiki/duo3d-ros-driver</url>
   <url type="website">http://www.duo3d.com</url>

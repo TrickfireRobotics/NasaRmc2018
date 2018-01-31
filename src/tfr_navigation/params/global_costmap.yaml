@@ -1,3 +1,4 @@
 global_costmap:
     global_frame: /odom
-    static_map: false
+    width: 20
+    height: 20 

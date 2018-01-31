@@ -1,6 +1,6 @@
 <launch>
     <node pkg="tf2_ros" type="static_transform_publisher" name="duo3d_broadcaster" 
-        args="0.29845 0 0 0 0 0 base_link /duo3d/frame" />
+        args="0.37 0 0.005 0 0 0 base_link /duo3d/frame" />
 
     <node pkg="tf2_ros" type="static_transform_publisher" name="duo3d_camera_broadcaster" 
         args="0 0 0 -1.5707 0 -1.5707 /duo3d/frame /duo3d/camera_frame" />
@@ -9,8 +9,8 @@
         args="0 0 0 -1.5707 0 -1.5707 /duo3d/frame /duo3d/imu_frame" />
 
     <node name="duo3d" pkg="duo3d_driver" type="duo3d_driver">
-        <param name="frame_rate" value="30.0"/>
-        <rosparam param="image_size">[720,480]</rosparam>
+        <param name="frame_rate" value="35"/>
+        <rosparam param="image_size">[640,480]</rosparam>
         <param name="dense3d_license" value="OVMZU-ZHFE2-9K41K-NQL44-WX3DV"/>
         <rosparam command="load" file="$(find tfr_sensor)/params/duo3d.yaml"/>
     </node>

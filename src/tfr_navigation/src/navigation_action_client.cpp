@@ -16,10 +16,10 @@ int main(int argc, char** argv)
     NavigationClient client("navigation_action_server");
     //test preemption
     client.navigate(tfr_msgs::LocationCode::MINING);
-    client.stop_all();
+//    client.stop_all();
     
     //test happy path mining
-    client.navigate(tfr_msgs::LocationCode::MINING);
+//    client.navigate(tfr_msgs::LocationCode::DUMPING);
     for (int i = 0; i < 16; i++)
     {
         ros::spinOnce();
@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 
     
     //test happy path dumping
-    client.navigate(tfr_msgs::LocationCode::DUMPING);
+//    client.navigate(tfr_msgs::LocationCode::DUMPING);
     ros::spin();
     return 0;
 }

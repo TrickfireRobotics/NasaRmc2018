@@ -75,7 +75,7 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
     r.sleep(); //this pause is for debugging only DELETE
 
     //test for completion
-    while (nav_stack.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    while (nav_stack.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         //Deal with preemption or error
         if (server.isPreemptRequested() || !ros::ok()) 

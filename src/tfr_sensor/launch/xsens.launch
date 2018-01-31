@@ -3,7 +3,7 @@
 
     <!--PARAMS-->
     <node pkg="tf2_ros" type="static_transform_publisher" name="xsens_broadcaster" 
-        args="0.1651 0.0762 0 0 0 0 base_link xsens_link" />
+        args="0.235 0.075 0.005 0 0 0 base_link xsens_link" />
 
 
     <!--DRIVER-->

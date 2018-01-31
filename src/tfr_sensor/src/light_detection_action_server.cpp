@@ -17,11 +17,11 @@ class DetectionActionServer
     public:
         DetectionActionServer(ros::NodeHandle &node, const std::string name,
                 const std::string camera_name, int window_size,
-                int threshold) : 
+                double threshold) : 
             n{node},
-            server{n, name, false},
+            server{node, name, false},
             detector{window_size, threshold},
-            it{n}
+            it{node}
         {
             server.registerGoalCallback(
                     boost::bind(&DetectionActionServer::setGoal,this));
@@ -29,6 +29,9 @@ class DetectionActionServer
                     boost::bind(&DetectionActionServer::preempt,this));
             image_subscriber = it.subscribe(camera_name, 5,
                     &DetectionActionServer::detect, this);
+            ROS_INFO("DetectionActionServer starting connection");
+            server.start();
+            ROS_INFO("DetectionActionServer connected");
         }
 
         ~DetectionActionServer() = default;
@@ -40,16 +43,19 @@ class DetectionActionServer
     private:
         void setGoal()
         {
-            ROS_INFO("DetectionActionServer started");
+            ROS_INFO("DetectionActionServer accepted goal");
+            detector.clear();
             server.acceptNewGoal();
         }
         void preempt()
         {
+            ROS_INFO("DetectionActionServer preempted goal");
             server.setPreempted();
         }
         void detect(const sensor_msgs::ImageConstPtr& msg)
         {
-            if (!server.isActive())
+
+            if (!server.isActive() || !ros::ok())
                 return;
             detector.add_image(msg);
             if (detector.is_on())
@@ -69,14 +75,15 @@ int main(int argc, char**argv)
     ros::NodeHandle n;
 
     std::string image_topic;
-    ros::param::param<std::string>("~image_topic", image_topic, "/sensors/aruco_cam");
+    ros::param::param<std::string>("~image_topic", image_topic,
+            "/sensors/rear_cam/image_raw");
     int window_size;
     ros::param::param<int>("~window_size", window_size, 5);
-    int threshold;
-    ros::param::param<int>("~threshold", threshold, 0.2);
+    double threshold;
+    ros::param::param<double>("~threshold", threshold, 0.1);
     
-    DetectionActionServer(n, ros::this_node::getName(), image_topic,
-            window_size, threshold);
+    DetectionActionServer server{n, "light_detection", image_topic,
+            window_size, threshold};
 
     ros::spin();
     return 0;

@@ -1,6 +1,7 @@
 #ifndef LIGHT_DETECTOR_H
 #define LIGHT_DETECTOR_H
 
+#include <ros/ros.h>
 #include <ros/console.h>
 #include <deque>
 #include <image_transport/image_transport.h>
@@ -23,8 +24,8 @@ class LightDetector
          * threshold - as a ratio, how much or a brightness increase is
          * considered turning the light on.
          * */
-        LightDetector(int w, int t): 
-            brightness{}, width{w}, threshold{threshold} {};
+        LightDetector(int w, double t): 
+            brightness{}, width{w}, threshold{t} {};
 
         ~LightDetector() = default;
         LightDetector(const LightDetector&) = delete;
@@ -36,12 +37,13 @@ class LightDetector
         void add_image(const sensor_msgs::ImageConstPtr& msg);
         //has the light been turned on?
         bool is_on();
+        void clear();
     private:
 
         struct ColorStats { double r_ave, g_ave, b_ave; };
 
         std::deque<ColorStats> brightness;
         int width;
-        int threshold;
+        double threshold;
 };
 #endif

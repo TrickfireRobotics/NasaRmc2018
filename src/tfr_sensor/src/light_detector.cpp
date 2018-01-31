@@ -6,15 +6,14 @@
 void LightDetector::add_image(const sensor_msgs::ImageConstPtr& msg)
 {
     //manage the moving average
-    if (brightness.size() >= threshold)
+    if (brightness.size() >= width)
         brightness.pop_back();
-
+    
     //convert out of std ros image
-    cv_bridge::CvImagePtr cv_ptr;
+    cv::Mat image;
     try
     {
-        cv_ptr = cv_bridge::toCvCopy(msg,
-                sensor_msgs::image_encodings::BGR8);
+        image = cv_bridge::toCvCopy(msg)->image;
     }
     catch (cv_bridge::Exception& e)
     {
@@ -22,31 +21,18 @@ void LightDetector::add_image(const sensor_msgs::ImageConstPtr& msg)
                 e.what());
         return;
     }
+    cv::Scalar intensities = cv::sum(image);
 
-	//prealllocate loop constants for speed
-    int rows = cv_ptr->image.rows;
-    int cols = cv_ptr->image.cols * cv_ptr->image.channels();
-    int i{},j{};
     ColorStats stats{};
-    cv::Vec3f intensity{};
-
-	//optimization from opencv tutorials
-    if (cv_ptr->image.isContinuous())
+    auto scale = [&image] (const double &intensity) 
     {
-        cols *= rows;
-        rows = 1;
-    }
+        return intensity/(image.rows*image.cols);
+    };
 
-    for( i = 0; i < rows; ++i)
-    {
-        for ( j = 0; j < cols; ++j)
-        {
-        	intensity = cv_ptr->image.at<cv::Vec3f>(i, j);
-        	stats.r_ave += intensity[0]/255.0;
-        	stats.g_ave += intensity[1]/255.0;
-        	stats.b_ave += intensity[2]/255.0;
-		}
-    }
+    //note we have to reverse out of native cv bgr ordering
+    stats.r_ave=scale(intensities[2]);
+    stats.g_ave=scale(intensities[1]);
+    stats.b_ave=scale(intensities[0]);
 
     brightness.push_front(stats);
 }
@@ -56,34 +42,44 @@ void LightDetector::add_image(const sensor_msgs::ImageConstPtr& msg)
  * */
 bool LightDetector::is_on()
 {
-    //this algorithm isn't defined for one element
-    if (brightness.size() < 2)
+    //we want a full window this will take 1/20th of a second to fill
+    if (brightness.size() < width)
         return false;
 
-    ColorStats total;
-    int ave_size = brightness.size() -1;
-
+    ColorStats total{};
+    int ave_size = brightness.size() -  1;
     /*
      *Get an average of the color channels for every element exept for the most
      recent addition to the average.
      * */
     std::for_each(++brightness.begin(), brightness.end(), 
-            [&total, ave_size] (const ColorStats &stats)
+            [&total, &ave_size] (const ColorStats &stat)
             {
-                total.r_ave += stats.r_ave/ave_size;
-                total.r_ave += stats.r_ave/ave_size;
-                total.r_ave += stats.r_ave/ave_size;
+                total.r_ave += stat.r_ave/ave_size;
+                total.g_ave += stat.g_ave/ave_size;
+                total.b_ave += stat.b_ave/ave_size;
             });
 
-    auto ave_brightness = [](const ColorStats & stats)
+    //ROS_INFO("int: %f %f %f", total.r_ave, total.g_ave, total.b_ave);
+    ColorStats recent = brightness.front();
+
+    auto amalgamate = [](const ColorStats &c)
     {
-        return (stats.r_ave + stats.g_ave + stats.b_ave)/3.0;
+        return (c.r_ave + c.g_ave + c.b_ave)/3;
     };
+    double recent_ave = amalgamate(recent);
+    double total_ave = amalgamate(total);
 
-    double total_ave = ave_brightness(total);
-    double recent_ave = ave_brightness(brightness.front());
+    //lets keep this for when we tune it to a color
+    //ROS_INFO("frame_calculated, recent- total: %f, threshold: %f", recent_ave - total_ave , threshold*total_ave);
+    return (recent_ave - total_ave) > threshold*total_ave;
+}
 
-    ROS_DEBUG("frame_calculated, total brightness: %f, recent brightness: %f",
-            total_ave, recent_ave);
-    return (recent_ave - total_ave) > threshold;
+/*
+ * clear out the average
+ */
+void LightDetector::clear()
+{
+    brightness.clear();
+
 }

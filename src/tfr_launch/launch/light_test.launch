@@ -1,0 +1,8 @@
+<launch>
+    <node name="camera" pkg="cv_camera" type="cv_camera_node" output="screen" >
+        <remap from="/camera/image_raw" to="/sensors/rear_cam/image_raw"/>
+        <remap from="/camera/camera_info" to="/sensors/rear_cam/camera_info"/>
+    </node>
+    <node name="light_detection_action_server" pkg="tfr_sensor" type="light_detection_action_server" output="screen" />
+    <node name="light_detection_action_client" pkg="tfr_sensor" type="light_detection_action_client" output="screen"/>
+</launch>

@@ -36,9 +36,12 @@ include_directories(
 add_library(light_detector
     src/light_detector.cpp
 )
+add_dependencies(light_detector ${catkin_EXPORTED_TARGETS})
 
 add_executable(light_detection_action_server ./src/light_detection_action_server.cpp)
 target_link_libraries(light_detection_action_server light_detector ${catkin_LIBRARIES})
+add_executable(light_detection_action_client ./src/light_detection_action_client.cpp)
+target_link_libraries(light_detection_action_client light_detector ${catkin_LIBRARIES})
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 

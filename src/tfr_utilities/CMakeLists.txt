@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   tfr_msgs
   actionlib
+  tf
   geometry_msgs
   tf
   tf2

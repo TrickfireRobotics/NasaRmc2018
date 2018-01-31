@@ -62,10 +62,10 @@ move_base_msgs::MoveBaseGoal NavigationGoalManager::get_updated_mining_goal(geom
     if (location_code == tfr_msgs::NavigationGoal::TO_MINING){
         nav_goal.target_pose.header.stamp =ros::Time::now();
         //TODO integrate reference frame when bin tf publisher is finished
-        double v_position = msg.position.y; 
-        int sign = (v_position > 0) ? 1 : -1;
+        double y_position = msg.position.y; 
+        int sign = (y_position > 0) ? 1 : -1;
         nav_goal.target_pose.pose.position.y = sign*std::min(
-                constraints.get_mining_line_length()/2, std::abs(v_position));
+                constraints.get_mining_line_length()/2, std::abs(y_position));
     }
     else 
     {
@@ -73,5 +73,3 @@ move_base_msgs::MoveBaseGoal NavigationGoalManager::get_updated_mining_goal(geom
     }
     return nav_goal;
 }
-
-

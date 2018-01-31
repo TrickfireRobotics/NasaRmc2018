@@ -1,6 +1,0 @@
-<launch>
-    <node pkg="hector_mapping" type="hector_mapping" name="hector_height_mapping" output="screen">
-        <rosparam command="load" file="$(find tfr_navigation)/params/hector_params.yaml"/>
-       <remap from="map" to="height_map" />
-    </node>
-</launch>

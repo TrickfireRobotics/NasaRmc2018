@@ -9,9 +9,15 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rospy
+  nav_msgs
+  sensor_msgs
+  geometry_msgs
   tfr_msgs
   actionlib
+  tf
   geometry_msgs
+  tf
   tf2
   tf2_ros
   tf2_geometry_msgs
@@ -23,8 +29,8 @@ find_package(GTest REQUIRED)
 # Uncomment each if the dependent project requires it
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME} tf_manipulator
-  CATKIN_DEPENDS roscpp tfr_msgs actionlib geometry_msgs tf2 tf2_ros tf2_geometry_msgs
+  LIBRARIES ${PROJECT_NAME}
+  DEPENDS tf message_runtime sensor_msgs geometry_msgs nav_msgs
 #  DEPENDS system_lib
 )
 

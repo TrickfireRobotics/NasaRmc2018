@@ -2,7 +2,7 @@ accel_range: 0
 auto_exposure: true
 camera_swap: false
 exposure: 55.0
-gain: 50.0
+gain: 25.0
 gyro_range: 0
 horizontal_flip: false
 image_scale: 3 

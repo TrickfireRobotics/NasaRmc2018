@@ -6,11 +6,10 @@
  * */
 Navigator::Navigator(ros::NodeHandle &n,
         const NavigationGoalManager::GeometryConstraints &constraints, 
-        std::string name) : node{n}, 
-        goal_manager(constraints),
+        std::string name, std::string bin_frame) : node{n}, 
+        goal_manager(bin_frame,constraints),
         server{n, name, boost::bind(&Navigator::navigate, this, _1) ,false}, 
         nav_stack{"move_base", true},
-        navigation{navigation_label, true},
         action_name{name}
 {
     ROS_DEBUG("Navigation server constructed %f", ros::Time::now().toSec());
@@ -54,12 +53,11 @@ Navigator::Navigator(ros::NodeHandle &n,
  * */
 void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
 {
+    auto code = static_cast<tfr_msgs::LocationCode>(goal->location_code);
     ROS_INFO("Navigation server started");
-
     //start with initial goal
-    goal_manager.location_code = goal->location_code;
-    nav_goal = goal_manager.initialize_goal();
-    nav_stack.sendGoal(goal);
+    nav_goal = goal_manager.initialize_goal(code);
+    nav_stack.sendGoal(nav_goal);
 
     ros::Rate r(rate);  
     r.sleep(); //this pause is for debugging only DELETE
@@ -74,16 +72,15 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
             nav_stack.cancelAllGoals();
             update_result();
             server.setPreempted(result);
-            success = false;
             return;
         }
         //main case, update nav goal
         else
         {
-            if (goal_manager.location_code == tfr_msgs::NavigationGoal::TO_MINING)
+            if (code == tfr_msgs::LocationCode::MINING)
             {
                 nav_goal = goal_manager.get_updated_mining_goal(current_position.pose.pose);
-                nav_stack.sendGoal(goal);
+                nav_stack.sendGoal(nav_goal);
             }
 
             update_feedback();
@@ -98,7 +95,7 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
     {
         server.setSucceeded(result);
     }
-    else (false)
+    else 
     {
         nav_stack.cancelAllGoals();
         server.setAborted(result);
@@ -110,7 +107,7 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
 /*
  * Prepare a feedback message for sending
  * */
-void Navigatore::update_result()
+void Navigator::update_result()
 {
     result.header.stamp = ros::Time::now();
     result.header.frame_id = frame_id;
@@ -121,7 +118,7 @@ void Navigatore::update_result()
 /*
  * Prepare a feedback message for sending
  * */
-void Navigatore::update_feedback()
+void Navigator::update_feedback()
 {
     feedback.header.stamp = ros::Time::now();
     feedback.header.frame_id = frame_id;

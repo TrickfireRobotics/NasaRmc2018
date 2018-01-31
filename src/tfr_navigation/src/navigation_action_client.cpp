@@ -1,6 +1,7 @@
 #include<ros/ros.h>
 #include<navigation_client.h>
 #include<tfr_msgs/NavigationAction.h>
+#include<tfr_msgs/location_codes.h>
 
 /**
  *  Main entry point for test class of navigation action server, eventually
@@ -14,11 +15,11 @@ int main(int argc, char** argv)
 
     NavigationClient client("navigation_action_server");
     //test preemption
-    client.navigate(tfr_msgs::NavigationGoal::TO_MINING);
+    client.navigate(tfr_msgs::LocationCode::MINING);
     client.stop_all();
     
     //test happy path mining
-    client.navigate(tfr_msgs::NavigationGoal::TO_MINING);
+    client.navigate(tfr_msgs::LocationCode::MINING);
     for (int i = 0; i < 16; i++)
     {
         ros::spinOnce();
@@ -27,7 +28,7 @@ int main(int argc, char** argv)
 
     
     //test happy path dumping
-    client.navigate(tfr_msgs::NavigationGoal::TO_DUMPING);
+    client.navigate(tfr_msgs::LocationCode::DUMPING);
     ros::spin();
     return 0;
 }

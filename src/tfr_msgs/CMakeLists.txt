@@ -49,9 +49,9 @@ generate_messages(
 # These are all for exporting to dependent packages/projects.
 # Uncomment each if the dependent project requires it
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES tfr_msgs
-  CATKIN_DEPENDS roscpp std_msgs message_runtime actionlib actionlib_msgs
+#  CATKIN_DEPENDS roscpp std_msgs message_runtime actionlib actionlib_msgs
 #  DEPENDS system_lib
 )
 
@@ -60,4 +60,10 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+)
+
+#install shared headers
+install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+    FILES_MATCHING PATTERN "*.h"
 )

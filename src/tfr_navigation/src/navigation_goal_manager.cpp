@@ -1,10 +1,10 @@
 #include <navigation_goal_manager.h>
 
 NavigationGoalManager::NavigationGoalManager(const std::string &frame, 
-        const GeometryConstraints &c, 
-        uint8_t code): reference_frame{frame}, constraints{c}, location_code{code}
+        const GeometryConstraints &c 
+        ): reference_frame{frame}, constraints{c},
+    goal{tfr_msgs::LocationCode::UNSET}
 {
-    initialize_goal();
     //NOTE ros is not really big on runtime exceptions,  I'll post an annoying
     //warning at startup
     if (    constraints.get_safe_mining_distance() < 0 || 
@@ -23,34 +23,32 @@ NavigationGoalManager::NavigationGoalManager(const std::string &frame,
     
 }
 
-NavigationGoalManager::NavigationGoalManager(const std::string &frame, 
-        const GeometryConstraints &c):
-        NavigationGoalManager{frame, c, tfr_msgs::NavigationGoal::UNSET} {}
-
-
 /**
  *  Initializes the goal based on the location code, flashes a warning if it's
  *  not recognized.
  * */
-move_base_msgs::MoveBaseGoal NavigationGoalManager::initialize_goal() {
+move_base_msgs::MoveBaseGoal NavigationGoalManager::initialize_goal(
+        tfr_msgs::LocationCode new_goal) {
+    goal = new_goal;
     nav_goal.target_pose.header.stamp = ros::Time::now();
     //TODO integrate the bin reference frame here, upon completion of
     //the bin transform publisher
-    switch(location_code)
+    switch(goal)
     {
-        case(tfr_msgs::NavigationGoal::TO_MINING):
+        case(tfr_msgs::LocationCode::MINING):
             nav_goal.target_pose.pose.position.x =
                 constraints.get_safe_mining_distance();
             //TODO 
             break;
-        case(tfr_msgs::NavigationGoal::TO_DUMPING):
+        case(tfr_msgs::LocationCode::DUMPING):
             nav_goal.target_pose.pose.position.x = constraints.get_finish_line();
             break;
-        case(tfr_msgs::NavigationGoal::UNSET):
+        case(tfr_msgs::LocationCode::UNSET):
             //leave it alone
             break;
         default:
-            ROS_WARN("location_code %d not recognized", location_code);
+            ROS_WARN("location_code %u not recognized",
+                    static_cast<uint8_t>(goal));
     }
     return nav_goal;
 }
@@ -61,7 +59,7 @@ move_base_msgs::MoveBaseGoal NavigationGoalManager::initialize_goal() {
  */
 move_base_msgs::MoveBaseGoal NavigationGoalManager::get_updated_mining_goal(geometry_msgs::Pose msg)
 {
-    if (location_code == tfr_msgs::NavigationGoal::TO_MINING){
+    if (goal == tfr_msgs::LocationCode::MINING){
         nav_goal.target_pose.header.stamp =ros::Time::now();
         //TODO integrate reference frame when bin tf publisher is finished
         double v_position = msg.position.y; 
@@ -71,7 +69,8 @@ move_base_msgs::MoveBaseGoal NavigationGoalManager::get_updated_mining_goal(geom
     }
     else 
     {
-        ROS_WARN("only can update mining goal, your goal: %d", location_code);
+        ROS_WARN("only can update mining goal, your goal: %u",
+                static_cast<uint8_t>(goal));
     }
     return nav_goal;
 }

@@ -60,6 +60,7 @@ int main(int argc, char** argv)
     goal.goal = "Do the thing!";
 
     // Callback functions: Result, Start, Feedback
+    //note we must use NULL not nullptr, or boost error
     client.sendGoal(goal, &finished, NULL, &feedback);
 
     ros::spin();

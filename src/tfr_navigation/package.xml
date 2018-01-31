@@ -14,8 +14,10 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <test_depend>gtest</test_depend>
-  <depend>rtabmap_ros</depend>
-  <depend>rtabmap</depend>
   <depend>roscpp</depend>
+  <depend>tfr_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>actionlib</depend>
 
 </package>

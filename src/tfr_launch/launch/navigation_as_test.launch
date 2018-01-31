@@ -1,0 +1,6 @@
+<launch>
+    <include file="$(find tfr_launch)/launch/core.launch"/>
+    <include file="$(find tfr_navigation)/launch/action_client.launch"/>
+    <include file="$(find tfr_navigation)/launch/action_server.launch"/>
+
+</launch>

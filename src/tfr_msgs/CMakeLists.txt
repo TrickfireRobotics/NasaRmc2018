@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   geometry_msgs
   actionlib_msgs
+  geometry_msgs
   actionlib
 )
 
@@ -28,6 +29,7 @@ add_message_files(
 add_action_files(
   FILES
   Example.action
+  Navigation.action
 )
 
 # Generate added messages and services with any dependencies listed here

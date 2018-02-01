@@ -21,7 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(GTest REQUIRED)
 
 catkin_package(
-#  INCLUDE_DIRS include
+    #  INCLUDE_DIRS include
 #  LIBRARIES tfr_sensor
 #  CATKIN_DEPENDS roscpp sensor_msgs cv_bridge
 #  DEPENDS OpenCV
@@ -38,8 +38,13 @@ add_library(light_detector
 )
 add_dependencies(light_detector ${catkin_EXPORTED_TARGETS})
 
+add_executable(image_topic_wrapper ./src/image_topic_wrapper.cpp)
+add_dependencies(image_topic_wrapper ${catkin_EXPORTED_TARGETS})
+target_link_libraries(image_topic_wrapper ${catkin_LIBRARIES})
+
 add_executable(light_detection_action_server ./src/light_detection_action_server.cpp)
 target_link_libraries(light_detection_action_server light_detector ${catkin_LIBRARIES})
+
 add_executable(light_detection_action_client ./src/light_detection_action_client.cpp)
 target_link_libraries(light_detection_action_client light_detector ${catkin_LIBRARIES})
 

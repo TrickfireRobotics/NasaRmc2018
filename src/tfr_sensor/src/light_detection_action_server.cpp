@@ -1,7 +1,7 @@
 #include <ros/ros.h>
 #include <ros/console.h>
 #include <light_detector.h>
-#include <tfr_msgs/LightDetectAction.h>
+#include <tfr_msgs/EmptyAction.h>
 #include <actionlib/server/simple_action_server.h>
 #include <image_transport/image_transport.h>
 
@@ -62,7 +62,7 @@ class DetectionActionServer
         }
 
         ros::NodeHandle &n;
-        actionlib::SimpleActionServer<tfr_msgs::LightDetectAction> server;
+        actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
         LightDetector detector;
         image_transport::ImageTransport it;
         image_transport::Subscriber image_subscriber;

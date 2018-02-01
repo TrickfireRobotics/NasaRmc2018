@@ -34,7 +34,7 @@ add_action_files(
   Navigation.action
   Bin.action
   Aruco.action
-  LightDetect.action
+  Empty.action
 )
 
 # Generate added messages and services with any dependencies listed here

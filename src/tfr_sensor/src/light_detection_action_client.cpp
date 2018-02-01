@@ -1,7 +1,7 @@
 #include <ros/ros.h>
 #include <ros/console.h>
 #include <actionlib/client/simple_action_client.h>
-#include <tfr_msgs/LightDetectAction.h>
+#include <tfr_msgs/EmptyAction.h>
 
 /**
  *  Test code to never be used again, demonstrates light detection functionality
@@ -10,13 +10,13 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "light_detection_action_client");
     ros::NodeHandle n;
-    actionlib::SimpleActionClient<tfr_msgs::LightDetectAction> client(
+    actionlib::SimpleActionClient<tfr_msgs::EmptyAction> client(
             "light_detection", true);
 
     ROS_INFO("waiting for detection action server to start");
     client.waitForServer();
     ROS_INFO("client connected");
-    tfr_msgs::LightDetectGoal goal{};
+    tfr_msgs::EmptyGoal goal{};
     
     client.sendGoal(goal);
     ros::Duration(0.5).sleep();
@@ -28,5 +28,3 @@ int main(int argc, char** argv)
     ROS_INFO("light detected! success");
     return 0;
 }
-
-

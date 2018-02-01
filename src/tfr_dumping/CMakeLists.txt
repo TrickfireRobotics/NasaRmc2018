@@ -5,6 +5,12 @@ add_compile_options(-std=c++11)
 
 
 find_package(catkin REQUIRED COMPONENTS
+    roscpp
+    actionlib
+    tfr_msgs
+    geometry_msgs
+    sensor_msgs
+    image_transport
 )
 
 find_package(GTest REQUIRED)
@@ -18,6 +24,12 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
     ${GTEST_INCLUDE_DIRS}
 )
+
+add_executable(dumping_action_server
+    src/dumping_action_server.cpp
+)
+add_dependencies(dumping_action_server ${catkin_EXPORTED_TARGETS})
+target_link_libraries(dumping_action_server ${catkin_LIBRARIES})
 
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")

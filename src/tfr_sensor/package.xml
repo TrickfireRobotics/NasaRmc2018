@@ -22,5 +22,4 @@
   <exec_depend>tfr_utilities</exec_depend>
   <exec_depend>xsens_driver</exec_depend>
   <exec_depend>duo3d_driver</exec_depend>
-
 </package>

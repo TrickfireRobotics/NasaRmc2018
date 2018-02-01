@@ -30,20 +30,33 @@ namespace tfr_control
         registerInterface(&joint_effort_interface);
     }
 
-    void Controller::read() {
+    // Return true if bin is finished moving to its new position.
+    // TODO: A more explicit return type might be better here, or a possible redesign.
+    //       If other values read end up needing to be returned, then this should 
+    //       probably return some data structure. It may be that read values get published
+    //       out on topics instead.
+    bool Controller::read() 
+    {
         // TODO: Waiting on further hardware development to implement
+
+        // Return true if bin has finished moving to its new position.
+        return false;
     }
 
-    void Controller::write() {
+    void Controller::write() 
+    {
         // TODO: Waiting on further hardware development to implement
-        if (use_fake_values) {
+        if (use_fake_values) 
+        {
             // Update all actuators velocity with the command (effort in).
             // Then update the position as derivative of the velocity over time.
-            for (int i = 0; i < kControllerCount; i++) {
+            for (int i = 0; i < kControllerCount; i++) 
+            {
                 velocity_values[i] = command_values[i];
                 position_values[i] += velocity_values[i] * get_update_time();
                 // If this joint has limits, clamp the range down
-                if (abs(lower_limits[i]) >= 1E-3 || abs(upper_limits[i]) >= 1E-3) {
+                if (abs(lower_limits[i]) >= 1E-3 || abs(upper_limits[i]) >= 1E-3) 
+                {
                     position_values[i] = std::max(std::min(position_values[i], upper_limits[i]), lower_limits[i]);
                 }
             }
@@ -52,7 +65,8 @@ namespace tfr_control
         prev_time = ros::Time::now();
     }
     
-    void Controller::register_joint(std::string joint, Actuator actuator) {
+    void Controller::register_joint(std::string joint, Actuator actuator) 
+    {
         JointStateHandle state_handle(joint, &position_values[actuator],
         &velocity_values[actuator], &effort_values[actuator]);
         joint_state_interface.registerHandle(state_handle);
@@ -61,7 +75,8 @@ namespace tfr_control
         joint_effort_interface.registerHandle(handle);
     }
 
-    double Controller::get_update_time() {
+    double Controller::get_update_time() 
+    {
         return (ros::Time::now() - prev_time).nsec / 1E9;
     }
 }

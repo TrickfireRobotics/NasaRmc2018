@@ -10,6 +10,7 @@
 #include <sstream>
 #include <controller_manager/controller_manager.h>
 #include "controller.h"
+#include "bin_control_server.h"
 
 // Whether we're running on hardware or using fake values
 const bool use_fake_values = true;
@@ -20,6 +21,10 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "controller_launcher");
     ros::NodeHandle n;
 
+    float bin_target_angle;
+    n.param<float>("target_bin_angle", bin_target_angle, 0.785); // ~pi/4
+    BinControlServer bin_server(n, bin_target_angle);
+
     // Start a spinner with one thread, we don't need any more than that
     // This is actually required (vs calling ros::spinOnce() in the loop)
     // by ControllerManager for some reason, as I found in testing.
@@ -29,20 +34,24 @@ int main(int argc, char **argv)
     // If we're faking the inputs, we need to know the model constraints on
     // the arm: load them here.
     // If not, just use zeroes, the limits don't matter.
-    double lower_limits[tfr_control::Controller::kControllerCount] = {}, upper_limits[tfr_control::Controller::kControllerCount] = {};
+    double lower_limits[tfr_control::Controller::kControllerCount] = {};
+    double upper_limits[tfr_control::Controller::kControllerCount] = {};
 
-    if (use_fake_values) {
+    if (use_fake_values) 
+    {
         // Get the model description 
         std::string desc;
         n.param<std::string>("robot_description", desc, "");
     
-        if (desc.length() == 0) {
+        if (desc.length() == 0) 
+        {
             ROS_ERROR("robot_description is empty and controller_launcher is using fake values, quitting.");
             return -1;
         }
 
         urdf::Model model;
-        if (!model.initString(desc)) {
+        if (!model.initString(desc)) 
+        {
             ROS_ERROR("Couldn't load robot_description, quitting.");
             return -1;
         }
@@ -73,7 +82,10 @@ int main(int argc, char **argv)
 
         // Read to and write from hardware based on values from the
         // controller_manager
-        controller.read();
+        if (controller.read())
+        {
+            bin_server.SignalBinController();
+        }
         cm.update(now, now - then);
         controller.write();
 

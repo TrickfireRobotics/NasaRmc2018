@@ -1,7 +1,0 @@
-# request
-uint8 state
-uint8 ERROR_ENCOUNTERED = 0
-uint8 BIN_RAISED = 1
-uint8 BIN_LOWERED = 2
----
-# response

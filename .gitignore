@@ -2,3 +2,4 @@
 build/*
 devel/*
 *.pyc
+src/CMakeLists.txt

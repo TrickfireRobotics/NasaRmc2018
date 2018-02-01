@@ -2,16 +2,21 @@
 #include <boost/bind.hpp>
 #include "std_msgs/Float64.h"
 
+
+// I could also pass in the name of the server, but it would end up being a literal
+// string anyway unless it also gets passed into the node, which seems a bit excessive.
+// If it's going to be a literal string we might as well put it as close to its destination
+// as possible so it's clear what it's being used for.
 BinControlServer::BinControlServer(ros::NodeHandle& n, float target_bin_angle) : node{n}, 
     server{n, "bin_control", boost::bind(&BinControlServer::ControlBin, this, _1), false},
-    TARGET_BIN_ANGLE{target_bin_angle}
+    TARGET_BIN_ANGLE{target_bin_angle}, signal_mutex{}, bin_task_completed{false}
 {
-    bin_signal_service = node.advertiseService("signal_bin_state", &BinControlServer::SignalBinController, this);
     bin_command_publisher = node.advertise<std_msgs::Float64>(
-            "left_tread_velocity_controller/command", 100);
+            "bin_position_controller/command", 100);
     server.start();
 }
 
+// Action Server callback function
 void BinControlServer::ControlBin(const tfr_msgs::BinGoalConstPtr& goal)
 {
     std_msgs::Float64 command;
@@ -35,16 +40,25 @@ void BinControlServer::ControlBin(const tfr_msgs::BinGoalConstPtr& goal)
         return;
     }
 
-    while (true)
+    // unlocked by the wait() call
+    std::unique_lock<std::mutex> signal_lock(signal_mutex);
+    while (!bin_task_completed)
     {
-        // wait for hardware interface to signal bin is ready
+        // TODO: Instead of using the signal.wait() semantics, we could check for preemptions in a 
+        //       polling loop here, but I don't think there's an easy way to tell the hardware_interface
+        //       to simply stop moving the bin; it takes in a target angle and simply goes until it gets 
+        //       there. If we think supporting preemption is important for this component, we can 
+        //       investigate further options.
 
-        // TODO: We could check for preemptions here, but I don't think there's an easy way to tell
-        //       the hardware_interface to simply stop moving the bin; it takes in a target angle 
-        //       and simply goes until it gets there. If we think supporting preemption is important
-        //       for this component, we can investigate further options.
-
-        break;
+        // http://en.cppreference.com/w/cpp/thread/condition_variable 
+        // https://stackoverflow.com/questions/16350473/why-do-i-need-stdcondition-variable
+        // wait() will release the lock. Sometimes the signal will be notified by accident, so
+        // a check on bin_task_completed is required. wait() reaquires the lock after it unblocks.
+        signal.wait(signal_lock);
+        if (!bin_task_completed)
+        {
+            break;
+        }
     }
 
     if (goal->command_code == goal->RAISE_BIN)
@@ -59,7 +73,10 @@ void BinControlServer::ControlBin(const tfr_msgs::BinGoalConstPtr& goal)
     server.setSucceeded(result);
 }
 
-bool BinControlServer::SignalBinController(tfr_msgs::BinState::Request &request, tfr_msgs::BinState::Response &resonse)
+void BinControlServer::SignalBinController()
 {
-
+    // unlocks when it falls out of scope
+    std::unique_lock<std::mutex> signal_lock(signal_mutex);
+    bin_task_completed = true;
+    signal.notify_one();
 }

@@ -32,6 +32,7 @@ add_action_files(
   FILES
   Example.action
   Navigation.action
+  Bin.action
   Aruco.action
 )
 

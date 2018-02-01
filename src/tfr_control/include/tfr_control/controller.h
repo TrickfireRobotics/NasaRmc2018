@@ -29,7 +29,7 @@ namespace tfr_control {
         static const int kControllerCount = 7;
 
         Controller(bool fakes, const double lower_lim[kControllerCount], const double upper_lim[kControllerCount]);
-        void read();
+        bool read();
         void write();
     private:
         hardware_interface::JointStateInterface joint_state_interface;

@@ -55,7 +55,7 @@ void Dumper::dump(const tfr_msgs::EmptyGoalConstPtr &goal)
     while (detector.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         //handle preemption
-        if (server.isPreemptRequested || !ros::ok())
+        if (server.isPreemptRequested() || !ros::ok())
         {
             stop_moving();
             server.setPreempted();
@@ -71,17 +71,17 @@ void Dumper::dump(const tfr_msgs::EmptyGoalConstPtr &goal)
         else
         {
             update_control_msg(estimate);
-            publisher.send(msg);
+            velocity_publisher.publish(cmd);
         }
     }
     stop_moving();
-    server.setSucceded();
+    server.setSucceeded();
 }
 
 /*
  *  Back up and turn slightly to match the orientation of the aruco board
  * */
-void update_control_msg(const tfr_msgs::ArucoIntegrateResult &estimate)
+void Dumper::update_control_msg(const tfr_msgs::ArucoIntegrateResult &estimate)
 {
     //back up
     cmd.linear.x = -1 * constraints.get_max_lin_vel();
@@ -96,30 +96,30 @@ void update_control_msg(const tfr_msgs::ArucoIntegrateResult &estimate)
      *
      * This conforms to rep 103
      * */
-    int sign = (estimate.pose.translation.y < 0) -1 : 1;
+    int sign = (estimate.pose.position.y < 0) ? -1 : 1;
     cmd.angular.z = sign*constraints.get_max_ang_vel();
 }
 
 /*
  * back up slowwwwly we can't see
  * */
-void move_blind()
+void Dumper::move_blind()
 {
     ROS_INFO("backing up blind");
     cmd.linear.x = -1*constraints.get_min_lin_vel();
     cmd.angular.z = 0;
-    publisher.send(slow);
+    velocity_publisher.publish(cmd);
 }
 
 /*
  *  Stop Moving 
  * */
-void stop_moving()
+void Dumper::stop_moving()
 {
     ROS_INFO("Stopped");
     cmd.linear.x = 0;
     cmd.angular.z =0;
-    publisher.send(cmd);
+    velocity_publisher.publish(cmd);
 }
 
 /*
@@ -130,27 +130,35 @@ tfr_msgs::ArucoIntegrateResult Dumper::get_aruco_estimate()
     tfr_msgs::WrappedImage image_request{};
     tfr_msgs::ArucoIntegrateGoal goal{};
     //grab the most recent image
-    goal.image = client.call(image_request).response.image;
+    image_client.call(image_request);
+    goal.image = image_request.response.image;
     //TODO hook up aruco here
-    tfr_msgs::ArucoIntegrateResponse response{};
-    response.markers_detected = 1;
-    return response;
+    tfr_msgs::ArucoIntegrateResult result{};
+    result.markers_detected = 1;
+    result.pose.position.x= 0.5;
+    result.pose.position.y= -0.1;
+    result.pose.position.z= -0.02;
+    result.pose.orientation.x = 0;
+    result.pose.orientation.y = 0;
+    result.pose.orientation.z = 1;
+    result.pose.orientation.w = 0;
+    return result;
 }
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "dumping_action_server");
     ros::NodeHandle n;
-    int min_lin_vel, max_lin_vel, min_ang_vel, max_ang_vel;
-    ros::param::param<int>("~min_lin_vel",min_lin_vel, 0);
-    ros::param::param<int>("~max_lin_vel",max_lin_vel, 0);
-    ros::param::param<int>("~min_ang_vel",min_ang_vel, 0);
-    ros::param::param<int>("~max_ang_vel",max_ang_vel, 0);
+    double min_lin_vel, max_lin_vel, min_ang_vel, max_ang_vel;
+    ros::param::param<double>("~min_lin_vel",min_lin_vel, 0);
+    ros::param::param<double>("~max_lin_vel",max_lin_vel, 0);
+    ros::param::param<double>("~min_ang_vel",min_ang_vel, 0);
+    ros::param::param<double>("~max_ang_vel",max_ang_vel, 0);
     std::string service_name;
     ros::param::param<std::string>("~image_service_name", service_name, "");
     Dumper::DumpingConstraints constraints(min_lin_vel, max_lin_vel,
             min_ang_vel, max_ang_vel);
-    Dumper::Dumper dumper(n, service_name, constraints);
+    Dumper dumper(n, service_name, constraints);
     ros::spin();
     return 0;
 }

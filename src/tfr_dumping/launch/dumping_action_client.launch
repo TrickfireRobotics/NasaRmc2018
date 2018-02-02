@@ -1,0 +1,3 @@
+<launch>
+    <node name="dumping_action_client" pkg="tfr_dumping" type="dumping_action_client" output="screen"/>
+</launch>

@@ -3,7 +3,7 @@
 #empty
 sensor_msgs/Image image
 ---
-#empty
----
 geometry_msgs/Pose pose
 int32 markers_detected
+---
+#empty

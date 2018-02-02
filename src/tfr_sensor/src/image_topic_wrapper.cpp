@@ -17,6 +17,7 @@
  * tfr_msgs::WrappedImage (srv)
  * */
 #include <ros/ros.h>
+#include <ros/console.h>
 #include <sensor_msgs/Image.h>
 #include <image_transport/image_transport.h>
 #include <tfr_msgs/WrappedImage.h>
@@ -28,7 +29,7 @@ class ImageWrapper
         ImageWrapper(ros::NodeHandle &n, const std::string &camera_topic,
                 const std::string &service_name)
         {
-            image_transport::ImageTransport it(n);
+            image_transport::ImageTransport it{n};
             subscriber = it.subscribe(camera_topic, 20, &ImageWrapper::set_current, this);
             server = n.advertiseService(service_name, &ImageWrapper::get_current, this);
         }
@@ -42,23 +43,26 @@ class ImageWrapper
     private:
 
         //subscription callback
-        void set_current(const sensor_msgs::ImageConstPtr &image)
+        void set_current(const sensor_msgs::ImageConstPtr &i)
         {
-            //this is safe because of smart pointers and non threaded spinning
-            current = *image;
+            //this is safe because of shared pointers and non threaded spinning
+            image = i;
         }
 
         //service callback
         bool get_current(tfr_msgs::WrappedImage::Request &request,
                 tfr_msgs::WrappedImage::Response &response)
         {
-            response.image = current;
+            /* we need some time to let the camera warm up and start publishing,
+             * so nullptr check needed*/
+            if (image != nullptr)
+                response.image = *image;
             return true;
         }
         
         image_transport::Subscriber subscriber;
         ros::ServiceServer server;
-        sensor_msgs::Image current{};
+        sensor_msgs::ImageConstPtr image{};
 };
 
 int main(int argc, char **argv)

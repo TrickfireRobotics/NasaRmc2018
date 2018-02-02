@@ -6,6 +6,7 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  sensor_msgs
   message_generation
   geometry_msgs
   actionlib_msgs
@@ -31,12 +32,14 @@ add_action_files(
   FILES
   Example.action
   Navigation.action
+  Aruco.action
 )
 
 # Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
   std_msgs
+  sensor_msgs
   actionlib_msgs
   geometry_msgs
 )

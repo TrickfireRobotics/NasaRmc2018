@@ -12,3 +12,4 @@ Installing the code requres, in addition to the standard `ros-kinetic-desktop-fu
  * `ros-kinetic-gps-common`
  * `ros-kinetic-moveit`
  * `ros-kinetic-moveit-ros`
+ * `ros-kinetic-cv-camera`

@@ -40,7 +40,8 @@ namespace tfr_control
         // TODO: Waiting on further hardware development to implement
 
         // Return true if bin has finished moving to its new position.
-        return false;
+        // For now, just return true so the bin controller doesn't block forever.
+        return true;
     }
 
     void Controller::write() 

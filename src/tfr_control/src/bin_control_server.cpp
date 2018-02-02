@@ -1,3 +1,9 @@
+/****************************************************************************************
+ * File:            bin_control_server.cpp
+ * 
+ * Purpose:         This is the implementation file for the BinControlServer class.
+ *                  See tfr_control/include/tfr_control/bin_control_server.h for details.
+ ***************************************************************************************/
 #include "bin_control_server.h"
 #include <boost/bind.hpp>
 #include "std_msgs/Float64.h"
@@ -40,6 +46,36 @@ void BinControlServer::ControlBin(const tfr_msgs::BinGoalConstPtr& goal)
         return;
     }
 
+    // This will block until SignalBinController() is called by the controller
+    wait_for_bin();
+
+    if (goal->command_code == goal->RAISE_BIN)
+    {
+        result.return_code = result.BIN_RAISED;
+    }
+    else if (goal->command_code == goal->LOWER_BIN)
+    {
+        result.return_code = result.BIN_LOWERED;
+    }
+
+    server.setSucceeded(result);
+}
+
+// This will signal the bin controller that the bin has reached its destination
+// Calling this will unblock the wait_for_bin() function which should be running
+// in the ActionServer part of the class (which will be running in by a different 
+// process, hence the signaling semantics).
+void BinControlServer::SignalBinController()
+{
+    // unlocks when it falls out of scope
+    std::unique_lock<std::mutex> signal_lock(signal_mutex);
+    bin_task_completed = true;
+    signal.notify_one();
+}
+
+
+void BinControlServer::wait_for_bin()
+{
     // unlocked by the wait() call
     std::unique_lock<std::mutex> signal_lock(signal_mutex);
     while (!bin_task_completed)
@@ -60,23 +96,4 @@ void BinControlServer::ControlBin(const tfr_msgs::BinGoalConstPtr& goal)
             break;
         }
     }
-
-    if (goal->command_code == goal->RAISE_BIN)
-    {
-        result.return_code = result.BIN_RAISED;
-    }
-    else if (goal->command_code == goal->LOWER_BIN)
-    {
-        result.return_code = result.BIN_LOWERED;
-    }
-
-    server.setSucceeded(result);
-}
-
-void BinControlServer::SignalBinController()
-{
-    // unlocks when it falls out of scope
-    std::unique_lock<std::mutex> signal_lock(signal_mutex);
-    bin_task_completed = true;
-    signal.notify_one();
 }

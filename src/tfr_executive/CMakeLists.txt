@@ -44,10 +44,6 @@ add_library(${PROJECT_NAME}_library
   src/executive_helper.cpp
 )
 
-# Create executable process/node and link it
-add_executable(executive_echo src/executive_echo.cpp)
-target_link_libraries(executive_echo ${catkin_LIBRARIES} ${PROJECT_NAME}_library)
-
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 

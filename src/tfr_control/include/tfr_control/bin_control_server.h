@@ -1,3 +1,16 @@
+/****************************************************************************************
+ * File:            bin_control_server.h
+ * 
+ * Purpose:         This class implements an action server that provides an interface
+ *                  between primary systems and the hardware layer of the robot.
+ *                  It allows systems to raise or lower the bin and communicates when
+ *                  that task has been completed.
+ * 
+ *                  This class is not a node, and lives in the controller_launcher node.
+ * 
+ * Actions Implemented (Server):    Bin.action
+ * Publishes To:                    /bin_position_controller/command
+ ***************************************************************************************/
 #ifndef BIN_CONTROL_SERVER_H
 #define BIN_CONTROL_SERVER_H
 
@@ -26,6 +39,8 @@ public:
     void SignalBinController();
 
 private:
+    void wait_for_bin();
+    
     ros::NodeHandle& node;
     Server server;
     ros::Publisher bin_command_publisher;

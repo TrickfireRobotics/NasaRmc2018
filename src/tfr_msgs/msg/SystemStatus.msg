@@ -1,3 +1,3 @@
-time SendTime
-int32 StatusCode
-float32 Data
+time time_stamp
+int32 status_code
+float32 data

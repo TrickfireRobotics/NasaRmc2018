@@ -6,7 +6,8 @@
  */
 void testCallback(const tfr_msgs::SystemStatus::ConstPtr& msg)
 {
-  ROS_INFO("Time: %f\nStatusCode: %d\nData: %5.2f", msg->SendTime.toSec(),msg->StatusCode, msg->Data);
+  ROS_INFO("Time: %f\nStatusCode: %d\nData: %5.2f", msg->time_stamp.toSec(),
+           msg->status_code, msg->data);
 }
 
 int main(int argc, char **argv)
@@ -21,7 +22,7 @@ int main(int argc, char **argv)
    */
   ros::NodeHandle n;
 
-  ros::Subscriber sub = n.subscribe("tfr_system_status", 1000, testCallback);
+  ros::Subscriber sub = n.subscribe("system_status", 25, testCallback);
 
 
   ros::spin();

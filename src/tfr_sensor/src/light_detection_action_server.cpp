@@ -54,7 +54,6 @@ class DetectionActionServer
         }
         void detect(const sensor_msgs::ImageConstPtr& msg)
         {
-
             if (!server.isActive() || !ros::ok())
                 return;
             detector.add_image(msg);

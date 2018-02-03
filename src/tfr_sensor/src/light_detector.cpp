@@ -71,7 +71,7 @@ bool LightDetector::is_on()
     double total_ave = amalgamate(total);
 
     //lets keep this for when we tune it to a color
-    //ROS_INFO("frame_calculated, recent- total: %f, threshold: %f", recent_ave - total_ave , threshold*total_ave);
+    ROS_INFO("frame_calculated, recent- total: %f, threshold: %f", recent_ave - total_ave , threshold*total_ave);
     return (recent_ave - total_ave) > threshold*total_ave;
 }
 

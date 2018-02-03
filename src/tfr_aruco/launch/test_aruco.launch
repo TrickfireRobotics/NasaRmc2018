@@ -1,0 +1,13 @@
+<launch>
+  <!-- load up the camrea. To select a different camera then use `rosparam set cv_camera/device_id 1` -->
+  <node type="cv_camera_node" name="cv_camera" pkg="cv_camera" />
+
+  <!-- load up the server -->
+  <node type="tfr_aruco_server"  name="tfr_aruco_server" pkg="tfr_aruco" />
+
+  <!-- load up the client and remap so that it gets the right images -->
+  <remap from="/image_raw" to="/cv_camera/image_raw" />
+  <remap from="/camera_info" to="/cv_camera/camera_info" />
+  <node type="tfr_aruco_example_client" name="tfr_aruco_example_client" pkg="tfr_aruco" output="screen" /> 
+</launch>
+

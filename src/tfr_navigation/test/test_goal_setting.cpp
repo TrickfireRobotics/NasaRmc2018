@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <navigation_goal_manager.h>
 #include <tfr_msgs/NavigationAction.h>
-#include <tfr_msgs/location_codes.h>
+#include <tfr_utilities/location_codes.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <geometry_msgs/Pose.h>
 #include <iostream>
@@ -31,7 +31,7 @@ TEST_F(GoalManager, initializeMiningGoal)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("bin_footprint",constraints);
-    auto nav_goal = manager.initialize_goal(tfr_msgs::LocationCode::MINING);
+    auto nav_goal = manager.initialize_goal(tfr_utilities::LocationCode::MINING);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
             SAFE_MINING_DISTANCE);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , 0);
@@ -49,7 +49,7 @@ TEST_F(GoalManager, initializeDumpingGoal)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("bin_footprint",constraints);
-    auto nav_goal = manager.initialize_goal(tfr_msgs::LocationCode::DUMPING);
+    auto nav_goal = manager.initialize_goal(tfr_utilities::LocationCode::DUMPING);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
             FINISH_LINE);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , 0);
@@ -80,7 +80,7 @@ TEST_F(GoalManager, adjustMiningGoalNeg)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("base_footprint", constraints);
-    manager.initialize_goal(tfr_msgs::LocationCode::MINING);
+    manager.initialize_goal(tfr_utilities::LocationCode::MINING);
     geometry_msgs::Pose p{};
     p.position.x = 3.4;
     p.position.y = -.05;
@@ -109,7 +109,7 @@ TEST_F(GoalManager, adjustMiningGoalPos)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("base_footprint", constraints);
-    manager.initialize_goal(tfr_msgs::LocationCode::MINING);
+    manager.initialize_goal(tfr_utilities::LocationCode::MINING);
     geometry_msgs::Pose p;
     p.position.x = 3.4;
     p.position.y = 1;
@@ -136,7 +136,7 @@ TEST_F(GoalManager, adjustMiningGoalBigPos)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("base_footprint", constraints);
-    manager.initialize_goal(tfr_msgs::LocationCode::MINING);
+    manager.initialize_goal(tfr_utilities::LocationCode::MINING);
     geometry_msgs::Pose p;
     p.position.x = 3.4;
     p.position.y = 5;
@@ -163,7 +163,7 @@ TEST_F(GoalManager, adjustMiningGoalBigNeg)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("base_footprint", constraints);
-    manager.initialize_goal(tfr_msgs::LocationCode::MINING);
+    manager.initialize_goal(tfr_utilities::LocationCode::MINING);
     geometry_msgs::Pose p;
     p.position.x = 3.4;
     p.position.y = -5;
@@ -190,7 +190,7 @@ TEST_F(GoalManager, adjustMiningGoalWrongType)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("base_footprint", constraints);
-    manager.initialize_goal(tfr_msgs::LocationCode::DUMPING);
+    manager.initialize_goal(tfr_utilities::LocationCode::DUMPING);
     geometry_msgs::Pose p;
     p.position.x = 3.4;
     p.position.y = -5;

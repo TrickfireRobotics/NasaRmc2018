@@ -15,7 +15,7 @@ NavigationClient::NavigationClient(std::string action_name):client{action_name, 
  *
  * action - The byte code corresponding to a location in the world map
  * */
-void NavigationClient::navigate(tfr_msgs::LocationCode location)
+void NavigationClient::navigate(tfr_utilities::LocationCode location)
 {
     tfr_msgs::NavigationGoal goal;
     //messages can't support user defined types

@@ -28,9 +28,9 @@ find_package(GTest REQUIRED)
 # These are all for exporting to dependent packages/projects.
 # Uncomment each if the dependent project requires it
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-  DEPENDS tf message_runtime sensor_msgs geometry_msgs nav_msgs
+    INCLUDE_DIRS include
+    LIBRARIES ${PROJECT_NAME}
+    DEPENDS tf message_runtime sensor_msgs geometry_msgs nav_msgs
 #  DEPENDS system_lib
 )
 
@@ -58,7 +58,6 @@ add_executable(bin_localizer src/bin_localizer.cpp)
 target_link_libraries(bin_localizer tf_manipulator ${catkin_LIBRARIES})
 add_dependencies(bin_localizer ${catkin_EXPORTED_TARGETS})
 
-
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
@@ -66,3 +65,9 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 endif()
+
+#install shared headers
+install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+    FILES_MATCHING PATTERN "*.h"
+)

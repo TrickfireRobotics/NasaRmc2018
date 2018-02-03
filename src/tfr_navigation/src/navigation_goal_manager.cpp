@@ -3,7 +3,7 @@
 NavigationGoalManager::NavigationGoalManager(const std::string &frame, 
         const GeometryConstraints &c 
         ): reference_frame{frame}, constraints{c},
-    goal{tfr_msgs::LocationCode::UNSET}
+    goal{tfr_utilities::LocationCode::UNSET}
 {
     //NOTE ros is not really big on runtime exceptions,  I'll post an annoying
     //warning at startup
@@ -28,7 +28,7 @@ NavigationGoalManager::NavigationGoalManager(const std::string &frame,
  *  not recognized.
  * */
 move_base_msgs::MoveBaseGoal NavigationGoalManager::initialize_goal(
-        tfr_msgs::LocationCode new_goal) {
+        tfr_utilities::LocationCode new_goal) {
     goal = new_goal;
     //set reference frame
     nav_goal.target_pose.header.frame_id = reference_frame;
@@ -36,14 +36,14 @@ move_base_msgs::MoveBaseGoal NavigationGoalManager::initialize_goal(
     //set translation goal
     switch(goal)
     {
-        case(tfr_msgs::LocationCode::MINING):
+        case(tfr_utilities::LocationCode::MINING):
             nav_goal.target_pose.pose.position.x =
                 constraints.get_safe_mining_distance();
             break;
-        case(tfr_msgs::LocationCode::DUMPING):
+        case(tfr_utilities::LocationCode::DUMPING):
             nav_goal.target_pose.pose.position.x = constraints.get_finish_line();
             break;
-        case(tfr_msgs::LocationCode::UNSET):
+        case(tfr_utilities::LocationCode::UNSET):
             //leave it alone
             break;
         default:
@@ -64,12 +64,12 @@ move_base_msgs::MoveBaseGoal NavigationGoalManager::initialize_goal(
  */
 move_base_msgs::MoveBaseGoal NavigationGoalManager::get_updated_mining_goal(geometry_msgs::Pose msg)
 {
-    if (goal == tfr_msgs::LocationCode::MINING){
+    if (goal == tfr_utilities::LocationCode::MINING){
         nav_goal.target_pose.header.stamp =ros::Time::now();
-        double v_position = msg.position.y; 
-        int sign = (v_position > 0) ? 1 : -1;
+        double y_position = msg.position.y; 
+        int sign = (y_position > 0) ? 1 : -1;
         nav_goal.target_pose.pose.position.y = sign*std::min(
-                constraints.get_mining_line_length()/2, std::abs(v_position));
+                constraints.get_mining_line_length()/2, std::abs(y_position));
     }
     else 
     {

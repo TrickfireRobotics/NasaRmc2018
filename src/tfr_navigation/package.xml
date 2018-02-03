@@ -14,6 +14,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <test_depend>gtest</test_depend>
   <depend>tfr_msgs</depend>
+  <depend>tfr_utilities</depend>
   <depend>roscpp</depend>
   <exec_depend>rtabmap_ros</exec_depend>
   <exec_depend>rtabmap</exec_depend>

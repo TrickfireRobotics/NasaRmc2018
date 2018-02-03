@@ -53,7 +53,7 @@ Navigator::Navigator(ros::NodeHandle &n,
  * */
 void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
 {
-    auto code = static_cast<tfr_msgs::LocationCode>(goal->location_code);
+    auto code = static_cast<tfr_utilities::LocationCode>(goal->location_code);
     ROS_INFO("Navigation server started");
     //start with initial goal
     nav_goal = goal_manager.initialize_goal(code);
@@ -89,7 +89,7 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
         //main case, update nav goal
         else
         {
-            if (code == tfr_msgs::LocationCode::MINING)
+            if (code == tfr_utilities::LocationCode::MINING)
             {
                 nav_goal = goal_manager.get_updated_mining_goal(current_position.pose.pose);
                 nav_stack.sendGoal(nav_goal);

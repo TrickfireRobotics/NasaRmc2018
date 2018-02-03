@@ -12,7 +12,7 @@
 #define NAVIGATION_CLIENT_H
 #include <ros/ros.h>
 #include <ros/console.h>
-#include <tfr_msgs/location_codes.h>
+#include <tfr_utilities/location_codes.h>
 #include <actionlib/client/simple_action_client.h>
 #include <boost/bind.hpp>
 #include <cstdint>
@@ -30,7 +30,7 @@ class NavigationClient
         NavigationClient& operator=(NavigationClient&&) = delete;
 
         //basic utilities
-        void navigate(tfr_msgs::LocationCode location);
+        void navigate(tfr_utilities::LocationCode location);
         void stop_all();
         actionlib::SimpleClientGoalState get_state();
 

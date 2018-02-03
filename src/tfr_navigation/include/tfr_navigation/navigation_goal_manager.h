@@ -5,7 +5,7 @@
 #include <geometry_msgs/Pose.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <tfr_msgs/NavigationAction.h>
-#include <tfr_msgs/location_codes.h>
+#include <tfr_utilities/location_codes.h>
 #include <cstdint>
 #include <cmath>
 class NavigationGoalManager
@@ -54,13 +54,13 @@ class NavigationGoalManager
         NavigationGoalManager(NavigationGoalManager&&) = delete;
         NavigationGoalManager& operator=(NavigationGoalManager&&) = delete;
 
-        move_base_msgs::MoveBaseGoal initialize_goal(tfr_msgs::LocationCode goal);
+        move_base_msgs::MoveBaseGoal initialize_goal(tfr_utilities::LocationCode goal);
         move_base_msgs::MoveBaseGoal get_updated_mining_goal(
                 geometry_msgs::Pose msg);
 
     private:
         //delegate initialization to ctor
-        tfr_msgs::LocationCode goal;
+        tfr_utilities::LocationCode goal;
 
         //the constraints to the problem
         const GeometryConstraints &constraints;

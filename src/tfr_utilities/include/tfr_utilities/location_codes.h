@@ -2,9 +2,8 @@
 #define LOCATION_CODES_H
 
 #include<cstdint>
-namespace tfr_msgs
+namespace tfr_utilities
 {
-
     enum class LocationCode : uint8_t {
         UNSET,
         MINING,

@@ -91,7 +91,9 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
         {
             if (code == tfr_utilities::LocationCode::MINING)
             {
-                nav_goal = goal_manager.get_updated_mining_goal(current_position.pose.pose);
+                auto thread_safe_local = current_position;
+                nav_goal =
+                    goal_manager.get_updated_mining_goal(thread_safe_local->pose.pose);
                 nav_stack.sendGoal(nav_goal);
             }
 
@@ -121,9 +123,10 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
  * */
 void Navigator::update_result()
 {
+    auto thread_safe_local = current_position;
     result.header.stamp = ros::Time::now();
     result.header.frame_id = frame_id;
-    result.current = current_position.pose.pose;
+    result.current = thread_safe_local->pose.pose;
     result.goal = nav_goal.target_pose.pose;
 }
 
@@ -132,9 +135,10 @@ void Navigator::update_result()
  * */
 void Navigator::update_feedback()
 {
+    auto thread_safe_local = current_position;
     feedback.header.stamp = ros::Time::now();
     feedback.header.frame_id = frame_id;
-    feedback.current = current_position.pose.pose;
+    feedback.current = thread_safe_local->pose.pose;
     feedback.goal = nav_goal.target_pose.pose;
 }
 
@@ -147,5 +151,5 @@ void Navigator::update_position(const nav_msgs::OdometryConstPtr &msg)
     //get the pose without the covariance, not needed
     //need to use shared pointer here for thread safety see:
     //https://answers.ros.org/question/53234/processing-an-image-outside-the-callback-function/
-    current_position = *msg;
+    current_position = msg;
 }

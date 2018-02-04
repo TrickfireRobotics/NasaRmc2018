@@ -58,7 +58,7 @@ class Navigator
         //needed msgs
         tfr_msgs::NavigationFeedback feedback{};
         tfr_msgs::NavigationResult result{};
-        nav_msgs::Odometry current_position{};
+        nav_msgs::OdometryConstPtr current_position{};
         move_base_msgs::MoveBaseGoal nav_goal{};
 
         //parameters

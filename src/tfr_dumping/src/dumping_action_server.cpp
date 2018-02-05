@@ -74,6 +74,7 @@ void Dumper::dump(const tfr_msgs::EmptyGoalConstPtr &goal)
             velocity_publisher.publish(cmd);
         }
     }
+    //TODO raise the bin
     stop_moving();
     server.setSucceeded();
 }

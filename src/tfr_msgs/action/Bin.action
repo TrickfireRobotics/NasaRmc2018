@@ -1,0 +1,12 @@
+# Goal
+uint8 command_code
+uint8 RAISE_BIN = 1
+uint8 LOWER_BIN = 2
+---
+# result
+uint8 return_code
+uint8 ERROR_ENCOUNTERED = 0
+uint8 BIN_RAISED = 1
+uint8 BIN_LOWERED = 2
+---
+# No feedback message

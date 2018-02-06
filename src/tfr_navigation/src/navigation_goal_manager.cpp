@@ -1,4 +1,4 @@
-#include <navigation_goal_manager.h>
+include <navigation_goal_manager.h>
 
 NavigationGoalManager::NavigationGoalManager(const std::string &frame, 
         const GeometryConstraints &c 

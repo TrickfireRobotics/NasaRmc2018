@@ -24,15 +24,11 @@ void LightDetector::add_image(const sensor_msgs::ImageConstPtr& msg)
     cv::Scalar intensities = cv::sum(image);
 
     ColorStats stats{};
-    auto scale = [&image] (const double &intensity) 
-    {
-        return intensity/(image.rows*image.cols);
-    };
 
     //note we have to reverse out of native cv bgr ordering
-    stats.r_ave=scale(intensities[2]);
-    stats.g_ave=scale(intensities[1]);
-    stats.b_ave=scale(intensities[0]);
+    stats.r_ave = intensities[2]/(image.rows*image.cols);
+    stats.g_ave = intensities[1]/(image.rows*image.cols);
+    stats.b_ave = intensities[0]/(image.rows*image.cols);
 
     brightness.push_front(stats);
 }
@@ -48,27 +44,25 @@ bool LightDetector::is_on()
 
     ColorStats total{};
     int ave_size = brightness.size() -  1;
+
     /*
-     *Get an average of the color channels for every element exept for the most
-     recent addition to the average.
+     * Get an average of the color channels for every element exept for the most
+     * recent addition to the average.
      * */
-    std::for_each(++brightness.begin(), brightness.end(), 
-            [&total, &ave_size] (const ColorStats &stat)
-            {
-                total.r_ave += stat.r_ave/ave_size;
-                total.g_ave += stat.g_ave/ave_size;
-                total.b_ave += stat.b_ave/ave_size;
-            });
+    for (auto current = ++brightness.begin(), end = brightness.end(); 
+            current != end; current++)
+    {
+        total.r_ave += current->r_ave/ave_size;
+        total.g_ave += current->g_ave/ave_size;
+        total.b_ave += current->b_ave/ave_size;
+    }
 
     //ROS_INFO("int: %f %f %f", total.r_ave, total.g_ave, total.b_ave);
     ColorStats recent = brightness.front();
 
-    auto amalgamate = [](const ColorStats &c)
-    {
-        return (c.r_ave + c.g_ave + c.b_ave)/3;
-    };
-    double recent_ave = amalgamate(recent);
-    double total_ave = amalgamate(total);
+    double recent_ave = (recent.r_ave + recent.g_ave + recent.b_ave)/3;
+    double total_ave = (total.r_ave + total.g_ave + total.b_ave)/3;
+
 
     //lets keep this for when we tune it to a color
     ROS_INFO("frame_calculated, recent- total: %f, threshold: %f", recent_ave - total_ave , threshold*total_ave);
@@ -81,5 +75,4 @@ bool LightDetector::is_on()
 void LightDetector::clear()
 {
     brightness.clear();
-
 }

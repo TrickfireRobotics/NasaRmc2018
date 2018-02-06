@@ -1,0 +1,5 @@
+<launch>
+    <!-- load up the server -->
+    <node type="aruco_action_server"  name="tfr_aruco_server" pkg="tfr_aruco" output="screen"/>
+</launch>
+

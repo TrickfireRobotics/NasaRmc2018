@@ -6,9 +6,9 @@
 #include <cv_bridge/cv_bridge.h>
 #include <image_geometry/pinhole_camera_model.h>
 #include <sensor_msgs/image_encodings.h>
-
 #include <tfr_msgs/ArucoAction.h>
 #include <actionlib/server/simple_action_server.h>
+#include <tf2/LinearMath/Quaternion.h>
 
 
 typedef actionlib::SimpleActionServer<tfr_msgs::ArucoAction> Server;
@@ -117,17 +117,24 @@ public:
         if (result.number_found > 0)
         {
             /*
-             * The relative pose vector is a vector with length 3 and is of
-             * opposite direction and equal magnitude, so multiply transVec by
-             * -1.
+             *  also the coordinate axist for the aruco are in a different
+             *  coordinate system and are rotated here.
              * */
-            result.relative_pose.position.x = -boardTransVec[0];
-            result.relative_pose.position.y = -boardTransVec[1];
-            result.relative_pose.position.z = -boardTransVec[2];
-            ROS_INFO("%f, %f, %f", boardRotVec[0], boardRotVec[1], boardRotVec[2]);
-
+            result.relative_pose.position.x = -boardTransVec[2];
+            result.relative_pose.position.y = boardTransVec[0];
+            result.relative_pose.position.z = -boardTransVec[1];
+            auto deg2rad = [](double angle) {return angle*180/3.14;};
+            ROS_INFO("%f, %f, %f", deg2rad(boardRotVec[0]), deg2rad(boardRotVec[1]), deg2rad(boardRotVec[2]));
+            
+            //let tf do the euler angle -> quaternion math
+            tf2::Quaternion rotated{};
+            //change rotated perspective RPY aruco output to ros coordinate system (2d)
+            rotated.setRPY(0, 0, -boardRotVec[1]);
+            result.relative_pose.orientation.x = rotated.x();
+            result.relative_pose.orientation.y = rotated.y();
+            result.relative_pose.orientation.z = rotated.z();
+            result.relative_pose.orientation.w = rotated.w();
         }
-        
         server->setSucceeded(result);
     }
 

@@ -15,12 +15,17 @@ typedef actionlib::SimpleActionClient<tfr_msgs::ArucoAction> Client;
 // Called once when the goal completes
 void finished(const actionlib::SimpleClientGoalState& state, const tfr_msgs::ArucoResultConstPtr& result)
 {
-    system("clear"); // make input easy to see
+    //system("clear"); // make input easy to see
     if(result->number_found > 0) {
         ROS_INFO("[position]");
         ROS_INFO("    x: %f meters", result->relative_pose.position.x);
         ROS_INFO("    y: %f meters", result->relative_pose.position.y);
         ROS_INFO("    z: %f meters", result->relative_pose.position.z);
+        ROS_INFO("[orientation]");
+        ROS_INFO("    x: %f radians", result->relative_pose.orientation.x);
+        ROS_INFO("    y: %f radians", result->relative_pose.orientation.y);
+        ROS_INFO("    z: %f radians", result->relative_pose.orientation.z);
+        ROS_INFO("    w: %f radians", result->relative_pose.orientation.w);
     } else {
         ROS_INFO("no markers found!");
     }
@@ -53,6 +58,7 @@ public:
         ROS_INFO("WAITING FOR SERVER");
         // Ensure connection was established with Server
         client.waitForServer();
+        ROS_INFO("Connected");
     }
 
     void updateCameraInfo(const sensor_msgs::CameraInfoConstPtr& cam_info) 

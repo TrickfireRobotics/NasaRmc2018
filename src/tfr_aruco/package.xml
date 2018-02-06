@@ -37,6 +37,7 @@
   <build_depend>actionlib</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>tfr_msgs</build_depend>
+  <build_depend>tf2</build_depend>
   <build_export_depend>actionlib</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>tfr_msgs</build_export_depend>

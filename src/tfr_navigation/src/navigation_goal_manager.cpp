@@ -65,7 +65,7 @@ move_base_msgs::MoveBaseGoal NavigationGoalManager::initialize_goal(
 move_base_msgs::MoveBaseGoal NavigationGoalManager::get_updated_mining_goal(geometry_msgs::Pose msg)
 {
     if (goal == tfr_utilities::LocationCode::MINING){
-        nav_goal.target_pose.header.stamp =ros::Time::now();
+        nav_goal.target_pose.header.stamp = ros::Time::now();
         double y_position = msg.position.y; 
         int sign = (y_position > 0) ? 1 : -1;
         nav_goal.target_pose.pose.position.y = sign*std::min(

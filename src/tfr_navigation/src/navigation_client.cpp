@@ -57,7 +57,7 @@ actionlib::SimpleClientGoalState NavigationClient::get_state()
  * */
 void NavigationClient::feedback(const tfr_msgs::NavigationFeedbackConstPtr& feedback)
 {
-    ROS_INFO("feedback recieved");
+    ROS_INFO("feedback received");
 }
 
 /**
@@ -66,5 +66,5 @@ void NavigationClient::feedback(const tfr_msgs::NavigationFeedbackConstPtr& feed
 void NavigationClient::finished(const actionlib::SimpleClientGoalState &state, const
         tfr_msgs::NavigationResultConstPtr &result)
 {
-    ROS_INFO("result recieved");
+    ROS_INFO("result received");
 }

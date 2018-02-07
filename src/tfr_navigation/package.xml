@@ -9,7 +9,7 @@
   <maintainer email="ryan.berge@trickfirerobotics.com">Ryan Berge</maintainer>
   <url type="website">http://www.trickfirerobotics.com/</url>
   <author email="ryan.berge@trickfirerobotics.com">Ryan Berge</author>
-  <author email="collinsconway@gmail.com">Collin Conway</author>
+  <author email="collinsconway@gmail.com">Collin Stair Conway</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <test_depend>gtest</test_depend>

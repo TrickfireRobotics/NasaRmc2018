@@ -18,14 +18,14 @@ void finished(const actionlib::SimpleClientGoalState& state, const tfr_msgs::Aru
     //system("clear"); // make input easy to see
     if(result->number_found > 0) {
         ROS_INFO("[position]");
-        ROS_INFO("    x: %f meters", result->relative_pose.position.x);
-        ROS_INFO("    y: %f meters", result->relative_pose.position.y);
-        ROS_INFO("    z: %f meters", result->relative_pose.position.z);
+        ROS_INFO("    x: %f meters", result->relative_pose.pose.position.x);
+        ROS_INFO("    y: %f meters", result->relative_pose.pose.position.y);
+        ROS_INFO("    z: %f meters", result->relative_pose.pose.position.z);
         ROS_INFO("[orientation]");
-        ROS_INFO("    x: %f radians", result->relative_pose.orientation.x);
-        ROS_INFO("    y: %f radians", result->relative_pose.orientation.y);
-        ROS_INFO("    z: %f radians", result->relative_pose.orientation.z);
-        ROS_INFO("    w: %f radians", result->relative_pose.orientation.w);
+        ROS_INFO("    x: %f radians", result->relative_pose.pose.orientation.x);
+        ROS_INFO("    y: %f radians", result->relative_pose.pose.orientation.y);
+        ROS_INFO("    z: %f radians", result->relative_pose.pose.orientation.z);
+        ROS_INFO("    w: %f radians", result->relative_pose.pose.orientation.w);
     } else {
         ROS_INFO("no markers found!");
     }

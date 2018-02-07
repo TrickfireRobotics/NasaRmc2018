@@ -116,24 +116,26 @@ public:
         result.number_found = markersDetected;
         if (result.number_found > 0)
         {
+            result.relative_pose.header.stamp = ros::Time::now();
+            result.relative_pose.header.frame_id = goal->image.header.frame_id;
             /*
              *  also the coordinate axist for the aruco are in a different
              *  coordinate system and are rotated here.
              * */
-            result.relative_pose.position.x = -boardTransVec[2];
-            result.relative_pose.position.y = boardTransVec[0];
-            result.relative_pose.position.z = -boardTransVec[1];
+            result.relative_pose.pose.position.x = -boardTransVec[2];
+            result.relative_pose.pose.position.y = boardTransVec[0];
+            result.relative_pose.pose.position.z = -boardTransVec[1];
             auto deg2rad = [](double angle) {return angle*180/3.14;};
             ROS_INFO("%f, %f, %f", deg2rad(boardRotVec[0]), deg2rad(boardRotVec[1]), deg2rad(boardRotVec[2]));
             
             //let tf do the euler angle -> quaternion math
             tf2::Quaternion rotated{};
             //change rotated perspective RPY aruco output to ros coordinate system (2d)
-            rotated.setRPY(0, 0, -boardRotVec[1]);
-            result.relative_pose.orientation.x = rotated.x();
-            result.relative_pose.orientation.y = rotated.y();
-            result.relative_pose.orientation.z = rotated.z();
-            result.relative_pose.orientation.w = rotated.w();
+            rotated.setRPY(boardRotVec[2], boardRotVec[1], -boardRotVec[1]);
+            result.relative_pose.pose.orientation.x = rotated.x();
+            result.relative_pose.pose.orientation.y = rotated.y();
+            result.relative_pose.pose.orientation.z = rotated.z();
+            result.relative_pose.pose.orientation.w = rotated.w();
         }
         server->setSucceeded(result);
     }

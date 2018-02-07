@@ -6,7 +6,9 @@
  * */
 Navigator::Navigator(ros::NodeHandle &n,
         const NavigationGoalManager::GeometryConstraints &constraints, 
-        const std::string &name, const std::string &bin_frame) : node{n}, 
+        const std::string &name, 
+        const std::string &bin_frame) : 
+        node{n}, 
         goal_manager(bin_frame,constraints),
         server{n, name, boost::bind(&Navigator::navigate, this, _1) ,false}, 
         nav_stack{"move_base", true}
@@ -65,10 +67,10 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
     nav_stack.sendGoal(nav_goal);
 
     ros::Rate r(rate);  
-    r.sleep(); //this pause is for debugging only DELETE
 
     //test for completion
-    while (nav_stack.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
+    while (nav_stack.getState() != actionlib::SimpleClientGoalState::SUCCEEDED
+            || nav_stack.getState() != actionlib::SimpleClientGoalState::ABORTED)
     {
         //Deal with preemption or error
         if (server.isPreemptRequested() || !ros::ok()) 
@@ -80,15 +82,8 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
             server.setPreempted(result);
             return;
         }
-        //main case, update nav goal
         else
         {
-            if (code == tfr_utilities::LocationCode::MINING)
-            {
-                auto thread_safe_local = current_position;
-                goal_manager.update_mining_goal(nav_goal, thread_safe_local->pose.pose);
-                nav_stack.sendGoal(nav_goal);
-            }
             tfr_msgs::NavigationFeedback feedback{};
             update_feedback(feedback, nav_goal);
             server.publishFeedback(feedback);
@@ -121,7 +116,8 @@ void Navigator::update_result(tfr_msgs::NavigationResult &result,
     auto thread_safe_local = current_position;
     result.header.stamp = ros::Time::now();
     result.header.frame_id = frame_id;
-    result.current = thread_safe_local->pose.pose;
+    if (thread_safe_local != nullptr)
+        result.current = thread_safe_local->pose.pose;
     result.goal = nav_goal.target_pose.pose;
 }
 
@@ -134,7 +130,8 @@ void Navigator::update_feedback(tfr_msgs::NavigationFeedback &feedback,
     auto thread_safe_local = current_position;
     feedback.header.stamp = ros::Time::now();
     feedback.header.frame_id = frame_id;
-    feedback.current = thread_safe_local->pose.pose;
+    if (thread_safe_local != nullptr)
+        feedback.current = thread_safe_local->pose.pose;
     feedback.goal = nav_goal.target_pose.pose;
 }
 

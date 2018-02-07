@@ -10,12 +10,18 @@ add_compile_options(-std=c++11)
 find_package(OpenCV 3 REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  tfr_msgs
-  cv_bridge
-  image_transport
-  sensor_msgs
-  actionlib
+    cv_bridge
+    roscpp
+    tf2
+    tf2_ros
+    tf2_geometry_msgs
+    image_transport
+    actionlib
+    geometry_msgs
+    sensor_msgs
+    nav_msgs
+    tfr_msgs
+    tfr_utilities
 )
 
 find_package(GTest REQUIRED)
@@ -47,6 +53,10 @@ target_link_libraries(light_detection_action_server light_detector ${catkin_LIBR
 
 add_executable(light_detection_action_client ./src/light_detection_action_client.cpp)
 target_link_libraries(light_detection_action_client light_detector ${catkin_LIBRARIES})
+
+add_executable(fiducial_odom_publisher src/fiducial_odom_publisher.cpp)
+add_dependencies(fiducial_odom_publisher ${catkin_EXPORTED_TARGETS})
+target_link_libraries(fiducial_odom_publisher tf_manipulator ${catkin_LIBRARIES})
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 

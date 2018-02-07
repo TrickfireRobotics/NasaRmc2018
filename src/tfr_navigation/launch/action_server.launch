@@ -2,5 +2,10 @@
 <launch>
     <node name="navigation_action_server" pkg="tfr_navigation" type="navigation_action_server"
         output="screen">
+        <rosparam> 
+            frame_id: base_footprint
+            rate: 1
+        </rosparam>
+        <remap from="odom" to="/fused_odom"/>
     </node>
 </launch>

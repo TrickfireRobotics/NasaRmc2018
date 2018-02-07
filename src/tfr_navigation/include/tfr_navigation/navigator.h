@@ -37,36 +37,28 @@ class Navigator
 
         void update_position(const nav_msgs::OdometryConstPtr &msg);
         
-        void update_feedback();
-        void update_result();
+        void update_feedback(tfr_msgs::NavigationFeedback &feedback,
+                const move_base_msgs::MoveBaseGoal &nav_goal);
+        void update_result(tfr_msgs::NavigationResult &result,
+                const move_base_msgs::MoveBaseGoal &nav_goal);
 
-
-
-        using Server = actionlib::SimpleActionServer<tfr_msgs::NavigationAction>; 
-        using NavStack =
-            actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction>;
         ros::NodeHandle& node;
         //NOTE delegate initialization of mgr to ctor
         NavigationGoalManager goal_manager;
         //NOTE delegate initialization of server to ctor
-        Server server;                      //handle to as
+        actionlib::SimpleActionServer<tfr_msgs::NavigationAction> server;
         //NOTE delegate initialization of server to ctor
-        NavStack nav_stack;
+        actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> nav_stack;
         //NOTE delegate initialization of subscriber to ctor
         ros::Subscriber odom_subscriber;    
 
         //needed msgs
-        tfr_msgs::NavigationFeedback feedback{};
-        tfr_msgs::NavigationResult result{};
         nav_msgs::OdometryConstPtr current_position{};
-        move_base_msgs::MoveBaseGoal nav_goal{};
 
         //parameters
         std::string frame_id{};
         std::string action_name{};
         std::string odometry_topic{};
         float rate{};
-
-
 };
 #endif

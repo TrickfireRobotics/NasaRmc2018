@@ -9,23 +9,18 @@ Navigator::Navigator(ros::NodeHandle &n,
         const std::string &name, const std::string &bin_frame) : node{n}, 
         goal_manager(bin_frame,constraints),
         server{n, name, boost::bind(&Navigator::navigate, this, _1) ,false}, 
-        nav_stack{"move_base", true},
-        action_name{name}
+        nav_stack{"move_base", true}
 {
     ROS_DEBUG("Navigation server constructed %f", ros::Time::now().toSec());
     //get parameters
-    ros::param::param<std::string>("~odometry_topic", odometry_topic,
-            "/fused_odom");
     ros::param::param<float>("~rate", rate, 1);
     ros::param::param<std::string>("~frame_id", frame_id, "base_footprint");
 
-    odom_subscriber = node.subscribe(odometry_topic, 5,
+    odom_subscriber = node.subscribe("odom", 5,
             &Navigator::update_position, this);
 
     //display parameters to the user
-    ROS_DEBUG(" name:           %s", action_name.c_str());
     ROS_DEBUG(" frame_id:       %s", frame_id.c_str());
-    ROS_DEBUG(" odometry_topic: %s", odometry_topic.c_str());
     ROS_DEBUG(" rate:           %f", rate);
 
     ROS_INFO("Navigation server connecting to nav_stack");
@@ -56,7 +51,8 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
     auto code = static_cast<tfr_utilities::LocationCode>(goal->location_code);
     ROS_INFO("Navigation server started");
     //start with initial goal
-    nav_goal = goal_manager.initialize_goal(code);
+    move_base_msgs::MoveBaseGoal nav_goal{};
+    goal_manager.initialize_goal(nav_goal, code);
     ROS_INFO("translation: %f,%f,%f  orientation: %f,%f,%f,%f reference: %s", nav_goal.target_pose.pose.position.x,
             nav_goal.target_pose.pose.position.y,
             nav_goal.target_pose.pose.position.z,
@@ -65,9 +61,6 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
             nav_goal.target_pose.pose.orientation.z,
             nav_goal.target_pose.pose.orientation.w,
             nav_goal.target_pose.header.frame_id.c_str());
-
-
-
 
     nav_stack.sendGoal(nav_goal);
 
@@ -80,9 +73,10 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
         //Deal with preemption or error
         if (server.isPreemptRequested() || !ros::ok()) 
         {
-            ROS_INFO("%s: preempted", action_name.c_str());
+            ROS_INFO("%s: preempted", ros::this_node::getName().c_str());
             nav_stack.cancelAllGoals();
-            update_result();
+            tfr_msgs::NavigationResult result;
+            update_result(result, nav_goal);
             server.setPreempted(result);
             return;
         }
@@ -92,19 +86,19 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
             if (code == tfr_utilities::LocationCode::MINING)
             {
                 auto thread_safe_local = current_position;
-                nav_goal =
-                    goal_manager.get_updated_mining_goal(thread_safe_local->pose.pose);
+                goal_manager.update_mining_goal(nav_goal, thread_safe_local->pose.pose);
                 nav_stack.sendGoal(nav_goal);
             }
-
-            update_feedback();
+            tfr_msgs::NavigationFeedback feedback{};
+            update_feedback(feedback, nav_goal);
             server.publishFeedback(feedback);
             ROS_INFO("servicing goal, %f", feedback.header.stamp.toSec());
             r.sleep();
         }
     }
 
-    update_result();
+    tfr_msgs::NavigationResult result{};
+    update_result(result, nav_goal);
     if (nav_stack.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         server.setSucceeded(result);
@@ -121,7 +115,8 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
 /*
  * Prepare a feedback message for sending
  * */
-void Navigator::update_result()
+void Navigator::update_result(tfr_msgs::NavigationResult &result,
+        const move_base_msgs::MoveBaseGoal &nav_goal)
 {
     auto thread_safe_local = current_position;
     result.header.stamp = ros::Time::now();
@@ -133,7 +128,8 @@ void Navigator::update_result()
 /*
  * Prepare a feedback message for sending
  * */
-void Navigator::update_feedback()
+void Navigator::update_feedback(tfr_msgs::NavigationFeedback &feedback,
+        const move_base_msgs::MoveBaseGoal &nav_goal)
 {
     auto thread_safe_local = current_position;
     feedback.header.stamp = ros::Time::now();

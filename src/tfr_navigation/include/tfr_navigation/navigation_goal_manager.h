@@ -54,18 +54,15 @@ class NavigationGoalManager
         NavigationGoalManager(NavigationGoalManager&&) = delete;
         NavigationGoalManager& operator=(NavigationGoalManager&&) = delete;
 
-        move_base_msgs::MoveBaseGoal initialize_goal(tfr_utilities::LocationCode goal);
-        move_base_msgs::MoveBaseGoal get_updated_mining_goal(
-                geometry_msgs::Pose msg);
+        void initialize_goal( move_base_msgs::MoveBaseGoal& nav_goal, 
+                const tfr_utilities::LocationCode& goal);
+        void update_mining_goal( move_base_msgs::MoveBaseGoal& nav_goal,
+                const geometry_msgs::Pose& msg);
 
     private:
-        //delegate initialization to ctor
-        tfr_utilities::LocationCode goal;
 
         //the constraints to the problem
         const GeometryConstraints &constraints;
-        //the navigation goal
-        move_base_msgs::MoveBaseGoal nav_goal{};
 
         const std::string &reference_frame;
 };

@@ -19,11 +19,13 @@ class GoalManager : public ::testing::Test
         virtual void TearDown()
         {
         }
+        move_base_msgs::MoveBaseGoal nav_goal{};
         double SAFE_MINING_DISTANCE = 5.1;
         double MINING_LINE_LENGTH = 2.03;
         double FINISH_LINE = 0.84;
 
 };
+
 TEST_F(GoalManager, initializeMiningGoal)
 {
     NavigationGoalManager::GeometryConstraints 
@@ -31,7 +33,7 @@ TEST_F(GoalManager, initializeMiningGoal)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("bin_footprint",constraints);
-    auto nav_goal = manager.initialize_goal(tfr_utilities::LocationCode::MINING);
+    manager.initialize_goal(nav_goal, tfr_utilities::LocationCode::MINING);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
             SAFE_MINING_DISTANCE);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , 0);
@@ -49,7 +51,7 @@ TEST_F(GoalManager, initializeDumpingGoal)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("bin_footprint",constraints);
-    auto nav_goal = manager.initialize_goal(tfr_utilities::LocationCode::DUMPING);
+    manager.initialize_goal(nav_goal, tfr_utilities::LocationCode::DUMPING);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
             FINISH_LINE);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , 0);
@@ -80,7 +82,7 @@ TEST_F(GoalManager, adjustMiningGoalNeg)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("base_footprint", constraints);
-    manager.initialize_goal(tfr_utilities::LocationCode::MINING);
+    manager.initialize_goal(nav_goal, tfr_utilities::LocationCode::MINING);
     geometry_msgs::Pose p{};
     p.position.x = 3.4;
     p.position.y = -.05;
@@ -89,7 +91,7 @@ TEST_F(GoalManager, adjustMiningGoalNeg)
     p.orientation.y = -.3;
     p.orientation.z = -.5;
     p.orientation.w = 1;
-    auto nav_goal = manager.get_updated_mining_goal(p);
+    manager.update_mining_goal(nav_goal,p);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
             SAFE_MINING_DISTANCE);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , -.05);
@@ -109,7 +111,7 @@ TEST_F(GoalManager, adjustMiningGoalPos)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("base_footprint", constraints);
-    manager.initialize_goal(tfr_utilities::LocationCode::MINING);
+    manager.initialize_goal(nav_goal, tfr_utilities::LocationCode::MINING);
     geometry_msgs::Pose p;
     p.position.x = 3.4;
     p.position.y = 1;
@@ -118,7 +120,7 @@ TEST_F(GoalManager, adjustMiningGoalPos)
     p.orientation.y = -.3;
     p.orientation.z = -.5;
     p.orientation.w = 1;
-    auto nav_goal =  manager.get_updated_mining_goal(p);
+    manager.update_mining_goal(nav_goal, p);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
             SAFE_MINING_DISTANCE);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , 1);
@@ -136,7 +138,7 @@ TEST_F(GoalManager, adjustMiningGoalBigPos)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("base_footprint", constraints);
-    manager.initialize_goal(tfr_utilities::LocationCode::MINING);
+    manager.initialize_goal(nav_goal, tfr_utilities::LocationCode::MINING);
     geometry_msgs::Pose p;
     p.position.x = 3.4;
     p.position.y = 5;
@@ -145,7 +147,7 @@ TEST_F(GoalManager, adjustMiningGoalBigPos)
     p.orientation.y = -.3;
     p.orientation.z = -.5;
     p.orientation.w = 1;
-    auto nav_goal = manager.get_updated_mining_goal(p);
+    manager.update_mining_goal(nav_goal, p);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
             SAFE_MINING_DISTANCE);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , 1.015);
@@ -163,7 +165,7 @@ TEST_F(GoalManager, adjustMiningGoalBigNeg)
                 MINING_LINE_LENGTH, 
                 FINISH_LINE);
     NavigationGoalManager manager("base_footprint", constraints);
-    manager.initialize_goal(tfr_utilities::LocationCode::MINING);
+    manager.initialize_goal(nav_goal, tfr_utilities::LocationCode::MINING);
     geometry_msgs::Pose p;
     p.position.x = 3.4;
     p.position.y = -5;
@@ -172,7 +174,7 @@ TEST_F(GoalManager, adjustMiningGoalBigNeg)
     p.orientation.y = -.3;
     p.orientation.z = -.5;
     p.orientation.w = 1;
-    auto nav_goal = manager.get_updated_mining_goal(p);
+    manager.update_mining_goal(nav_goal, p);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
             SAFE_MINING_DISTANCE);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , -1.015);
@@ -181,35 +183,6 @@ TEST_F(GoalManager, adjustMiningGoalBigNeg)
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
     ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,1);
-}
-
-TEST_F(GoalManager, adjustMiningGoalWrongType)
-{
-    NavigationGoalManager::GeometryConstraints 
-        constraints(SAFE_MINING_DISTANCE, 
-                MINING_LINE_LENGTH, 
-                FINISH_LINE);
-    NavigationGoalManager manager("base_footprint", constraints);
-    manager.initialize_goal(tfr_utilities::LocationCode::DUMPING);
-    geometry_msgs::Pose p;
-    p.position.x = 3.4;
-    p.position.y = -5;
-    p.position.z = 0.4;
-    p.orientation.x = .1;
-    p.orientation.y = -.3;
-    p.orientation.z = -.5;
-    p.orientation.w = 1;
-    auto nav_goal = manager.get_updated_mining_goal(p);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.x , 
-            FINISH_LINE);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.y , 0);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.position.z , 0);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.x ,0);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.y ,0);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.z ,0);
-    ASSERT_DOUBLE_EQ(nav_goal.target_pose.pose.orientation.w ,1);
-    std::cout << "Note: you should have seen a warning when running this" 
-        <<" test case, this is defined behavior." << std::endl;
 }
 
 

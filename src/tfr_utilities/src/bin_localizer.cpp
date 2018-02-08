@@ -16,25 +16,28 @@ int main(int argc, char **argv)
     ros::NodeHandle n{};
     TfManipulator manipulator{};
 
-    //create some arbitrary point
-    //this will be replaced by output of the aruco action server
-    geometry_msgs::Pose pose{};
-    pose.position.x = 0.1;
-    pose.position.y = 0.2;
-    pose.position.z = 0;
-    pose.orientation.x = 0.0;
-    pose.orientation.y = 0.0;
-    pose.orientation.z = -0.819;
-    pose.orientation.w = 0.574;
+    //this is set up for the testing bay in the lab
+    geometry_msgs::PoseStamped pose{};
+    pose.header.stamp = ros::Time::now();
+    pose.header.frame_id = "bin_link";
+    pose.pose.position.x = -1.7;
+    pose.pose.position.y = 0.045;
+    pose.pose.position.z = 0.4425;
+    pose.pose.orientation.x = 0.0;
+    pose.pose.orientation.y = 0.0;
+    pose.pose.orientation.z = 0;
+    pose.pose.orientation.w = 1;
 
+    
+
+    geometry_msgs::PoseStamped transpose{};
     //process it to the correct reference frame
-    auto stamped = manipulator.wrap_pose(pose, "rear_camera_link");
-    geometry_msgs::PoseStamped transpose;
-    while(!manipulator.transform_pose(stamped,transpose, "map"));
+    while(!manipulator.transform_pose(pose,transpose, "odom"))
+        ros::Duration(0.5).sleep();
 
     //send the message
     tfr_msgs::LocalizePoint::Request request;
-    request.pose = transpose.pose;
+    request.pose = transpose;
     tfr_msgs::LocalizePoint::Response response;
     bool out = ros::service::call("localize_bin", request, response);
 

@@ -5,7 +5,6 @@ sensor_msgs/CameraInfo camera_info
 ---
 # result
 int32 number_found
-float32[] position
-float32[] rotation
+geometry_msgs/PoseStamped relative_pose
 ---
 # there is no feedback necessary

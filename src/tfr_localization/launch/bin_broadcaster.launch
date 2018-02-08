@@ -2,7 +2,7 @@
     <!--spins up a settable broadcaster for the location of the bin-->
     <node name="bin_broadcaster" pkg="tfr_utilities" output="screen" type="point_broadcaster">
         <rosparam>
-            parent_frame: map
+            parent_frame: odom
             point_frame: bin_link
             service_name: localize_bin
             hz: 10

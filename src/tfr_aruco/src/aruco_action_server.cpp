@@ -6,9 +6,9 @@
 #include <cv_bridge/cv_bridge.h>
 #include <image_geometry/pinhole_camera_model.h>
 #include <sensor_msgs/image_encodings.h>
-
 #include <tfr_msgs/ArucoAction.h>
 #include <actionlib/server/simple_action_server.h>
+#include <tf2/LinearMath/Quaternion.h>
 
 
 typedef actionlib::SimpleActionServer<tfr_msgs::ArucoAction> Server;
@@ -65,6 +65,7 @@ public:
         //params->cornerRefinementMethod = cv::aruco::CORNER_REFINE_CONTOUR;
         params->cornerRefinementWinSize = 10;
     }
+
     // This is the method that will be called when a client makes use
     // of this server. The provided goal is the "input".
     void execute(const tfr_msgs::ArucoGoalConstPtr& goal, Server* server)
@@ -104,29 +105,36 @@ public:
         
         std::vector< cv::Vec3d > rvecs, tvecs;
         cv::aruco::estimatePoseSingleMarkers(markerCorners, 0.05, cameraMatrix, distCoeffs, rvecs, tvecs);
-    
-    
-    
         
         cv::Vec3d boardRotVec, boardTransVec;
         int markersDetected = cv::aruco::estimatePoseBoard(markerCorners, markerIds, board, cameraMatrix, distCoeffs, boardRotVec, boardTransVec);
         
         tfr_msgs::ArucoResult result;
         result.number_found = markersDetected;
-        result.position = std::vector<float>(3, 0); // 3 members initialized to 0
-        result.rotation = std::vector<float>(3, 0); // 3 members initialized to 0
-        if(markersDetected != 0) 
+        if (result.number_found > 0)
         {
-            result.position[0] = boardTransVec[0];
-            result.position[1] = boardTransVec[1];
-            result.position[2] = boardTransVec[2];
-    
-            result.rotation[0] = boardRotVec[0];
-            result.rotation[1] = boardRotVec[1];
-            result.rotation[2] = boardRotVec[2];
+            result.relative_pose.header.stamp = ros::Time::now();
+            result.relative_pose.header.frame_id = goal->image.header.frame_id;
+            /*
+             *  also the coordinate axist for the aruco are in a different
+             *  coordinate system and are rotated here.
+             * */
+            result.relative_pose.pose.position.x = boardTransVec[2];
+            result.relative_pose.pose.position.y = boardTransVec[0];
+            result.relative_pose.pose.position.z = boardTransVec[1];
+            //let tf do the euler angle -> quaternion math
+            tf2::Quaternion rotated{};
+            //change rotated perspective RPY aruco output to ros coordinate system (2d)
+            rotated.setRPY(boardRotVec[2], boardRotVec[0], 3.14159 + boardRotVec[1]);
+            result.relative_pose.pose.orientation.x = rotated.x();
+            result.relative_pose.pose.orientation.y = rotated.y();
+            result.relative_pose.pose.orientation.z = rotated.z();
+            result.relative_pose.pose.orientation.w = rotated.w();
         }
         server->setSucceeded(result);
     }
+
+
 };
 
 int main(int argc, char** argv)
@@ -136,7 +144,7 @@ int main(int argc, char** argv)
 
     TFR_Aruco aruco;
 
-    Server server(n, "tfr_aruco", boost::bind(&TFR_Aruco::execute, aruco, _1, &server), false);
+    Server server(n, "aruco_action_server", boost::bind(&TFR_Aruco::execute, aruco, _1, &server), false);
     server.start();
     ros::spin();
     return 0;

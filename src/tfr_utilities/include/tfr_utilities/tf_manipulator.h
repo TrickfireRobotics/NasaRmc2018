@@ -28,7 +28,6 @@ class TfManipulator
     private:
         tf2_ros::Buffer buffer;
         tf2_ros::TransformListener listener;
-
 };
 
 #endif

@@ -30,7 +30,7 @@ class ImageWrapper
                 const std::string &service_name)
         {
             image_transport::ImageTransport it{n};
-            subscriber = it.subscribe(camera_topic, 20, &ImageWrapper::set_current, this);
+            subscriber = it.subscribeCamera(camera_topic, 20, &ImageWrapper::set_current, this);
             server = n.advertiseService(service_name, &ImageWrapper::get_current, this);
         }
         
@@ -43,10 +43,12 @@ class ImageWrapper
     private:
 
         //subscription callback
-        void set_current(const sensor_msgs::ImageConstPtr &i)
+        void set_current(const sensor_msgs::ImageConstPtr &i, const
+                sensor_msgs::CameraInfoConstPtr &in)
         {
             //this is safe because of shared pointers and non threaded spinning
             image = i;
+            info = in;
         }
 
         //service callback
@@ -55,14 +57,19 @@ class ImageWrapper
         {
             /* we need some time to let the camera warm up and start publishing,
              * so nullptr check needed*/
-            if (image != nullptr)
+            if (image != nullptr && info != nullptr)
+            {
                 response.image = *image;
-            return true;
+                response.camera_info= *info;
+                return true;
+            }
+            return false;
         }
         
-        image_transport::Subscriber subscriber;
+        image_transport::CameraSubscriber subscriber;
         ros::ServiceServer server;
         sensor_msgs::ImageConstPtr image{};
+        sensor_msgs::CameraInfoConstPtr info{};
 };
 
 int main(int argc, char **argv)

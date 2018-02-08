@@ -1,47 +1,81 @@
 /**
- *  This node is a placeholder for a set of responsibilites that collin needs to
- *  test for bin localization, it is not meant to go into the final system.
- *  It's logic and responsibilities will get transfered to an action server at
- *  the appropriate point in time.
+ * This node is meant to localize the bin on system start using the rear camera
+ * and an aruco sheet. 
+ *
+ * It's responsibilites will eventually get transferred to the localization
+ * action server
  * */
 
 #include <ros/ros.h>
 #include <ros/console.h>
 #include <tf_manipulator.h>
 #include <tfr_msgs/LocalizePoint.h>
+#include <actionlib/client/simple_action_client.h>
+#include <tfr_msgs/WrappedImage.h>
+#include <tfr_msgs/ArucoAction.h>
+
+class PartialServer
+{
+
+    public:
+        PartialServer(ros::NodeHandle &n):
+            aruco{"aruco_action_server", true},
+            tf_manipulator{}
+        {
+            image_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/rear_cam/image_raw");
+            aruco.waitForServer();
+        }
+
+        bool localize(geometry_msgs::PoseStamped &output)
+        {
+            tfr_msgs::WrappedImage request{};
+            //grab an image
+            if(!image_client.call(request))
+                return false;
+            tfr_msgs::ArucoGoal goal;
+            goal.image = request.response.image;
+            goal.camera_info = request.response.camera_info;
+            //send it to the server
+            aruco.sendGoal(goal);
+            if (aruco.waitForResult())
+            {
+                //make sure we can see
+                auto result = aruco.getResult();
+                if (result->number_found ==0)
+                    return false;
+                //transform relative to the base
+                geometry_msgs::PoseStamped cam_pose =
+                    aruco.getResult()->relative_pose;
+                if (!tf_manipulator.transform_pose(cam_pose, output,
+                            "base_footprint"))
+                    return false;
+                //fire off the localized bin
+                output.header.stamp = ros::Time::now();
+                output.pose.position.y *= -1;
+                output.pose.position.z *= -1;
+                return true;
+            }
+        }
+    private:
+        actionlib::SimpleActionClient<tfr_msgs::ArucoAction> aruco;    
+        ros::ServiceClient  image_client;
+        TfManipulator tf_manipulator;
+};
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "bin_localizer");
     ros::NodeHandle n{};
-    TfManipulator manipulator{};
 
-    //this is set up for the testing bay in the lab
-    geometry_msgs::PoseStamped pose{};
-    pose.header.stamp = ros::Time::now();
-    pose.header.frame_id = "bin_link";
-    pose.pose.position.x = -1.7;
-    pose.pose.position.y = 0.045;
-    pose.pose.position.z = 0.4425;
-    pose.pose.orientation.x = 0.0;
-    pose.pose.orientation.y = 0.0;
-    pose.pose.orientation.z = 0;
-    pose.pose.orientation.w = 1;
-
-    
-
-    geometry_msgs::PoseStamped transpose{};
-    //process it to the correct reference frame
-    while(!manipulator.transform_pose(pose,transpose, "odom"))
-        ros::Duration(0.5).sleep();
+    PartialServer example{n};
+    geometry_msgs::PoseStamped location;
+    //do this until we can locaize
+    while (!example.localize(location));
 
     //send the message
     tfr_msgs::LocalizePoint::Request request;
-    request.pose = transpose;
+    request.pose = location;
     tfr_msgs::LocalizePoint::Response response;
     bool out = ros::service::call("localize_bin", request, response);
-
-    ROS_INFO("success: %s", out ? "true" : "false");
-
     return 0;
 }

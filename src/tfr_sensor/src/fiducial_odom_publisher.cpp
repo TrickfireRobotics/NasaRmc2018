@@ -30,6 +30,7 @@
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <tfr_msgs/ArucoAction.h>
+#include <tfr_utilities/tf_manipulator.h>
 #include <actionlib/client/simple_action_client.h>
 #include <tf2/convert.h>
 #include <tf2/LinearMath/Quaternion.h>
@@ -48,13 +49,13 @@ class FiducialOdom
                 const std::string& b_frame,
                 const std::string& o_frame) :
             client{"aruco_action_server", true},
+            tf_manipulator{},
             camera_frame{c_frame},
             footprint_frame{f_frame},
             bin_frame{b_frame},
             odometry_frame{o_frame},
             last_pose{}
         {
-            tf2_ros::TransformListener listener(tf_buffer);
             image_transport::ImageTransport it{n};
             subscriber = it.subscribeCamera("image",10, 
                     &FiducialOdom::process_odometry, this);
@@ -70,7 +71,6 @@ class FiducialOdom
         FiducialOdom& operator=(const FiducialOdom&) = delete;
         FiducialOdom(FiducialOdom&&) = delete;
         FiducialOdom& operator=(FiducialOdom&&) = delete;
-
     private:
         void process_odometry(const sensor_msgs::ImageConstPtr& image, const
                 sensor_msgs::CameraInfoConstPtr& info)
@@ -94,20 +94,10 @@ class FiducialOdom
                     return;
 
                 geometry_msgs::PoseStamped unprocessed_pose = result->relative_pose;
-                geometry_msgs::TransformStamped transform_stamped;
-                try{
-                    transform_stamped =
-                        tf_buffer.lookupTransform(camera_frame, footprint_frame,
-                                ros::Time(0));
-                }
-                catch (tf2::TransformException &ex) {
-                    ROS_WARN("%s",ex.what());
-                    ros::Duration(1.0).sleep();
-                    return;
-                }
-
                 geometry_msgs::PoseStamped relative_pose;
-                tf2::doTransform(unprocessed_pose, relative_pose, transform_stamped);
+                if (!tf_manipulator.transform_pose(unprocessed_pose,
+                            relative_pose, footprint_frame))
+                        return;
 
                 //NOTE this negative sign is needed to make the transform work,
                 //I have no idea why
@@ -195,7 +185,7 @@ class FiducialOdom
         ros::Publisher publisher;
         actionlib::SimpleActionClient<tfr_msgs::ArucoAction> client;
         tf2_ros::TransformBroadcaster broadcaster;
-        tf2_ros::Buffer tf_buffer;
+        TfManipulator tf_manipulator;
 
         geometry_msgs::PoseStamped last_pose;
         

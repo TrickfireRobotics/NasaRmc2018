@@ -1,0 +1,9 @@
+<launch>
+    <include file="$(find tfr_launch)/launch/core.launch"/>
+    <include file="$(find tfr_sensor)/launch/sensor_platform.launch"/>
+    <include file="$(find tfr_launch)/launch/fake_localization.launch"/>
+    <include file="$(find tfr_aruco)/launch/aruco.launch"/>
+    <include file="$(find tfr_localization)/launch/bin_broadcaster.launch"/>
+    <include file="$(find tfr_sensor)/launch/fiducial_odom.launch"/>
+    <node name="rviz" pkg="rviz" type="rviz"/>
+</launch>

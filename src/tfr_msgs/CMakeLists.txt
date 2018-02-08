@@ -25,6 +25,7 @@ add_message_files(
  add_service_files(
    FILES
    LocalizePoint.srv
+   WrappedImage.srv
  )
 
 # Generate actions in the 'action' folder
@@ -34,6 +35,8 @@ add_action_files(
   Navigation.action
   Bin.action
   Aruco.action
+  Empty.action
+  ArucoIntegrate.action
 )
 
 # Generate added messages and services with any dependencies listed here

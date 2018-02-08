@@ -1,0 +1,7 @@
+<launch>
+    <include file="$(find tfr_launch)/launch/core.launch"/>
+    <include file="$(find tfr_sensor)/launch/sensor_platform.launch"/>
+    <node name="light_detection_action_server" pkg="tfr_sensor" type="light_detection_action_server" output="screen" />
+    <node name="light_detection_action_client" pkg="tfr_sensor" type="light_detection_action_client" output="screen"/>
+    <include file="$(find tfr_visualization)/launch/sensor_platform.launch"/>
+</launch>

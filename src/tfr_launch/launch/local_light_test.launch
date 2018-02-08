@@ -1,0 +1,15 @@
+<launch>
+    <!-- launch file for testing cv code at home, not useable on the jetson-->
+    <include file="$(find tfr_launch)/launch/core.launch"/>
+    <group ns= "sensors">
+        <node name="read_cam_tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher"
+            args="-0.375 0 0.01 0 0 1 0 base_link rear_cam_link"/>
+        <node name="rear_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
+            <rosparam>
+                frame_id: rear_cam_link
+            </rosparam>
+        </node>
+    </group>
+    <node name="light_detection_action_server" pkg="tfr_sensor" type="light_detection_action_server" output="screen" />
+    <node name="light_detection_action_client" pkg="tfr_sensor" type="light_detection_action_client" output="screen"/>
+</launch>

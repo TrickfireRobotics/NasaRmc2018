@@ -1,0 +1,9 @@
+#this is a placeholder for collin to interact with aruco until the aruco action server get's integrated
+#TODO delete me and integrate actual aruco
+#empty
+sensor_msgs/Image image
+---
+geometry_msgs/Pose pose
+int32 markers_detected
+---
+#empty

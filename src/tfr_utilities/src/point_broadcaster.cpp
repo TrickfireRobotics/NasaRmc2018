@@ -49,13 +49,13 @@ void PointBroadcaster::broadcast()
 bool PointBroadcaster::localize_point(tfr_msgs::LocalizePoint::Request &request,
         tfr_msgs::LocalizePoint::Response &resonse)
 {
-    transform.transform.translation.x = request.pose.position.x;
-    transform.transform.translation.y = request.pose.position.y;
-    transform.transform.translation.z = request.pose.position.z;
-    transform.transform.rotation.x = request.pose.orientation.x;
-    transform.transform.rotation.y = request.pose.orientation.y;
-    transform.transform.rotation.z = request.pose.orientation.z;
-    transform.transform.rotation.w = request.pose.orientation.w;
+    transform.transform.translation.x = request.pose.pose.position.x;
+    transform.transform.translation.y = request.pose.pose.position.y;
+    transform.transform.translation.z = request.pose.pose.position.z;
+    transform.transform.rotation.x = request.pose.pose.orientation.x;
+    transform.transform.rotation.y = request.pose.pose.orientation.y;
+    transform.transform.rotation.z = request.pose.pose.orientation.z;
+    transform.transform.rotation.w = request.pose.pose.orientation.w;
     return true;
 }
 

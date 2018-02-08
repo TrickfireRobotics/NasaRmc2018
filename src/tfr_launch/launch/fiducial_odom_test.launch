@@ -1,8 +1,9 @@
 <launch>
-	<include file="$(find tfr_launch)/launch/core.launch"/>
+    <include file="$(find tfr_launch)/launch/core.launch"/>
     <include file="$(find tfr_sensor)/launch/sensor_platform.launch"/>
     <include file="$(find tfr_aruco)/launch/aruco.launch"/>
-    <remap from="/image_raw" to="/sensors/rear_cam/image_raw" />
-    <remap from="/camera_info" to="/sensors/rear_cam/camera_info" />
-    <node name="sample_client" pkg="tfr_aruco" type="aruco_action_client" output="screen"/>
+    <include file="$(find tfr_localization)/launch/bin_broadcaster.launch"/>
+    <node name="bin_localizer" pkg="tfr_utilities" type="bin_localizer" output="screen"/>
+    <include file="$(find tfr_sensor)/launch/fiducial_odom.launch"/>
+    <node name="rviz" pkg="rviz" type="rviz"/>
 </launch>

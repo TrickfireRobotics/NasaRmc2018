@@ -18,18 +18,12 @@ class NavigationGoalManager
         struct GeometryConstraints 
         {
             public:
-                GeometryConstraints(double d, double l, double f) :
-                    safe_mining_distance{d}, mining_line_length{l},
-                    finish_line{f}{};
+                GeometryConstraints(double d, double f) :
+                    safe_mining_distance{d}, finish_line{f}{};
 
                 double get_safe_mining_distance() const
                 {
                     return safe_mining_distance;
-                }
-
-                double get_mining_line_length() const
-                {
-                    return mining_line_length;
                 }
 
                 double get_finish_line() const
@@ -39,11 +33,8 @@ class NavigationGoalManager
             private:
                 //The distance to travel from the bin
                 double safe_mining_distance;
-                //The length of the varying mining line
-                double mining_line_length;
                 //the distance from the bin the finish line is
                 double finish_line;
-
         };
 
 
@@ -56,8 +47,6 @@ class NavigationGoalManager
 
         void initialize_goal( move_base_msgs::MoveBaseGoal& nav_goal, 
                 const tfr_utilities::LocationCode& goal);
-        void update_mining_goal( move_base_msgs::MoveBaseGoal& nav_goal,
-                const geometry_msgs::Pose& msg);
 
     private:
 

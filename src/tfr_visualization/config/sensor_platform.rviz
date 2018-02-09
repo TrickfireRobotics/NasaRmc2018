@@ -84,8 +84,11 @@ Visualization Manager:
                 {}
               duo3d/imu_frame:
                 {}
+<<<<<<< 66f7395b2277657f678b9b251b20e5ff9838f899
             rear_cam_link:
               {}
+=======
+>>>>>>> hooked up library
             xsens_link:
               {}
       Update Interval: 0

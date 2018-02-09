@@ -40,7 +40,8 @@ Dumper::Dumper(ros::NodeHandle &node, const std::string &service_name,
 void Dumper::dump(const tfr_msgs::EmptyGoalConstPtr &goal) 
 {  
     //check to make sure we can see the board
-    auto initial_estimate = get_aruco_estimate();
+    tfr_msgs::ArucoIntegrateResult initial_estimate{};
+    getArucoEstimate(initial_estimate);
     if (initial_estimate.markers_detected == 0)
     {
         server.setAborted();
@@ -57,35 +58,38 @@ void Dumper::dump(const tfr_msgs::EmptyGoalConstPtr &goal)
         //handle preemption
         if (server.isPreemptRequested() || !ros::ok())
         {
-            stop_moving();
+            stopMoving();
             server.setPreempted();
             return;
         }
 
         //get the most recent aruco reading
-        tfr_msgs::ArucoIntegrateResult estimate = get_aruco_estimate();
+        tfr_msgs::ArucoIntegrateResult estimate{};
+        getArucoEstimate(estimate);
 
         //send motor commands
         if (estimate.markers_detected == 0)
-            move_blind();
+            moveBlind();
         else
         {
-            update_control_msg(estimate);
+            geometry_msgs::Twist cmd{};
+            updateControlMsg(estimate, cmd);
             velocity_publisher.publish(cmd);
         }
     }
     //TODO raise the bin
-    stop_moving();
+    stopMoving();
     server.setSucceeded();
 }
 
 /*
  *  Back up and turn slightly to match the orientation of the aruco board
  * */
-void Dumper::update_control_msg(const tfr_msgs::ArucoIntegrateResult &estimate)
+void Dumper::updateControlMsg(const tfr_msgs::ArucoIntegrateResult &estimate,
+        geometry_msgs::Twist &cmd)
 {
     //back up
-    cmd.linear.x = -1 * constraints.get_max_lin_vel();
+    cmd.linear.x = -1 * constraints.getMaxLinVel();
     /*
      * Maintenence note:
      *
@@ -98,16 +102,17 @@ void Dumper::update_control_msg(const tfr_msgs::ArucoIntegrateResult &estimate)
      * This conforms to rep 103
      * */
     int sign = (estimate.pose.position.y < 0) ? -1 : 1;
-    cmd.angular.z = sign*constraints.get_max_ang_vel();
+    cmd.angular.z = sign*constraints.getMaxAngVel();
 }
 
 /*
  * back up slowwwwly we can't see
  * */
-void Dumper::move_blind()
+void Dumper::moveBlind()
 {
     ROS_INFO("backing up blind");
-    cmd.linear.x = -1*constraints.get_min_lin_vel();
+    geometry_msgs::Twist cmd{};
+    cmd.linear.x = -1*constraints.getMinLinVel();
     cmd.angular.z = 0;
     velocity_publisher.publish(cmd);
 }
@@ -115,9 +120,10 @@ void Dumper::move_blind()
 /*
  *  Stop Moving 
  * */
-void Dumper::stop_moving()
+void Dumper::stopMoving()
 {
     ROS_INFO("Stopped");
+    geometry_msgs::Twist cmd{};
     cmd.linear.x = 0;
     cmd.angular.z =0;
     velocity_publisher.publish(cmd);
@@ -126,7 +132,7 @@ void Dumper::stop_moving()
 /*
  * Gets the most recent position estimate from the aruco service
  */
-tfr_msgs::ArucoIntegrateResult Dumper::get_aruco_estimate()
+void Dumper::getArucoEstimate(tfr_msgs::ArucoIntegrateResult &result)
 {
     tfr_msgs::WrappedImage image_request{};
     tfr_msgs::ArucoIntegrateGoal goal{};
@@ -134,7 +140,6 @@ tfr_msgs::ArucoIntegrateResult Dumper::get_aruco_estimate()
     image_client.call(image_request);
     goal.image = image_request.response.image;
     //TODO hook up aruco here
-    tfr_msgs::ArucoIntegrateResult result{};
     result.markers_detected = 1;
     result.pose.position.x= 0.5;
     result.pose.position.y= -0.1;
@@ -143,7 +148,6 @@ tfr_msgs::ArucoIntegrateResult Dumper::get_aruco_estimate()
     result.pose.orientation.y = 0;
     result.pose.orientation.z = 1;
     result.pose.orientation.w = 0;
-    return result;
 }
 
 int main(int argc, char **argv)

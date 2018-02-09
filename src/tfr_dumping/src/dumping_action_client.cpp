@@ -14,7 +14,6 @@ int main(int argc, char** argv)
     client.waitForServer();
     ROS_INFO("client connected to server");
 
-    ros::Duration(1).sleep();
     tfr_msgs::EmptyGoal empty{};
     client.sendGoal(empty);
     client.waitForResult();

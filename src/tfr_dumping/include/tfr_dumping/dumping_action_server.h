@@ -16,7 +16,7 @@
  * Its first step is to make sure it can see the aruco board, it will abort the
  * mission if it can't. 
  *
- * I backs up at a set speed until it get's really close and loses sight of the
+ * It backs up at a set speed until it get's really close and loses sight of the
  * board. When it is blind, it drives straight back, goes slower. 
  *
  * It stops when the light detector get's triggered.
@@ -36,10 +36,10 @@ class Dumper
                         double min_ang, double max_ang):
                     min_lin_vel(min_lin), max_lin_vel(max_lin),
                     min_ang_vel(min_ang), max_ang_vel(max_ang) {}
-                double get_min_lin_vel() const {return min_lin_vel;}
-                double get_max_lin_vel() const {return max_lin_vel;}
-                double get_min_ang_vel() const {return min_ang_vel;}
-                double get_max_ang_vel() const {return max_ang_vel;}
+                double getMinLinVel() const {return min_lin_vel;}
+                double getMaxLinVel() const {return max_lin_vel;}
+                double getMinAngVel() const {return min_ang_vel;}
+                double getMaxAngVel() const {return max_ang_vel;}
         };
 
         Dumper(ros::NodeHandle &node, const std::string &camera_topic,
@@ -52,10 +52,11 @@ class Dumper
 
     private:
         void dump(const tfr_msgs::EmptyGoalConstPtr &goal);
-        tfr_msgs::ArucoIntegrateResult get_aruco_estimate();
-        void move_blind();
-        void stop_moving();
-        void update_control_msg(const tfr_msgs::ArucoIntegrateResult &estimate);
+        void getArucoEstimate(tfr_msgs::ArucoIntegrateResult &estimate);
+        void moveBlind();
+        void stopMoving();
+        void updateControlMsg(const tfr_msgs::ArucoIntegrateResult &estimate, 
+                geometry_msgs::Twist &cmd);
 
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
         actionlib::SimpleActionClient<tfr_msgs::EmptyAction> detector;
@@ -67,8 +68,6 @@ class Dumper
         ros::Publisher velocity_publisher;
 
         const DumpingConstraints &constraints; 
-
-        geometry_msgs::Twist cmd{};
 };
 
 #endif

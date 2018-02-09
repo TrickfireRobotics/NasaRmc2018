@@ -108,7 +108,7 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
 
 
 /*
- * Prepare a feedback message for sending
+ * Prepare a result message for sending
  * */
 void Navigator::update_result(tfr_msgs::NavigationResult &result,
         const move_base_msgs::MoveBaseGoal &nav_goal)

@@ -1,12 +1,10 @@
 # Each of these three will be build as a ROS message
 # goal
-DiggingState goal
+float32[] pose
 ---
 # result
 # whether the motion was successful or not
-bool success
 float32[] pose
 ---
 # feedback message
 # this is the angle of all the joints
-float32[] pose

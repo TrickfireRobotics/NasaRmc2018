@@ -1,2 +1,0 @@
-geometry_msgs/Point relative_point
-float64 scoop_angle

@@ -9,7 +9,7 @@
   <license>BSD</license>
   <url type="website">http://www.trickfirerobotics.com/</url>
   <author email="ryan.berge@trickfirerobotics.com">Ryan Berge</author>
-  <!-- <author email="another.author@example.com">Jane Doe</author> -->
+  <author email="collinsconway@gmail.com">Collin Conway</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <test_depend>gtest</test_depend>
@@ -17,9 +17,9 @@
   <depend>rospy</depend>
   <depend>nav_msgs</depend>
   <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
   <depend>message_runtime</depend>
   <depend>tfr_msgs</depend>
-  <depend>geometry_msgs</depend>
   <depend>tf</depend>
   <depend>tf2</depend>
   <depend>tf2_ros</depend>

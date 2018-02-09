@@ -49,9 +49,9 @@ generate_messages(
 # These are all for exporting to dependent packages/projects.
 # Uncomment each if the dependent project requires it
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES tfr_msgs
-  CATKIN_DEPENDS roscpp std_msgs message_runtime actionlib actionlib_msgs
+    #  INCLUDE_DIRS include
+    #  LIBRARIES tfr_msgs
+#  CATKIN_DEPENDS roscpp std_msgs message_runtime actionlib actionlib_msgs
 #  DEPENDS system_lib
 )
 

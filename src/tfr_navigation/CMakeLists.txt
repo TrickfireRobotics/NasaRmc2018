@@ -6,6 +6,7 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   tfr_msgs
+  tfr_utilities
   geometry_msgs
   nav_msgs
   actionlib
@@ -28,11 +29,13 @@ add_library( navigation_server
     src/navigator.cpp
 )
 add_dependencies(navigation_server ${catkin_EXPORTED_TARGETS})
+target_link_libraries(navigation_server ${catkin_LIBRARIES})
 
 add_library( navigation_client 
     src/navigation_client.cpp
 )
 add_dependencies(navigation_client ${catkin_EXPORTED_TARGETS})
+target_link_libraries(navigation_server ${catkin_LIBRARIES})
 
 
 add_executable(navigation_action_server 

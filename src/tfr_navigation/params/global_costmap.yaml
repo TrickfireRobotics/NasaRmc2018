@@ -1,0 +1,4 @@
+global_costmap:
+    global_frame: /odom
+    width: 20
+    height: 20 

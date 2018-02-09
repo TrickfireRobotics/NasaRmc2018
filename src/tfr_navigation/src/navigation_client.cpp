@@ -15,10 +15,11 @@ NavigationClient::NavigationClient(std::string action_name):client{action_name, 
  *
  * action - The byte code corresponding to a location in the world map
  * */
-void NavigationClient::navigate(uint8_t location)
+void NavigationClient::navigate(tfr_utilities::LocationCode location)
 {
     tfr_msgs::NavigationGoal goal;
-    goal.location_code= location;
+    //messages can't support user defined types
+    goal.location_code= static_cast<uint8_t>(location);
 
 
     /*Maintenece Note:
@@ -56,7 +57,7 @@ actionlib::SimpleClientGoalState NavigationClient::get_state()
  * */
 void NavigationClient::feedback(const tfr_msgs::NavigationFeedbackConstPtr& feedback)
 {
-    ROS_INFO("feedback recieved, code: %d", feedback->status);
+    ROS_INFO("feedback received");
 }
 
 /**
@@ -65,5 +66,5 @@ void NavigationClient::feedback(const tfr_msgs::NavigationFeedbackConstPtr& feed
 void NavigationClient::finished(const actionlib::SimpleClientGoalState &state, const
         tfr_msgs::NavigationResultConstPtr &result)
 {
-    ROS_INFO("result recieved, code: %d", result->status);
+    ROS_INFO("result received");
 }

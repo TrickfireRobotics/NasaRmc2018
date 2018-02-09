@@ -5,6 +5,7 @@
 #include <geometry_msgs/Pose.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <tfr_msgs/NavigationAction.h>
+#include <tfr_utilities/location_codes.h>
 #include <cstdint>
 #include <cmath>
 class NavigationGoalManager
@@ -46,24 +47,23 @@ class NavigationGoalManager
         };
 
 
-        NavigationGoalManager(const GeometryConstraints &constraints);
-        NavigationGoalManager(const GeometryConstraints &constraints, uint8_t code);
+        NavigationGoalManager(const std::string &ref_frame, const GeometryConstraints &constraints);
+        ~NavigationGoalManager() = default;
         NavigationGoalManager(const NavigationGoalManager&) = delete;
         NavigationGoalManager& operator=(const NavigationGoalManager&) = delete;
         NavigationGoalManager(NavigationGoalManager&&) = delete;
         NavigationGoalManager& operator=(NavigationGoalManager&&) = delete;
 
-        move_base_msgs::MoveBaseGoal initialize_goal();
-        move_base_msgs::MoveBaseGoal get_updated_mining_goal(
-                geometry_msgs::Pose msg);
+        void initialize_goal( move_base_msgs::MoveBaseGoal& nav_goal, 
+                const tfr_utilities::LocationCode& goal);
+        void update_mining_goal( move_base_msgs::MoveBaseGoal& nav_goal,
+                const geometry_msgs::Pose& msg);
 
-        //delegate initialization to ctor
-        uint8_t location_code;
+    private:
 
         //the constraints to the problem
         const GeometryConstraints &constraints;
-    private:
-        //the navigation goal
-        move_base_msgs::MoveBaseGoal nav_goal{};
+
+        const std::string &reference_frame;
 };
 #endif

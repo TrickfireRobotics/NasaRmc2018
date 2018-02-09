@@ -12,6 +12,7 @@
 #define NAVIGATION_CLIENT_H
 #include <ros/ros.h>
 #include <ros/console.h>
+#include <tfr_utilities/location_codes.h>
 #include <actionlib/client/simple_action_client.h>
 #include <boost/bind.hpp>
 #include <cstdint>
@@ -19,11 +20,6 @@
 class NavigationClient
 {
     public:
-        enum class Location : uint8_t 
-        {
-            MINING = tfr_msgs::NavigationGoal::TO_MINING,
-            DUMPING = tfr_msgs::NavigationGoal::TO_DUMPING
-        };
         NavigationClient(std::string action_name);
         ~NavigationClient() {} 
 
@@ -34,7 +30,7 @@ class NavigationClient
         NavigationClient& operator=(NavigationClient&&) = delete;
 
         //basic utilities
-        void navigate(uint8_t location);
+        void navigate(tfr_utilities::LocationCode location);
         void stop_all();
         actionlib::SimpleClientGoalState get_state();
 

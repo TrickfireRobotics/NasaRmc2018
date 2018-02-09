@@ -11,6 +11,8 @@ Panels:
         - /PointCloud21
         - /Imu2
         - /Odometry1
+        - /Odometry2
+        - /Odometry2/Shape1
       Splitter Ratio: 0.5
     Tree Height: 843
   - Class: rviz/Selection
@@ -62,6 +64,8 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
+        bin_link:
+          Value: true
         duo3d/camera_frame:
           Value: true
         duo3d/frame:
@@ -69,6 +73,8 @@ Visualization Manager:
         duo3d/imu_frame:
           Value: true
         odom:
+          Value: true
+        rear_cam_link:
           Value: true
         xsens_link:
           Value: true
@@ -78,17 +84,20 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        base_footprint:
-          base_link:
-            duo3d/frame:
-              duo3d/camera_frame:
-                {}
-              duo3d/imu_frame:
-                {}
-            xsens_link:
-              {}
         odom:
-          {}
+          base_footprint:
+            base_link:
+              duo3d/frame:
+                duo3d/camera_frame:
+                  {}
+                duo3d/imu_frame:
+                  {}
+              rear_cam_link:
+                {}
+              xsens_link:
+                {}
+          bin_link:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -139,7 +148,41 @@ Visualization Manager:
       Topic: /sensors/mti/sensor/imu
       Unreliable: false
       Value: false
-    - Angle Tolerance: 0.100000001
+    - Angle Tolerance: 0.00999999978
+      Class: rviz/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.300000012
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: true
+      Keep: 5
+      Name: Odometry
+      Position Tolerance: 0.00999999978
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.100000001
+        Color: 255; 25; 0
+        Head Length: 0.300000012
+        Head Radius: 0.100000001
+        Shaft Length: 1
+        Shaft Radius: 0.0500000007
+        Value: Arrow
+      Topic: /odometry/filtered
+      Unreliable: false
+      Value: true
+    - Angle Tolerance: 0.00999999978
       Class: rviz/Odometry
       Covariance:
         Orientation:
@@ -157,20 +200,20 @@ Visualization Manager:
           Value: true
         Value: false
       Enabled: true
-      Keep: 100
+      Keep: 5
       Name: Odometry
-      Position Tolerance: 0.100000001
+      Position Tolerance: 0.00999999978
       Shape:
         Alpha: 1
         Axes Length: 1
         Axes Radius: 0.100000001
-        Color: 255; 25; 0
+        Color: 0; 255; 0
         Head Length: 0.300000012
-        Head Radius: 0.100000001
-        Shaft Length: 1
-        Shaft Radius: 0.0500000007
+        Head Radius: 0.150000006
+        Shaft Length: 0.5
+        Shaft Radius: 0.100000001
         Value: Arrow
-      Topic: /odometry/filtered
+      Topic: /odom
       Unreliable: false
       Value: true
   Enabled: true
@@ -213,10 +256,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.110203601
+      Pitch: 0.739796042
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.4385891
+      Yaw: 5.17040157
     Saved: ~
 Window Geometry:
   Displays:

@@ -51,6 +51,10 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
+add_library(${PROJECT_NAME}
+  src/status_code.cpp
+)
+
 add_library(tf_manipulator
     ./src/tf_manipulator.cpp
 )
@@ -66,7 +70,9 @@ add_dependencies(bin_localizer ${catkin_EXPORTED_TARGETS})
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
+
 # Add gtest based cpp test target and link libraries
+catkin_add_gtest(${PROJECT_NAME}-test test/test_system_codes.cpp)
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 endif()

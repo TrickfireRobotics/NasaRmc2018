@@ -94,30 +94,63 @@ class FiducialOdom
                     return;
 
                 geometry_msgs::PoseStamped unprocessed_pose = result->relative_pose;
-                geometry_msgs::PoseStamped relative_pose;
+                ROS_INFO("unprocessed data %s %f %f %f",
+                        unprocessed_pose.header.frame_id.c_str(),
+                        unprocessed_pose.pose.position.x,
+                        unprocessed_pose.pose.position.y,
+                        unprocessed_pose.pose.position.z);
+                 geometry_msgs::PoseStamped processed_pose;
                 if (!tf_manipulator.transform_pose(unprocessed_pose,
-                            relative_pose, footprint_frame))
+                            processed_pose, footprint_frame))
                         return;
-
-                //NOTE this negative sign is needed to make the transform work,
-                //I have no idea why
+                //note we need to reverse sign here
+                processed_pose.pose.position.x *= -1;
+                ROS_INFO("processed data %s %f %f %f",
+                        processed_pose.header.frame_id.c_str(),
+                        processed_pose.pose.position.x,
+                        processed_pose.pose.position.y,
+                        processed_pose.pose.position.z);
+                //so we have a point in terms of the camera and bin
+                //we need to express that in terms of odom
+                geometry_msgs::Transform relative_bin_transform;
+                //get odom bin transform
+                if (!tf_manipulator.get_transform(relative_bin_transform,
+                            bin_frame, odometry_frame))
+                        return;
+                //take a difference of the two transforms to find the
+                //odom_camera transform
+                tf2::Transform p_0{};
+                tf2::convert(processed_pose.pose, p_0);
+                tf2::Transform p_1{};
+                tf2::convert(relative_bin_transform, p_1);
+                //get the difference between the two transforms
+                auto difference = p_1.inverseTimes(p_0);
+                geometry_msgs::Transform relative_transform;
+                relative_transform = tf2::toMsg(difference);
+                geometry_msgs::PoseStamped relative_pose;
                 relative_pose.header.stamp = ros::Time::now();
-                relative_pose.pose.position.x *= -1;
-
+                relative_pose.header.frame_id = camera_frame;
+                relative_pose.pose.position.x = relative_transform.translation.x;
+                relative_pose.pose.position.y = relative_transform.translation.y;
+                relative_pose.pose.position.z = relative_transform.translation.z;
+                relative_pose.pose.orientation = relative_transform.rotation;
+                ROS_INFO("relative data %s %f %f %f",
+                        relative_pose.header.frame_id.c_str(),
+                        relative_pose.pose.position.x,
+                        relative_pose.pose.position.y,
+                        relative_pose.pose.position.z);
+ 
                 // 1. handle transforms for tf
                 geometry_msgs::TransformStamped transform;
                 transform.header.stamp = ros::Time::now();
-                transform.header.frame_id = bin_frame;
+                transform.header.frame_id = odometry_frame;
                 transform.child_frame_id = footprint_frame;
-                transform.transform.translation.x = relative_pose.pose.position.x;
-                transform.transform.translation.y = relative_pose.pose.position.y;
-                transform.transform.translation.z = relative_pose.pose.position.z;
-                transform.transform.rotation = relative_pose.pose.orientation;
+                transform.transform = relative_transform;
                 broadcaster.sendTransform(transform);
-            
+
                 // 2. handle odometry data
                 nav_msgs::Odometry odom;
-                odom.header.frame_id = bin_frame;
+                odom.header.frame_id = odometry_frame;
                 odom.header.stamp = ros::Time::now();
                 odom.child_frame_id = footprint_frame;
                 //get our pose and fudge some covariances

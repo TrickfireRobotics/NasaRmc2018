@@ -43,16 +43,39 @@ class PartialServer
                 auto result = aruco.getResult();
                 if (result->number_found ==0)
                     return false;
+
+                ROS_INFO("localization %s %f %f %f %f %f %f %f",
+                        result->relative_pose.header.frame_id.c_str(),
+                        result->relative_pose.pose.position.x,
+                        result->relative_pose.pose.position.y,
+                        result->relative_pose.pose.position.z,
+                        result->relative_pose.pose.orientation.x,
+                        result->relative_pose.pose.orientation.y,
+                        result->relative_pose.pose.orientation.z,
+                        result->relative_pose.pose.orientation.w);
+
                 //transform relative to the base
                 geometry_msgs::PoseStamped cam_pose =
                     aruco.getResult()->relative_pose;
                 if (!tf_manipulator.transform_pose(cam_pose, output,
                             "base_footprint"))
                     return false;
+                output.pose.position.y *=-1;
+                output.pose.position.z *=-1;
+                ROS_INFO("localization %s %f %f %f %f %f %f %f",
+                        output.header.frame_id.c_str(),
+                        output.pose.position.x,
+                        output.pose.position.y,
+                        output.pose.position.z,
+                        output.pose.orientation.x,
+                        output.pose.orientation.y,
+                        output.pose.orientation.z,
+                        output.pose.orientation.w);
+
+
                 //fire off the localized bin
+                output.header.frame_id = "bin_link";
                 output.header.stamp = ros::Time::now();
-                output.pose.position.y *= -1;
-                output.pose.position.z *= -1;
                 return true;
             }
         }

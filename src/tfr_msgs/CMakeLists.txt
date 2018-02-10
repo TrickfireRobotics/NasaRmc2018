@@ -18,7 +18,6 @@ add_message_files(
   FILES
   Echo.msg
   SystemStatus.msg
-  DiggingState.msg
 )
 
 # Generate services in the 'srv' folder

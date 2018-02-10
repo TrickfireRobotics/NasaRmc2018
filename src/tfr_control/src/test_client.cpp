@@ -25,36 +25,73 @@
 #include <actionlib/client/simple_action_client.h>
 #include <std_msgs/Float64.h>
 #include <vector>
+#include <map>
 
 typedef actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> Client;
 
 // Called once when the goal completes
 void finished(const actionlib::SimpleClientGoalState& state, const tfr_msgs::ArmMoveResultConstPtr& result)
 {
-    ROS_INFO("Action succeeded: %s", state.getText());
-    ros::shutdown(); // This will terminate the node
+    // If this goal didn't succeed (there's multiple fail states in the enum so
+    // it's easier to check for this)
+    if (state.state_ != actionlib::SimpleClientGoalState::StateEnum::SUCCEEDED) {
+        ROS_WARN("Error planning/executing motion.");
+        return;
+    }
+
+    ROS_INFO("Planning and execution succeeded.");
 }
 
 int main(int argc, char** argv)
 {
+    // The list of positions to travel to, in order
+    std::vector<std::string> position_names = { "ready", "dig", "scoop", "out", "dump", "release", "invalid" };
+
+    // Basic ROS setup
     ros::init(argc, argv, "example_client");
+    ros::NodeHandle n;
+
+    // Needed to spin while we're waiting for a blocking call later (waiting for
+    // server finished response)
+    ros::AsyncSpinner spin(1);
+    spin.start();
+    
+    // Set up the action server and connect
     Client client("move_arm", true);
 
-    // Ensure connection was established with Server
+    ROS_INFO("Connecting to action server...");
     client.waitForServer();
+    ROS_INFO("Connection established with server.");
 
-    // Members of ArmMoveGoal are defined in tfr_msgs/action/ArmMove.action
-    tfr_msgs::ArmMoveGoal goal;
-    goal.pose.resize(4);
-    goal.pose[0] = 0.0;
-    goal.pose[1] = 1.65;
-    goal.pose[2] = 0.0;
-    goal.pose[3] = -0.85;
+    // Loop through all of the positions to travel to and then exit
+    for (auto iter = position_names.begin(); iter != position_names.end(); iter++) {
+        // Get the name of the parameter in the positions namespace
+        std::string param_name = "positions/" + *iter;
+        ROS_INFO("Loading value: %s", param_name.c_str());
 
-    // Callback functions: Result, Start, Feedback
-    client.sendGoal(goal, &finished, NULL, NULL);
+        // Load the parameters (an array of doubles which represent joint angles)
+        std::vector<double> angles;
+        if (!n.getParam(param_name, angles)) {
+            ROS_WARN("Error loading parameter %s, skipping", param_name.c_str());
+            continue;
+        }
 
-    ros::spin();
+        ROS_DEBUG("Loaded parameter %s successfully", param_name.c_str());
+        ROS_INFO("Values: %f %f %f %f", angles[0], angles[1], angles[2], angles[3]);
+        ROS_INFO("Sending values to server for execution.");
+        
+        // Create the goal object to send
+        tfr_msgs::ArmMoveGoal goal;
+        goal.pose.resize(4);
+        goal.pose[0] = angles[0];
+        goal.pose[1] = angles[1];
+        goal.pose[2] = angles[2];
+        goal.pose[3] = angles[3];
+
+        // Execute the action
+        client.sendGoal(goal, &finished, NULL, NULL);
+        client.waitForResult(ros::Duration(0.0));
+    }
 
     return 0;
 }

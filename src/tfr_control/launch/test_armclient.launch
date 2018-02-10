@@ -1,0 +1,9 @@
+<launch>
+    <rosparam file="$(find tfr_control)/config/test_client_positions.yaml" command="load" />
+
+    <!-- Launch the action server -->
+    <node name="test_client" pkg="tfr_control" type="test_client" />
+
+    <!-- Launch the console viewer -->
+    <node name="rqt_console" pkg="rqt_console" type="rqt_console" />
+</launch>

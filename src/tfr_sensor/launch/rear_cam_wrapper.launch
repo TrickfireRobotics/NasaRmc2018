@@ -1,0 +1,8 @@
+<launch>
+    <node name="rear_cam_wrapper" pkg="tfr_sensor" type="image_topic_wrapper">
+        <rosparam>
+            camera_topic: /sensors/rear_cam/image_raw
+            service_name: /on_demand/rear_cam/image_raw
+        </rosparam>
+    </node>
+</launch>

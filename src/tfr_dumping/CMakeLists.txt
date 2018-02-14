@@ -20,7 +20,6 @@ catkin_package(
 )
 
 include_directories(
-    include/${PROJECT_NAME}
     ${catkin_INCLUDE_DIRS}
     ${GTEST_INCLUDE_DIRS}
 )
@@ -28,13 +27,11 @@ include_directories(
 add_executable(dumping_action_server
     src/dumping_action_server.cpp
 )
-add_dependencies(dumping_action_server ${catkin_EXPORTED_TARGETS})
 target_link_libraries(dumping_action_server ${catkin_LIBRARIES})
 
 add_executable(dumping_action_client
     src/dumping_action_client.cpp
 )
-add_dependencies(dumping_action_client ${catkin_EXPORTED_TARGETS})
 target_link_libraries(dumping_action_client ${catkin_LIBRARIES})
 
 

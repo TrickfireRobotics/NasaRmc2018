@@ -94,30 +94,48 @@ class FiducialOdom
                     return;
 
                 geometry_msgs::PoseStamped unprocessed_pose = result->relative_pose;
-                ROS_INFO("unprocessed data %s %f %f %f",
+                ROS_INFO("unprocessed data %s %f %f %f %f %f %f %f",
                         unprocessed_pose.header.frame_id.c_str(),
                         unprocessed_pose.pose.position.x,
                         unprocessed_pose.pose.position.y,
-                        unprocessed_pose.pose.position.z);
+                        unprocessed_pose.pose.position.z,
+                        unprocessed_pose.pose.orientation.x,
+                        unprocessed_pose.pose.orientation.y,
+                        unprocessed_pose.pose.orientation.z,
+                        unprocessed_pose.pose.orientation.w);
                  geometry_msgs::PoseStamped processed_pose;
                 if (!tf_manipulator.transform_pose(unprocessed_pose,
                             processed_pose, footprint_frame))
                         return;
-                //note we need to reverse sign here
-                processed_pose.pose.position.x *= -1;
-                ROS_INFO("processed data %s %f %f %f",
+                //note we have to reverse signs here
+                processed_pose.pose.position.y *= -1;
+                processed_pose.pose.position.z *= -1;
+                ROS_INFO("processed data %s %f %f %f %f %f %f %f",
                         processed_pose.header.frame_id.c_str(),
                         processed_pose.pose.position.x,
                         processed_pose.pose.position.y,
-                        processed_pose.pose.position.z);
+                        processed_pose.pose.position.z,
+                        processed_pose.pose.orientation.x,
+                        processed_pose.pose.orientation.y,
+                        processed_pose.pose.orientation.z,
+                        processed_pose.pose.orientation.w);
                 //so we have a point in terms of the camera and bin
+
                 //we need to express that in terms of odom
                 geometry_msgs::Transform relative_bin_transform;
                 //get odom bin transform
                 if (!tf_manipulator.get_transform(relative_bin_transform,
-                            bin_frame, odometry_frame))
+                            odometry_frame, bin_frame))
                         return;
-                //take a difference of the two transforms to find the
+                ROS_INFO("relative transform %f %f %f %f %f %f %f",
+                        relative_bin_transform.translation.x,
+                        relative_bin_transform.translation.y,
+                        relative_bin_transform.translation.z,
+                        relative_bin_transform.rotation.x,
+                        relative_bin_transform.rotation.y,
+                        relative_bin_transform.rotation.z,
+                        relative_bin_transform.rotation.w);
+                 //take a difference of the two transforms to find the
                 //odom_camera transform
                 tf2::Transform p_0{};
                 tf2::convert(processed_pose.pose, p_0);
@@ -130,23 +148,27 @@ class FiducialOdom
                 geometry_msgs::PoseStamped relative_pose;
                 relative_pose.header.stamp = ros::Time::now();
                 relative_pose.header.frame_id = camera_frame;
-                relative_pose.pose.position.x = relative_transform.translation.x;
-                relative_pose.pose.position.y = relative_transform.translation.y;
-                relative_pose.pose.position.z = relative_transform.translation.z;
+                relative_pose.pose.position.x = -relative_transform.translation.x;
+                relative_pose.pose.position.y = -relative_transform.translation.y;
+                relative_pose.pose.position.z = -relative_transform.translation.z;
                 relative_pose.pose.orientation = relative_transform.rotation;
-                ROS_INFO("relative data %s %f %f %f",
+                ROS_INFO("relative data %s %f %f %f %f %f %f %f",
                         relative_pose.header.frame_id.c_str(),
                         relative_pose.pose.position.x,
                         relative_pose.pose.position.y,
-                        relative_pose.pose.position.z);
+                        relative_pose.pose.position.z,
+                        relative_pose.pose.orientation.x,
+                        relative_pose.pose.orientation.y,
+                        relative_pose.pose.orientation.z,
+                        relative_pose.pose.orientation.w);
  
                 // 1. handle transforms for tf
-                geometry_msgs::TransformStamped transform;
-                transform.header.stamp = ros::Time::now();
-                transform.header.frame_id = odometry_frame;
-                transform.child_frame_id = footprint_frame;
-                transform.transform = relative_transform;
-                broadcaster.sendTransform(transform);
+//                geometry_msgs::TransformStamped transform;
+//                transform.header.stamp = ros::Time::now();
+//                transform.header.frame_id = odometry_frame;
+//                transform.child_frame_id = footprint_frame;
+//                transform.transform = relative_transform;
+//                broadcaster.sendTransform(transform);
 
                 // 2. handle odometry data
                 nav_msgs::Odometry odom;
@@ -177,11 +199,20 @@ class FiducialOdom
                 tf2::Transform t_1{};
                 tf2::convert(relative_pose.pose, t_1);
 
-                /* take fast difference to get linear and angular delta inbetween
-                 * timestamps
-                 * https://answers.ros.org/question/12654/relative-pose-between-two-tftransforms/
-                 */
+              /* take fast difference to get linear and angular delta inbetween
+               * timestamps
+               * https://answers.ros.org/question/12654/relative-pose-between-two-tftransforms/
+               */
                 auto deltas = t_0.inverseTimes(t_1);
+                auto out_deltas = tf2::toMsg(deltas);
+                ROS_INFO("deltas %f %f %f %f %f %f %f",
+                        out_deltas.translation.x,
+                        out_deltas.translation.y,
+                        out_deltas.translation.z,
+                        out_deltas.rotation.x,
+                        out_deltas.rotation.y,
+                        out_deltas.rotation.z,
+                        out_deltas.rotation.w);
                 auto linear_deltas = deltas.getOrigin();
                 auto angular_deltas = deltas.getRotation();
  

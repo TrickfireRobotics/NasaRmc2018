@@ -21,6 +21,8 @@
  *
  * It requires a service where it can get the most recent image on demand for
  * the camera of interest for backing up. 
+ *
+ * This is currently filled by the camera_topic_wrapper in sensors
  * */
 class Dumper
 {

@@ -2,7 +2,7 @@
     <include file="$(find tfr_launch)/launch/core.launch"/>
     <include file="$(find tfr_sensor)/launch/sensor_platform.launch"/>
     <include file="$(find tfr_sensor)/launch/rear_cam_wrapper.launch"/>
-    <node name="light_detection_action_server" pkg="tfr_sensor" type="light_detection_action_server" output="screen" />
-    <include file="$(find tfr_dumping)/launch/dumping_action_server.launch"/>
+    <include file="$(find tfr_dumping)/launch/dumping.launch"/>
     <include file="$(find tfr_dumping)/launch/dumping_action_client.launch"/>
+    <include file="$(find tfr_aruco)/launch/aruco.launch"/>
 </launch>

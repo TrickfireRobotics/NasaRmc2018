@@ -1,7 +1,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <tfr_msgs/EmptyAction.h>
-#include <tfr_msgs/ArucoIntegrateAction.h>
+#include <tfr_msgs/ArucoAction.h>
 #include <tfr_msgs/WrappedImage.h>
 #include <sensor_msgs/Image.h>
 #include <image_transport/image_transport.h>
@@ -43,14 +43,15 @@ class Dumper
         
         Dumper(ros::NodeHandle &node, const std::string &service_name,
                 const DumpingConstraints &c) :
-            server{node, "dump", boost::bind(&Dumper::dump, this, _1), false},
+            server{node, "dumping_action_server", boost::bind(&Dumper::dump, this, _1), false},
             detector{"light_detection"},
+            aruco{"aruco_action_server",true},
             //TODO add dumping controller here
-            //TODO add aruco here
             constraints{c}
         {
             ROS_INFO("dumping action server initializing");
             detector.waitForServer();
+            aruco.waitForServer();
 
             image_client = node.serviceClient<tfr_msgs::WrappedImage>(service_name);
 
@@ -69,9 +70,9 @@ class Dumper
     private:
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
         actionlib::SimpleActionClient<tfr_msgs::EmptyAction> detector;
+        actionlib::SimpleActionClient<tfr_msgs::ArucoAction> aruco;
 
         //TODO add the Dumping Controller here
-        //TODO add aruco here
 
         ros::ServiceClient image_client;
         ros::Publisher velocity_publisher;
@@ -84,9 +85,9 @@ class Dumper
         void dump(const tfr_msgs::EmptyGoalConstPtr &goal) 
         {  
             //check to make sure we can see the board
-            tfr_msgs::ArucoIntegrateResult initial_estimate{};
+            tfr_msgs::ArucoResult initial_estimate{};
             getArucoEstimate(initial_estimate);
-            if (initial_estimate.markers_detected == 0)
+            if (initial_estimate.number_found == 0)
             {
                 server.setAborted();
                 return;
@@ -108,11 +109,11 @@ class Dumper
                 }
 
                 //get the most recent aruco reading
-                tfr_msgs::ArucoIntegrateResult estimate{};
+                tfr_msgs::ArucoResult estimate{};
                 getArucoEstimate(estimate);
 
                 //send motor commands
-                if (estimate.markers_detected == 0)
+                if (estimate.number_found == 0)
                     moveBlind();
                 else
                 {
@@ -129,7 +130,7 @@ class Dumper
         /*
          *  Back up and turn slightly to match the orientation of the aruco board
          * */
-        void updateControlMsg(const tfr_msgs::ArucoIntegrateResult &estimate,
+        void updateControlMsg(const tfr_msgs::ArucoResult &estimate,
                 geometry_msgs::Twist &cmd)
         {
             //back up
@@ -145,7 +146,7 @@ class Dumper
              *
              * This conforms to rep 103
              * */
-            int sign = (estimate.pose.position.y < 0) ? -1 : 1;
+            int sign = (estimate.relative_pose.pose.position.y < 0) ? 1 : -1;
             cmd.angular.z = sign*constraints.getMaxAngVel();
         }
 
@@ -169,29 +170,26 @@ class Dumper
             ROS_INFO("Stopped");
             geometry_msgs::Twist cmd{};
             cmd.linear.x = 0;
-            cmd.angular.z =0;
+            cmd.angular.z = 0;
             velocity_publisher.publish(cmd);
         }
 
         /*
          * Gets the most recent position estimate from the aruco service
          */
-        void getArucoEstimate(tfr_msgs::ArucoIntegrateResult &result)
+        void getArucoEstimate(tfr_msgs::ArucoResult &result)
         {
             tfr_msgs::WrappedImage image_request{};
-            tfr_msgs::ArucoIntegrateGoal goal{};
-            //grab the most recent image
-            image_client.call(image_request);
+            tfr_msgs::ArucoGoal goal{};
+            while (!image_client.call(image_request));
+
             goal.image = image_request.response.image;
-            //TODO hook up aruco here
-            result.markers_detected = 1;
-            result.pose.position.x= 0.5;
-            result.pose.position.y= -0.1;
-            result.pose.position.z= -0.02;
-            result.pose.orientation.x = 0;
-            result.pose.orientation.y = 0;
-            result.pose.orientation.z = 1;
-            result.pose.orientation.w = 0;
+            goal.camera_info = image_request.response.camera_info;
+            
+            aruco.sendGoal(goal);
+            aruco.waitForResult();
+
+            result = *aruco.getResult();
         }
 };
 

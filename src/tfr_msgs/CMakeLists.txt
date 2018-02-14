@@ -38,8 +38,6 @@ add_action_files(
   Bin.action
   Aruco.action
   Empty.action
-  ArucoIntegrate.action
-  ArmMove.action
 )
 
 # Generate added messages and services with any dependencies listed here

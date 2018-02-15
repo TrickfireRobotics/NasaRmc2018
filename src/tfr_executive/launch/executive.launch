@@ -1,0 +1,4 @@
+<launch>
+    <node name="clock_service" pkg="tfr_executive" type="clock_service" output="screen"/>
+    <node name="autnonomous_action_server" pkg="tfr_executive" type="autonomous_action_server" output="screen"/>
+</launch>

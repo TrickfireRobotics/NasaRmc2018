@@ -24,6 +24,8 @@ add_message_files(
 # Generate services in the 'srv' folder
  add_service_files(
    FILES
+   EmptySrv.srv
+   DurationSrv.srv
    LocalizePoint.srv
    WrappedImage.srv
  )

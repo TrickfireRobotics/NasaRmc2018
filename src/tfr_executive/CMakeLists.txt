@@ -4,6 +4,8 @@ project(tfr_executive)
 add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
+    roscpp
+    tfr_msgs
 )
 
 find_package(GTest REQUIRED)
@@ -12,9 +14,12 @@ catkin_package(
 )
 
 include_directories(
-  include/${PROJECT_NAME}
   ${catkin_INCLUDE_DIRS}
   ${GTEST_INCLUDE_DIRS}
 )
+
+add_executable(clock_service src/clock_service.cpp)
+add_dependencies(clock_service ${catkin_EXPORTED_TARGETS})
+target_link_libraries(clock_service ${catkin_LIBRARIES})
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")

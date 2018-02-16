@@ -161,7 +161,7 @@ class TeleopExecutive
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "teleopaction_server");
+    ros::init(argc, argv, "teleop_action_server");
     ros::NodeHandle n{};
     double linear_velocity, angular_velocity;
     ros::param::param<double>("~linear_velocity", linear_velocity, 0.25);

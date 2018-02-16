@@ -12,11 +12,12 @@
  * SERVICES  
  * 1. start_mission: starts the mission clock.
  * 2. time_remaining: returns the amount of time remaining in the mission
- * 3. digging_time: Gives the dumping time which is equal to  
+ * 3. digging_time: Gives the digging time which is equal to  
  *                  (duration - start - driving_time - dumping_time) or 0 
  *                  if negative duration. 
  * */
 #include <ros/ros.h>
+#include <cmath>
 #include <tfr_msgs/EmptySrv.h>
 #include <tfr_msgs/DurationSrv.h>
 
@@ -71,7 +72,7 @@ class ClockService
                 tfr_msgs::DurationSrv::Response &res)
         {
             timeRemaining(req, res);
-            if (mission_start.toSec() == 0.0)
+            if (!mission_start.isValid())
                 ROS_WARN("Clock Service: Uninitialized Mission Clock Detected");
             res.duration = res.duration - driving_duration - dumping_duration;
             return true;

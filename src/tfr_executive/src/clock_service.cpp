@@ -1,4 +1,21 @@
-
+/*
+ * The clock service is a really simple node that exposes some utility services
+ * to simplify the operation of the executive system.
+ * 
+ * PARAMETERS 
+ * - ~driving_time: The amount of time we anticipate driving, to take in 
+ *                  seconds. (`float`, default 60)
+ * - ~dumping_time: The amount of time we anticipate dumping to take in 
+ *                  seconds. (`float`, default 30)
+ * - ~mission_time: The amount of time we allocate for the mission in total 
+ *                  seconds. (`float`, default: 600)
+ * SERVICES  
+ * 1. start_mission: starts the mission clock.
+ * 2. time_remaining: returns the amount of time remaining in the mission
+ * 3. digging_time: Gives the dumping time which is equal to  
+ *                  (duration - start - driving_time - dumping_time) or 0 
+ *                  if negative duration. 
+ * */
 #include <ros/ros.h>
 #include <tfr_msgs/EmptySrv.h>
 #include <tfr_msgs/DurationSrv.h>

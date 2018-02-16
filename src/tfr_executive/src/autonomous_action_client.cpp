@@ -8,12 +8,12 @@
 int main(int argc, char **argv)
 {
     ros::init(argc, argv,  "autonomous_action_client");
-    ros::NodeHandle n;
+    ros::NodeHandle n{};
     actionlib::SimpleActionClient<tfr_msgs::EmptyAction>
         client{"autonomous_action_server",true};
-    ROS_INFO("client connecting");
+    ROS_INFO("Simple Action Client: connecting");
     client.waitForServer();
-    ROS_INFO("client connected");
+    ROS_INFO("Simple Action Client: connected");
     tfr_msgs::EmptyGoal goal{};
     client.sendGoal(goal);
     client.waitForResult();

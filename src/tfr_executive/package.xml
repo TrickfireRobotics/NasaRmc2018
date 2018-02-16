@@ -15,6 +15,8 @@
   <test_depend>gtest</test_depend>
   <depend>roscpp</depend>
   <depend>tfr_msgs</depend>
+  <depend>tfr_utilities</depend>
+  <depend>geometry_msgs</depend>
   <depend>actionlib</depend>
 
 </package>

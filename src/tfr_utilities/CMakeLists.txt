@@ -28,20 +28,20 @@ find_package(GTest REQUIRED)
 # These are all for exporting to dependent packages/projects.
 # Uncomment each if the dependent project requires it
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME} tf_manipulator
-  CATKIN_DEPENDS 
-      roscpp 
-      actionlib 
-      tf 
-      tf2 
-      tf2_ros 
-      tf2_geometry_msgs
-      tfr_msgs 
-      message_runtime 
-      sensor_msgs 
-      geometry_msgs 
-      nav_msgs
+    INCLUDE_DIRS include
+    #  LIBRARIES ${PROJECT_NAME} tf_manipulator
+    #  CATKIN_DEPENDS 
+    #      roscpp 
+    #      actionlib 
+    #      tf 
+    #      tf2 
+    #      tf2_ros 
+    #      tf2_geometry_msgs
+    #      tfr_msgs 
+    #      message_runtime 
+    #      sensor_msgs 
+    #      geometry_msgs 
+    #      nav_msgs
 #  DEPENDS system_lib
 )
 
@@ -51,10 +51,6 @@ include_directories(
   include/${PROJECT_NAME}
   ${catkin_INCLUDE_DIRS}
   ${GTEST_INCLUDE_DIRS}
-)
-
-add_library(${PROJECT_NAME}
-  src/placeholder_utility.cpp
 )
 
 add_library(tf_manipulator

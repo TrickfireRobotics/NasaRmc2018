@@ -17,11 +17,12 @@
  * node to preempt all other active action servers it has called, allow them 
  * to return to a safe state on a timeout and promptly exit. 
  * 
- * An additional responsibility of the autonomous server is to start the 
- * mission clock using the `start_mission` service.
- * 
  * On startup the action server will be expecting a command to start autonomy, 
  * and initialize autonomous operation. 
+ *
+ * PRECONDITION
+ * The clock service must be up and started, anything else is undefined
+ * behavior.
  * 
  * PARAMETERS
  * - ~rate: the rate in hz to check to preemption during long running calls, (double, default: 10)
@@ -33,7 +34,6 @@
 #include <ros/ros.h>
 #include <ros/console.h>
 #include <tfr_msgs/EmptyAction.h>
-#include <tfr_msgs/EmptySrv.h>
 #include <tfr_msgs/DurationSrv.h>
 #include <actionlib/server/simple_action_server.h>
 class AutonomousExecutive
@@ -69,14 +69,13 @@ class AutonomousExecutive
          * 
          * Judiciously following these guidelines, the skeleton of the main procedure is 
          * as follows:
-         * 1. Start mission clock.
-         * 2. Run the localization subsystem.
-         * 3. Store the odometry information gathered.
-         * 4. Run the navigation subsystem with the drive to mining zone setting.
-         * 5. Run the digging action subsystem with the digging time, from the `get_digging_time` service.
-         * 6. Run the navigation subsystem with the return from mining zone option.
-         * 7. Run the dumping subsystem.
-         * 8. Put the system in teleop mode and await instructions.
+         * 1. Run the localization subsystem.
+         * 2. Store the odometry information gathered.
+         * 3. Run the navigation subsystem with the drive to mining zone setting.
+         * 4. Run the digging action subsystem with the digging time, from the `get_digging_time` service.
+         * 5. Run the navigation subsystem with the return from mining zone option.
+         * 6. Run the dumping subsystem.
+         * 7. Put the system in teleop mode and await instructions.
          * 
          * ACTION COMPONENTS
          * - Goal: none
@@ -86,13 +85,6 @@ class AutonomousExecutive
         void autonomousMission(const tfr_msgs::EmptyGoalConstPtr &goal)
         {
             ROS_INFO("Autonomous Action Server: mission started");
-
-            ROS_INFO("Autonomous Action Server: starting clock %f",
-                    ros::Time::now().toSec());
-            tfr_msgs::EmptySrv start;
-            ros::service::call("start_mission", start);
-            ROS_INFO("Autonomous Action Server: clock started %f",
-                    ros::Time::now().toSec());
 
             ROS_INFO("Autonomous Action Server: commencing localization");
             ROS_INFO("Autonomous Action Server: localization finished");

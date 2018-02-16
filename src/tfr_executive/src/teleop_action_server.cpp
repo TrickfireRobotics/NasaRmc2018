@@ -19,6 +19,10 @@
  * - Reset Motor state
  *   - Resets the arm, motor and control system to a safe position, ready to 
  *     recieve commands.
+ *
+ * PRECONDITION
+ * The clock service must be up and started, anything else is undefined
+ * behavior.
  * 
  * PARAMETERS 
  * -~linear_velocity: the max linear velocity. (double, default: 0.25)
@@ -28,6 +32,7 @@
 #include <ros/console.h>
 #include <tfr_utilities/teleop_code.h>
 #include <tfr_msgs/TeleopAction.h>
+#include <tfr_msgs/EmptySrv.h>
 #include <tfr_msgs/DurationSrv.h>
 #include <geometry_msgs/Twist.h>
 #include <actionlib/server/simple_action_server.h>

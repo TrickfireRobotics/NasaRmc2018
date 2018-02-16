@@ -28,7 +28,7 @@ class ClockService
             start_mission{n.advertiseService("start_mission", &ClockService::startMission, this)},
             time_remaining{n.advertiseService("time_remaining", &ClockService::timeRemaining, this)},
             digging_time{n.advertiseService("digging_time", &ClockService::diggingTime , this)},
-            mission_start{ros::Time::now()},
+            mission_start{},
             mission_duration{mission},
             driving_duration{driving},
             dumping_duration{dumping}
@@ -71,8 +71,8 @@ class ClockService
                 tfr_msgs::DurationSrv::Response &res)
         {
             timeRemaining(req, res);
-            if (res.duration.toSec() <=0)
-                ROS_WARN("Clock Service: Negative digging time calculated, did you start the clock?");
+            if (mission_start.toSec() == 0.0)
+                ROS_WARN("Clock Service: Uninitialized Mission Clock Detected");
             res.duration = res.duration - driving_duration - dumping_duration;
             return true;
         }

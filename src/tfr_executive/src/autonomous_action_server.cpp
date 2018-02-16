@@ -121,7 +121,6 @@ class AutonomousExecutive
         }
 
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
-        ros::ServiceClient clock_service;
         ros::Duration frequency;
 };
 

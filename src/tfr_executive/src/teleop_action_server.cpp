@@ -28,6 +28,7 @@
 #include <ros/console.h>
 #include <tfr_utilities/teleop_code.h>
 #include <tfr_msgs/TeleopAction.h>
+#include <tfr_msgs/DurationSrv.h>
 #include <geometry_msgs/Twist.h>
 #include <actionlib/server/simple_action_server.h>
 
@@ -122,6 +123,10 @@ class TeleopExecutive
             else if (code == tfr_utilities::TeleopCode::DIG)
             {
                 ROS_INFO("Teleop Action Server: Command Revieved, DIG");
+                tfr_msgs::DurationSrv digging_time;
+                ros::service::call("digging_time", digging_time);
+                ROS_INFO("Autonomous Action Server: digging time retreived %f",
+                    digging_time.response.duration.toSec());
                 //TODO hook up digging when ready
             }
             else if (code == tfr_utilities::TeleopCode::DUMP)

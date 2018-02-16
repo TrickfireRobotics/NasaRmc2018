@@ -71,7 +71,8 @@ class ClockService
                 tfr_msgs::DurationSrv::Response &res)
         {
             timeRemaining(req, res);
-            ROS_INFO("time remaining: %f", res.duration.toSec());
+            if (res.duration.toSec() <=0)
+                ROS_WARN("Clock Service: Negative digging time calculated, did you start the clock?");
             res.duration = res.duration - driving_duration - dumping_duration;
             return true;
         }

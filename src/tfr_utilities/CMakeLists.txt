@@ -53,10 +53,6 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME}
-  src/placeholder_utility.cpp
-)
-
 add_library(tf_manipulator
     ./src/tf_manipulator.cpp
 )

@@ -29,20 +29,19 @@ find_package(GTest REQUIRED)
 # Uncomment each if the dependent project requires it
 catkin_package(
     INCLUDE_DIRS include
-    #  LIBRARIES ${PROJECT_NAME} tf_manipulator
-    #  CATKIN_DEPENDS 
-    #      roscpp 
-    #      actionlib 
-    #      tf 
-    #      tf2 
-    #      tf2_ros 
-    #      tf2_geometry_msgs
-    #      tfr_msgs 
-    #      message_runtime 
-    #      sensor_msgs 
-    #      geometry_msgs 
-    #      nav_msgs
-#  DEPENDS system_lib
+    LIBRARIES tf_manipulator
+    CATKIN_DEPENDS 
+        roscpp 
+        actionlib 
+        tf 
+        tf2 
+        tf2_ros 
+        tf2_geometry_msgs
+        tfr_msgs 
+        message_runtime 
+        sensor_msgs 
+        geometry_msgs 
+        nav_msgs
 )
 
 # Specify additional locations of header files

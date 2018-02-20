@@ -1,0 +1,11 @@
+<launch>
+    <node name="fiducial_odom_publisher" pkg="tfr_sensor" type="fiducial_odom_publisher" >
+        <rosparam>
+            camera_frame: rear_cam_link
+            footprint_frame: base_footprint
+            bin_frame: bin_link
+            odom_frame: odom
+        </rosparam>
+        <remap from="image" to="/sensors/rear_cam/image_raw"/>
+    </node>
+</launch>

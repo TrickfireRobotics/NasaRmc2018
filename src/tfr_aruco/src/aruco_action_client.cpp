@@ -15,21 +15,17 @@ typedef actionlib::SimpleActionClient<tfr_msgs::ArucoAction> Client;
 // Called once when the goal completes
 void finished(const actionlib::SimpleClientGoalState& state, const tfr_msgs::ArucoResultConstPtr& result)
 {
-    system("clear"); // make input easy to see
+    //system("clear"); // make input easy to see
     if(result->number_found > 0) {
         ROS_INFO("[position]");
-        ROS_INFO("    x: %f meters", result->position[0]);
-        ROS_INFO("    y: %f meters", result->position[1]);
-        ROS_INFO("    z: %f meters", result->position[2]);
-        ROS_INFO("[distance]");
-        ROS_INFO("    d: %f meters", sqrt(result->position[0] * result->position[0] +
-                                          result->position[1] * result->position[1] +
-                                          result->position[2] * result->position[2]));
-        // convert to degrees
-        ROS_INFO("[rotation]");
-        ROS_INFO("    x: %f degrees", result->rotation[0]/3.1415*180.0);
-        ROS_INFO("    y: %f degrees", result->rotation[1]/3.1415*180.0);
-        ROS_INFO("    z: %f degrees", result->rotation[2]/3.1415*180.0);
+        ROS_INFO("    x: %f meters", result->relative_pose.pose.position.x);
+        ROS_INFO("    y: %f meters", result->relative_pose.pose.position.y);
+        ROS_INFO("    z: %f meters", result->relative_pose.pose.position.z);
+        ROS_INFO("[orientation]");
+        ROS_INFO("    x: %f radians", result->relative_pose.pose.orientation.x);
+        ROS_INFO("    y: %f radians", result->relative_pose.pose.orientation.y);
+        ROS_INFO("    z: %f radians", result->relative_pose.pose.orientation.z);
+        ROS_INFO("    w: %f radians", result->relative_pose.pose.orientation.w);
     } else {
         ROS_INFO("no markers found!");
     }
@@ -62,6 +58,7 @@ public:
         ROS_INFO("WAITING FOR SERVER");
         // Ensure connection was established with Server
         client.waitForServer();
+        ROS_INFO("Connected");
     }
 
     void updateCameraInfo(const sensor_msgs::CameraInfoConstPtr& cam_info) 

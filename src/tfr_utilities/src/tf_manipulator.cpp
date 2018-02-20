@@ -39,19 +39,36 @@ geometry_msgs::PoseStamped TfManipulator::wrap_pose(const geometry_msgs::Pose
 bool TfManipulator::transform_pose(const geometry_msgs::PoseStamped &pose, 
         geometry_msgs::PoseStamped &out, const std::string &desired_frame)
 {
-    bool success = true;
     geometry_msgs::TransformStamped transform;
     try{
         transform = buffer.lookupTransform(
-                desired_frame, 
                 pose.header.frame_id,
+                desired_frame, 
                 ros::Time(0));
     }
     catch (tf2::TransformException &ex) {
         ROS_WARN("%s",ex.what());
-        success = false;
+        return false;
     }
     tf2::doTransform(pose, out, transform);
-    return success;
+    return true;
 }
-
+/**
+ *  east interface for looking up a transform
+ *
+ * */
+bool TfManipulator::get_transform(geometry_msgs::Transform &transform, 
+        const std::string &current_frame, const std::string &desired_frame)
+{
+    try{
+        transform = buffer.lookupTransform(
+                current_frame,
+                desired_frame, 
+                ros::Time(0)).transform;
+    }
+    catch (tf2::TransformException &ex) {
+        ROS_WARN("%s",ex.what());
+        return false;
+    }
+    return true;
+}

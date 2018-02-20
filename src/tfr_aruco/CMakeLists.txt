@@ -7,6 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   roscpp
   tfr_msgs
+  tf2
   cv_bridge
   image_geometry
   image_transport
@@ -17,7 +18,6 @@ find_package(OpenCV 3 REQUIRED)
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 
-
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES tfr_communication
@@ -25,18 +25,16 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-
 include_directories(
   include/${PROJECT_NAME}
   ${OpenCV_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(${PROJECT_NAME}_example_client src/tfr_aruco_example_client.cpp)
-target_link_libraries(${PROJECT_NAME}_example_client ${catkin_LIBRARIES})
-add_dependencies(${PROJECT_NAME}_example_client ${catkin_EXPORTED_TARGETS})
+add_executable(aruco_action_client src/aruco_action_client.cpp)
+target_link_libraries(aruco_action_client ${catkin_LIBRARIES})
+add_dependencies(aruco_action_client ${catkin_EXPORTED_TARGETS})
 
-add_executable(${PROJECT_NAME}_server src/tfr_aruco_server.cpp)
-target_link_libraries(${PROJECT_NAME}_server ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(${PROJECT_NAME}_server ${catkin_EXPORTED_TARGETS})
-
+add_executable(aruco_action_server src/aruco_action_server.cpp)
+target_link_libraries(aruco_action_server ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(aruco_action_server ${catkin_EXPORTED_TARGETS})

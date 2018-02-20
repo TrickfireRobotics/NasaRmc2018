@@ -24,6 +24,8 @@ add_message_files(
 # Generate services in the 'srv' folder
  add_service_files(
    FILES
+   EmptySrv.srv
+   DurationSrv.srv
    LocalizePoint.srv
    WrappedImage.srv
  )
@@ -31,6 +33,7 @@ add_message_files(
 # Generate actions in the 'action' folder
 add_action_files(
   FILES
+  Teleop.action
   Example.action
   Navigation.action
   Bin.action

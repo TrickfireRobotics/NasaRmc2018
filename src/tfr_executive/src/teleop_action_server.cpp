@@ -27,6 +27,7 @@
  * PARAMETERS 
  * -~linear_velocity: the max linear velocity. (double, default: 0.25)
  * -~angular_velocity: the max angular velocity. (double, default: 0.1)
+ * - ~rate: the rate in hz to check to preemption during long running calls, (double, default: 10)
  */ 
 #include <ros/ros.h>
 #include <ros/console.h>
@@ -49,17 +50,18 @@ class TeleopExecutive
                 double angular;
             public:
                 DriveVelocity(double lin, double ang):
-                    linear{lin}, angular{ang} {}
+                    linear{lin}, angular{ang}{}
                 double getLinear(){return linear;}
                 double getAngular(){return angular;}
         };
 
-        TeleopExecutive(ros::NodeHandle &n , DriveVelocity &drive) :
+        TeleopExecutive(ros::NodeHandle &n , DriveVelocity &drive, double f) :
             server{n, "teleop_action_server",
                 boost::bind(&TeleopExecutive::processCommand, this, _1),
                 false},
             drivebase{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
-            drive_stats{drive}
+            drive_stats{drive},
+            frequency{f}
         {
             server.start();
             ROS_INFO("Teleop Action Server: Online %f", ros::Time::now().toSec());
@@ -156,6 +158,8 @@ class TeleopExecutive
         actionlib::SimpleActionServer<tfr_msgs::TeleopAction> server;
         ros::Publisher drivebase;
         DriveVelocity &drive_stats;
+        //how often to check for preemption
+        ros::Duration frequency;
 };
 
 
@@ -163,11 +167,12 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "teleop_action_server");
     ros::NodeHandle n{};
-    double linear_velocity, angular_velocity;
+    double linear_velocity, angular_velocity, rate;
     ros::param::param<double>("~linear_velocity", linear_velocity, 0.25);
     ros::param::param<double>("~angular_velocity", angular_velocity, 0.1);
+    ros::param::param<double>("~rate", rate, 10.0);
     TeleopExecutive::DriveVelocity velocities{linear_velocity, angular_velocity};
-    TeleopExecutive teleop{n, velocities};
+    TeleopExecutive teleop{n, velocities, 1.0/rate};
     ros::spin();
     return 0;
 }

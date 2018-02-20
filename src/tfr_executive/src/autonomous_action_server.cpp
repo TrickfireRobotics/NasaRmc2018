@@ -113,6 +113,7 @@ class AutonomousExecutive
         }
 
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
+        //how often to check for preemption
         ros::Duration frequency;
 };
 

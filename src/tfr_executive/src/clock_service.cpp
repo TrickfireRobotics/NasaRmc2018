@@ -61,6 +61,8 @@ class ClockService
         bool timeRemaining(tfr_msgs::DurationSrv::Request &req,
                 tfr_msgs::DurationSrv::Response &res)
         {
+            if (!mission_start.isValid())
+                ROS_WARN("Clock Service: Uninitialized Mission Clock Detected");
             res.duration = mission_duration - (ros::Time::now() - mission_start);
             return true;
         }

@@ -42,8 +42,8 @@ include_directories(
 
 add_library(pwm_driver src/JHPWMPCA9685.cpp)
 
-add_executable(pwm_blink src/pwm_blink.cpp)
-target_link_libraries(pwm_blink pwm_driver ${catkin_LIBRARIES})
+add_executable(pwm_bridge src/pwm_bridge.cpp)
+target_link_libraries(pwm_bridge pwm_driver ${catkin_LIBRARIES})
 
 
 # proto_driver_station

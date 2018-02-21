@@ -1,6 +1,6 @@
 /****************************************************************************************
- * File:    example_action_client.cpp
- * Node:    example_client
+ * File:    test_client.cpp
+ * Node:    test_client
  * 
  * Purpose: This is a example of what an ActionServer client node might look like.
  *          It includes functions likely to be used in our production code for
@@ -9,15 +9,15 @@
  *          read the ROS API documentation on actionlib::SimpleActionClient<> at 
  *          http://docs.ros.org/api/actionlib/html/classactionlib_1_1SimpleActionClient.html
  * 
- *          This file includes <tfr_msgs/ExampleAction.h>, which is one of seven headers
- *          built by catkin from `tfr_msgs/action/Example.action`:
- *              devel/include/tfr_msgs/ExampleAction.h
- *              devel/include/tfr_msgs/ExampleActionFeedback.h
- *              devel/include/tfr_msgs/ExampleActionGoal.h
- *              devel/include/tfr_msgs/ExampleActionResult.h
- *              devel/include/tfr_msgs/ExampleFeedback.h
- *              devel/include/tfr_msgs/ExampleGoal.h
- *              devel/include/tfr_msgs/ExampleResult.h
+ *          This file includes <tfr_msgs/ArmMoveAction.h>, which is one of seven headers
+ *          built by catkin from `tfr_msgs/action/ArmMove.action`:
+ *              devel/include/tfr_msgs/ArmMoveAction.h
+ *              devel/include/tfr_msgs/ArmMoveActionFeedback.h
+ *              devel/include/tfr_msgs/ArmMoveActionGoal.h
+ *              devel/include/tfr_msgs/ArmMoveActionResult.h
+ *              devel/include/tfr_msgs/ArmMoveFeedback.h
+ *              devel/include/tfr_msgs/ArmMoveGoal.h
+ *              devel/include/tfr_msgs/ArmMoveResult.h
  * 
  ***************************************************************************************/
 
@@ -34,7 +34,8 @@ void finished(const actionlib::SimpleClientGoalState& state, const tfr_msgs::Arm
 {
     // If this goal didn't succeed (there's multiple fail states in the enum so
     // it's easier to check for this)
-    if (state.state_ != actionlib::SimpleClientGoalState::StateEnum::SUCCEEDED) {
+    if (state.state_ != actionlib::SimpleClientGoalState::StateEnum::SUCCEEDED)
+    {
         ROS_WARN("Error planning/executing motion.");
         return;
     }
@@ -49,7 +50,7 @@ int main(int argc, char** argv)
 
     // Basic ROS setup
     ros::init(argc, argv, "example_client");
-    ros::NodeHandle n;
+    ros::NodeHandle n("~");
 
     // Needed to spin while we're waiting for a blocking call later (waiting for
     // server finished response)
@@ -64,14 +65,16 @@ int main(int argc, char** argv)
     ROS_INFO("Connection established with server.");
 
     // Loop through all of the positions to travel to and then exit
-    for (auto iter = position_names.begin(); iter != position_names.end(); iter++) {
+    for (auto &position : position_names)
+    {
         // Get the name of the parameter in the positions namespace
-        std::string param_name = "positions/" + *iter;
+        std::string param_name = "positions/" + position;
         ROS_INFO("Loading value: %s", param_name.c_str());
 
         // Load the parameters (an array of doubles which represent joint angles)
         std::vector<double> angles;
-        if (!n.getParam(param_name, angles)) {
+        if (!n.getParam(param_name, angles))
+        {
             ROS_WARN("Error loading parameter %s, skipping", param_name.c_str());
             continue;
         }

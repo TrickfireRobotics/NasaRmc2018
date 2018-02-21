@@ -1,6 +1,6 @@
 # Holds all of the positions for the test client to travel to (order doesn't
 # matter in this file, but this is the correct order for a dig cycle)
-/positions:
+positions:
   ready: [0.0, 1.65, 0.0, -0.85]
   dig: [0.0, 1.5, 0.6, -0.85]
   scoop: [0.0, 1.35, 0.9, 0.7]

@@ -22,5 +22,5 @@
                 right_tread_velocity_controller
                 bin_position_controller
                 arm_controller
-                arm_end_controller --shutdown-timeout 1"/>
+                arm_end_controller"/>
 </launch>

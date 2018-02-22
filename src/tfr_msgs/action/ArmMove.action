@@ -1,0 +1,9 @@
+# Each of these three will be build as a ROS message
+# goal
+float32[] pose
+---
+# result
+# whether the motion was successful or not
+float32[] pose
+---
+# feedback message

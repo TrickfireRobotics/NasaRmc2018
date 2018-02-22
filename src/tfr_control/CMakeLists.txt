@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   joint_state_controller
   effort_controllers
   joint_trajectory_controller
+  moveit_ros_planning_interface
 )
 
 find_package(GTest REQUIRED)
@@ -43,6 +44,7 @@ include_directories(
 add_executable(proto_driver_station 
   src/proto_driver_station.cpp
 )
+add_dependencies(proto_driver_station tfr_msgs_gencpp)
 target_link_libraries(proto_driver_station
   ${catkin_LIBRARIES} 
   sfml-system
@@ -55,6 +57,7 @@ add_executable(controller_launcher
   src/controller.cpp
   src/bin_control_server.cpp
 )
+add_dependencies(controller_launcher tfr_msgs_gencpp)
 target_link_libraries(controller_launcher
   ${catkin_LIBRARIES}
 )
@@ -73,6 +76,16 @@ target_link_libraries(drivebase
 add_dependencies(drivebase
   tfr_msgs_gencpp
 )
+
+add_executable(arm_action_server src/arm_action_server.cpp)
+add_dependencies(arm_action_server tfr_msgs_gencpp)
+target_link_libraries(arm_action_server
+  ${catkin_LIBRARIES}
+)
+
+add_executable(test_client src/test_client.cpp)
+add_dependencies(test_client tfr_msgs_gencpp)
+target_link_libraries(test_client ${catkin_LIBRARIES})
 
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")

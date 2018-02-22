@@ -37,6 +37,7 @@ add_action_files(
   Navigation.action
   Bin.action
   Aruco.action
+  ArmMove.action
   Empty.action
 )
 

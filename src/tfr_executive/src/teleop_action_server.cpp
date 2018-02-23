@@ -97,9 +97,9 @@ class TeleopExecutive
         {
             geometry_msgs::Twist move_cmd{};
             auto code = static_cast<tfr_utilities::TeleopCode>(goal->code);
-            if (code == tfr_utilities::TeleopCode::NONE)
+            if (code == tfr_utilities::TeleopCode::STOP)
             {
-                ROS_INFO("Teleop Action Server: Command Revieved, RESET");
+                ROS_INFO("Teleop Action Server: Command Revieved, STOP");
                 //all zeros by default
                 drivebase.publish(move_cmd);
             }
@@ -156,11 +156,16 @@ class TeleopExecutive
             else if (code == tfr_utilities::TeleopCode::RESET_DUMPING)
             {
                 ROS_INFO("Teleop Action Server: Command Revieved, RESET_DUMPING");
+                //all zeros by default
+                drivebase.publish(move_cmd);
+
                 //TODO hook up reset when ready
             }
             else if (code == tfr_utilities::TeleopCode::RESET_STARTING)
             {
                 ROS_INFO("Teleop Action Server: Command Revieved, RESET_STARTING");
+                //all zeros by default
+                drivebase.publish(move_cmd);
                 //TODO hook up reset when ready
             }else
             {

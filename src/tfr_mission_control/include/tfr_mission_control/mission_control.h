@@ -5,13 +5,17 @@
 
 #include <ros/ros.h>
 #include <ros/console.h>
+#include <actionlib/client/simple_action_client.h>
+#include <actionlib/client/terminal_state.h>
 
 #include <tfr_msgs/EmptySrv.h>
 #include <tfr_msgs/DurationSrv.h>
 #include <tfr_msgs/EmptyAction.h>
 #include <tfr_msgs/TeleopAction.h>
-#include <actionlib/client/simple_action_client.h>
-#include <actionlib/client/terminal_state.h>
+
+#include <tfr_utilities/teleop_code.h>
+
+#include <cstdint>
 
 #include <QWidget>
 #include <QObject>
@@ -101,6 +105,8 @@ protected slots:
   virtual void startManual();
   virtual void startAutonomy();
   virtual void startTeleop();
+
+  virtual void performTeleop(tfr_utilities::TeleopCode code);
 
   virtual void renderClock();
   virtual void startTimeService();

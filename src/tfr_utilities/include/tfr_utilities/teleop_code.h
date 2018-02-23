@@ -13,7 +13,7 @@ namespace tfr_utilities
      * */
     enum class TeleopCode: uint8_t
     {
-        NONE,
+        STOP,
         FORWARD,
         BACKWARD,
         LEFT,

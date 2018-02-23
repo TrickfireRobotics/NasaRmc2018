@@ -90,10 +90,10 @@ int main(int argc, char** argv)
     ROS_INFO("Simple Action Client: finished RESET_DUMPING");
 
 
-    ROS_INFO("Simple Action Client: sending NONE");
-    goal.code = static_cast<uint8_t>(tfr_utilities::TeleopCode::NONE);
+    ROS_INFO("Simple Action Client: sending STOP");
+    goal.code = static_cast<uint8_t>(tfr_utilities::TeleopCode::STOP);
     client.sendGoal(goal);
     client.waitForResult();
-    ROS_INFO("Simple Action Client: finished NONE");
+    ROS_INFO("Simple Action Client: finished STOP");
     return 0;
 }

@@ -97,13 +97,19 @@ class TeleopExecutive
         {
             geometry_msgs::Twist move_cmd{};
             auto code = static_cast<tfr_utilities::TeleopCode>(goal->code);
-            if (code == tfr_utilities::TeleopCode::STOP)
+            if (code == tfr_utilities::TeleopCode::STOP_DRIVEBASE)
             {
-                ROS_INFO("Teleop Action Server: Command Revieved, STOP");
+                ROS_INFO("Teleop Action Server: Command Revieved, STOP_DRIVEBASE");
                 //all zeros by default
                 drivebase.publish(move_cmd);
             }
-            else if(code == tfr_utilities::TeleopCode::FORWARD)
+            else if (code == tfr_utilities::TeleopCode::STOP_TURNTABLE)
+            {
+                ROS_INFO("Teleop Action Server: Command Revieved, STOP_TURNTABLE");
+                //all zeros by default
+                //TODO integrate manual turntable control
+            }
+             else if(code == tfr_utilities::TeleopCode::FORWARD)
             {
                 ROS_INFO("Teleop Action Server: Command Revieved, FORWARD");
                 move_cmd.linear.x = drive_stats.getLinear();

@@ -66,24 +66,28 @@ void MissionControl::initPlugin(qt_gui_cpp::PluginContext& context)
           [this] () {performTeleop(tfr_utilities::TeleopCode::DIG);});
   connect(ui.cw_button,&QPushButton::pressed,
           [this] () {performTeleop(tfr_utilities::TeleopCode::CLOCKWISE);});
+  connect(ui.cw_button,&QPushButton::released,
+          [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_TURNTABLE);});
   connect(ui.ccw_button,&QPushButton::pressed,
           [this] () {performTeleop(tfr_utilities::TeleopCode::COUNTERCLOCKWISE);});
+  connect(ui.ccw_button,&QPushButton::released,
+          [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_TURNTABLE);});
   connect(ui.forward_button,&QPushButton::pressed,
           [this] () {performTeleop(tfr_utilities::TeleopCode::FORWARD);});
   connect(ui.forward_button,&QPushButton::released,
-          [this] () {performTeleop(tfr_utilities::TeleopCode::STOP);});
+          [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);});
   connect(ui.backward_button,&QPushButton::pressed,
           [this] () {performTeleop(tfr_utilities::TeleopCode::BACKWARD);});
   connect(ui.backward_button,&QPushButton::released,
-          [this] () {performTeleop(tfr_utilities::TeleopCode::STOP);});
+          [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);});
   connect(ui.left_button,&QPushButton::pressed,
           [this] () {performTeleop(tfr_utilities::TeleopCode::LEFT);});
   connect(ui.left_button,&QPushButton::released,
-          [this] () {performTeleop(tfr_utilities::TeleopCode::STOP);});
+          [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);});
   connect(ui.right_button,&QPushButton::pressed,
           [this] () {performTeleop(tfr_utilities::TeleopCode::RIGHT);});
   connect(ui.right_button,&QPushButton::released,
-          [this] () {performTeleop(tfr_utilities::TeleopCode::STOP);});
+          [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);});
 
   ROS_INFO("Mission Control: connecting autonomy");
   autonomy.waitForServer();

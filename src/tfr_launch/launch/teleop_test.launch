@@ -1,4 +1,0 @@
-<launch>
-    <include file="$(find tfr_executive)/launch/executive.launch"/>
-    <node name="teleop_action_client" pkg="tfr_executive" type="teleop_action_client" output="screen"/>
-</launch>

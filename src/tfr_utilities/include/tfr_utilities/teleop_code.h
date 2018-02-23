@@ -18,9 +18,12 @@ namespace tfr_utilities
         BACKWARD,
         LEFT,
         RIGHT,
+        CLOCKWISE,
+        COUNTERCLOCKWISE,
         DIG,
         DUMP,
-        RESET
+        RESET_DUMPING,
+        RESET_STARTING
     };
 }
 #endif

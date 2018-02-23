@@ -120,10 +120,22 @@ class TeleopExecutive
                 ROS_INFO("Teleop Action Server: Command Revieved, LEFT");
                 move_cmd.angular.z = drive_stats.getAngular();
                 drivebase.publish(move_cmd);
-           }
+            }
             else if (code == tfr_utilities::TeleopCode::RIGHT)
             {
                 ROS_INFO("Teleop Action Server: Command Revieved, RIGHT");
+                move_cmd.angular.z = -drive_stats.getAngular();
+                drivebase.publish(move_cmd);
+            }
+            else if (code == tfr_utilities::TeleopCode::CLOCKWISE)
+            {
+                ROS_INFO("Teleop Action Server: Command Revieved, CLOCKWISE");
+                move_cmd.angular.z = drive_stats.getAngular();
+                drivebase.publish(move_cmd);
+            }
+            else if (code == tfr_utilities::TeleopCode::COUNTERCLOCKWISE)
+            {
+                ROS_INFO("Teleop Action Server: Command Revieved, COUNTERCLOCKWISE");
                 move_cmd.angular.z = -drive_stats.getAngular();
                 drivebase.publish(move_cmd);
             }
@@ -141,12 +153,16 @@ class TeleopExecutive
                 ROS_INFO("Teleop Action Server: Command Revieved, DUMP");
                 //TODO hook up dumping when ready
             }
-            else if (code == tfr_utilities::TeleopCode::RESET)
+            else if (code == tfr_utilities::TeleopCode::RESET_DUMPING)
             {
-                ROS_INFO("Teleop Action Server: Command Revieved, RESET");
+                ROS_INFO("Teleop Action Server: Command Revieved, RESET_DUMPING");
                 //TODO hook up reset when ready
             }
-            else
+            else if (code == tfr_utilities::TeleopCode::RESET_STARTING)
+            {
+                ROS_INFO("Teleop Action Server: Command Revieved, RESET_STARTING");
+                //TODO hook up reset when ready
+            }else
             {
                 ROS_WARN("Teleop Action Server: UNRECOGNIZED COMMAND");
             }

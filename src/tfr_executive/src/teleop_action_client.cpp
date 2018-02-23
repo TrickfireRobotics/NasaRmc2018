@@ -53,6 +53,18 @@ int main(int argc, char** argv)
     client.waitForResult();
     ROS_INFO("Simple Action Client: finished RIGHT");
 
+    ROS_INFO("Simple Action Client: sending CLOCKWISE");
+    goal.code = static_cast<uint8_t>(tfr_utilities::TeleopCode::CLOCKWISE);
+    client.sendGoal(goal);
+    client.waitForResult();
+    ROS_INFO("Simple Action Client: finished CLOCKWISE");
+
+    ROS_INFO("Simple Action Client: sending COUNTERCLOCKWISE");
+    goal.code = static_cast<uint8_t>(tfr_utilities::TeleopCode::COUNTERCLOCKWISE);
+    client.sendGoal(goal);
+    client.waitForResult();
+    ROS_INFO("Simple Action Client: finished COUNTERCLOCKWISE");
+
     ROS_INFO("Simple Action Client: sending DIG");
     goal.code = static_cast<uint8_t>(tfr_utilities::TeleopCode::DIG);
     client.sendGoal(goal);
@@ -65,11 +77,18 @@ int main(int argc, char** argv)
     client.waitForResult();
     ROS_INFO("Simple Action Client: finished DUMP");
 
-    ROS_INFO("Simple Action Client: sending RESET");
-    goal.code = static_cast<uint8_t>(tfr_utilities::TeleopCode::RESET);
+    ROS_INFO("Simple Action Client: sending RESET_STARTING");
+    goal.code = static_cast<uint8_t>(tfr_utilities::TeleopCode::RESET_STARTING);
     client.sendGoal(goal);
     client.waitForResult();
-    ROS_INFO("Simple Action Client: finished RESET");
+    ROS_INFO("Simple Action Client: finished RESET_STARTING");
+
+    ROS_INFO("Simple Action Client: sending RESET_DUMPING");
+    goal.code = static_cast<uint8_t>(tfr_utilities::TeleopCode::RESET_DUMPING);
+    client.sendGoal(goal);
+    client.waitForResult();
+    ROS_INFO("Simple Action Client: finished RESET_DUMPING");
+
 
     ROS_INFO("Simple Action Client: sending NONE");
     goal.code = static_cast<uint8_t>(tfr_utilities::TeleopCode::NONE);

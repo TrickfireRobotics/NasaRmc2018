@@ -1,3 +1,3 @@
 time time_stamp
-int32 status_code
+uint16 status_code
 float32 data

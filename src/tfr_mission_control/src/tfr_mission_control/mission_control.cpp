@@ -12,7 +12,8 @@ MissionControl::MissionControl()
     : rqt_gui_cpp::Plugin(),
       widget(nullptr),
       autonomy{"autonomous_action_server",true},
-      teleop{"teleop_action_server",true}
+      teleop{"teleop_action_server",true},
+      com{nh.subscribe("com", 5, &MissionControl::renderStatus, this)}
 {
 
   setObjectName("MissionControl");
@@ -43,7 +44,7 @@ void MissionControl::initPlugin(qt_gui_cpp::PluginContext& context)
 
 
 
-  //set up plugin here
+  //set up button SIGNAL->SLOT connections
   connect(ui.start_button, &QPushButton::pressed,this, &MissionControl::startMission);
   connect(ui.clock_button, &QPushButton::pressed,this, &MissionControl::startManual);
   connect(ui.autonomy_button, &QPushButton::pressed, this,  &MissionControl::startAutonomy);
@@ -51,7 +52,8 @@ void MissionControl::initPlugin(qt_gui_cpp::PluginContext& context)
   connect(countdown, &QTimer::timeout, this,  &MissionControl::renderClock);
   /* NOTE using lambdas here helps us avoid writing a million different parameterless
    * wrapper functions we can just pass in a constant to perform teleop for each one
-   * It wraps them in a free function, so no this passing needed.*/
+   * It wraps them in a free function, so no 'this' implicit parameter  passing needed,
+   * ain't qt5 great?*/
   connect(ui.reset_starting_button,&QPushButton::pressed,
           [this] () {performTeleop(tfr_utilities::TeleopCode::RESET_STARTING);});
   connect(ui.reset_dumping_button,&QPushButton::pressed,
@@ -90,6 +92,13 @@ void MissionControl::initPlugin(qt_gui_cpp::PluginContext& context)
 
 void MissionControl::shutdownPlugin()
 {
+    //note because qt plugins are weird we need to manually kill ros entities
+    com.shutdown();
+    autonomy.cancelAllGoals();
+    autonomy.stopTrackingGoal();
+    teleop.cancelAllGoals();
+    teleop.stopTrackingGoal();
+
 }
 
 /* ========================================================================== */
@@ -142,7 +151,13 @@ void MissionControl::setAutonomyButtons(bool value)
 /* ========================================================================== */
 /* Callbacks                                                                  */
 /* ========================================================================== */
-
+void MissionControl::renderStatus(const tfr_msgs::SystemStatusConstPtr &status)
+{
+    auto str = getStatusMessage(static_cast<StatusCode>(status->status_code), status->data);
+    QString msg = QString::fromStdString(str);
+    ui.status_log->appendPlainText(msg);
+    ui.status_log->verticalScrollBar()->setValue(ui.status_log->verticalScrollBar()->maximum());
+}
 
 
 /* ========================================================================== */

@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>558</width>
+    <width>570</width>
     <height>417</height>
    </rect>
   </property>
@@ -100,7 +100,7 @@
           <bool>true</bool>
          </property>
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -174,10 +174,12 @@
     </layout>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="plainTextEdit">
+    <widget class="QPlainTextEdit" name="status_log">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
      <property name="plainText">
-      <string>lots of scrollable messages
-</string>
+      <string/>
      </property>
     </widget>
    </item>

@@ -9,17 +9,21 @@
 #include <actionlib/client/terminal_state.h>
 
 #include <tfr_msgs/EmptySrv.h>
+#include <tfr_msgs/SystemStatus.h>
 #include <tfr_msgs/DurationSrv.h>
 #include <tfr_msgs/EmptyAction.h>
 #include <tfr_msgs/TeleopAction.h>
 
 #include <tfr_utilities/teleop_code.h>
+#include <tfr_utilities/status_code.h>
 
 #include <cstdint>
 
 #include <QWidget>
 #include <QObject>
 #include <QTimer>
+#include <QScrollBar>
+#include <QPushButton>
 
 namespace tfr_mission_control {
 
@@ -72,6 +76,7 @@ private:
   ros::NodeHandle nh;
   actionlib::SimpleActionClient<tfr_msgs::EmptyAction> autonomy;
   actionlib::SimpleActionClient<tfr_msgs::TeleopAction> teleop;
+  ros::Subscriber com;
 
   /* ======================================================================== */
   /* Methods                                                                  */
@@ -91,6 +96,7 @@ private:
   /* ======================================================================== */
   /* Callbacks                                                                */
   /* ======================================================================== */
+  void renderStatus(const tfr_msgs::SystemStatusConstPtr &status);
 
 
 

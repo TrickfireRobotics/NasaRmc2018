@@ -12,6 +12,7 @@
  */
 enum class SubSystem: uint16_t
 {
+    SYS = 0b0000000000000000,
     EXC = 0b0000000100000000,
     LOC = 0b0000001000000000,
     NAV = 0b0000010000000000,
@@ -37,6 +38,10 @@ enum class SubSystem: uint16_t
  */
 enum class StatusCode : uint16_t
 {
+    //System Status Codes
+    SYS_OK = 0b0000000000000000,
+    SYS_MOTOR_TOGGLE = 0b0000000000000001,
+
     //Executive Status Codes
     EXC_OK = 0b0000000100000000,
 

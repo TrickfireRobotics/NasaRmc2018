@@ -13,9 +13,8 @@ MissionControl::MissionControl()
       widget(nullptr),
       autonomy{"autonomous_action_server",true},
       teleop{"teleop_action_server",true},
-      com{nh.subscribe("com", 5, &MissionControl::renderStatus, this)}
+      com{nh.subscribe("com", 5, &MissionControl::updateStatus, this)}
 {
-
   setObjectName("MissionControl");
 }
 
@@ -47,7 +46,11 @@ void MissionControl::initPlugin(qt_gui_cpp::PluginContext& context)
   connect(ui.autonomy_button, &QPushButton::pressed, this,  &MissionControl::startAutonomy);
   connect(ui.teleop_button, &QPushButton::pressed, this,  &MissionControl::startTeleop);
 
+  connect(ui.motor_button,&QPushButton::pressed, this, &MissionControl::toggleMotors);
+
   connect(countdown, &QTimer::timeout, this,  &MissionControl::renderClock);
+  connect(this, &MissionControl::emitStatus, ui.status_log, &QPlainTextEdit::appendPlainText);
+  connect(ui.status_log, &QPlainTextEdit::textChanged, this,  &MissionControl::renderStatus);
 
   /* NOTE using lambdas here helps us avoid writing a million different parameterless
    * wrapper functions we can just pass in a constant to perform teleop for each one
@@ -81,6 +84,7 @@ void MissionControl::initPlugin(qt_gui_cpp::PluginContext& context)
           [this] () {performTeleop(tfr_utilities::TeleopCode::RIGHT);});
   connect(ui.right_button,&QPushButton::released,
           [this] () {performTeleop(tfr_utilities::TeleopCode::STOP);});
+
   ROS_INFO("Mission Control: connecting autonomy");
   autonomy.waitForServer();
   ROS_INFO("Mission Control: connected autonomy");
@@ -97,7 +101,6 @@ void MissionControl::shutdownPlugin()
     autonomy.stopTrackingGoal();
     teleop.cancelAllGoals();
     teleop.stopTrackingGoal();
-
 }
 
 /* ========================================================================== */
@@ -146,12 +149,11 @@ void MissionControl::setAutonomyButtons(bool value)
 /* ========================================================================== */
 /* Callbacks                                                                  */
 /* ========================================================================== */
-void MissionControl::renderStatus(const tfr_msgs::SystemStatusConstPtr &status)
+void MissionControl::updateStatus(const tfr_msgs::SystemStatusConstPtr &status)
 {
     auto str = getStatusMessage(static_cast<StatusCode>(status->status_code), status->data);
     QString msg = QString::fromStdString(str);
-    ui.status_log->appendPlainText(msg);
-    ui.status_log->verticalScrollBar()->setValue(ui.status_log->verticalScrollBar()->maximum());
+    emit emitStatus(msg);
 }
 
 /* ========================================================================== */
@@ -199,11 +201,22 @@ void MissionControl::performTeleop(tfr_utilities::TeleopCode code)
     teleop.sendGoal(goal);
 }
 
+void MissionControl::toggleMotors()
+{
+    tfr_msgs::EmptySrv toggle;
+    ros::service::call("toggle_motors", toggle);
+}
+
 void MissionControl::renderClock()
 {
     tfr_msgs::DurationSrv remaining_time;
     ros::service::call("time_remaining", remaining_time);
     ui.time_display->display(remaining_time.response.duration.toSec());
+}
+
+void MissionControl::renderStatus()
+{
+    ui.status_log->verticalScrollBar()->setValue(ui.status_log->verticalScrollBar()->maximum());
 }
 
 

@@ -27,8 +27,8 @@ find_package(GTest REQUIRED)
 # These are all for exporting to dependent packages/projects.
 # Uncomment each if the dependent project requires it
 catkin_package(
-    INCLUDE_DIRS include
-    LIBRARIES tf_manipulator status_publisher
+    INCLUDE_DIRS include include/${PROJECT_NAME}
+    LIBRARIES status_code tf_manipulator status_publisher
     CATKIN_DEPENDS 
         roscpp 
         actionlib 
@@ -51,17 +51,17 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME}
-  src/status_code.cpp
-)
+add_library(status_code src/status_code.cpp)
+add_dependencies(status_code ${catkin_EXPORTED_TARGETS})
+target_link_libraries(status_code ${catkin_LIBRARIES})
 
-add_library(tf_manipulator
-    ./src/tf_manipulator.cpp
-)
+add_library(tf_manipulator ./src/tf_manipulator.cpp)
+add_dependencies(tf_manipulator ${catkin_EXPORTED_TARGETS})
+target_link_libraries(tf_manipulator ${catkin_LIBRARIES})
 
-add_library(status_publisher
-    ./src/status_publisher.cpp
-)
+add_library(status_publisher ./src/status_publisher.cpp)
+add_dependencies(status_publisher ${catkin_EXPORTED_TARGETS})
+target_link_libraries(status_publisher status_code ${catkin_LIBRARIES})
 
 
 add_executable(point_broadcaster src/point_broadcaster.cpp)
@@ -79,7 +79,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 # Add gtest based cpp test target and link libraries
 catkin_add_gtest(${PROJECT_NAME}-test test/test_system_codes.cpp)
 if(TARGET ${PROJECT_NAME}-test)
-  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+  target_link_libraries(${PROJECT_NAME}-test status_code)
 endif()
 
 #install shared headers

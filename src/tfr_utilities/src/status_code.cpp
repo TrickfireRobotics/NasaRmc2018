@@ -9,6 +9,7 @@ enum { SystemMask = 0b1111111100000000 };
  * Any new status codes should have their associated messaged added into these
  * functions.
  */
+std::string parseSysCode(StatusCode code, float data);
 std::string parseExecCode(StatusCode code, float data);
 std::string parseLocCode(StatusCode code, float data);
 std::string parseNavCode(StatusCode code, float data);
@@ -21,6 +22,10 @@ std::string getStatusMessage(StatusCode code, float data)
     //switch to find the sub system and use associated code parser
     switch (static_cast<SubSystem>(SystemMask & static_cast<uint16_t>(code)))
     {
+        case SubSystem::SYS:
+        {
+            return parseSysCode(code, data);
+        }
         case SubSystem::EXC:
         {
             return parseExecCode(code, data);
@@ -47,6 +52,27 @@ std::string getStatusMessage(StatusCode code, float data)
         }
     }
 }
+
+//Parser for all system level status codes
+std::string parseSysCode(StatusCode code, float data)
+{
+    switch(code)
+    {
+        case StatusCode::SYS_OK:
+        {
+            return "System OK";
+        }
+        case StatusCode::SYS_MOTOR_TOGGLE:
+        {
+            return "System Motors Toggled";
+        }
+        default:
+        {
+            return "Warning: Unknown status code for System received.";
+        }
+    }
+}
+
 
 //Parser for all status codes in the Executive sub system
 std::string parseExecCode(StatusCode code, float data)

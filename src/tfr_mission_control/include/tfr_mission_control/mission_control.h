@@ -17,6 +17,7 @@
 #include <tfr_utilities/teleop_code.h>
 #include <tfr_utilities/status_code.h>
 
+
 #include <cstdint>
 
 #include <QWidget>
@@ -24,6 +25,7 @@
 #include <QTimer>
 #include <QScrollBar>
 #include <QPushButton>
+#include <QPlainTextEdit>
 
 namespace tfr_mission_control {
 
@@ -96,7 +98,8 @@ private:
   /* ======================================================================== */
   /* Callbacks                                                                */
   /* ======================================================================== */
-  void renderStatus(const tfr_msgs::SystemStatusConstPtr &status);
+  void updateStatus(const tfr_msgs::SystemStatusConstPtr &status);
+
 
 
 
@@ -109,12 +112,15 @@ protected slots:
 
   virtual void startMission();
   virtual void startManual();
+
   virtual void startAutonomy();
   virtual void startTeleop();
 
   virtual void performTeleop(tfr_utilities::TeleopCode code);
+  virtual void toggleMotors();
 
   virtual void renderClock();
+  virtual void renderStatus();
   virtual void startTimeService();
 
 
@@ -123,7 +129,7 @@ signals:
   /* ======================================================================== */
   /* Signals                                                                  */
   /* ======================================================================== */
-
+  void emitStatus(QString status);
 
 
 

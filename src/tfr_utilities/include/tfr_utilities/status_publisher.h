@@ -15,20 +15,26 @@
 class StatusPublisher
 {
     public:
-        StatusPublisher(ros::NodeHandle &node);
+        StatusPublisher();
         ~StatusPublisher() = default;
+        StatusPublisher(const StatusPublisher&) = delete;
+        StatusPublisher& operator=(const StatusPublisher&) = delete;
+        StatusPublisher(StatusPublisher&&) = delete;
+        StatusPublisher& operator=(StatusPublisher&&) = delete;
 
         //publishes at standard ros visibility levels
-        void info (const StatusCode& code,const float &data);
-        void debug(const StatusCode& code,const float &data);
-        void warn (const StatusCode& code,const float &data);
-        void error(const StatusCode& code,const float &data);
+        void info (const StatusCode& code,const float &data) const;
+        void debug(const StatusCode& code,const float &data) const;
+        void warn (const StatusCode& code,const float &data) const;
+        void error(const StatusCode& code,const float &data) const;
 
         //only publishes at mission control scope
-        void missionControl(const StatusCode& code ,const float &data);
+        void missionControl(const StatusCode& code ,const float &data) const;
+
+        void shutdown();
 
     private:
-        ros::NodeHandle &n;
+        ros::NodeHandle n;
         ros::Publisher com;
 };
 #endif

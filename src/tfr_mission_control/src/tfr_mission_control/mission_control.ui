@@ -66,10 +66,10 @@
         <enum>QFrame::Plain</enum>
        </property>
        <property name="smallDecimalPoint">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="digitCount">
-        <number>8</number>
+        <number>4</number>
        </property>
        <property name="segmentStyle">
         <enum>QLCDNumber::Filled</enum>
@@ -351,9 +351,6 @@
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="control_bar"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="mission_bar">

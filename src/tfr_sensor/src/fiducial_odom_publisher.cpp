@@ -81,10 +81,8 @@ class FiducialOdom
             client.sendGoal(goal);
             if (client.waitForResult())
             {
-                /*we need to publish 2 things:
-                 * 1. Transform for tf
-                 * 2. Odometry information 
-                 * However tf is weird so the first thing we will have to do is
+                /*
+                 * the first thing we will have to do is
                  * translate our current tf information to base_footprint, to
                  * not disrupt the tree structure of the transforms*/
 
@@ -162,27 +160,19 @@ class FiducialOdom
                         relative_pose.pose.orientation.z,
                         relative_pose.pose.orientation.w);
  
-                // 1. handle transforms for tf
-//                geometry_msgs::TransformStamped transform;
-//                transform.header.stamp = ros::Time::now();
-//                transform.header.frame_id = odometry_frame;
-//                transform.child_frame_id = footprint_frame;
-//                transform.transform = relative_transform;
-//                broadcaster.sendTransform(transform);
-
-                // 2. handle odometry data
+                // handle odometry data
                 nav_msgs::Odometry odom;
                 odom.header.frame_id = odometry_frame;
                 odom.header.stamp = ros::Time::now();
                 odom.child_frame_id = footprint_frame;
                 //get our pose and fudge some covariances
                 odom.pose.pose = relative_pose.pose;
-                odom.pose.covariance = {  5e-3,   0,   0,   0,   0,   0,
-                                             0,5e-3,   0,   0,   0,   0,
-                                             0,   0,5e-3,   0,   0,   0,
-                                             0,   0,   0,5e-3,   0,   0,
-                                             0,   0,   0,   0,5e-3,   0,
-                                             0,   0,   0,   0,   0,5e-3};
+                odom.pose.covariance = {  1e-1,   0,   0,   0,   0,   0,
+                                             0,1e-1,   0,   0,   0,   0,
+                                             0,   0,1e-1,   0,   0,   0,
+                                             0,   0,   0,1e-1,   0,   0,
+                                             0,   0,   0,   0,1e-1,   0,
+                                             0,   0,   0,   0,   0,1e-1};
 
 
                 //handle uninitialized data
@@ -228,12 +218,12 @@ class FiducialOdom
                 odom.twist.twist.linear =  tf2::toMsg(linear_deltas/delta_t);
                 odom.twist.twist.angular = tf2::toMsg(rpy_deltas/delta_t);
 
-                odom.twist.covariance = {  5e-3,   0,   0,   0,   0,   0,
-                                              0,5e-3,   0,   0,   0,   0,
-                                              0,   0,5e-3,   0,   0,   0,
-                                              0,   0,   0,5e-3,   0,   0,
-                                              0,   0,   0,   0,5e-3,   0,
-                                              0,   0,   0,   0,   0,5e-3};
+                odom.twist.covariance = {  1e-1,   0,   0,   0,   0,   0,
+                                              0,1e-1,   0,   0,   0,   0,
+                                              0,   0,1e-1,   0,   0,   0,
+                                              0,   0,   0,1e-1,   0,   0,
+                                              0,   0,   0,   0,1e-1,   0,
+                                              0,   0,   0,   0,   0,1e-1};
 
                 //fire it off! and cleanup
                 publisher.publish(odom);

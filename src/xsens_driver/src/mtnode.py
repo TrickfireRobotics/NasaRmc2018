@@ -193,11 +193,14 @@ class XSensDriver(object):
 				ss_msg.internal.imu.dv.z = acc_data['Delta v.z']											
 			elif 'accX' in acc_data: # found acceleration
 				pub_imu = True
-				imu_msg.linear_acceleration.x = acc_data['accX']
-				imu_msg.linear_acceleration.y = acc_data['accY']
-				imu_msg.linear_acceleration.z = acc_data['accZ']						
+                                #COLLIN changed sign of x
+				imu_msg.linear_acceleration.x = -acc_data['accX']
+                                #COLLIN changes sign of y
+				imu_msg.linear_acceleration.y = -acc_data['accY']
+                                #COLLIN changed sign of z
+				imu_msg.linear_acceleration.z = -acc_data['accZ']						
                                 #NOTE COLLIN added covariences
-                                imu_msg.linear_acceleration_covariance=[1e-3,0,0,0,1e-3,0,0,0,1e-3]
+                                imu_msg.linear_acceleration_covariance=[1e-2,0,0,0,1e-2,0,0,0,1e-2]
 			else:
 				raise MTException("Unsupported message in XDI_AccelerationGroup.")	
 					
@@ -214,7 +217,7 @@ class XSensDriver(object):
 				imu_msg.angular_velocity.y = gyr_data['gyrY']
 				imu_msg.angular_velocity.z = gyr_data['gyrZ']
                                 #NOTE COLLIN added covariences
-                                imu_msg.angular_velocity_covariance=[1e-3,0,0,0,1e-3,0,0,0,1e-3]
+                                imu_msg.angular_velocity_covariance=[1e-2,0,0,0,1e-2,0,0,0,1e-2]
 			else:
 				raise MTException("Unsupported message in XDI_AngularVelocityGroup.")
 		
@@ -258,7 +261,7 @@ class XSensDriver(object):
 				imu_msg.orientation.x = orient_data['Q1']
 				imu_msg.orientation.y = orient_data['Q2']
 				imu_msg.orientation.z = orient_data['Q3']
-                                imu_msg.orientation_covariance=[1e-3,0,0,0,1e-3,0,0,0,1e-3]
+                                imu_msg.orientation_covariance=[1e-2,0,0,0,1e-2,0,0,0,1e-2]
 			elif 'Roll' in orient_data:
 				pub_ori = True
 				ori_msg.roll = orient_data['Roll']

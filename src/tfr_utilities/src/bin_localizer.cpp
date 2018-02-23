@@ -74,7 +74,7 @@ class PartialServer
 
 
                 //fire off the localized bin
-                output.header.frame_id = "bin_link";
+                output.header.frame_id = "odom";
                 output.header.stamp = ros::Time::now();
                 return true;
             }

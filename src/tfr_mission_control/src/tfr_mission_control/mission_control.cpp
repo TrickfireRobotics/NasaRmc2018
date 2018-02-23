@@ -41,15 +41,14 @@ void MissionControl::initPlugin(qt_gui_cpp::PluginContext& context)
 
   countdown = new QTimer(this);
 
-
-
-
   //set up button SIGNAL->SLOT connections
   connect(ui.start_button, &QPushButton::pressed,this, &MissionControl::startMission);
   connect(ui.clock_button, &QPushButton::pressed,this, &MissionControl::startManual);
   connect(ui.autonomy_button, &QPushButton::pressed, this,  &MissionControl::startAutonomy);
   connect(ui.teleop_button, &QPushButton::pressed, this,  &MissionControl::startTeleop);
+
   connect(countdown, &QTimer::timeout, this,  &MissionControl::renderClock);
+
   /* NOTE using lambdas here helps us avoid writing a million different parameterless
    * wrapper functions we can just pass in a constant to perform teleop for each one
    * It wraps them in a free function, so no 'this' implicit parameter  passing needed,
@@ -135,18 +134,14 @@ void MissionControl::setTeleopButtons(bool value)
     ui.dig_button->setEnabled(value);
 }
 
-
 void MissionControl::setAutonomyButtons(bool value)
 {
     ui.teleop_button->setEnabled(value);
 }
 
-
 /* ========================================================================== */
 /* Events                                                                     */
 /* ========================================================================== */
-
-
 
 /* ========================================================================== */
 /* Callbacks                                                                  */
@@ -158,7 +153,6 @@ void MissionControl::renderStatus(const tfr_msgs::SystemStatusConstPtr &status)
     ui.status_log->appendPlainText(msg);
     ui.status_log->verticalScrollBar()->setValue(ui.status_log->verticalScrollBar()->maximum());
 }
-
 
 /* ========================================================================== */
 /* Slots                                                                      */

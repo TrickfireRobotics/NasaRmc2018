@@ -28,7 +28,7 @@ find_package(GTest REQUIRED)
 # Uncomment each if the dependent project requires it
 catkin_package(
     INCLUDE_DIRS include
-    LIBRARIES tf_manipulator
+    LIBRARIES tf_manipulator status_publisher
     CATKIN_DEPENDS 
         roscpp 
         actionlib 
@@ -58,6 +58,11 @@ add_library(${PROJECT_NAME}
 add_library(tf_manipulator
     ./src/tf_manipulator.cpp
 )
+
+add_library(status_publisher
+    ./src/status_publisher.cpp
+)
+
 
 add_executable(point_broadcaster src/point_broadcaster.cpp)
 target_link_libraries(point_broadcaster ${catkin_LIBRARIES})

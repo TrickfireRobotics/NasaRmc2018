@@ -1,22 +1,25 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <package format="2">
   <name>tfr_mission_control</name>
-  <version>0.1.0</version>
-  <description>The tfr_mission_control package</description>
+  <version>0.3.10</version>
+  <description>tfr_mission_control provides a GUI plugin to control the robot</description>
 
-  <!-- If you are the actual maintainer of this package, please say so here. -->
-  <maintainer email="dehaan.jeremiah@gmail.com">Jeremy DeHaan</maintainer>
+  <maintainer email="collinsconway@gmail.com">Collin</maintainer>
   <license>BSD</license>
-  <url type="website">http://www.trickfirerobotics.com/</url>
-  <author email="dehaan.jeremiah@gmail.com">Jeremy DeHaan</author>
-  <author email="nmcmichaelwork@gmail.com">Noah McMichael</author>
-  <!-- <author email="another.author@example.com">Jane Doe</author> -->
+  <!-- <url type="website">http://www.bla.com</url> -->
+  <author email="collinsconway@gmail.com">Collin</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <test_depend>gtest</test_depend>
-  <depend>roscpp</depend>
-  <depend>std_msgs</depend>
+  <depend>rqt_gui</depend>
+  <depend>rqt_gui_cpp</depend>
   <depend>tfr_msgs</depend>
   <depend>tfr_utilities</depend>
+  <depend>roscpp</depend>
+  <depend>actionlib</depend>
 
+
+  <export>
+    <rqt_gui plugin="${prefix}/plugin.xml"/>
+  </export>
 </package>

@@ -1,6 +1,6 @@
-
 build/*
 devel/*
 *.pyc
 src/CMakeLists.txt
-src/tfr_mission_control/gui/build*
+*.pro
+*.user

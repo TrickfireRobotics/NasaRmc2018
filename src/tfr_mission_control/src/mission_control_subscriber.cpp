@@ -13,7 +13,7 @@ void testCallback(const tfr_msgs::SystemStatus::ConstPtr& msg)
 int main(int argc, char **argv)
 {
 
-  ros::init(argc, argv, "mission_control");
+  ros::init(argc, argv, "mission_control_subscriber");
 
   /**
    * NodeHandle is the main access point to communications with the ROS system.

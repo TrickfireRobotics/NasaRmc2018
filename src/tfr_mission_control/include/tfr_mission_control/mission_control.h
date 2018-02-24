@@ -26,10 +26,11 @@
 #include <QScrollBar>
 #include <QPushButton>
 #include <QPlainTextEdit>
+#include <QKeyEvent>
 
 namespace tfr_mission_control {
 
-class MissionControl : public rqt_gui_cpp::Plugin {
+class MissionControl : public rqt_gui_cpp::Plugin{
 Q_OBJECT
 
 public:
@@ -66,6 +67,7 @@ private:
   /* ======================================================================== */
 
   const std::string TAG = "MissionControl";
+  const double MOTOR_INTERVAL = 1000/3;
 
   /* ======================================================================== */
   /* Variables                                                                */
@@ -74,25 +76,29 @@ private:
   Ui::MissionControlWidget ui;
   QWidget* widget;
   QTimer* countdown;
+  QTimer* motorKill;
 
   ros::NodeHandle nh;
   actionlib::SimpleActionClient<tfr_msgs::EmptyAction> autonomy;
   actionlib::SimpleActionClient<tfr_msgs::TeleopAction> teleop;
   ros::Subscriber com;
+  int lastKey;
+
+  bool teleopEnabled;
 
   /* ======================================================================== */
   /* Methods                                                                  */
   /* ======================================================================== */
-  void setTeleopButtons(bool value);
-
-  void setAutonomyButtons(bool value);
+  void softwareStop();
+  void setTeleop(bool value);
+  void setAutonomy(bool value);
 
 
 
   /* ======================================================================== */
   /* Events                                                                   */
   /* ======================================================================== */
-
+  bool eventFilter(QObject *obj, QEvent *event);
 
 
   /* ======================================================================== */
@@ -113,11 +119,12 @@ protected slots:
   virtual void startMission();
   virtual void startManual();
 
-  virtual void startAutonomy();
-  virtual void startTeleop();
+  virtual void goAutonomousMode();
+  virtual void goTeleopMode();
 
   virtual void performTeleop(tfr_utilities::TeleopCode code);
   virtual void toggleMotors();
+  virtual void stopDrivebase();
 
   virtual void renderClock();
   virtual void renderStatus();

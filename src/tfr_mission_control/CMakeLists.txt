@@ -1,3 +1,8 @@
+# NOTE the build for this qt stuff is really complicated. I generated it from
+# a community utility, and would highly recommend doing the same if you need
+# to do so in the future. To be frank I don't really understand everything
+# it is doing.
+# see "catkin_create_rqt" repository on github for details
 cmake_minimum_required(VERSION 2.8.3)
 
 project(tfr_mission_control)
@@ -11,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
 )
 
+####################GENERATED######################################################
 find_package(Qt5Widgets REQUIRED)
 
 # Flags
@@ -96,12 +102,14 @@ add_dependencies(${PROJECT_NAME}
 
 find_package(class_loader)
 class_loader_hide_library_symbols(${PROJECT_NAME})
+####################END GENERATED######################################################
 
 add_executable(mission_control_subscriber ./src/mission_control_subscriber.cpp)
 add_dependencies(mission_control_subscriber ${catkin_EXPORTED_TARGETS})
 target_link_libraries(mission_control_subscriber ${catkin_LIBRARIES})
 
 
+####################GENERATED######################################################
 install(FILES plugin.xml
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
@@ -120,10 +128,4 @@ install(DIRECTORY include/${PROJECT_NAME}/
     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-#install(
-#  DIRECTORY resource
-#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-#  FILES_MATCHING
-#  PATTERN "*.png"
-#  PATTERN "*.svg"
-#)
+####################END GENERATED######################################################

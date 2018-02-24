@@ -31,6 +31,7 @@ class StatusPublisher
         //only publishes at mission control scope
         void missionControl(const StatusCode& code ,const float &data) const;
 
+        //frees up resources for qt framewwork
         void shutdown();
 
     private:

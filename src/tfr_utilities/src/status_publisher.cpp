@@ -43,6 +43,7 @@ void StatusPublisher::missionControl(const StatusCode &code, const float &data)
     com.publish(status);
 }
 
+//shuts down publishers
 void StatusPublisher::shutdown()
 {
     com.shutdown();

@@ -1,0 +1,3 @@
+<launch>
+    <node name="test_digging_client" type="test_digging_client" pkg="tfr_mining" output="screen" />
+</launch>

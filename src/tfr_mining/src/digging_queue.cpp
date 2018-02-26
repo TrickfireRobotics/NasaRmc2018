@@ -4,14 +4,15 @@ namespace tfr_mining
 {
     DiggingQueue::DiggingQueue() : sets{}
     {
-        // TODO: Populate sets
-        // Temporary test set
-        DiggingSet set;
-        for (int i = 0; i < 5; i++) {
-            std::vector<double> state {};
-            set.insertState(state, 2.0);
+        // Temporary test sets
+        for (int j = 0; j < 5; j++) {
+            DiggingSet set;
+            for (int i = 0; i < 5; i++) {
+                std::vector<double> state { (-3.14159265 / 2) + (j * (3.14159265/4)) , 0.5, 0.5 + (0.2 * i), 0.0 };
+                set.insertState(state, 3.5);
+            }
+            sets.push(set);
         }
-        sets.push(set);
     }
 
     bool DiggingQueue::isEmpty()

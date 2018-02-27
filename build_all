@@ -5,17 +5,22 @@ echo ""
 
 
 ARCH=$(uname -m)
-CMAKE_OPTIONS="-DARCH_DIR=$ARCH"
+if [ "$ARCH" == "aarch64" ]
+then
+    CMAKE_OPTIONS="-DARCH_DIR=$ARCH -DCMAKE_C_COMPILER=/usr/bin/gcc-5 -DCMAKE_CXX_COMPILER=/usr/bin/g++-5"
+else
+    CMAKE_OPTIONS="-DARCH_DIR=$ARCH"
+fi
 
 catkin_make --cmake-args $CMAKE_OPTIONS
 
 if [ $? -eq 0 ]; then
     echo ""
-	echo "--------------------------------- Building Tests ---------------------------------"
-	echo ""
-	
-	catkin_make tests --cmake-args $CMAKE_OPTIONS
-	
+    echo "--------------------------------- Building Tests ---------------------------------"
+    echo ""
+
+    catkin_make tests --cmake-args $CMAKE_OPTIONS
+
 	if [ $? -eq 0 ]; then
 		echo ""
 		echo "--------------------------------- Build Succeeded --------------------------------"

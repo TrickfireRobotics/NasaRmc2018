@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>jetson_tx2</name>
+  <version>0.0.0</version>
+  <description>The jetson_tx2 package production code specifically for the tx2</description>
+
+  <maintainer email="collinsconway@gmail.com">Collin</maintainer>
+  <author email="collinsconway@gmail.com">Collin</author>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+  </export>
+</package>

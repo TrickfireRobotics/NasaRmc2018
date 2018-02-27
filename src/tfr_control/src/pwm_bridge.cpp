@@ -94,13 +94,16 @@ int main(int argc, char** argv)
     PWMInterface interface{};
     interface.enablePWM(true);
 
-    bool io = false;
-    for (double j = -1; j <= 1; j += 0.01, io = !io)
+    bool sign = false;
+    for (double j = 0.055; true ; j += ((sign)?1:-1)*0.001)
     {
         ROS_INFO("cycle %f", j);
-        interface.set(PWMInterface::Address::LEFT_TREAD, j);
-        sleep(2);
-        interface.enablePWM(io);
+        interface.set(PWMInterface::Address::LEFT_TREAD, 0.055);
+        sleep(0.25);
+        if (j < 0.055)
+            sign = true;
+        if(j > 0.08)
+            sign = false;
     }
     interface.set(PWMInterface::Address::LEFT_TREAD, 0);
     return 0;

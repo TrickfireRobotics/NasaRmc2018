@@ -11,8 +11,8 @@
 class Quadrature
 {
   public:
-    Quadrature(int ppr, int a_pin, int b_pin):
-    PPR{ppr}, data{}, encoder{a_pin,b_pin} {}
+    Quadrature(int cpr, int a_pin, int b_pin):
+    CPR{cpr}, data{}, encoder{a_pin,b_pin} {}
   /*
     Gives the velocity of controller in shaftrevloutions/sec, since the last time
     getVelocity was called, should be called often to ensure accuracy, provides interrupt safety
@@ -31,10 +31,10 @@ class Quadrature
     }
     
     //time will only overflow every 50 days of consecutive operation, non issue
-    data.t_1 = millis(); 
+    data.t_1 = millis()*1e-3; 
 
     //calculate the velocity
-    auto velocity = (data.p_1 - data.p_0)/((data.t_1-data.t_0)*PPR);
+    double velocity = (data.p_1 - data.p_0)/((data.t_1-data.t_0)*CPR);
     
     data.p_0 = data.p_1;
     data.t_0 = data.t_1;
@@ -48,12 +48,12 @@ class Quadrature
     struct EncoderData
     {
       int32_t p_0 = 0;
-      int32_t t_0 = 0;
+      double t_0 = 0;
       int32_t p_1 = 0;
-      int32_t t_1 = 0;
+      double t_1 = 0;
     };
 
-    const double PPR;
+    const double CPR;
 
     EncoderData data;
 

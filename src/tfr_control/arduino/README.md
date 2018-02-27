@@ -11,3 +11,8 @@ After this use the arduino ide to handle compiling and uploading the files to yo
 Since this package relies on our custom msgs, you will need to follow these instructions
 to make our headers visible to the avr compiler:
 http://wiki.ros.org/rosserial_arduino/Tutorials/Adding%20Custom%20Messages
+
+Note this also requires the CDC -> ACM module be installed on the jetson.
+https://github.com/jetsonhacks/installACMModule
+
+If you ever reflash the jetson, really make sure to do both of these steps or you are in a world of hurt.

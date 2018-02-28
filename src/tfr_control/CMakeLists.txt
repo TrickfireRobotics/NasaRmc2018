@@ -41,23 +41,10 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-
 add_library(pwm_driver src/JHPWMPCA9685.cpp)
 add_executable(pwm_bridge src/pwm_bridge.cpp)
 add_dependencies(pwm_bridge gpio pwm_driver ${catkin_EXPORTED_TARGETS})
 target_link_libraries(pwm_bridge pwm_driver gpio ${catkin_LIBRARIES})
-
-
-# proto_driver_station
-add_executable(proto_driver_station 
-  src/proto_driver_station.cpp
-)
-add_dependencies(proto_driver_station tfr_msgs_gencpp)
-target_link_libraries(proto_driver_station
-  ${catkin_LIBRARIES} 
-  sfml-system
-  sfml-window sfml-graphics
-)
 
 # controller_launcher
 add_executable(controller_launcher

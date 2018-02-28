@@ -18,13 +18,14 @@ namespace tfr_control
         // joint names from the URDF. If one changes, so must the other.
 
         // Connect and register the joint state and effort interfaces
-        register_joint("left_tread_joint", Actuator::kLeftTread);
-        register_joint("right_tread_joint", Actuator::kRightTread);
-        register_joint("bin_joint", Actuator::kBin);
-        register_joint("turntable_joint", Actuator::kTurntable);
-        register_joint("lower_arm_joint", Actuator::kLowerArm);
-        register_joint("upper_arm_joint", Actuator::kUpperArm);
-        register_joint("scoop_joint", Actuator::kScoop);
+        registerDrivebaseJoint("left_tread_joint", Joint::LEFT_TREAD);
+        registerDrivebaseJoint("right_tread_joint", Joint::RIGHT_TREAD);
+        
+        registerArmJoint("bin_joint", Actuator::BIN);
+        registerArmJoint("turntable_joint", Actuator::TURNTABLE);
+        registerArmJoint("lower_arm_joint", Actuator::LOWER_ARM);
+        registerArmJoint("upper_arm_joint", Actuator::UPPER_ARM);
+        registerArmJoint("scoop_joint", Actuator::SCOOP);
 
         registerInterface(&joint_state_interface);
         registerInterface(&joint_effort_interface);
@@ -51,32 +52,40 @@ namespace tfr_control
         {
             // Update all actuators velocity with the command (effort in).
             // Then update the position as derivative of the velocity over time.
-            for (int i = 0; i < kControllerCount; i++) 
+            for (int i = 0; i < ARM_CONTROLLER_COUNT; i++) 
             {
-                velocity_values[i] = command_values[i];
-                position_values[i] += velocity_values[i] * get_update_time();
+                arm_velocity_values[i] = arm_command_values[i];
+                arm_position_values[i] += arm_velocity_values[i] * getUpdateTime();
                 // If this joint has limits, clamp the range down
                 if (abs(lower_limits[i]) >= 1E-3 || abs(upper_limits[i]) >= 1E-3) 
                 {
-                    position_values[i] = std::max(std::min(position_values[i], upper_limits[i]), lower_limits[i]);
+                    arm_position_values[i] =
+                        std::max(std::min(arm_position_values[i],
+                                    upper_limits[i]), lower_limits[i]);
                 }
             }
         }
 
         prev_time = ros::Time::now();
     }
-    
-    void Controller::register_joint(std::string joint, Actuator actuator) 
+
+    void Controller::registerDrivebaseJoint(std::string name, Joint joint) 
     {
-        JointStateHandle state_handle(joint, &position_values[actuator],
-        &velocity_values[actuator], &effort_values[actuator]);
+        //TODO
+    }
+
+    void Controller::registerArmJoint(std::string name, Actuator actuator) 
+    {
+        auto idx = static_cast<int>(actuator);
+        JointStateHandle state_handle(name, &arm_position_values[idx],
+        &arm_velocity_values[idx], &arm_effort_values[idx]);
         joint_state_interface.registerHandle(state_handle);
 
-        JointHandle handle(state_handle, &command_values[actuator]);
+        JointHandle handle(state_handle, &arm_command_values[idx]);
         joint_effort_interface.registerHandle(handle);
     }
 
-    double Controller::get_update_time() 
+    double Controller::getUpdateTime() 
     {
         return (ros::Time::now() - prev_time).nsec / 1E9;
     }

@@ -86,6 +86,10 @@ add_executable(motor_toggle_test ./src/motor_toggle_test.cpp)
 add_dependencies(motor_toggle_test ${catkin_EXPORTED_TARGETS})
 target_link_libraries(motor_toggle_test status_code status_publisher ${catkin_LIBRARIES})
 
+add_executable(test_cmd src/test_cmd.cpp)
+add_dependencies(test_cmd tfr_msgs_gencpp)
+target_link_libraries(test_cmd ${catkin_LIBRARIES})
+
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 

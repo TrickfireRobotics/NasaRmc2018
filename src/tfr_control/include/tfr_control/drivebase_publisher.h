@@ -18,7 +18,7 @@
 
 #include "ros/ros.h"
 #include "geometry_msgs/Twist.h"
-
+#include "std_msgs/Float64MultiArray.h"
 namespace tfr_control
 {
     class DrivebasePublisher
@@ -48,8 +48,7 @@ namespace tfr_control
         const float wheel_radius;
         const float wheel_span;
 
-        ros::Publisher left_tread_publisher;
-        ros::Publisher right_tread_publisher;
+        ros::Publisher tread_publisher;
         ros::Subscriber subscriber;
     };
 }

@@ -1,6 +1,4 @@
-/**
- * controller.cpp
- * 
+/** * controller.cpp * 
  * This class is in charge of handling the physical hardware interface with
  * the robot itself, and is started by the controller_launcher node.
  */
@@ -18,13 +16,14 @@ namespace tfr_control
         // joint names from the URDF. If one changes, so must the other.
 
         // Connect and register the joint state and effort interfaces
-        registerVelocityJoint("left_tread_joint", Joint::LEFT_TREAD);
-        registerVelocityJoint("right_tread_joint", Joint::RIGHT_TREAD);
-        //registerArmJoint("bin_joint", Joint::BIN); TODO FIGURE THIS OUT
-        registerEffortJoint("turntable_joint", Joint::TURNTABLE);
-        registerEffortJoint("lower_arm_joint", Joint::LOWER_ARM);
-        registerEffortJoint("upper_arm_joint", Joint::UPPER_ARM);
-        registerEffortJoint("scoop_joint", Joint::SCOOP);
+        registerJoint("left_tread_joint", Joint::LEFT_TREAD);
+        registerJoint("right_tread_joint", Joint::RIGHT_TREAD);
+        registerJoint("bin_joint", Joint::BIN); //TODO FIGURE THIS OUT
+        registerJoint("turntable_joint", Joint::TURNTABLE);
+        registerJoint("lower_arm_joint", Joint::LOWER_ARM);
+        registerJoint("upper_arm_joint", Joint::UPPER_ARM);
+        registerJoint("scoop_joint", Joint::SCOOP);
+        registerInterface(&tread_velocity_interface);
         registerInterface(&joint_state_interface);
         registerInterface(&joint_effort_interface);
     }
@@ -64,27 +63,38 @@ namespace tfr_control
             }
         }
 
+        ROS_INFO("l: %f", command_values[0]); 
+        ROS_INFO("r: %f", command_values[1]); 
         prev_time = ros::Time::now();
     }
 
-    void Controller::registerVelocityJoint(std::string name, Joint joint) 
-    {
-        auto idx = static_cast<int>(joint);
-        JointStateHandle state_handle(name, &position_values[idx],
-            &velocity_values[idx], &effort_values[idx]);
-        JointHandle handle(state_handle, &command_values[idx]);
-        drivebase_velocity_interface.registerHandle(handle);
-    }
-
-    void Controller::registerEffortJoint(std::string name, Joint joint) 
+    void Controller::registerJoint(std::string name, Joint joint) 
     {
         auto idx = static_cast<int>(joint);
         JointStateHandle state_handle(name, &position_values[idx],
             &velocity_values[idx], &effort_values[idx]);
         joint_state_interface.registerHandle(state_handle);
+
         JointHandle handle(state_handle, &command_values[idx]);
-        joint_effort_interface.registerHandle(handle);
+
+        switch (joint)
+        {
+            case Joint::LEFT_TREAD:
+            case Joint::RIGHT_TREAD:
+                tread_velocity_interface.registerHandle(handle);
+                break;
+            case Joint::BIN:
+                joint_effort_interface.registerHandle(handle);
+                break;
+            case Joint::TURNTABLE:
+            case Joint::LOWER_ARM:
+            case Joint::UPPER_ARM:
+            case Joint::SCOOP:
+                joint_effort_interface.registerHandle(handle);
+                break;
+        }
     }
+
 
     double Controller::getUpdateTime() 
     {

@@ -42,7 +42,7 @@ namespace tfr_control {
         void read();
         void write();
     private:
-        hardware_interface::VelocityJointInterface drivebase_velocity_interface;
+        hardware_interface::VelocityJointInterface tread_velocity_interface;
         hardware_interface::JointStateInterface joint_state_interface;
         hardware_interface::EffortJointInterface joint_effort_interface;
 
@@ -67,21 +67,7 @@ namespace tfr_control {
         // The time of the previous update cycle (update at the end of write)
         ros::Time prev_time;
         
-        /**
-         * two motors to store data for:
-         *  - left tread
-         *  - right tread
-         */
-        void registerVelocityJoint(std::string name, Joint joint);
-
-        /**
-         * four actuators/motors to store data for:
-         *  - Turntable
-         *  - Lower arm actuator
-         *  - Upper arm actuator
-         *  - Scoop actuator
-         */
-        void registerEffortJoint(std::string name, Joint join);
+        void registerJoint(std::string name, Joint joint);
 
         /**
          * Gets the time in seconds since the last update cycle

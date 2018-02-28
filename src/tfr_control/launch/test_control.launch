@@ -1,0 +1,7 @@
+<launch>
+    <node name="test_cmd" pkg="tfr_control" type="test_cmd"/>
+  <!-- Launch all the hardware interface nodes -->
+  <include file="$(find tfr_control)/launch/test_controller.launch"/>
+
+  <include file="$(find tfr_control)/launch/drivebase.launch"/>
+</launch>

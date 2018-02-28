@@ -5,20 +5,17 @@
  *                  See tfr_control/include/tfr_control/drivebase_publisher.h for details.
  ***************************************************************************************/
 #include "drivebase_publisher.h"
-#include "std_msgs/Float64.h"
 
 namespace tfr_control
 {
     DrivebasePublisher::DrivebasePublisher(
         ros::NodeHandle& n, float wheel_radius, float wheel_span) : 
         n{n}, wheel_radius{wheel_radius}, wheel_span{wheel_span}, 
-        left_tread_publisher{}, right_tread_publisher{}
+        tread_publisher{}
     {
-        left_tread_publisher = n.advertise<std_msgs::Float64>(
-            "left_tread_velocity_controller/command", 100);
+        tread_publisher = n.advertise<std_msgs::Float64MultiArray>(
+            "tread_velocity_controller/command", 5);
 
-        right_tread_publisher = n.advertise<std_msgs::Float64>(
-            "right_tread_velocity_controller/command", 100);
 
         subscriber = n.subscribe("cmd_vel", 100, &DrivebasePublisher::subscriptionCallback, this);
     }
@@ -30,12 +27,11 @@ namespace tfr_control
         DrivebasePublisher::twistToDifferential(msg->linear.x, msg->angular.z,
             this->wheel_span, this->wheel_radius, left_tread, right_tread);
         
-        std_msgs::Float64 left_msg;
-        std_msgs::Float64 right_msg;
-        left_msg.data = left_tread;
-        right_msg.data = right_tread;
-        left_tread_publisher.publish(left_msg);
-        right_tread_publisher.publish(right_msg);
+        std_msgs::Float64MultiArray cmd;
+        cmd.data.resize(2);
+        cmd.data[0] = left_tread;
+        cmd.data[1] = right_tread;
+        tread_publisher.publish(cmd);
     }
 
     // left_tread and right_tread are output parameters; the rest are inputs.

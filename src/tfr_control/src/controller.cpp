@@ -18,15 +18,13 @@ namespace tfr_control
         // joint names from the URDF. If one changes, so must the other.
 
         // Connect and register the joint state and effort interfaces
-        registerDrivebaseJoint("left_tread_joint", Joint::LEFT_TREAD);
-        registerDrivebaseJoint("right_tread_joint", Joint::RIGHT_TREAD);
-        
-        registerArmJoint("bin_joint", Actuator::BIN);
-        registerArmJoint("turntable_joint", Actuator::TURNTABLE);
-        registerArmJoint("lower_arm_joint", Actuator::LOWER_ARM);
-        registerArmJoint("upper_arm_joint", Actuator::UPPER_ARM);
-        registerArmJoint("scoop_joint", Actuator::SCOOP);
-
+        registerVelocityJoint("left_tread_joint", Joint::LEFT_TREAD);
+        registerVelocityJoint("right_tread_joint", Joint::RIGHT_TREAD);
+        //registerArmJoint("bin_joint", Joint::BIN); TODO FIGURE THIS OUT
+        registerEffortJoint("turntable_joint", Joint::TURNTABLE);
+        registerEffortJoint("lower_arm_joint", Joint::LOWER_ARM);
+        registerEffortJoint("upper_arm_joint", Joint::UPPER_ARM);
+        registerEffortJoint("scoop_joint", Joint::SCOOP);
         registerInterface(&joint_state_interface);
         registerInterface(&joint_effort_interface);
     }
@@ -36,13 +34,12 @@ namespace tfr_control
     //       If other values read end up needing to be returned, then this should 
     //       probably return some data structure. It may be that read values get published
     //       out on topics instead.
-    bool Controller::read() 
+    void Controller::read() 
     {
         // TODO: Waiting on further hardware development to implement
 
         // Return true if bin has finished moving to its new position.
         // For now, just return true so the bin controller doesn't block forever.
-        return true;
     }
 
     void Controller::write() 
@@ -52,15 +49,16 @@ namespace tfr_control
         {
             // Update all actuators velocity with the command (effort in).
             // Then update the position as derivative of the velocity over time.
-            for (int i = 0; i < ARM_CONTROLLER_COUNT; i++) 
+            // ADAM make sure to update this index when you need to
+            for (int i = 3; i < CONTROLLER_COUNT; i++) 
             {
-                arm_velocity_values[i] = arm_command_values[i];
-                arm_position_values[i] += arm_velocity_values[i] * getUpdateTime();
+                velocity_values[i] = command_values[i];
+                position_values[i] += velocity_values[i] * getUpdateTime();
                 // If this joint has limits, clamp the range down
                 if (abs(lower_limits[i]) >= 1E-3 || abs(upper_limits[i]) >= 1E-3) 
                 {
-                    arm_position_values[i] =
-                        std::max(std::min(arm_position_values[i],
+                    position_values[i] =
+                        std::max(std::min(position_values[i],
                                     upper_limits[i]), lower_limits[i]);
                 }
             }
@@ -69,19 +67,22 @@ namespace tfr_control
         prev_time = ros::Time::now();
     }
 
-    void Controller::registerDrivebaseJoint(std::string name, Joint joint) 
+    void Controller::registerVelocityJoint(std::string name, Joint joint) 
     {
-        //TODO
+        auto idx = static_cast<int>(joint);
+        JointStateHandle state_handle(name, &position_values[idx],
+            &velocity_values[idx], &effort_values[idx]);
+        JointHandle handle(state_handle, &command_values[idx]);
+        drivebase_velocity_interface.registerHandle(handle);
     }
 
-    void Controller::registerArmJoint(std::string name, Actuator actuator) 
+    void Controller::registerEffortJoint(std::string name, Joint joint) 
     {
-        auto idx = static_cast<int>(actuator);
-        JointStateHandle state_handle(name, &arm_position_values[idx],
-        &arm_velocity_values[idx], &arm_effort_values[idx]);
+        auto idx = static_cast<int>(joint);
+        JointStateHandle state_handle(name, &position_values[idx],
+            &velocity_values[idx], &effort_values[idx]);
         joint_state_interface.registerHandle(state_handle);
-
-        JointHandle handle(state_handle, &arm_command_values[idx]);
+        JointHandle handle(state_handle, &command_values[idx]);
         joint_effort_interface.registerHandle(handle);
     }
 

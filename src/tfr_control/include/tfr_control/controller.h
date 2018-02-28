@@ -15,11 +15,16 @@
 #include <algorithm>
 
 namespace tfr_control {
-    enum class Joint {LEFT_TREAD, RIGHT_TREAD};
-
-    //TODO this doesn't match our coding standard
-    enum class Actuator { BIN, TURNTABLE, LOWER_ARM,
-                    UPPER_ARM, SCOOP };
+    enum class Joint 
+    {
+        LEFT_TREAD, 
+        RIGHT_TREAD, 
+        BIN, //TODO integrate bin
+        TURNTABLE, 
+        LOWER_ARM,
+        UPPER_ARM, 
+        SCOOP 
+    };
 
     /**
      * The class registered with controller_manager that handles the interface
@@ -30,37 +35,25 @@ namespace tfr_control {
     {
     public:
         
-        static const int DRIVEBASE_CONTROLLER_COUNT = 5;
-        static const int ARM_CONTROLLER_COUNT = 5;
+        static const int CONTROLLER_COUNT = 7;
 
-        Controller(bool fakes, const double lower_lim[ARM_CONTROLLER_COUNT],
-                const double upper_lim[ARM_CONTROLLER_COUNT]);
-        bool read();
+        Controller(bool fakes, const double lower_lim[CONTROLLER_COUNT],
+                const double upper_lim[CONTROLLER_COUNT]);
+        void read();
         void write();
     private:
         hardware_interface::VelocityJointInterface drivebase_velocity_interface;
-
         hardware_interface::JointStateInterface joint_state_interface;
         hardware_interface::EffortJointInterface joint_effort_interface;
 
         // Populated by controller_manager, read in by the write() method
-        double drivebase_command_values[DRIVEBASE_CONTROLLER_COUNT]{};
+        double command_values[CONTROLLER_COUNT]{};
         // Populated by sensors, read in by controller_manager
-        double drivebase_position_values[DRIVEBASE_CONTROLLER_COUNT]{};
+        double position_values[CONTROLLER_COUNT]{};
         // Populated by sensors, read in by controller_manager
-        double drivebase_velocity_values[DRIVEBASE_CONTROLLER_COUNT]{};
+        double velocity_values[CONTROLLER_COUNT]{};
         // Populated by sensors, read in by controller_manager
-        double drivebase_effort_values[DRIVEBASE_CONTROLLER_COUNT]{};
-
-
-        // Populated by controller_manager, read in by the write() method
-        double arm_command_values[ARM_CONTROLLER_COUNT]{};
-        // Populated by sensors, read in by controller_manager
-        double arm_position_values[ARM_CONTROLLER_COUNT]{};
-        // Populated by sensors, read in by controller_manager
-        double arm_velocity_values[ARM_CONTROLLER_COUNT]{};
-        // Populated by sensors, read in by controller_manager
-        double arm_effort_values[ARM_CONTROLLER_COUNT]{};
+        double effort_values[CONTROLLER_COUNT]{};
 
         /**
          * If false, this will use the actual hardware values.
@@ -79,17 +72,16 @@ namespace tfr_control {
          *  - left tread
          *  - right tread
          */
-        void registerDrivebaseJoint(std::string name, Joint joint);
+        void registerVelocityJoint(std::string name, Joint joint);
 
         /**
-         * Five actuators/motors to store data for:
-         *  - Bin actuator
+         * four actuators/motors to store data for:
          *  - Turntable
          *  - Lower arm actuator
          *  - Upper arm actuator
          *  - Scoop actuator
          */
-        void registerArmJoint(std::string name, Actuator actuator);
+        void registerEffortJoint(std::string name, Joint join);
 
         /**
          * Gets the time in seconds since the last update cycle

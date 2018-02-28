@@ -18,7 +18,6 @@ add_message_files(
   FILES
   Echo.msg
   SystemStatus.msg
-  DrivebaseVelocity.msg
 )
 
 # Generate services in the 'srv' folder
@@ -28,6 +27,7 @@ add_message_files(
    DurationSrv.srv
    LocalizePoint.srv
    WrappedImage.srv
+   EncoderReading.srv
  )
 
 # Generate actions in the 'action' folder

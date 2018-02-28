@@ -1,18 +1,13 @@
-/*
- * rosserial Publisher Example
- * Prints "hello world!"
- */
- #include <Encoder.h>
+#include <Encoder.h>
 
 #include <ros.h>
-#include <tfr_msgs/DrivebaseVelocity.h>
+#include <tfr_msgs/EncoderReading.h>
 
 #include <quadrature.h>
 
 ros::NodeHandle nh;
 
-tfr_msgs::DrivebaseVelocity velocities;
-ros::Publisher drivebase_publisher("drivebase_velocity", &velocities);
+
 
 //encoder level constants
 const double GEARBOX_CPR = 4096; //pulse per revolution
@@ -27,20 +22,31 @@ Quadrature gearbox_left(GEARBOX_CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 
 //algorithm constants
 const float rate(1/50.0);
+double left_velocity = 0;
 
+//note the method signature get's mangled by the AVR compiler
+/*I have literally no control over what this returns*/
+void readEncoders(const tfr_msgs::EncoderReadingRequest &req,
+                   tfr_msgs::EncoderReadingResponse &res)
+{
+    res.left_vel = left_velocity;
+    //TODO hook up right encoder
+    //TODO hook up the position of the turntable
+}
+
+ros::ServiceServer<tfr_msgs::EncoderReading::Request, tfr_msgs::EncoderReading::Response> 
+      server("read_encoders", readEncoders);
 void setup()
 {
     nh.initNode();
-    nh.advertise(drivebase_publisher);
+    nh.advertiseService(server);
     nh.getParam("~rate", &rate);
-    
 }
 
 void loop()
 {
-    velocities.timestamp = nh.now();
-    velocities.left_vel = gearbox_left.getVelocity()/GEARBOX_RPM;
-    drivebase_publisher.publish(&velocities);
+    left_velocity = gearbox_left.getVelocity()/GEARBOX_RPM;
+    //TODO hook up right encoder
     nh.spinOnce();
     delay(rate);
 }

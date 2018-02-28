@@ -44,7 +44,7 @@ include_directories(
 
 add_library(pwm_driver src/JHPWMPCA9685.cpp)
 add_executable(pwm_bridge src/pwm_bridge.cpp)
-add_dependencies(pwm_bridge gpio pwm_driver jetson_tx2 ${catkin_EXPORTED_TARGETS})
+add_dependencies(pwm_bridge gpio pwm_driver ${catkin_EXPORTED_TARGETS})
 target_link_libraries(pwm_bridge pwm_driver gpio ${catkin_LIBRARIES})
 
 

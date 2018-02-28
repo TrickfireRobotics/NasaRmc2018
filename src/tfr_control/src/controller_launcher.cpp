@@ -34,8 +34,8 @@ int main(int argc, char **argv)
     // If we're faking the inputs, we need to know the model constraints on
     // the arm: load them here.
     // If not, just use zeroes, the limits don't matter.
-    double lower_limits[tfr_control::Controller::ARM_CONTROLLER_COUNT] = {};
-    double upper_limits[tfr_control::Controller::ARM_CONTROLLER_COUNT] = {};
+    double lower_limits[tfr_control::Controller::CONTROLLER_COUNT] = {};
+    double upper_limits[tfr_control::Controller::CONTROLLER_COUNT] = {};
 
     if (use_fake_values) 
     {
@@ -57,21 +57,21 @@ int main(int argc, char **argv)
         }
 
         ROS_INFO("Model loaded successfully, loading joint limits.");
-        lower_limits[static_cast<int>(tfr_control::Actuator::BIN)] 
+        lower_limits[static_cast<int>(tfr_control::Joint::BIN)] 
             = model.getJoint("bin_joint")->limits->lower;
-        upper_limits[static_cast<int>(tfr_control::Actuator::BIN)] 
+        upper_limits[static_cast<int>(tfr_control::Joint::BIN)] 
             = model.getJoint("bin_joint")->limits->upper;
-        lower_limits[static_cast<int>(tfr_control::Actuator::LOWER_ARM)] 
+        lower_limits[static_cast<int>(tfr_control::Joint::LOWER_ARM)] 
             = model.getJoint("lower_arm_joint")->limits->lower;
-        upper_limits[static_cast<int>(tfr_control::Actuator::LOWER_ARM)] 
+        upper_limits[static_cast<int>(tfr_control::Joint::LOWER_ARM)] 
             = model.getJoint("lower_arm_joint")->limits->upper;
-        lower_limits[static_cast<int>(tfr_control::Actuator::UPPER_ARM)] 
+        lower_limits[static_cast<int>(tfr_control::Joint::UPPER_ARM)] 
             = model.getJoint("upper_arm_joint")->limits->lower;
-        upper_limits[static_cast<int>(tfr_control::Actuator::UPPER_ARM)] 
+        upper_limits[static_cast<int>(tfr_control::Joint::UPPER_ARM)] 
             = model.getJoint("upper_arm_joint")->limits->upper;
-        lower_limits[static_cast<int>(tfr_control::Actuator::SCOOP)] 
+        lower_limits[static_cast<int>(tfr_control::Joint::SCOOP)] 
             = model.getJoint("scoop_joint")->limits->lower;
-        upper_limits[static_cast<int>(tfr_control::Actuator::SCOOP)] 
+        upper_limits[static_cast<int>(tfr_control::Joint::SCOOP)] 
             = model.getJoint("scoop_joint")->limits->upper;
     }
 
@@ -90,10 +90,8 @@ int main(int argc, char **argv)
 
         // Read to and write from hardware based on values from the
         // controller_manager
-        if (controller.read())
-        {
-            bin_server.SignalBinController();
-        }
+        controller.read();
+        //TODO do this or get rid of it    bin_server.SignalBinController();
         cm.update(now, now - then);
         controller.write();
 

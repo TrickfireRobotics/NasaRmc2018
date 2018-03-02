@@ -1,17 +1,14 @@
 #include <Encoder.h>
-
 #include <ros.h>
 #include <tfr_msgs/EncoderReading.h>
-
 #include <quadrature.h>
 
 ros::NodeHandle nh;
 
-
-
 //encoder level constants
 const double GEARBOX_CPR = 4096; //pulse per revolution
-const double GEARBOX_RPM = 0.876; //revolutions per meter
+//TODO note this rev/m is acually 0.87, but I had to step it up to make testing work
+const double GEARBOX_RPM = 60; //revolutions per meter
 
 //pin constants
 const int GEARBOX_LEFT_A = 2;
@@ -19,34 +16,26 @@ const int GEARBOX_LEFT_B = 3;
 
 //encoders
 Quadrature gearbox_left(GEARBOX_CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
+tfr_msgs::EncoderReading reading;
 
 //algorithm constants
 const float rate(1/50.0);
-double left_velocity = 0;
 
-//note the method signature get's mangled by the AVR compiler
-/*I have literally no control over what this returns*/
-void readEncoders(const tfr_msgs::EncoderReadingRequest &req,
-                   tfr_msgs::EncoderReadingResponse &res)
-{
-    res.left_vel = left_velocity;
-    //TODO hook up right encoder
-    //TODO hook up the position of the turntable
-}
+ros::Publisher encoders("encoders", &reading);
 
-ros::ServiceServer<tfr_msgs::EncoderReading::Request, tfr_msgs::EncoderReading::Response> 
-      server("read_encoders", readEncoders);
 void setup()
 {
     nh.initNode();
-    nh.advertiseService(server);
+    nh.advertise(encoders);
     nh.getParam("~rate", &rate);
 }
 
 void loop()
 {
-    left_velocity = gearbox_left.getVelocity()/GEARBOX_RPM;
+    reading.left_vel = gearbox_left.getVelocity()/GEARBOX_RPM;
     //TODO hook up right encoder
-    nh.spinOnce();
+
+    nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
+    encoders.publish(&reading);
     delay(rate);
 }

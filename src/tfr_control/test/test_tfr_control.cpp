@@ -13,11 +13,11 @@ TEST(Control, Drivebase)
     // Google tests provide no handlers for exceptions
     try
     {
-        const float WHEEL_RADIUS = 0.14605;
-        const float WHEEL_SPAN = 0.9906;
-        const float ABS_ERROR = 0.00005;
-        float left_tread = 0;
-        float right_tread = 0;
+        const double WHEEL_RADIUS = 0.14605;
+        const double WHEEL_SPAN = 0.9906;
+        const double ABS_ERROR = 0.00005;
+        double left_tread = 0;
+        double right_tread = 0;
 
         DrivebasePublisher::twistToDifferential(0, 0, WHEEL_RADIUS, 
                               WHEEL_SPAN, left_tread, right_tread);

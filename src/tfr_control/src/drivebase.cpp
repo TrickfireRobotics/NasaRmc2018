@@ -16,26 +16,18 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "drivebase");
 
     ros::NodeHandle n;
-    float wheel_span, wheel_radius;
-    if (!n.getParam("wheel_span", wheel_span))
-    {
-        // Parameter error
-        ROS_ERROR("Parameter 'wheel_span' not found for node 'drivebase'");
-        return 1;
-    }
-    else if (wheel_span <= 0)
+    
+    double wheel_span, wheel_radius;
+
+    ros::param::param<double>("~wheel_span", wheel_span, 1);
+    if (wheel_span <= 0)
     {
         ROS_ERROR("Parameter 'wheel_span' must be a positive value.");
         return 1;
     }
 
-    if (!n.getParam("wheel_radius", wheel_radius))
-    {
-        // Parameter error
-        ROS_ERROR("Parameter 'wheel_radius' not found for node 'drivebase'");
-        return 1;
-    }
-    else if (wheel_radius <= 0)
+    ros::param::param<double>("~wheel_radius", wheel_radius, 1);
+    if (wheel_radius <= 0)
     {
         ROS_ERROR("Parameter 'wheel_radius' must be a positive value.");
         return 1;

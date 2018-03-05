@@ -1,5 +1,7 @@
 <launch>
     <include file="$(find tfr_control)/launch/test_armserver.launch" />
 
-    <node name="digging_server" type="digging_action_server" pkg="tfr_mining" output="screen" />
+    <node name="digging_server" type="digging_action_server" pkg="tfr_mining" output="screen" >
+        <rosparam file="$(find tfr_mining)/data/digging_queue_templates.yaml" command="load" />
+    </node>
 </launch>

@@ -24,7 +24,7 @@ typedef actionlib::SimpleActionClient<tfr_msgs::DiggingAction> Client;
 // Called every time feedback is received for the goal
 void feedback(const tfr_msgs::DiggingFeedbackConstPtr& feedback)
 {
-
+    
 }
 
 // Called once when the goal completes
@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 
     // Members of ExampleGoal are defined in tfr_msgs/action/Digging.action
     tfr_msgs::DiggingGoal goal;
-    goal.diggingTime = ros::Duration(40.0);
+    goal.diggingTime = ros::Duration(420.0);
 
     // Callback functions: Result, Start, Feedback
     //note we must use NULL not nullptr, or boost error

@@ -10,8 +10,9 @@
 #ifndef DIGGING_QUEUE_H
 #define DIGGING_QUEUE_H
 
-#include "digging_set.h"
+#include <ros/ros.h>
 #include <queue>
+#include "digging_set.h"
 
 namespace tfr_mining
 {
@@ -22,7 +23,7 @@ namespace tfr_mining
          * Constructs the queue and instantiates all of the digging sets inside
          * it.
          **/
-        DiggingQueue();
+        DiggingQueue(ros::NodeHandle nh);
         ~DiggingQueue() = default;
 
         /**
@@ -36,6 +37,8 @@ namespace tfr_mining
         DiggingSet popDiggingSet();
     private:
         std::queue<DiggingSet> sets;
+
+        void generateDigAndDump(ros::NodeHandle &nh, DiggingSet &set, double rotation, int dig_number);
     };
 }
 

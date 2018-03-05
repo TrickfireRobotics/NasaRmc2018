@@ -27,7 +27,7 @@ typedef actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> Client;
 
 class DiggingActionServer {
 public:
-    DiggingActionServer(ros::NodeHandle n) : server{n, "dig", boost::bind(&DiggingActionServer::execute, this, _1), false}
+    DiggingActionServer(ros::NodeHandle nh, ros::NodeHandle nh_priv) : nh_private{nh_priv}, queue{nh_priv}, server{nh, "dig", boost::bind(&DiggingActionServer::execute, this, _1), false}
     {
         server.start();
         //server.registerPreemptCallback(boost::bind(&DiggingActionServer::preempted, this));
@@ -90,11 +90,22 @@ private:
 
         tfr_msgs::ArmMoveGoal final_goal;
         final_goal.pose.resize(4);
-        // These should be read in from a file/parameter
-        final_goal.pose[0] = 0.0;
-        final_goal.pose[1] = 0.21;
-        final_goal.pose[2] = 0.0;
-        final_goal.pose[3] = 0.0;
+
+        std::vector<double> final_angles;
+        if (!nh_private.getParam("positions/safe", final_angles))
+        {
+            // Couldn't load parameter, go to predetermined final position
+            final_goal.pose[0] = 0.0;
+            final_goal.pose[1] = 0.21;
+            final_goal.pose[2] = 0.0;
+            final_goal.pose[3] = 0.0;
+        } else
+        {
+            final_goal.pose[0] = final_angles[0];
+            final_goal.pose[1] = final_angles[1];
+            final_goal.pose[2] = final_angles[2];
+            final_goal.pose[3] = final_angles[3];
+        }
 
         bool success = (client.sendGoalAndWait(final_goal) == actionlib::SimpleClientGoalState::SUCCEEDED);
 
@@ -111,14 +122,16 @@ private:
 
     tfr_mining::DiggingQueue queue;
     Server server;
+    ros::NodeHandle &nh_private;
 };
 
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "digging_server");
     ros::NodeHandle n;
+    ros::NodeHandle n_priv("~");
 
-    DiggingActionServer server(n);
+    DiggingActionServer server(n, n_priv);
     ros::spin();
     return 0;
 }

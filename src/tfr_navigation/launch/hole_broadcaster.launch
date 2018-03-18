@@ -1,0 +1,12 @@
+<launch>
+    <!--spins up a settable broadcaster for the location of the bin-->
+    <node name="hole_broadcaster" pkg="tfr_utilities" output="screen" type="obstacle_broadcaster">
+        <rosparam>
+            parent_frame: odom
+            point_frame: hole
+            service_name: localize_hole
+            hz: 10
+            diameter: 0.5
+        </rosparam>
+    </node>
+</launch>

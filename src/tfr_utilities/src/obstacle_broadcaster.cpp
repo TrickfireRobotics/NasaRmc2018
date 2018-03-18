@@ -22,7 +22,7 @@ ObstacleBroadcaster::ObstacleBroadcaster(
     transform.header.frame_id = map_frame;
     transform.child_frame_id = broadcaster_frame;
     transform.transform.rotation.w = 1;
-    cloud_publisher = node.advertise<sensor_msgs::PointCloud2>("hole", 5);
+    cloud_publisher = node.advertise<sensor_msgs::PointCloud2>("obstacle_cloud", 5);
 }
 
 /*
@@ -68,8 +68,13 @@ void ObstacleBroadcaster::generateCloud(PointCloud &cloud)
     cloud.header.frame_id = broadcaster_frame;
     cloud.width    = 16;
     cloud.height   = 1;
-    for (int i = 0, offset = 0;  i < 16; i++, offset += PI/8) 
-        cloud.points.push_back(pcl::PointXYZ( cos(offset), sin(offset), 1));
+    cloud.is_dense = false;
+    double radius = diameter/2, offset = 0.0;
+    for (int i = 0;  i < 16; i++, offset += PI/8) 
+    {
+        cloud.points.push_back(pcl::PointXYZ( radius*cos(offset), radius*sin(offset), 0.1));
+        ROS_INFO("%f, %f, %f, %f", offset, radius*cos(offset), radius*sin(offset), 0.1);
+    }
 
 }
 

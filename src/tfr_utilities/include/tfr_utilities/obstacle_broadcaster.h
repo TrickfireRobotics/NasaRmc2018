@@ -24,12 +24,18 @@
  *      service_name: the name of the service you want to broadcast (type = string, default = "")
  *      hz: the frequency to pubish at. (type = double, default: 5.0)
  *      diameter: the diameter of the obstacle in meters (type = double, default: 0.0)
+ *  published topics:
+ *      obstacle_cloud (PointCloud2) the cloud of points representing the obstacle
  * */
 class ObstacleBroadcaster 
 {
     public:
-        ObstacleBroadcaster(ros::NodeHandle &n, const std::string &point_frame, const  std::string
-                &parent_frame, const std::string &service, const double &diameter);
+        ObstacleBroadcaster(
+                ros::NodeHandle &n, 
+                const std::string &point_frame, 
+                const  std::string &parent_frame, 
+                const std::string &service, 
+                const double &diameter);
         ~ObstacleBroadcaster(){};
 
         ObstacleBroadcaster(const ObstacleBroadcaster&) = delete;

@@ -42,7 +42,7 @@
 class TeleopExecutive
 {
     public:
-        
+
         struct DriveVelocity
         {
             private:
@@ -97,85 +97,115 @@ class TeleopExecutive
         {
             geometry_msgs::Twist move_cmd{};
             auto code = static_cast<tfr_utilities::TeleopCode>(goal->code);
-            if (code == tfr_utilities::TeleopCode::STOP_DRIVEBASE)
+            switch(code)
             {
-                ROS_INFO("Teleop Action Server: Command Revieved, STOP_DRIVEBASE");
-                //all zeros by default
-                drivebase.publish(move_cmd);
-            }
-            else if (code == tfr_utilities::TeleopCode::STOP_TURNTABLE)
-            {
-                ROS_INFO("Teleop Action Server: Command Revieved, STOP_TURNTABLE");
-                //all zeros by default
-                //TODO integrate manual turntable control
-            }
-             else if(code == tfr_utilities::TeleopCode::FORWARD)
-            {
-                ROS_INFO("Teleop Action Server: Command Revieved, FORWARD");
-                move_cmd.linear.x = drive_stats.getLinear();
-                drivebase.publish(move_cmd);
-            }
-            else if (code == tfr_utilities::TeleopCode::BACKWARD)
-            {
-                ROS_INFO("Teleop Action Server: Command Revieved, BACKWARD");
-                move_cmd.linear.x = -drive_stats.getLinear();
-                drivebase.publish(move_cmd);
-            }
-            else if (code == tfr_utilities::TeleopCode::LEFT)
-            {
-                ROS_INFO("Teleop Action Server: Command Revieved, LEFT");
-                move_cmd.angular.z = drive_stats.getAngular();
-                drivebase.publish(move_cmd);
-            }
-            else if (code == tfr_utilities::TeleopCode::RIGHT)
-            {
-                ROS_INFO("Teleop Action Server: Command Revieved, RIGHT");
-                move_cmd.angular.z = -drive_stats.getAngular();
-                drivebase.publish(move_cmd);
-            }
-            else if (code == tfr_utilities::TeleopCode::CLOCKWISE)
-            {
-                ROS_INFO("Teleop Action Server: Command Revieved, CLOCKWISE");
-                move_cmd.angular.z = drive_stats.getAngular();
-                drivebase.publish(move_cmd);
-            }
-            else if (code == tfr_utilities::TeleopCode::COUNTERCLOCKWISE)
-            {
-                ROS_INFO("Teleop Action Server: Command Revieved, COUNTERCLOCKWISE");
-                move_cmd.angular.z = -drive_stats.getAngular();
-                drivebase.publish(move_cmd);
-            }
-            else if (code == tfr_utilities::TeleopCode::DIG)
-            {
-                ROS_INFO("Teleop Action Server: Command Revieved, DIG");
-                tfr_msgs::DurationSrv digging_time;
-                ros::service::call("digging_time", digging_time);
-                ROS_INFO("Autonomous Action Server: digging time retreived %f",
-                    digging_time.response.duration.toSec());
-                //TODO hook up digging when ready
-            }
-            else if (code == tfr_utilities::TeleopCode::DUMP)
-            {
-                ROS_INFO("Teleop Action Server: Command Revieved, DUMP");
-                //TODO hook up dumping when ready
-            }
-            else if (code == tfr_utilities::TeleopCode::RESET_DUMPING)
-            {
-                ROS_INFO("Teleop Action Server: Command Revieved, RESET_DUMPING");
-                //all zeros by default
-                drivebase.publish(move_cmd);
+                case (tfr_utilities::TeleopCode::STOP_DRIVEBASE):
+                    {
+                        ROS_INFO("Teleop Action Server: Command Recieved, STOP_DRIVEBASE");
+                        //all zeros by default
+                        drivebase.publish(move_cmd);
+                        break;
+                    }
 
-                //TODO hook up reset when ready
-            }
-            else if (code == tfr_utilities::TeleopCode::RESET_STARTING)
-            {
-                ROS_INFO("Teleop Action Server: Command Revieved, RESET_STARTING");
-                //all zeros by default
-                drivebase.publish(move_cmd);
-                //TODO hook up reset when ready
-            }else
-            {
-                ROS_WARN("Teleop Action Server: UNRECOGNIZED COMMAND");
+                case (tfr_utilities::TeleopCode::STOP_TURNTABLE):
+                    {
+                        ROS_INFO("Teleop Action Server: Command Recieved, STOP_TURNTABLE");
+                        //all zeros by default
+                        //TODO integrate manual turntable control
+                        break;
+                    }
+
+                case (tfr_utilities::TeleopCode::FORWARD):
+                    {
+                        ROS_INFO("Teleop Action Server: Command Recieved, FORWARD");
+                        move_cmd.linear.x = drive_stats.getLinear();
+                        drivebase.publish(move_cmd);
+                        break;
+                    }
+
+                case (tfr_utilities::TeleopCode::BACKWARD):
+                    {
+                        ROS_INFO("Teleop Action Server: Command Recieved, BACKWARD");
+                        move_cmd.linear.x = -drive_stats.getLinear();
+                        drivebase.publish(move_cmd);
+                        break;
+                    }
+
+                case (tfr_utilities::TeleopCode::LEFT):
+                    {
+                        ROS_INFO("Teleop Action Server: Command Recieved, LEFT");
+                        move_cmd.angular.z = drive_stats.getAngular();
+                        drivebase.publish(move_cmd);
+                        break;
+                    }
+
+                case (tfr_utilities::TeleopCode::RIGHT):
+                    {
+                        ROS_INFO("Teleop Action Server: Command Recieved, RIGHT");
+                        move_cmd.angular.z = -drive_stats.getAngular();
+                        drivebase.publish(move_cmd);
+                        break;
+                    }
+
+                case (tfr_utilities::TeleopCode::CLOCKWISE):
+                    {
+                        ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
+                        move_cmd.angular.z = drive_stats.getAngular();
+                        drivebase.publish(move_cmd);
+                        break;
+                    }
+
+                case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
+                    {
+                        ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
+                        move_cmd.angular.z = -drive_stats.getAngular();
+                        drivebase.publish(move_cmd);
+                        break;
+                    }
+
+                case (tfr_utilities::TeleopCode::DIG):
+                    {
+                        // TODO integrate and check for preemption
+                        ROS_INFO("Teleop Action Server: Command Recieved, DIG");
+                        tfr_msgs::DurationSrv digging_time;
+                        ros::service::call("digging_time", digging_time);
+                        ROS_INFO("Autonomous Action Server: digging time retreived %f",
+                                digging_time.response.duration.toSec());
+                        break;
+                    }
+
+                case (tfr_utilities::TeleopCode::DUMP):
+                    {
+                        // TODO integrate and check for preemption
+                        ROS_INFO("Teleop Action Server: Command Recieved, DUMP");
+                        break;
+                    }
+
+                case (tfr_utilities::TeleopCode::RESET_DUMPING):
+                    {
+                        // TODO integrate  
+                        ROS_INFO("Teleop Action Server: Command Recieved, RESET_DUMPING");
+                        //all zeros by default
+                        drivebase.publish(move_cmd);
+                        break;
+                    }
+
+                case (tfr_utilities::TeleopCode::RESET_STARTING):
+                    {
+                        // TODO integrate  
+                        ROS_INFO("Teleop Action Server: Command Recieved, RESET_STARTING");
+                        //all zeros by default
+                        drivebase.publish(move_cmd);
+                        break;
+                    }
+
+                default:
+                    {
+                        ROS_WARN("Teleop Action Server: UNRECOGNIZED COMMAND");
+                        tfr_msgs::TeleopResult result{};
+                        server.setAborted(result);
+                        return;
+                    }
             }
 
             tfr_msgs::TeleopResult result{};

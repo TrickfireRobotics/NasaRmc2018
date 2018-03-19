@@ -3,5 +3,6 @@
     <include file="$(find tfr_sensor)/launch/sensor_platform.launch"/>
     <include file="$(find tfr_sensor)/launch/rear_cam_wrapper.launch"/>
     <include file="$(find tfr_aruco)/launch/aruco.launch"/>
+    <node name="localization_action_client" pkg="tfr_localization" type="localization_action_client" output="screen"/>
     <include file="$(find tfr_localization)/launch/localization.launch"/>
 </launch>

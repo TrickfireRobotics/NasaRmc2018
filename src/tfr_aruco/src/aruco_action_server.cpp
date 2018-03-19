@@ -138,7 +138,7 @@ class TFR_Aruco {
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "tfr_aruco");
+    ros::init(argc, argv, "aruco_action_server");
     ros::NodeHandle n;
     TFR_Aruco aruco;
     Server server(n, "aruco_action_server", boost::bind(&TFR_Aruco::execute, aruco, _1, &server), false);

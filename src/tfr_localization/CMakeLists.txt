@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   tfr_msgs
+  actionlib
 )
 
 find_package(GTest REQUIRED)
@@ -27,6 +28,11 @@ include_directories(
 add_executable(localization_action_server src/localization_action_server.cpp)
 target_link_libraries(localization_action_server ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(localization_action_server ${catkin_EXPORTED_TARGETS})
+
+add_executable(localization_action_client src/localization_action_client.cpp)
+target_link_libraries(localization_action_client ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(localization_action_client ${catkin_EXPORTED_TARGETS})
+
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 

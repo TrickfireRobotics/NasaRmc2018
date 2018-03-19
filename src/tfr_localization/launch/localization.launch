@@ -4,7 +4,6 @@
         <rosparam>
             turn_speed: 0.5
             turn_duration: 0.75
-            image_service: /on_demand/rear_cam/image_raw
         </rosparam>
     </node>
     <include file="$(find tfr_localization)/launch/bin_broadcaster.launch"/>

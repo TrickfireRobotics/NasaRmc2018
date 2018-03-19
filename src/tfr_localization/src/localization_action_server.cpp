@@ -18,6 +18,8 @@
 #include <tfr_msgs/ArucoAction.h>
 #include <tfr_msgs/EmptyAction.h>
 #include <tfr_msgs/WrappedImage.h>
+#include <tfr_msgs/LocalizePoint.h>
+#include <tfr_utilities/tf_manipulator.h>
 
 class Localizer
 {
@@ -33,6 +35,8 @@ class Localizer
 
             ROS_INFO("Localization Action Server: Connecting Image Client");
             image_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/rear_cam/image_raw");
+            tfr_msgs::WrappedImage request{};
+            while(!image_client.call(request));
             ROS_INFO("Localization Action Server: Connected Image Client");
             ROS_INFO("Localization Action Server: Starting");
             server.start();
@@ -47,13 +51,78 @@ class Localizer
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
         actionlib::SimpleActionClient<tfr_msgs::ArucoAction> aruco;
         ros::ServiceClient image_client;
+        TfManipulator tf_manipulator;
 
         void localize( const tfr_msgs::EmptyGoalConstPtr &goal)
         {
             ROS_INFO("Localization Action Server: Localize Starting");
+            //setup
+
+            //loop
+            while (true)
+            {
+                if (server.isPreemptRequested() || !ros::ok())
+                {
+                    ROS_INFO("Localization Action Server: preempt requested");
+                    server.setPreempted();
+                    break;
+                }
+                tfr_msgs::WrappedImage request{};
+                //grab an image
+                if(!image_client.call(request))
+                {
+                    ROS_WARN("Localization Action Server: Could not reach image client");
+                    continue;
+                }
+
+                tfr_msgs::ArucoGoal goal;
+                goal.image = request.response.image;
+                goal.camera_info = request.response.camera_info;
+                //send it to the server
+                aruco.sendGoal(goal);
+                if (aruco.waitForResult())
+                {
+                    //make sure we can see
+                    auto result = aruco.getResult();
+                    if (result->number_found ==0)
+                    {
+                        ROS_INFO("Localization Action Server: No markers detected");
+                        continue;
+                    }
+                    //We found something, transform relative to the base
+                    geometry_msgs::PoseStamped bin_pose{};
+                    if (!tf_manipulator.transform_pose(
+                                aruco.getResult()->relative_pose, 
+                                bin_pose, 
+                                "base_footprint"))
+                    {
+                        ROS_WARN("Localization Action Server: Transformation failed");
+                        continue;
+                    }
+                    bin_pose.pose.position.y *=-1;
+                    bin_pose.pose.position.z *=-1;
+                    bin_pose.header.frame_id = "odom";
+                    bin_pose.header.stamp = ros::Time::now();
+
+                    //send the message
+                    tfr_msgs::LocalizePoint::Request request;
+                    request.pose = bin_pose;
+                    tfr_msgs::LocalizePoint::Response response;
+                    if(ros::service::call("localize_bin", request, response))
+                    {
+                        ROS_INFO("Localization Action Server: Success");
+                        server.setSucceeded();
+                        break;
+                    }
+                    else
+                        ROS_INFO("Localization Action Server: retrying to localize movable point");
+                }
+                else
+                    ROS_WARN("Localization Action Server: Could not reach aruco");
+            }
+            //teardown
             ROS_INFO("Localization Action Server: Localize Finished");
         }
-
 };
 
 int main(int argc, char** argv)

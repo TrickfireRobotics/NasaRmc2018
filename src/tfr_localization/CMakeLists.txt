@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   tfr_msgs
+  tfr_utilities
   actionlib
 )
 
@@ -26,7 +27,7 @@ include_directories(
 )
 
 add_executable(localization_action_server src/localization_action_server.cpp)
-target_link_libraries(localization_action_server ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+target_link_libraries(localization_action_server tf_manipulator ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(localization_action_server ${catkin_EXPORTED_TARGETS})
 
 add_executable(localization_action_client src/localization_action_client.cpp)

@@ -1,0 +1,11 @@
+<launch>
+    <!--spins up a settable broadcaster for the location of the bin-->
+    <node name="localization_action_server" pkg="tfr_localization" output="screen" type="localization_action_server">
+        <rosparam>
+            turn_speed: 0.5
+            turn_duration: 0.75
+            image_service: /on_demand/rear_cam/image_raw
+        </rosparam>
+    </node>
+    <include file="$(find tfr_localization)/launch/bin_broadcaster.launch"/>
+</launch>

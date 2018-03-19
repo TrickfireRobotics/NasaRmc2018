@@ -11,30 +11,23 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   tfr_msgs
-  tfr_utilities
 )
 
 find_package(GTest REQUIRED)
 
-# These are all for exporting to dependent packages/projects.
-# Uncomment each if the dependent project requires it
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES tfr_localization
-#  CATKIN_DEPENDS roscpp std_msgs
-#  DEPENDS system_lib
 )
 
-# Specify additional locations of header files
-# Your package locations should be listed before other locations
 include_directories(
   include/${PROJECT_NAME}
   ${catkin_INCLUDE_DIRS}
   ${GTEST_INCLUDE_DIRS}
 )
 
+add_executable(localization_action_server src/localization_action_server.cpp)
+target_link_libraries(localization_action_server ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(localization_action_server ${catkin_EXPORTED_TARGETS})
 
-# This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 if(TARGET ${PROJECT_NAME}-test)

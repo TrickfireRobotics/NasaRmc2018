@@ -74,10 +74,6 @@ target_link_libraries(obstacle_broadcaster ${catkin_LIBRARIES})
 add_dependencies(obstacle_broadcaster ${catkin_EXPORTED_TARGETS})
 
 
-add_executable(bin_localizer src/bin_localizer.cpp)
-target_link_libraries(bin_localizer tf_manipulator ${catkin_LIBRARIES})
-add_dependencies(bin_localizer ${catkin_EXPORTED_TARGETS})
-
 add_executable(obstacle_test src/obstacle_test.cpp)
 target_link_libraries(obstacle_test ${catkin_LIBRARIES})
 add_dependencies(obstacle_test ${catkin_EXPORTED_TARGETS})

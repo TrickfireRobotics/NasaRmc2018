@@ -15,15 +15,16 @@
  *  When initialized will drop a circular obstacle into the field with configurable diameter.
  *
  *  Listens for updates on a service. The service takes in a tfr_msgs/LocalizePoint.srv
- *
- *  It will report (0 0 0) (0 0 0 0) until it is given a proper location
+ *  Once it gets called it will broadcast the obstacle at wherever the service
+ *  told it to go
  *
  *  parameters:
- *      parent_frame: the parent frame of this point (type = string, default = "")
- *      point_frame: the name of the frame you want to broadcast (type = string, default = "")
- *      service_name: the name of the service you want to broadcast (type = string, default = "")
- *      hz: the frequency to pubish at. (type = double, default: 5.0)
- *      diameter: the diameter of the obstacle in meters (type = double, default: 0.0)
+ *      ~parent_frame: the parent frame of this point (type = string, default = "")
+ *      ~point_frame: the name of the frame you want to broadcast (type = string, default = "")
+ *      ~service_name: the name of the service you want to broadcast (type = string, default = "")
+ *      ~hz: the frequency to pubish at. (type = double, default: 5.0)
+ *      ~diameter: the diameter of the obstacle in meters (type = double, default: 0.0)
+ *
  *  published topics:
  *      obstacle_cloud (PointCloud2) the cloud of points representing the obstacle
  * */
@@ -46,7 +47,6 @@ class ObstacleBroadcaster
         void broadcast();
 
     private:
-        typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
         ros::NodeHandle &node;
         tf2_ros::TransformBroadcaster broadcaster{};
         ros::Publisher cloud_publisher{};
@@ -60,6 +60,6 @@ class ObstacleBroadcaster
 
         bool localizePoint(tfr_msgs::LocalizePoint::Request &request,
                 tfr_msgs::LocalizePoint::Response &response);
-        void generateCloud(PointCloud &cloud);
+        void generateCloud(pcl::PointCloud<pcl::PointXYZ> &cloud);
 };
 #endif

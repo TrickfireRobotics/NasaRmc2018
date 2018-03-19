@@ -22,6 +22,10 @@ ObstacleBroadcaster::ObstacleBroadcaster(
     transform.header.frame_id = map_frame;
     transform.child_frame_id = broadcaster_frame;
     transform.transform.rotation.w = 1;
+    /* NOTE we work with the pcl::PointCloud class and broadcast it as a
+     * sensor_msgs::PointCloud2, this is intentional, and in fact the way it is
+     * designed to be used in ROS
+     * */
     cloud_publisher = node.advertise<sensor_msgs::PointCloud2>("obstacle_cloud", 5);
 }
 
@@ -35,7 +39,7 @@ void ObstacleBroadcaster::broadcast()
     broadcaster.sendTransform(transform);
     if (point_set)
     {
-        PointCloud cloud;
+        pcl::PointCloud<pcl::PointXYZ> cloud;
         generateCloud(cloud);
         cloud_publisher.publish(cloud);
     }
@@ -62,19 +66,16 @@ bool ObstacleBroadcaster::localizePoint(tfr_msgs::LocalizePoint::Request &reques
  *  Generates a circular pointcloud levitating above the ground around the hole,
  *  used to make sure the robot, never ever falls in.
  * */
-void ObstacleBroadcaster::generateCloud(PointCloud &cloud)
+void ObstacleBroadcaster::generateCloud(pcl::PointCloud<pcl::PointXYZ> &cloud)
 {
     double PI = 3.14159;
     cloud.header.frame_id = broadcaster_frame;
     cloud.width    = 16;
     cloud.height   = 1;
-    cloud.is_dense = false;
+    cloud.is_dense = true;
     double radius = diameter/2, offset = 0.0;
     for (int i = 0;  i < 16; i++, offset += PI/8) 
-    {
-        cloud.points.push_back(pcl::PointXYZ( radius*cos(offset), radius*sin(offset), 0.1));
-        ROS_INFO("%f, %f, %f, %f", offset, radius*cos(offset), radius*sin(offset), 0.1);
-    }
+        cloud.points.push_back(pcl::PointXYZ( radius*cos(offset), radius*sin(offset), 0.15));
 
 }
 
@@ -96,7 +97,7 @@ int main(int argc, char** argv)
 
     ObstacleBroadcaster broadcaster{n, point_frame, parent_frame, service_name, diameter};
 
-    //broadcast the point across the network
+    //wait to be called, then broadcast
     ros::Rate rate(hz);
     while(ros::ok())
     {

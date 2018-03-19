@@ -1,0 +1,4 @@
+<launch>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tfr_visualization)/config/hole.rviz"/>
+</launch>
+

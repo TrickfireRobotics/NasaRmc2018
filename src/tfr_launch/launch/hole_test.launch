@@ -1,5 +1,5 @@
 <launch>
     <include file="$(find tfr_navigation)/launch/hole_broadcaster.launch"/>
     <node name="hole_test" pkg="tfr_utilities" type="obstacle_test" output="screen"/>
-    <node name="rviz" pkg="rviz" type="rviz"/>
+    <include file="$(find tfr_visualization)/launch/hole.launch"/>
 </launch>

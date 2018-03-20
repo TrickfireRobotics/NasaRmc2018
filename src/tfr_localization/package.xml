@@ -17,4 +17,5 @@
   <depend>tfr_msgs</depend>
   <depend>tfr_utilities</depend>
   <depend>actionlib</depend>
+  <depend>geometry_msgs</depend>
 </package>

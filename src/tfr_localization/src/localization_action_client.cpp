@@ -18,9 +18,6 @@ int main(int argc, char** argv)
     ROS_INFO("Localization Action Client: Calling server");
     tfr_msgs::EmptyGoal goal{};
     client.sendGoal(goal);
-    ros::Duration(0.5).sleep();
-    client.cancelGoal();
-    client.sendGoal(goal);
     client.waitForResult();
     ROS_INFO("Localization Action Client: Server finished");
     return 0;

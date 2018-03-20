@@ -124,7 +124,7 @@ class TFR_Aruco {
                 //let tf do the euler angle -> quaternion math
                 tf2::Quaternion rotated{};
                 //change rotated perspective RPY aruco output to ros coordinate system (2d)
-                rotated.setRPY(boardRotVec[2], boardRotVec[0], PI + boardRotVec[1]);
+                rotated.setRPY(0,0, PI + boardRotVec[1]);
                 result.relative_pose.pose.orientation.x = rotated.x();
                 result.relative_pose.pose.orientation.y = rotated.y();
                 result.relative_pose.pose.orientation.z = rotated.z();

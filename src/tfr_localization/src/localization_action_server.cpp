@@ -10,6 +10,9 @@
  * parameters:
  *  - ~turn_speed: how fast to turn [rad/s] (double, default: 0.0)
  *  - ~turn_duration: how long to turn [s] (double, default: 0.0)
+ *
+ * published topics:
+ *  - /cmd_vel publishes to the drivebase (geometry_msgs/Twist)
  * */
 
 #include <ros/ros.h>
@@ -20,13 +23,17 @@
 #include <tfr_msgs/WrappedImage.h>
 #include <tfr_msgs/LocalizePoint.h>
 #include <tfr_utilities/tf_manipulator.h>
+#include <geometry_msgs/Twist.h>
 
 class Localizer
 {
     public:
-        Localizer(ros::NodeHandle &n) : 
+        Localizer(ros::NodeHandle &n, const double& velocity, const double& duration) : 
             aruco{n, "aruco_action_server"},
-            server{n, "localize", boost::bind(&Localizer::localize, this, _1) ,false}
+            server{n, "localize", boost::bind(&Localizer::localize, this, _1) ,false},
+            cmd_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
+            turn_velocity{velocity},
+            turn_duration{duration}
 
         {
             ROS_INFO("Localization Action Server: Connecting Aruco");
@@ -50,8 +57,11 @@ class Localizer
     private:
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
         actionlib::SimpleActionClient<tfr_msgs::ArucoAction> aruco;
+        ros::Publisher cmd_publisher;
         ros::ServiceClient image_client;
         TfManipulator tf_manipulator;
+        const double& turn_velocity;
+        const double& turn_duration;
 
         void localize( const tfr_msgs::EmptyGoalConstPtr &goal)
         {
@@ -74,6 +84,7 @@ class Localizer
                     ROS_WARN("Localization Action Server: Could not reach image client");
                     continue;
                 }
+                
 
                 tfr_msgs::ArucoGoal goal;
                 goal.image = request.response.image;
@@ -86,13 +97,19 @@ class Localizer
                     auto result = aruco.getResult();
                     if (result->number_found ==0)
                     {
-                        ROS_INFO("Localization Action Server: No markers detected");
+                        ROS_INFO("Localization Action Server: No markers detected, turning");
+                        geometry_msgs::Twist cmd;
+                        cmd.angular.z = turn_velocity;
+                        cmd_publisher.publish(cmd);
+                        ros::Duration(turn_duration).sleep();
+                        cmd.angular.z = 0;
+                        cmd_publisher.publish(cmd);
                         continue;
                     }
                     //We found something, transform relative to the base
                     geometry_msgs::PoseStamped bin_pose{};
                     if (!tf_manipulator.transform_pose(
-                                aruco.getResult()->relative_pose, 
+                                result->relative_pose, 
                                 bin_pose, 
                                 "base_footprint"))
                     {
@@ -110,7 +127,14 @@ class Localizer
                     tfr_msgs::LocalizePoint::Response response;
                     if(ros::service::call("localize_bin", request, response))
                     {
-                        ROS_INFO("Localization Action Server: Success");
+                        ROS_INFO("Localization Action Server: Success %f, %f, %f, %f, %f, %f, %f",
+                                bin_pose.pose.position.x,
+                                bin_pose.pose.position.y,
+                                bin_pose.pose.position.z,
+                                bin_pose.pose.orientation.x,
+                                bin_pose.pose.orientation.y,
+                                bin_pose.pose.orientation.z,
+                                bin_pose.pose.orientation.w);
                         server.setSucceeded();
                         break;
                     }
@@ -119,6 +143,7 @@ class Localizer
                 }
                 else
                     ROS_WARN("Localization Action Server: Could not reach aruco");
+
             }
             //teardown
             ROS_INFO("Localization Action Server: Localize Finished");
@@ -129,13 +154,12 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "localization_action_server");
     ros::NodeHandle n{};
-    double turn_speed, turn_duration;
-    ros::param::param<double>("~turn_speed", turn_speed, 0.0);
+    double turn_velocity, turn_duration;
+    ros::param::param<double>("~turn_velocity", turn_velocity, 0.0);
     ros::param::param<double>("~turn_duration", turn_duration, 0.0);
-    if (turn_speed == 0.0 || turn_duration == 0.0)
+    if (turn_velocity == 0.0 || turn_duration == 0.0)
         ROS_WARN("Localization Action Server: Uninitialized Parameters");
-    Localizer localizer(n);
+    Localizer localizer(n, turn_velocity, turn_duration);
     ros::spin();
     return 0;
-
 }

@@ -42,6 +42,13 @@ include_directories(
 )
 
 add_library(pwm_driver src/JHPWMPCA9685.cpp)
+add_library(adc_interface src/ads1115_tx2_i2c_interface.cpp)
+
+add_executable(adc_service src/ads1x1x.c
+    src/adc_service.cpp
+)
+add_dependencies(adc_service adc_interface ${catkin_EXPORTED_TARGETS})
+target_link_libraries(adc_service adc_interface ${catkin_LIBRARIES})
 
 add_library(pwm_interface src/pwm_interface.cpp)
 add_dependencies(pwm_interface gpio pwm_driver ${catkin_EXPORTED_TARGETS})

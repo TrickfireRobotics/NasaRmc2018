@@ -26,7 +26,7 @@ const int GEARBOX_LEFT_B = 3;
 Quadrature gearbox_left(GEARBOX_CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 
 //algorithm constants
-float rate(1/50.0);
+const float rate(1/50.0);
 
 void setup()
 {

@@ -20,4 +20,4 @@ Installing the code requres, in addition to the standard `ros-kinetic-desktop-fu
  * `ros-kinetic-rosserial-arduino`
 
 # Arduino Libraries
-Some of our control software is installed on arduino. If that needs to be modified requires the Encoder library to be installed. https://www.pjrc.com/teensy/td_libs_Encoder.html
+Some of our control software is installed on arduino. Modifications require the Encoder library to be installed. https://www.pjrc.com/teensy/td_libs_Encoder.html

@@ -1,6 +1,5 @@
 /**
- * Simple example to bring up a node and blink an led at address 0 on the i2c
- * pwm bus and demo the driver.
+ * interface for the PWM board to be used by control library.
  * */
 
 #include <ros/ros.h>

@@ -91,6 +91,12 @@ namespace tfr_control
         prev_time = ros::Time::now();
     }
 
+    void RobotInterface::clearCommands()
+    {
+        for(auto& value : command_values)
+            value = 0;
+    }
+
 
     /*
      * Register this joint with each neccessary hardware interface

@@ -6,11 +6,15 @@
  * controllers and manage their state. 
  * This layer maintains the state of the controller manager, and performs the
  * control loop for the control package.
- * 
+ *
  * PARAMETERS:
  *  ~rate: in hz how fast we want to run the control loop (double, default:10)
+ * SERVICES:
+ *  /toggle_motors - uses the empty service, needs to be explicitly turned on to
+ *  work
  */
 #include <ros/ros.h>
+#include <tfr_msgs/EmptySrv.h>
 #include <urdf/model.h>
 #include <sstream>
 #include <controller_manager/controller_manager.h>
@@ -20,6 +24,33 @@
 // TODO adam delete this test code when ready
 // Whether we're running on hardware or using fake values
 const bool use_fake_values = true;
+class StopManager
+{
+    public:
+        StopManager(ros::NodeHandle &n):
+            eStop{n.advertiseService("toggle_motors", &StopManager::toggle,this)},
+            enabled{false} {}
+        ~StopManager() = default;
+        StopManager(const StopManager&) = delete;
+        StopManager& operator=(const StopManager&) = delete;
+        StopManager(StopManager&&) = delete;
+        StopManager& operator=(StopManager&&) = delete;
+
+        bool isEnabled() { return enabled; }
+
+    private:
+        bool toggle(tfr_msgs::EmptySrv::Request& request,
+                tfr_msgs::EmptySrv::Response& response)
+        {
+            enabled = !enabled;
+            return true;
+        }
+        ros::ServiceServer eStop;
+        bool enabled;
+
+
+
+};
 
 int main(int argc, char **argv)
 {
@@ -85,6 +116,8 @@ int main(int argc, char **argv)
     //the controller layer
     controller_manager::ControllerManager controller_interface(&robot_interface);
 
+    StopManager stopManager{n};
+
     // Store the time of the last update to feed to ControllerManager
     ros::Time then = ros::Time::now();
 
@@ -95,6 +128,8 @@ int main(int argc, char **argv)
         robot_interface.read();
         //update controllers
         controller_interface.update(ros::Time::now(), cycle);
+        if (!stopManager.isEnabled())
+            robot_interface.clearCommands();
         //update hardware from controllers
         robot_interface.write();
         cycle.sleep();

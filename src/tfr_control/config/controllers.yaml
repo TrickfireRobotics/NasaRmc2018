@@ -20,22 +20,22 @@ joint_state_controller:
 left_tread_velocity_controller:
     type: effort_controllers/JointVelocityController
     joint: left_tread_joint
-        #NOTE these are purposely not tuned
-    pid: {p: 0.5, i: 0, d: 0}
+    pid: {p: 0.5, i: 0, d: 0} #NOTE these are purposely not tuned
 
-    right_tread_velocity_controller:
-        type: effort_controllers/JointVelocityController
+right_tread_velocity_controller:
+    type: effort_controllers/JointVelocityController
     joint: right_tread_joint
     pid: {p: 0.5, i: 0, d: 0}
 
 
-    bin_position_controller:
-        type: effort_controllers/JointPositionController
+bin_position_controller:
+    type: effort_controllers/JointPositionController
     joint: bin_joint
+    pid: {p: 0.5, i: 0, d: 0}
 
         # Controls all the joints of the main part of the arm
-    arm_controller:
-        type: effort_controllers/JointTrajectoryController
+arm_controller:
+    type: effort_controllers/JointTrajectoryController
     joints:
         - turntable_joint
         - lower_arm_joint
@@ -50,11 +50,11 @@ left_tread_velocity_controller:
             # Controls the end effector (scoop) of the arm. This is
             # separate from the main arm controller as MoveIt requires
             # having a separate controller for the end effector
-        arm_end_controller:
-            type: effort_controllers/JointTrajectoryController
-        joints:
-            - scoop_joint
-        gains:
-            scoop_joint: {p: 0.75, i: 0.5, d: 0.01}
-        constraints:
-            goal_time: 10.0
+arm_end_controller:
+    type: effort_controllers/JointTrajectoryController
+    joints:
+        - scoop_joint
+    gains:
+        scoop_joint: {p: 0.75, i: 0.5, d: 0.01}
+    constraints:
+        goal_time: 10.0

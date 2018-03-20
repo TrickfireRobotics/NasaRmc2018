@@ -94,7 +94,6 @@ namespace tfr_control {
 
         /**
          * Adam uses this for testing the arm
-         * TODO delete
          */
         bool use_fake_values = false;
 

@@ -2,8 +2,6 @@
   <!-- Load all of the motor controllers -->
   <rosparam file="$(find tfr_control)/config/controllers.yaml" command="load"/>
 
-  <!-- TODO adam delete Load the URDF into the ROS Parameter Server, processing macros as we
-       do -->
   <param name="robot_description" command="$(find xacro)/xacro --inorder
                                 '$(find tfr_description)/xacro/model.xacro'" />
   

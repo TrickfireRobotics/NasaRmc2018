@@ -33,7 +33,7 @@ void setup()
 void loop()
 {
     reading.left_vel = gearbox_left.getVelocity()/GEARBOX_RPM;
-    //TODO hook up right encoder
+    //TODO hook up other encoders
 
     nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
     encoders.publish(&reading);

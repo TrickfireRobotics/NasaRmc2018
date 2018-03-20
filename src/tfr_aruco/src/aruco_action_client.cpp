@@ -47,7 +47,7 @@ public:
 
     Client client;
     bool haveCameraInfo = false;
-    ExampleCameraHandler() : imageTransport(nodeHandle), client("tfr_aruco", true) 
+    ExampleCameraHandler() : imageTransport(nodeHandle), client("aruco_action_server", true) 
     {
         imageInputSubscriber = imageTransport.subscribe("/image_raw", 1,
             &ExampleCameraHandler::updateCameraImage, this);

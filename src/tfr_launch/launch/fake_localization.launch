@@ -1,4 +1,0 @@
-<launch>
-    <include file="$(find tfr_sensor)/launch/rear_cam_wrapper.launch"/>
-    <node name="bin_localizer" pkg="tfr_utilities" type="bin_localizer" output="screen"/>
-</launch>

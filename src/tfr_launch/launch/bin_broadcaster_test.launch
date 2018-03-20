@@ -1,8 +1,0 @@
-<launch>
-    <node pkg="tf2_ros" type="static_transform_publisher" name="camera_broadcaster" 
-        args="-.1 .1 0 0 0 0.819 0.574 map rear_camera_link" />
-    <include file="$(find tfr_localization)/launch/bin_broadcaster.launch"/>
-    <node name="bin_localizer" pkg="tfr_utilities" type="bin_localizer" output="screen"/>
-    <node name="rviz" pkg="rviz" type="rviz"/>
-
-</launch>

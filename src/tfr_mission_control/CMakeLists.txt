@@ -1,60 +1,131 @@
-# If you're having trouble getting your things to build, visit the ROS
-# tutorials at <http://wiki.ros.org/ROS/Tutorials> and also read the ROS
-# CMake documentation at <http://wiki.ros.org/catkin/CMakeLists.txt>.
-
+# NOTE the build for this qt stuff is really complicated. I generated it from
+# a community utility, and would highly recommend doing the same if you need
+# to do so in the future. To be frank I don't really understand everything
+# it is doing.
+# see "catkin_create_rqt" repository on github for details
 cmake_minimum_required(VERSION 2.8.3)
+
 project(tfr_mission_control)
-
-add_compile_options(-std=c++11)
-
+# Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-  tfr_msgs
-  tfr_utilities
+    rqt_gui
+    rqt_gui_cpp
+    tfr_msgs
+    tfr_utilities
+    actionlib
+    roscpp
 )
 
-find_package(GTest REQUIRED)
+####################GENERATED######################################################
+find_package(Qt5Widgets REQUIRED)
 
-# These are all for exporting to dependent packages/projects.
-# Uncomment each if the dependent project requires it
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES tfr_communication
-#  CATKIN_DEPENDS roscpp std_msgs
-#  DEPENDS system_lib
+# Flags
+SET(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
+set(${PROJECT_NAME}_SRCS
+    src/${PROJECT_NAME}/mission_control.cpp
 )
 
-# Specify additional locations of header files
-# Your package locations should be listed before other locations
-include_directories(
-  include/${PROJECT_NAME}
-  ${catkin_INCLUDE_DIRS}
-  ${GTEST_INCLUDE_DIRS}
+set(${PROJECT_NAME}_HDRS
+    include/${PROJECT_NAME}/mission_control.h
 )
 
-# Declare a C++ library
-# You can either create libraries like this and link them in the
-# target_link_libraries() call below or include the individual .cpp
-# files in each add_executable() call. I'm not really sure which one
-# is better.
-# Declared libraries can be exported to other dependent packages 
-# in the LIBRARIES part of the catkin_package() call above.
-#add_library(${PROJECT_NAME}_library
-#  
-#)
+set(${PROJECT_NAME}_UIS
+    src/${PROJECT_NAME}/mission_control.ui
+)
 
-# Create executable process/node and link it
-add_executable(mission_control src/mission_control.cpp)
-target_link_libraries(mission_control ${catkin_LIBRARIES})#${PROJECT_NAME}_library)
+set(${PROJECT_NAME}_QRC
+    resource/resources.qrc
+)
 
-add_dependencies(mission_control tfr_msgs_gencpp)
+set(ui_INCLUDE_DIR
+    "${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_INCLUDE_DESTINATION}/${PROJECT_NAME}"
+)
 
-# This call is sometimes needed and sometimes not and I'm not really clear why
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+set(${PROJECT_NAME}_INCLUDE_DIRECTORIES
+    include
+    ${ui_INCLUDE_DIR}/..
+)
 
-# Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test test/test_tfr_mission_control.cpp)
-if(TARGET ${PROJECT_NAME}-test)
-  target_link_libraries(${PROJECT_NAME}-test)# ${PROJECT_NAME}_library)
+if(NOT EXISTS ${ui_INCLUDE_DIR})
+    file(MAKE_DIRECTORY ${ui_INCLUDE_DIR})
 endif()
+
+catkin_package(
+    #  INCLUDE_DIRS
+    #    ${${PROJECT_NAME}_INCLUDE_DIRECTORIES}
+    #  LIBRARIES ${PROJECT_NAME}
+    CATKIN_DEPENDS
+    rqt_gui
+    rqt_gui_cpp
+    tfr_msgs
+    tfr_utilities
+    roscpp
+
+)
+
+# include directories before wrap cpp
+include_directories(${${PROJECT_NAME}_INCLUDE_DIRECTORIES}
+    ${${PROJECT_NAME}_INCLUDE_DIRECTORIES}
+    ${catkin_INCLUDE_DIRS}
+)
+
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
+add_definitions(${Qt5Widgets_DEFINITIONS})
+qt5_wrap_cpp(${PROJECT_NAME}_MOCS ${${PROJECT_NAME}_HDRS})
+qt5_add_resources(${PROJECT_NAME}_RCC ${${PROJECT_NAME}_QRC})
+
+# ensure generated header files are being created in the devel space
+set(_cmake_current_binary_dir "${CMAKE_CURRENT_BINARY_DIR}")
+set(CMAKE_CURRENT_BINARY_DIR ${ui_INCLUDE_DIR})
+qt5_wrap_ui(${PROJECT_NAME}_UIS_H ${${PROJECT_NAME}_UIS})
+set(CMAKE_CURRENT_BINARY_DIR "${_cmake_current_binary_dir}")
+
+add_library(${PROJECT_NAME}
+    ${${PROJECT_NAME}_SRCS}
+    ${${PROJECT_NAME}_HDRS}
+    ${${PROJECT_NAME}_MOCS}
+    ${${PROJECT_NAME}_UIS_H}
+    ${${PROJECT_NAME}_RCC}
+)
+
+target_link_libraries(${PROJECT_NAME}
+    status_code
+    ${catkin_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
+
+add_dependencies(${PROJECT_NAME}
+    ${catkin_EXPORTED_TARGETS}
+)
+
+find_package(class_loader)
+class_loader_hide_library_symbols(${PROJECT_NAME})
+####################END GENERATED######################################################
+
+add_executable(mission_control_subscriber ./src/mission_control_subscriber.cpp)
+add_dependencies(mission_control_subscriber ${catkin_EXPORTED_TARGETS})
+target_link_libraries(mission_control_subscriber ${catkin_LIBRARIES})
+
+
+####################GENERATED######################################################
+install(FILES plugin.xml
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+install(TARGETS ${PROJECT_NAME}
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(PROGRAMS scripts/${PROJECT_NAME}
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+####################END GENERATED######################################################

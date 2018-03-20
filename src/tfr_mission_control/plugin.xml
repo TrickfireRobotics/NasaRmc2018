@@ -1,0 +1,19 @@
+<library path="lib/libtfr_mission_control">
+  <class name="tfr_mission_control/MissionControl"
+         type="tfr_mission_control::MissionControl"
+         base_class_type="rqt_gui_cpp::Plugin">
+    <description>
+      A GUI plugin to ...
+    </description>
+    <qtgui>
+      <group>
+        <label>New Group</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins related to...</statustip>
+      </group>
+      <label>RQT Plugin tfr_mission_control</label>
+      <icon type="theme">image-x-generic</icon>
+      <statustip>A GUI plugin to ...</statustip>
+    </qtgui>
+  </class>
+</library>

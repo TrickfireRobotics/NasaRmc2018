@@ -13,14 +13,18 @@ namespace tfr_utilities
      * */
     enum class TeleopCode: uint8_t
     {
-        NONE,
+        STOP_DRIVEBASE,
+        STOP_TURNTABLE,
         FORWARD,
         BACKWARD,
         LEFT,
         RIGHT,
+        CLOCKWISE,
+        COUNTERCLOCKWISE,
         DIG,
         DUMP,
-        RESET
+        RESET_DUMPING,
+        RESET_STARTING
     };
 }
 #endif

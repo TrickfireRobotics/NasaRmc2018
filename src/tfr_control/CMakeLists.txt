@@ -41,36 +41,20 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-
 add_library(pwm_driver src/JHPWMPCA9685.cpp)
-add_executable(pwm_bridge src/pwm_bridge.cpp)
-add_dependencies(pwm_bridge gpio pwm_driver jetson_tx2 ${catkin_EXPORTED_TARGETS})
-target_link_libraries(pwm_bridge pwm_driver gpio ${catkin_LIBRARIES})
 
-
-# proto_driver_station
-add_executable(proto_driver_station 
-  src/proto_driver_station.cpp
-)
-add_dependencies(proto_driver_station tfr_msgs_gencpp)
-target_link_libraries(proto_driver_station
-  ${catkin_LIBRARIES} 
-  sfml-system
-  sfml-window sfml-graphics
-)
+add_library(pwm_interface src/pwm_interface.cpp)
+add_dependencies(pwm_interface gpio pwm_driver ${catkin_EXPORTED_TARGETS})
+target_link_libraries(pwm_interface pwm_driver gpio ${catkin_LIBRARIES})
 
 # controller_launcher
-add_executable(controller_launcher
-  src/controller_launcher.cpp
-  src/controller.cpp
-  src/bin_control_server.cpp
+add_executable(control
+  src/control.cpp
+  src/robot_interface.cpp
 )
-add_dependencies(controller_launcher tfr_msgs_gencpp)
-target_link_libraries(controller_launcher
+add_dependencies(control pwm_interface tfr_msgs_gencpp)
+target_link_libraries(control pwm_interface
   ${catkin_LIBRARIES}
-)
-add_dependencies(controller_launcher
-  tfr_msgs_gencpp
 )
 
 # drivebase
@@ -78,12 +62,8 @@ add_executable(drivebase
   src/drivebase.cpp
   src/drivebase_publisher.cpp
 )
-target_link_libraries(drivebase
-  ${catkin_LIBRARIES}
-)
-add_dependencies(drivebase
-  tfr_msgs_gencpp
-)
+target_link_libraries(drivebase ${catkin_LIBRARIES})
+add_dependencies(drivebase tfr_msgs_gencpp)
 
 add_executable(arm_action_server src/arm_action_server.cpp)
 add_dependencies(arm_action_server tfr_msgs_gencpp)
@@ -98,6 +78,10 @@ target_link_libraries(test_client ${catkin_LIBRARIES})
 add_executable(motor_toggle_test ./src/motor_toggle_test.cpp)
 add_dependencies(motor_toggle_test ${catkin_EXPORTED_TARGETS})
 target_link_libraries(motor_toggle_test status_code status_publisher ${catkin_LIBRARIES})
+
+add_executable(test_cmd src/test_cmd.cpp)
+add_dependencies(test_cmd tfr_msgs_gencpp)
+target_link_libraries(test_cmd ${catkin_LIBRARIES})
 
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")

@@ -18,14 +18,14 @@
 
 #include "ros/ros.h"
 #include "geometry_msgs/Twist.h"
-
+#include "std_msgs/Float64.h"
 namespace tfr_control
 {
     class DrivebasePublisher
     {
     public:
         DrivebasePublisher() = delete;
-        explicit DrivebasePublisher(ros::NodeHandle& n, float wheel_span, float wheel_radius);
+        explicit DrivebasePublisher(ros::NodeHandle& n, double wheel_span, double wheel_radius);
         DrivebasePublisher(const DrivebasePublisher& other) = delete;
         DrivebasePublisher(DrivebasePublisher&&) = delete;
 
@@ -38,15 +38,15 @@ namespace tfr_control
         // Making this static allows for unit-testing without 
         // creating a DrivebasePublisher object
         // left_tread and right_tread are output parameters; the rest are inputs.
-        static void twistToDifferential(const float linear_v, const float angular_v, const float wheel_radius, 
-                                        const float wheel_span, float& left_tread, float& right_tread);
+        static void twistToDifferential(const double linear_v, const double angular_v, const double wheel_radius, 
+                                        const double wheel_span, double& left_tread, double& right_tread);
 
     private:
         void subscriptionCallback(const geometry_msgs::Twist::ConstPtr& msg);
 
         ros::NodeHandle& n;
-        const float wheel_radius;
-        const float wheel_span;
+        const double wheel_radius;
+        const double wheel_span;
 
         ros::Publisher left_tread_publisher;
         ros::Publisher right_tread_publisher;

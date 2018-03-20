@@ -1,51 +1,60 @@
 # ------------------------------------------------------------
 # This file holds the controller configurations for all controllers
 # on the robot.
+#
+# These are loaded into the controller layer by the  controller
+# manager at will, and the joints they describe need to match the hardware
+# layer
+#
+# The controller manager handles the upper level logic, and makes sure
+# the controllers do not conflict
 # ------------------------------------------------------------
 
 # Publish all joint states -----------------------------------
 joint_state_controller:
-  type: joint_state_controller/JointStateController
-  publish_rate: 50
+    type: joint_state_controller/JointStateController
+    publish_rate: 50
 
-# Controllers ------------------------------------------------
+    # Controllers ------------------------------------------------
+    #
 left_tread_velocity_controller:
-  type: effort_controllers/JointVelocityController
-  joint: left_tread_joint
-  pid: {p: 1.0, i: 500.0, d: 0.0}
+    type: effort_controllers/JointVelocityController
+    joint: left_tread_joint
+        #NOTE these are purposely not tuned
+    pid: {p: 0.5, i: 0, d: 0}
 
-right_tread_velocity_controller:
-  type: effort_controllers/JointVelocityController
-  joint: right_tread_joint
-  pid: {p: 1.0, i: 500.0, d: 0.0}
+    right_tread_velocity_controller:
+        type: effort_controllers/JointVelocityController
+    joint: right_tread_joint
+    pid: {p: 0.5, i: 0, d: 0}
 
-bin_position_controller:
-  type: effort_controllers/JointPositionController
-  joint: bin_joint
-  pid: {p: 1.0, i: 500.0, d: 0.0}
 
-# Controls all the joints of the main part of the arm
-arm_controller:
-  type: effort_controllers/JointTrajectoryController
-  joints:
-    - turntable_joint
-    - lower_arm_joint
-    - upper_arm_joint
-  gains:
-    turntable_joint: {p: 2.0, i: 0.0, d: 0.0}
-    lower_arm_joint: {p: 2.0, i: 0.0, d: 0.0}
-    upper_arm_joint: {p: 2.0, i: 0.0, d: 0.0}
-  constraints:
-    goal_time: 10.0
+    bin_position_controller:
+        type: effort_controllers/JointPositionController
+    joint: bin_joint
 
-# Controls the end effector (scoop) of the arm. This is
-# separate from the main arm controller as MoveIt requires
-# having a separate controller for the end effector
-arm_end_controller:
-  type: effort_controllers/JointTrajectoryController
-  joints:
-    - scoop_joint
-  gains:
-    scoop_joint: {p: 2.0, i: 0.0, d: 0.0}
-  constraints:
-    goal_time: 10.0
+        # Controls all the joints of the main part of the arm
+    arm_controller:
+        type: effort_controllers/JointTrajectoryController
+    joints:
+        - turntable_joint
+        - lower_arm_joint
+        - upper_arm_joint
+    gains:
+        turntable_joint: {p: 0.75, i: 0.5, d: 0.01}
+        lower_arm_joint: {p: 0.75, i: 0.5, d: 0.01}
+        upper_arm_joint: {p: 0.75, i: 0.5, d: 0.01}
+    constraints:
+        goal_time: 10.0
+
+            # Controls the end effector (scoop) of the arm. This is
+            # separate from the main arm controller as MoveIt requires
+            # having a separate controller for the end effector
+        arm_end_controller:
+            type: effort_controllers/JointTrajectoryController
+        joints:
+            - scoop_joint
+        gains:
+            scoop_joint: {p: 0.75, i: 0.5, d: 0.01}
+        constraints:
+            goal_time: 10.0

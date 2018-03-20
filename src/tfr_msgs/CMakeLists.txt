@@ -18,7 +18,7 @@ add_message_files(
   FILES
   Echo.msg
   SystemStatus.msg
-  DrivebaseVelocity.msg
+  EncoderReading.msg
 )
 
 # Generate services in the 'srv' folder

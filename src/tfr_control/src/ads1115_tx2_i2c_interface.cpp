@@ -35,9 +35,24 @@ uint8_t ADCInterface::i2cWrite(uint8_t data)
     return -1;
 }
 
+uint8_t ADCInterface::i2cRead()
+{
+    if (enabled)
+    {
+        int toReturn = i2c_smbus_read_byte(fileDescriptor);
+        if (toReturn < 0) {
+            printf("Read Byte error: %d",errno) ;
+            error = errno ;
+            toReturn = -1 ;
+        }
+        return toReturn ;
+    }
+    printf("Disabled: %d",errno) ;
+    return -1;
+}
+
 bool ADCInterface::isEnabled()
 {
     return enabled;
 }
-
 

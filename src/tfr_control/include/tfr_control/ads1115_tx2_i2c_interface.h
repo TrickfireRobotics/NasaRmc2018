@@ -21,6 +21,7 @@ class ADCInterface
         ADCInterface(uint8_t address);
         bool isEnabled();
         uint8_t i2cWrite(uint8_t data);
+        uint8_t i2cRead();
 
     private:
         uint8_t address;

@@ -26,21 +26,45 @@ ros::Publisher encoders("encoders", &encoderReading);
 //potentiometers
 Adafruit_ADS1115 ads1115;
 tfr_msgs::PotentiometerReading potentiometerReading;
-ros::Publisher potentiometers("potentiometers_a", &potentiometerReading);
+ros::Publisher potentiometers("potentiometers", &potentiometerReading);
+
 void setup()
 {
     nh.initNode();
     nh.advertise(encoders);
-    nh.getParam("~rate", &rate);
+    nh.advertise(potentiometers);
     ads1115.begin();
 }
 
 void loop()
 {
-    encoderReading.left_vel = gearbox_left.getVelocity()/GEARBOX_RPM;
+    encoderReading.right_vel = encoderReading.left_vel = gearbox_left.getVelocity()/GEARBOX_RPM;
+    gearbox_left.getVelocity()/GEARBOX_RPM;
+    //used to test latency
+    gearbox_left.getVelocity()/GEARBOX_RPM;
+    encoderReading.turntable_pos = 0;
+
     //TODO hook up other encoders
-    potentiometerReading.pot0 = ads1015.readADC_SingleEnded(0);
-    
+    ads1115.startADC_SingleEnded(0);
+    delay(8);
+    potentiometerReading.pot_0 = ads1115.collectADC_SingleEnded();
+    potentiometerReading.pot_1 = 0;
+    ads1115.collectADC_SingleEnded();
+
+    ads1115.startADC_SingleEnded(0);
+    ads1115.startADC_SingleEnded(1);
+    ads1115.startADC_SingleEnded(2);
+    delay(8);
+    potentiometerReading.pot_2 = potentiometerReading.pot_3 = 0;
+    ads1115.collectADC_SingleEnded();
+    ads1115.collectADC_SingleEnded();
+
+    ads1115.startADC_SingleEnded(1);
+    ads1115.startADC_SingleEnded(2);
+    delay(8);
+    potentiometerReading.pot_4 = potentiometerReading.pot_5 = 0;
+    ads1115.collectADC_SingleEnded();
+    ads1115.collectADC_SingleEnded();
 
     nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
     encoders.publish(&encoderReading);

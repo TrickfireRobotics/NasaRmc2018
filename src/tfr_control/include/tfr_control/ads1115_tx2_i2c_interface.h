@@ -10,6 +10,9 @@
 #include <unistd.h>
 #include <errno.h>
 #include <cstdint>
+#include <ads1x1x.h>
+#include <ros/console.h>
+
 
 /*I2C stubs, implementations in implementation file
   *do not explicitly need to be forward declared, but included in header for
@@ -20,18 +23,15 @@ class ADCInterface
     public:
         ADCInterface(uint8_t address);
         bool isEnabled();
-        uint8_t i2cWrite(uint8_t data);
-        uint8_t i2cRead();
-
+        void writeWord(uint8_t reg, uint16_t data);
+        uint16_t readWord(uint8_t reg);
+        ADS1x1x_config_t config;
     private:
         uint8_t address;
         uint8_t i2cBus = 1 ;           // Default I2C bus for Jetson TK1
         int32_t error;
         int32_t fileDescriptor;
         bool enabled;
-
-
-
 };
 
 #endif

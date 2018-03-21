@@ -25,11 +25,7 @@
 /**************************************************************************/
 void ADS1x1x_write_register(uint8_t i2c_address, uint8_t reg, uint16_t value)
 {
-  ADS1x1x_i2c_start_write(i2c_address);
-  ADS1x1x_i2c_write(reg);
-  ADS1x1x_i2c_write((uint8_t)(value>>8));
-  ADS1x1x_i2c_write((uint8_t)(value&0xff));
-  ADS1x1x_i2c_stop();
+  ADS1x1x_i2c_write_word(i2c_address, reg, value);
 }
 
 /**************************************************************************/
@@ -39,15 +35,7 @@ void ADS1x1x_write_register(uint8_t i2c_address, uint8_t reg, uint16_t value)
 /**************************************************************************/
 uint16_t ADS1x1x_read_register(uint8_t i2c_address, uint8_t reg)
 {
-  uint16_t result = 0;
-  ADS1x1x_i2c_start_write(i2c_address);
-  ADS1x1x_i2c_write(reg);
-  ADS1x1x_i2c_stop();
-  ADS1x1x_i2c_start_read(i2c_address,2);
-  result = ADS1x1x_i2c_read() << 8;
-  result |= ADS1x1x_i2c_read();
-  ADS1x1x_i2c_stop();
-  return result;
+  return ADS1x1x_i2c_read_word(i2c_address, reg);
 }
 
 

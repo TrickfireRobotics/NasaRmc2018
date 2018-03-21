@@ -9,6 +9,8 @@
     This started out as a port of the Adafruit library, but ended
     up largely rewritten.
 
+    COLLIN CONWAY modified this for trickfire robotics
+
     v1.0 - First release
 */
 /**************************************************************************/
@@ -23,14 +25,10 @@ extern "C" {
 
 #include <stdint.h>
 
-
+//NOTE heavy modifications here
 // I2C stubs, implementations to be provided by the user.
-extern uint8_t ADS1x1x_i2c_start_write(uint8_t i2c_address);
-extern uint8_t ADS1x1x_i2c_write(uint8_t x);
-extern uint8_t ADS1x1x_i2c_start_read(uint8_t i2c_address, uint16_t bytes_to_read);
-extern uint8_t ADS1x1x_i2c_read(void);
-extern uint8_t ADS1x1x_i2c_stop(void);
-
+extern void ADS1x1x_i2c_write_word(uint8_t i2c_address, uint8_t reg, uint16_t value);
+extern uint16_t ADS1x1x_i2c_read_word(uint8_t i2c_address, uint8_t reg);
 
 // I2C definitions.
 #define ADS1x1x_I2C_ADDRESS_ADDR_TO_GND  (0x48)

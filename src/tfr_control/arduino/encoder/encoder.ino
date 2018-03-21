@@ -1,6 +1,9 @@
 #include <Encoder.h>
+#include <Wire.h>
+#include <Adafruit_ADS1015.h>
 #include <ros.h>
 #include <tfr_msgs/EncoderReading.h>
+#include <tfr_msgs/PotentiometerReading.h>
 #include <quadrature.h>
 
 ros::NodeHandle nh;
@@ -16,26 +19,30 @@ const int GEARBOX_LEFT_B = 3;
 
 //encoders
 Quadrature gearbox_left(GEARBOX_CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
-tfr_msgs::EncoderReading reading;
+tfr_msgs::EncoderReading encoderReading;
 
-//algorithm constants
-const float rate(1/50.0);
+ros::Publisher encoders("encoders", &encoderReading);
 
-ros::Publisher encoders("encoders", &reading);
-
+//potentiometers
+Adafruit_ADS1115 ads1115;
+tfr_msgs::PotentiometerReading potentiometerReading;
+ros::Publisher potentiometers("potentiometers_a", &potentiometerReading);
 void setup()
 {
     nh.initNode();
     nh.advertise(encoders);
     nh.getParam("~rate", &rate);
+    ads1115.begin();
 }
 
 void loop()
 {
-    reading.left_vel = gearbox_left.getVelocity()/GEARBOX_RPM;
+    encoderReading.left_vel = gearbox_left.getVelocity()/GEARBOX_RPM;
     //TODO hook up other encoders
+    potentiometerReading.pot0 = ads1015.readADC_SingleEnded(0);
+    
 
     nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
-    encoders.publish(&reading);
-    delay(rate);
+    encoders.publish(&encoderReading);
+    potentiometers.publish(&potentiometerReading);
 }

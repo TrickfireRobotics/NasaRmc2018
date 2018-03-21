@@ -17,6 +17,28 @@ const double GEARBOX_RPM = 60; //revolutions per meter
 const int GEARBOX_LEFT_A = 2;
 const int GEARBOX_LEFT_B = 3;
 
+struct potentiometer
+{
+    const static float ADC_RANGE=0.0001875;
+    float extension_range; //the max range the potentiometer can be extended
+    float max_voltage; //the max voltage for the potentiometer
+    float getExtension(int16_t val)
+    {
+        return val* ADC_RANGE/max_voltage; 
+    }
+};
+
+const potentiometer pots[6] = 
+    {
+        {0.15, 5.0},
+        {0.15, 5.0},
+        {0.15, 5.0},
+        {0.15, 5.0},
+        {0.15, 5.0},
+        {0.15, 5.0}
+    };
+
+
 //encoders
 Quadrature gearbox_left(GEARBOX_CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 tfr_msgs::EncoderReading encoderReading;
@@ -47,7 +69,7 @@ void loop()
     //TODO hook up other encoders
     ads1115.startADC_SingleEnded(0);
     delay(8);
-    potentiometerReading.pot_0 = ads1115.collectADC_SingleEnded();
+    potentiometerReading.pot_0 = pots[0].getExtension(ads1115.collectADC_SingleEnded());
     potentiometerReading.pot_1 = 0;
     ads1115.collectADC_SingleEnded();
 

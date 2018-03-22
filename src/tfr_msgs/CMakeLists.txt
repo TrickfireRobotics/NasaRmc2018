@@ -18,8 +18,7 @@ add_message_files(
   FILES
   Echo.msg
   SystemStatus.msg
-  EncoderReading.msg
-  PotentiometerReading.msg
+  ArduinoReading.msg
 )
 
 # Generate services in the 'srv' folder

@@ -1,6 +1,6 @@
 <launch>
   <!-- Launch all the hardware interface nodes -->
-  <include file="$(find tfr_control)/launch/test_controller.launch"/>
+  <include file="$(find tfr_control)/launch/control.launch"/>
 
   <!-- Launch all the MoveIt! nodes -->
   <include file="$(find tfr_moveit)/launch/move_group.launch"/>

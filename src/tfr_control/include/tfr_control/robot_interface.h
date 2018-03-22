@@ -20,7 +20,7 @@
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/robot_hw.h>
 #include <algorithm>
-#include <tfr_msgs/EncoderReading.h>
+#include <tfr_msgs/ArduinoReading.h>
 #include <pwm_interface.h>
 
 namespace tfr_control {
@@ -78,11 +78,11 @@ namespace tfr_control {
         //the pwm bridge
         PWMInterface pwm;
         //reads from arduino encoder publisher
-        ros::Subscriber encoders;
-        tfr_msgs::EncoderReadingConstPtr latest_encoders;
+        ros::Subscriber arduino;
+        tfr_msgs::ArduinoReadingConstPtr latest_arduino;
 
         //callback for publisher
-        void readEncoders(const tfr_msgs::EncoderReadingConstPtr &msg);
+        void readArduino(const tfr_msgs::ArduinoReadingConstPtr &msg);
 
         // Populated by controller layer for us to use
         double command_values[JOINT_COUNT]{};

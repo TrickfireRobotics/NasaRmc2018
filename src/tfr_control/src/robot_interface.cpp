@@ -12,7 +12,7 @@ namespace tfr_control
     RobotInterface::RobotInterface(ros::NodeHandle &n, bool fakes, 
             const double *lower_lim, const double *upper_lim) :
         pwm{},
-        encoders{n.subscribe("encoders", 5, &RobotInterface::readEncoders, this)},
+        arduino{n.subscribe("arduino", 5, &RobotInterface::readArduino, this)},
         use_fake_values{fakes}, lower_limits{lower_lim}, upper_limits{upper_lim}
     {
         // Note: the string parameters in these constructors must match the
@@ -36,9 +36,9 @@ namespace tfr_control
     void RobotInterface::read() 
     {
         //Grab the neccessary data
-        tfr_msgs::EncoderReading encoders;
-        if (latest_encoders != nullptr)
-            encoders = *latest_encoders;
+        tfr_msgs::ArduinoReading reading;
+        if (latest_arduino != nullptr)
+            reading = *latest_arduino;
 
         /*
          * Populate the shared memory, note items that are not expicity needed
@@ -46,12 +46,11 @@ namespace tfr_control
          * */
 
         //LEFT_TREAD
-        velocity_values[static_cast<int>(Joint::LEFT_TREAD)] = encoders.left_vel;
+        velocity_values[static_cast<int>(Joint::LEFT_TREAD)] = reading.left_vel;
         position_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
         effort_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
         //TODO put in other components
 
-        ROS_INFO("l_enc: %f", velocity_values[static_cast<int>(Joint::LEFT_TREAD)]); 
     }
 
     void RobotInterface::write() 
@@ -85,7 +84,6 @@ namespace tfr_control
         //LEFT_TREAD
         double signal = velocityToPWM(command_values[static_cast<int>(Joint::LEFT_TREAD)]);
         pwm.set(PWMInterface::Address::LEFT_TREAD, signal);
-        ROS_INFO("l_vel, l_pwm: %f, %f", command_values[static_cast<int>(Joint::LEFT_TREAD)], signal); 
         
         //upkeep
         prev_time = ros::Time::now();
@@ -136,9 +134,9 @@ namespace tfr_control
     /*
      * Callback for our encoder subscriber
      * */
-    void RobotInterface::readEncoders(const tfr_msgs::EncoderReadingConstPtr &msg)
+    void RobotInterface::readArduino(const tfr_msgs::ArduinoReadingConstPtr &msg)
     {
-        latest_encoders = msg;
+        latest_arduino = msg;
     }
 
     /*

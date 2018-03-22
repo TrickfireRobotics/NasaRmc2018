@@ -1,3 +1,0 @@
-float64 left_vel #m/s
-float64 right_vel #m/s
-float64 turntable_pos #rad

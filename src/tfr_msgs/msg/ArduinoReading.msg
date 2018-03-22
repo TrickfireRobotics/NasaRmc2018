@@ -1,0 +1,10 @@
+float64 left_vel #m/s
+float64 right_vel #m/s
+float64 turntable_pos #rad
+#TODO name potentiometers
+float32 pot_0 #m
+float32 pot_1 #m
+float32 pot_2 #m
+float32 pot_3 #m
+float32 pot_4 #m
+float32 pot_5 #m

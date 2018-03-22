@@ -58,6 +58,7 @@ namespace tfr_control
         //TODO adam delete this old test code when ready
         if (use_fake_values) 
         {
+            ROS_INFO("write");
             // Update all actuators velocity with the command (effort in).
             // Then update the position as derivative of the velocity over time.
             // ADAM make sure to update this index when you need to
@@ -72,6 +73,7 @@ namespace tfr_control
                         std::max(std::min(position_values[i],
                                     upper_limits[i]), lower_limits[i]);
                 }
+                ROS_INFO("join : %d command : %f", i , command_values[i]);
             }
         }
 

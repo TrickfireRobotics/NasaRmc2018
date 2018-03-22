@@ -47,7 +47,7 @@ namespace tfr_control
          * */
 
         //LEFT_TREAD
-        velocity_values[static_cast<int>(Joint::LEFT_TREAD)] = reading.left_vel;
+        velocity_values[static_cast<int>(Joint::LEFT_TREAD)] = reading.tread_left_vel;
         position_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
         effort_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
         //TODO put in other components

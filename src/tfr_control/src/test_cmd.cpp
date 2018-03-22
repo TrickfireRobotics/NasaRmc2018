@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 
     msg.linear.x=0.5;
 
-    chatter_pub.publish(msg);
+//    chatter_pub.publish(msg);
 
     ros::spinOnce();
 

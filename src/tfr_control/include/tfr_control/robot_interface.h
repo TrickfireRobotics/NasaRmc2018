@@ -73,6 +73,7 @@ namespace tfr_control {
         //joint states for Joint state publisher package
         hardware_interface::JointStateInterface joint_state_interface;
         //cmd states for effort controllers package relies on joint states
+        hardware_interface::PositionJointInterface joint_position_interface;
         hardware_interface::EffortJointInterface joint_effort_interface;
 
         //the pwm bridge
@@ -102,7 +103,9 @@ namespace tfr_control {
         // The time of the previous update cycle (update at the end of write)
         ros::Time prev_time;
         
-        void registerJoint(std::string name, Joint joint);
+        void registerTreadJoint(std::string name, Joint joint);
+        void registerBinJoint(std::string name, Joint joint);
+        void registerArmJoint(std::string name, Joint joint);
 
         /**
          * Gets the time in seconds since the last update cycle

@@ -47,19 +47,56 @@ namespace tfr_control
          * */
 
         //LEFT_TREAD
-        velocity_values[static_cast<int>(Joint::LEFT_TREAD)] = reading.tread_left_vel;
         position_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
+        velocity_values[static_cast<int>(Joint::LEFT_TREAD)] = reading.tread_left_vel;
         effort_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
-        //TODO put in other components
+
+        //RIGHT_TREAD
+        position_values[static_cast<int>(Joint::RIGHT_TREAD)] = 0;
+        velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] = reading.tread_right_vel;
+        effort_values[static_cast<int>(Joint::RIGHT_TREAD)] = 0;
+
+        //TURNTABLE
+        position_values[static_cast<int>(Joint::TURNTABLE)] = reading.arm_turntable_pos;
+        velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0;
+        effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
+
+        //LOWER_ARM
+        /*
+         * I take the average of the two values to feed to move it.
+         * */
+        position_values[static_cast<int>(Joint::LOWER_ARM)] = 
+                (reading.arm_lower_left_pos+ reading.arm_lower_right_pos)/2;
+        velocity_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
+        effort_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
+
+        //UPPER_ARM
+        position_values[static_cast<int>(Joint::UPPER_ARM)] = reading.arm_upper_pos;
+        velocity_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
+        effort_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
+
+        //SCOOP
+        position_values[static_cast<int>(Joint::SCOOP)] = reading.arm_scoop_pos;
+        velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
+        effort_values[static_cast<int>(Joint::SCOOP)] = 0;
+
+        //BIN
+        /*
+         * I take the average of the two values for position estimation.
+         * */
+        position_values[static_cast<int>(Joint::BIN)] = 
+            (reading.bin_left_pos + reading.bin_right_pos)/2;
+        velocity_values[static_cast<int>(Joint::BIN)] = 0;
+        effort_values[static_cast<int>(Joint::BIN)] = 0;
+
+
 
     }
 
     void RobotInterface::write() 
     {
-        //TODO adam delete this old test code when ready
-        if (use_fake_values) 
+        if (use_fake_values) //test code  for working with rviz simulator
         {
-            //ROS_INFO("write");
             // Update all actuators velocity with the command (effort in).
             // Then update the position as derivative of the velocity over time.
             // ADAM make sure to update this index when you need to
@@ -73,8 +110,11 @@ namespace tfr_control
                         std::max(std::min(position_values[i],
                                     upper_limits[i]), lower_limits[i]);
                 }
-                //ROS_INFO("join : %d command : %f", i , command_values[i]);
             }
+        }
+        else  // we are working with the real arm
+        {
+
         }
 
         /**
@@ -179,13 +219,4 @@ namespace tfr_control
         latest_arduino = msg;
     }
 
-    /*
-     * gets the time elapsed since last read 
-     * TODO this is currently only used by test code, and is not really needed
-     * by this object it should be deleted when the test code is deleted
-     * */
-    double RobotInterface::getUpdateTime() 
-    {
-        return (ros::Time::now() - prev_time).nsec / 1E9;
-    }
 }

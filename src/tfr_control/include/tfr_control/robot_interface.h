@@ -72,8 +72,9 @@ namespace tfr_control {
     private:
         //joint states for Joint state publisher package
         hardware_interface::JointStateInterface joint_state_interface;
-        //cmd states for effort controllers package relies on joint states
+        //cmd states for position driven joints
         hardware_interface::PositionJointInterface joint_position_interface;
+        //cmd states for velocity driven joints
         hardware_interface::EffortJointInterface joint_effort_interface;
 
         //the pwm bridge
@@ -82,8 +83,6 @@ namespace tfr_control {
         ros::Subscriber arduino;
         tfr_msgs::ArduinoReadingConstPtr latest_arduino;
 
-        //callback for publisher
-        void readArduino(const tfr_msgs::ArduinoReadingConstPtr &msg);
 
         // Populated by controller layer for us to use
         double command_values[JOINT_COUNT]{};
@@ -95,11 +94,6 @@ namespace tfr_control {
         // Populated by us for controller layer to use
         double effort_values[JOINT_COUNT]{};
 
-        /**
-         * Adam uses this for testing the arm
-         */
-        bool use_fake_values = false;
-
         // The time of the previous update cycle (update at the end of write)
         ros::Time prev_time;
         
@@ -107,17 +101,18 @@ namespace tfr_control {
         void registerBinJoint(std::string name, Joint joint);
         void registerArmJoint(std::string name, Joint joint);
 
-        /**
-         * Gets the time in seconds since the last update cycle
-         */
-        double getUpdateTime();
+
+        //callback for publisher
+        void readArduino(const tfr_msgs::ArduinoReadingConstPtr &msg);
 
         /**
          * Gets the PWM appropriate output for a joint at the current time
          * */
         double velocityToPWM(const double &velocity);
 
+        // THESE DATA MEMBERS ARE FOR SIMULATION ONLY
         // Holds the lower and upper limits of the URDF model joint
+        bool use_fake_values = false;
         const double *lower_limits, *upper_limits;
     };
 }

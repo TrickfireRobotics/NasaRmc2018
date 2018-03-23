@@ -9,6 +9,10 @@ using hardware_interface::JointHandle;
 
 namespace tfr_control
 {
+    /*
+     * Creates the robot interfaces spins up all the joints and registers them
+     * with their relevant interfaces
+     * */
     RobotInterface::RobotInterface(ros::NodeHandle &n, bool fakes, 
             const double *lower_lim, const double *upper_lim) :
         pwm{},
@@ -34,17 +38,22 @@ namespace tfr_control
         pwm.enablePWM(true);
     }
 
+    /*
+     * Reads from our hardware and populates from shared memory.  
+     *
+     * Information that is not that are not expicity needed by our controllers 
+     * are written to some safe sensible default (usually 0).
+     *
+     * A couple of our logical joints are controlled by two actuators and read
+     * by multiple potentiometers. For the purpose of populating information for
+     * control I take the average of the two positions.
+     * */
     void RobotInterface::read() 
     {
         //Grab the neccessary data
         tfr_msgs::ArduinoReading reading;
         if (latest_arduino != nullptr)
             reading = *latest_arduino;
-
-        /*
-         * Populate the shared memory, note items that are not expicity needed
-         * are written to some safe sensible default (usually 0)
-         * */
 
         //LEFT_TREAD
         position_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
@@ -62,9 +71,6 @@ namespace tfr_control
         effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
 
         //LOWER_ARM
-        /*
-         * I take the average of the two values to feed to move it.
-         * */
         position_values[static_cast<int>(Joint::LOWER_ARM)] = 
                 (reading.arm_lower_left_pos+ reading.arm_lower_right_pos)/2;
         velocity_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
@@ -81,24 +87,33 @@ namespace tfr_control
         effort_values[static_cast<int>(Joint::SCOOP)] = 0;
 
         //BIN
-        /*
-         * I take the average of the two values for position estimation.
-         * */
         position_values[static_cast<int>(Joint::BIN)] = 
             (reading.bin_left_pos + reading.bin_right_pos)/2;
         velocity_values[static_cast<int>(Joint::BIN)] = 0;
         effort_values[static_cast<int>(Joint::BIN)] = 0;
 
-
-
     }
 
+    /*
+     * Writes command values from our controllers to our motors and actuators.
+     *
+     * Takes in command values from the controllers and these values are scaled
+     * to pwm outputs and written to the right place. There are some edge cases
+     * for twin actuators, which are controlled as if they are one joint. 
+     *
+     * The controller gives a command value to move them as one, then we scale
+     * our pwm outputs to move them back into sync if they get out of wack.
+     * */
     void RobotInterface::write() 
     {
+        //Grab the neccessary data
+        tfr_msgs::ArduinoReading reading;
+        if (latest_arduino != nullptr)
+            reading = *latest_arduino;
+
+        double signal;
         if (use_fake_values) //test code  for working with rviz simulator
         {
-            // Update all actuators velocity with the command (effort in).
-            // Then update the position as derivative of the velocity over time.
             // ADAM make sure to update this index when you need to
             for (int i = 3; i < JOINT_COUNT; i++) 
             {
@@ -114,21 +129,37 @@ namespace tfr_control
         }
         else  // we are working with the real arm
         {
+            //TURNTABLE
+            signal = turntableAngleToPWM(command_values[static_cast<int>(Joint::TURNTABLE)],
+                        position_values[static_cast<int>(Joint::TURNTABLE)]);
+            pwm.set(PWMInterface::Address::ARM_TURNTABLE, signal);
 
+            //LOWER_ARM
+            auto twin_sig = twinAngleToPWM(command_values[static_cast<int>(Joint::LOWER_ARM)],
+                        reading.arm_lower_left_pos,
+                        reading.arm_lower_right_pos);
+            pwm.set(PWMInterface::Address::ARM_LOWER_LEFT, twin_sig.first);
+            pwm.set(PWMInterface::Address::ARM_LOWER_RIGHT, twin_sig.second);
+
+            //UPPER_ARM
+            signal = angleToPWM(command_values[static_cast<int>(Joint::UPPER_ARM)],
+                        position_values[static_cast<int>(Joint::UPPER_ARM)]);
+            pwm.set(PWMInterface::Address::ARM_UPPER, signal);
+
+            //SCOOP
+            signal = angleToPWM(command_values[static_cast<int>(Joint::SCOOP)],
+                        position_values[static_cast<int>(Joint::SCOOP)]);
+            pwm.set(PWMInterface::Address::ARM_SCOOP, signal);
         }
 
-        /**
-         * write the specified hardware taking in to account safety precautions
-         * It is up to us to make sure the signals being given are scaled
-         * appropriately, and routed to the right place
-         * */
-
         //LEFT_TREAD
-        double signal = velocityToPWM(command_values[static_cast<int>(Joint::LEFT_TREAD)]);
-        pwm.set(PWMInterface::Address::LEFT_TREAD, signal);
-        
-        //upkeep
-        prev_time = ros::Time::now();
+        signal = velocityToPWM(command_values[static_cast<int>(Joint::LEFT_TREAD)]);
+        pwm.set(PWMInterface::Address::TREAD_LEFT, signal);
+
+        //RIGHT_TREAD
+        signal = velocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)]);
+        pwm.set(PWMInterface::Address::TREAD_RIGHT, signal);
+        //TODO integrate bin
     }
 
     void RobotInterface::clearCommands()
@@ -195,6 +226,62 @@ namespace tfr_control
          * package
          */
         joint_position_interface.registerHandle(handle);
+    }
+
+    /*
+     * Input is angle desired/measured and output is in raw pwm frequency.
+     * */
+    double RobotInterface::angleToPWM(const double &desired, const double &actual)
+    {
+        //we don't anticipate this changing very much keep at method level
+        double angle_tolerance = 0.01;
+        double difference = desired - actual;
+        if (abs(difference) > angle_tolerance)
+            return (difference < 0) ? -1 : 1;
+        return 0;
+    }
+
+    /*
+     * Input is angle desired/measured of a twin acutuator joint and output is
+     * in raw pwm frequency for both of them. The actuator further ahead get's
+     * scaled down.
+     * */
+    std::pair<double,double> RobotInterface::twinAngleToPWM(const double &desired, 
+            const double &actual_left, const double &actual_right)
+    {
+        //we don't anticipate these changing very much keep at method level
+        double  total_angle_tolerance = 0.01,
+                individual_angle_tolerance = 0.01,
+                scaling_factor = .9, 
+                difference = desired - (actual_left + actual_right)/2;
+        if (abs(difference) > total_angle_tolerance)
+        {
+            int direction = (difference < 0) ? -1 : 1;
+            double delta = actual_left - actual_right;
+            double cmd_left = direction, cmd_right = direction;
+            if (abs(delta) > individual_angle_tolerance)
+            {
+                if (actual_left > actual_right)
+                    cmd_left *= scaling_factor;
+                else
+                    cmd_right *= scaling_factor;
+            }
+            return std::make_pair(cmd_left, cmd_right);
+        }
+        return std::make_pair(0,0);
+    }
+    
+    /*
+     * Input is angle desired/measured of turntable and output is in raw pwm frequency.
+     * */
+    double RobotInterface::turntableAngleToPWM(const double &desired, const double &actual)
+    {
+        //we don't anticipate this changing very much keep at method level
+        double angle_tolerance = 0.01;
+        double difference = desired - actual;
+        if (abs(difference) > angle_tolerance)
+            return (difference < 0) ? -0.8 : 0.8;
+        return 0;
     }
 
     /*

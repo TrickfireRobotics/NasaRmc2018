@@ -19,6 +19,7 @@
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/robot_hw.h>
+#include <utility>
 #include <algorithm>
 #include <tfr_msgs/ArduinoReading.h>
 #include <pwm_interface.h>
@@ -94,8 +95,6 @@ namespace tfr_control {
         // Populated by us for controller layer to use
         double effort_values[JOINT_COUNT]{};
 
-        // The time of the previous update cycle (update at the end of write)
-        ros::Time prev_time;
         
         void registerTreadJoint(std::string name, Joint joint);
         void registerBinJoint(std::string name, Joint joint);
@@ -104,6 +103,22 @@ namespace tfr_control {
 
         //callback for publisher
         void readArduino(const tfr_msgs::ArduinoReadingConstPtr &msg);
+
+        /**
+         * Gets the PWM appropriate output for an angle joint at the current time
+         * */
+        double angleToPWM(const double &desired, const double &measured);
+
+        /**
+         * Gets the PWM appropriate output for turntable at the current time
+         * */
+        double turntableAngleToPWM(const double &desired, const double &measured);
+
+        /**
+         * Gets the PWM appropriate output for turntable at the current time
+         * */
+        std::pair<double, double> twinAngleToPWM(const double &desired, 
+                const double &measured_left, const double &measured_right);
 
         /**
          * Gets the PWM appropriate output for a joint at the current time

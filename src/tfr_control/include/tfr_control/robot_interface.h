@@ -95,6 +95,10 @@ namespace tfr_control {
         // Populated by us for controller layer to use
         double effort_values[JOINT_COUNT]{};
 
+        //used to limit acceleration pull on the drivebase
+        std::pair<double, double> drivebase_v0;
+        ros::Time last_update;
+
         
         void registerTreadJoint(std::string name, Joint joint);
         void registerBinJoint(std::string name, Joint joint);
@@ -123,12 +127,13 @@ namespace tfr_control {
         /**
          * Gets the PWM appropriate output for a joint at the current time
          * */
-        double velocityToPWM(const double &velocity);
+        double drivebaseVelocityToPWM(const double &v_1, const double &v_0);
 
         // THESE DATA MEMBERS ARE FOR SIMULATION ONLY
         // Holds the lower and upper limits of the URDF model joint
         bool use_fake_values = false;
         const double *lower_limits, *upper_limits;
+
     };
 }
 

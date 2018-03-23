@@ -17,7 +17,10 @@ namespace tfr_control
             const double *lower_lim, const double *upper_lim) :
         pwm{},
         arduino{n.subscribe("arduino", 5, &RobotInterface::readArduino, this)},
-        use_fake_values{fakes}, lower_limits{lower_lim}, upper_limits{upper_lim}
+        use_fake_values{fakes}, lower_limits{lower_lim},
+        upper_limits{upper_lim}, drivebase_v0{std::make_pair(0,0)},
+        last_update{ros::Time::now()}
+
     {
         // Note: the string parameters in these constructors must match the
         // joint names from the URDF, and yaml controller description. 
@@ -135,11 +138,11 @@ namespace tfr_control
             pwm.set(PWMInterface::Address::ARM_TURNTABLE, signal);
 
             //LOWER_ARM
-            auto twin_sig = twinAngleToPWM(command_values[static_cast<int>(Joint::LOWER_ARM)],
+            auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::LOWER_ARM)],
                         reading.arm_lower_left_pos,
                         reading.arm_lower_right_pos);
-            pwm.set(PWMInterface::Address::ARM_LOWER_LEFT, twin_sig.first);
-            pwm.set(PWMInterface::Address::ARM_LOWER_RIGHT, twin_sig.second);
+            pwm.set(PWMInterface::Address::ARM_LOWER_LEFT, twin_signal.first);
+            pwm.set(PWMInterface::Address::ARM_LOWER_RIGHT, twin_signal.second);
 
             //UPPER_ARM
             signal = angleToPWM(command_values[static_cast<int>(Joint::UPPER_ARM)],
@@ -153,13 +156,28 @@ namespace tfr_control
         }
 
         //LEFT_TREAD
-        signal = velocityToPWM(command_values[static_cast<int>(Joint::LEFT_TREAD)]);
+        signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::LEFT_TREAD)],
+                    drivebase_v0.first);
         pwm.set(PWMInterface::Address::TREAD_LEFT, signal);
 
         //RIGHT_TREAD
-        signal = velocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)]);
+        signal =
+            drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
+                    drivebase_v0.second);
         pwm.set(PWMInterface::Address::TREAD_RIGHT, signal);
-        //TODO integrate bin
+
+        //BIN
+        auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::BIN)],
+                    reading.bin_left_pos,
+                    reading.bin_left_pos);
+        pwm.set(PWMInterface::Address::BIN_LEFT, twin_signal.first);
+        pwm.set(PWMInterface::Address::BIN_RIGHT, twin_signal.second);
+
+        
+        //UPKEEP
+        last_update = ros::Time::now();
+        drivebase_v0.first = velocity_values[static_cast<int>(Joint::LEFT_TREAD)];
+        drivebase_v0.second = velocity_values[static_cast<int>(Joint::RIGHT_TREAD)];
     }
 
     void RobotInterface::clearCommands()
@@ -181,10 +199,6 @@ namespace tfr_control
 
         //allow the joint to be commanded
         JointHandle handle(state_handle, &command_values[idx]);
-        /* note there might need to be more complicated logic here in the 
-         * future if we need to use interfaces outside of the effort_controllers
-         * package
-         */
         joint_effort_interface.registerHandle(handle);
     }
 
@@ -201,10 +215,6 @@ namespace tfr_control
 
         //allow the joint to be commanded
         JointHandle handle(state_handle, &command_values[idx]);
-        /* note there might need to be more complicated logic here in the 
-         * future if we need to use interfaces outside of the effort_controllers
-         * package
-         */
         joint_effort_interface.registerHandle(handle);
     }
 
@@ -221,10 +231,6 @@ namespace tfr_control
 
         //allow the joint to be commanded
         JointHandle handle(state_handle, &command_values[idx]);
-        /* note there might need to be more complicated logic here in the 
-         * future if we need to use interfaces outside of the effort_controllers
-         * package
-         */
         joint_position_interface.registerHandle(handle);
     }
 
@@ -288,9 +294,30 @@ namespace tfr_control
      * Takes in a velocity, and converts it to pwm for the drivebase.
      * Velocity is in meters per second, and output is in raw pwm frequency.
      * Scaled to match the values expected by pwm interface
+     * NOTE we have a safety limit here of 1 m/s^2 any more and it will snap a
+     * shaft
      * */
-    double RobotInterface::velocityToPWM(const double &vel)
+    double RobotInterface::drivebaseVelocityToPWM(const double& v_1, const double& v_0)
     {
+        //limit for acceleration
+        double vel = v_1, d_v = v_1 - v_0 , d_t = (ros::Time::now()- last_update).toSec();
+        double max_a = 1;
+        double del = vel;
+
+        /*
+         * d_v/d_t = max_a
+         * d_v = max_a * d_t && d_v = v_1 - v_0
+         * v_1 = max_a * d_t - v_0
+         * */
+        if (abs(d_v/d_t) > max_a)
+        {
+            if (d_v < 0)
+                max_a = -1;
+            vel = max_a * d_t - v_0;
+        }
+        
+        ROS_INFO("original %f,limited %f", del, vel);
+        //limit for max velocity
         //we don't anticipate this changing very much keep at method level
         double max_vel = 1;
         int sign = (vel < 0) ? -1 : 1;

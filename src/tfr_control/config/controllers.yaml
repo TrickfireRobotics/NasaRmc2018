@@ -40,12 +40,12 @@ arm_controller:
         - turntable_joint
         - lower_arm_joint
         - upper_arm_joint
-#    gains:
-#        turntable_joint: {p: 0.75, i: 0.5, d: 0.01}
-#        lower_arm_joint: {p: 0.75, i: 0.5, d: 0.01}
-#        upper_arm_joint: {p: 0.75, i: 0.5, d: 0.01}
-#    constraints:
-#        goal_time: 10.0
+    gains:
+        turntable_joint: {p: 0.75, i: 0.5, d: 0.01}
+        lower_arm_joint: {p: 0.75, i: 0.5, d: 0.01}
+        upper_arm_joint: {p: 0.75, i: 0.5, d: 0.01}
+    constraints:
+        goal_time: 10.0
 
 # Controls the end effector (scoop) of the arm. This is
 # separate from the main arm controller as MoveIt requires
@@ -54,7 +54,7 @@ arm_end_controller:
     type: position_controllers/JointTrajectoryController
     joints:
         - scoop_joint
-#    gains:
-#        scoop_joint: {p: 0.75, i: 0.5, d: 0.01}
-#    constraints:
-#        goal_time: 10.0
+    gains:
+        scoop_joint: {p: 0.75, i: 0.5, d: 0.01}
+    constraints:
+        goal_time: 10.0

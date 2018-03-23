@@ -46,12 +46,12 @@ enum Potentiometers
 
 Potentiometer pots []
 {
-  {4.144,  0.209, 1.693},      //ARM_LOWER_LEFT
-  {4.144,  0.209, 1.693},      //ARM_LOWER_RIGHT
-  {4.144,  0.000, 1.868},      //ARM_UPPER
-  {4.144, -0.873, 1.868},      //ARM_SCOOP
-  {4.144,  0.000, 0.786},      //BIN_LEFT
-  {4.144,  0.000, 0.786}       //BIN_RIGHT
+  {4.88,  0.209, 1.693},      //ARM_LOWER_LEFT
+  {4.88,  0.209, 1.693},      //ARM_LOWER_RIGHT
+  {4.88,  0.000, 1.868},      //ARM_UPPER
+  {4.88, -0.873, 1.868},      //ARM_SCOOP
+  {4.88,  0.000, 0.786},      //BIN_LEFT
+  {4.88,  0.000, 0.786}       //BIN_RIGHT
 };
 
 

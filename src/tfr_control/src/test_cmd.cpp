@@ -14,7 +14,7 @@ int main(int argc, char **argv)
   ros::Publisher chatter_pub =
       n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
 
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(30);
 
   int count = 0;
   tfr_msgs::EmptySrv request;
@@ -22,13 +22,16 @@ int main(int argc, char **argv)
   while(!ros::service::call("toggle_motors", request));
 
 
+
+  bool sign = false;
   while (ros::ok())
   {
     geometry_msgs::Twist msg;
 
-    msg.linear.x=0.5;
+    msg.linear.x= (sign)? -1:1;
+    sign = !sign;
 
-//    chatter_pub.publish(msg);
+    chatter_pub.publish(msg);
 
     ros::spinOnce();
 

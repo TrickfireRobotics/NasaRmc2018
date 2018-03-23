@@ -26,8 +26,49 @@
 #include <std_msgs/Float64.h>
 #include <vector>
 #include <map>
+#include <iostream>
+#include <termios.h>
 
 typedef actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> Client;
+
+// Non-blocking input function (useful for testing preemption)
+char getch()
+{
+    fd_set set;
+    struct timeval timeout;
+    int rv;
+    char buff = 0;
+    int len = 1;
+    int filedesc = 0;
+    FD_ZERO(&set);
+    FD_SET(filedesc, &set);
+
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 1000;
+
+    rv = select(filedesc + 1, &set, NULL, NULL, &timeout);
+
+    struct termios old = {0};
+    if (tcgetattr(filedesc, &old) < 0)
+        ROS_ERROR("tcsetattr()");
+    old.c_lflag &= ~ICANON;
+    old.c_lflag &= ~ECHO;
+    old.c_cc[VMIN] = 1;
+    old.c_cc[VTIME] = 0;
+    if (tcsetattr(filedesc, TCSANOW, &old) < 0)
+        ROS_ERROR("tcsetattr ICANON");
+
+    if(rv == -1)
+        ROS_ERROR("select");
+    else if (rv > 0)
+        read(filedesc, &buff, len );
+
+    old.c_lflag |= ICANON;
+    old.c_lflag |= ECHO;
+    if (tcsetattr(filedesc, TCSADRAIN, &old) < 0)
+        ROS_ERROR ("tcsetattr ~ICANON");
+    return (buff);
+}
 
 // Called once when the goal completes
 void finished(const actionlib::SimpleClientGoalState& state, const tfr_msgs::ArmMoveResultConstPtr& result)
@@ -55,7 +96,7 @@ int main(int argc, char** argv)
     // Needed to spin while we're waiting for a blocking call later (waiting for
     // server finished response)
     ros::AsyncSpinner spin(1);
-    spin.start();
+    //spin.start();
     
     // Set up the action server and connect
     Client client("move_arm", true);
@@ -92,8 +133,29 @@ int main(int argc, char** argv)
         goal.pose[3] = angles[3];
 
         // Execute the action
-        client.sendGoal(goal, &finished, NULL, NULL);
-        client.waitForResult(ros::Duration(0.0));
+        client.sendGoal(goal, NULL, NULL, NULL);
+        ros::Rate rate(50.0);
+        bool breaking = false;
+        while ((client.getState() == actionlib::SimpleClientGoalState::ACTIVE
+               || client.getState() == actionlib::SimpleClientGoalState::PENDING) && ros::ok())
+        {
+            if (getch())
+            {
+                breaking = true;
+                ROS_INFO("Preempting Arm Action Server");
+                // Preempt, the program is being killed
+                client.cancelAllGoals();
+                break;
+            }
+
+            rate.sleep();
+            ros::spinOnce();
+        }
+        ROS_INFO("State: %s", client.getState().toString().c_str());
+        if (!ros::ok() || breaking)
+        {
+            break;
+        }
     }
 
     return 0;

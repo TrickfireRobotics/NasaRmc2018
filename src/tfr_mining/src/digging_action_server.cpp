@@ -75,9 +75,25 @@ private:
                 goal.pose[2] = state[2];
                 goal.pose[3] = state[3];
 
-                bool success = (client.sendGoalAndWait(goal) == actionlib::SimpleClientGoalState::SUCCEEDED);
+                client.sendGoal(goal);
+                ros::Rate rate(50.0);
 
-                if (!success)
+                while ((client.getState() == actionlib::SimpleClientGoalState::ACTIVE
+                        || client.getState() == actionlib::SimpleClientGoalState::PENDING) && ros::ok())
+                {
+                    if (server.isPreemptRequested())
+                    {
+                        ROS_INFO("Preempting digging action server");
+                        client.cancelAllGoals();
+                        tfr_msgs::DiggingResult result;
+                        server.setPreempted(result);
+                        return;
+                    }
+
+                    rate.sleep();
+                }
+                
+                if (client.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
                 {
                     ROS_WARN("Error executing arm action server to state, exiting.");
                     tfr_msgs::DiggingResult result;
@@ -107,11 +123,27 @@ private:
             final_goal.pose[3] = final_angles[3];
         }
 
-        bool success = (client.sendGoalAndWait(final_goal) == actionlib::SimpleClientGoalState::SUCCEEDED);
+        client.sendGoal(final_goal);
+        ros::Rate rate(50.0);
 
-        if (!success)
+        while ((client.getState() == actionlib::SimpleClientGoalState::ACTIVE
+                || client.getState() == actionlib::SimpleClientGoalState::PENDING) && ros::ok())
         {
-            ROS_WARN("Error moving arm to final position (may or may not be in a safe position for driving).");
+            if (server.isPreemptRequested())
+            {
+                ROS_INFO("Preempting digging action server");
+                client.cancelAllGoals();
+                tfr_msgs::DiggingResult result;
+                server.setPreempted(result);
+                return;
+            }
+
+            rate.sleep();
+        }
+        
+        if (client.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
+        {
+            ROS_WARN("Error moving arm to final position, exiting.");
             tfr_msgs::DiggingResult result;
             server.setAborted(result);
         }

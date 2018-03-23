@@ -172,7 +172,6 @@ namespace tfr_control
                     reading.bin_left_pos);
         pwm.set(PWMInterface::Address::BIN_LEFT, twin_signal.first);
         pwm.set(PWMInterface::Address::BIN_RIGHT, twin_signal.second);
-
         
         //UPKEEP
         last_update = ros::Time::now();
@@ -302,7 +301,6 @@ namespace tfr_control
         //limit for acceleration
         double vel = v_1, d_v = v_1 - v_0 , d_t = (ros::Time::now()- last_update).toSec();
         double max_a = 1;
-        double del = vel;
 
         /*
          * d_v/d_t = max_a
@@ -316,7 +314,6 @@ namespace tfr_control
             vel = max_a * d_t - v_0;
         }
         
-        ROS_INFO("original %f,limited %f", del, vel);
         //limit for max velocity
         //we don't anticipate this changing very much keep at method level
         double max_vel = 1;

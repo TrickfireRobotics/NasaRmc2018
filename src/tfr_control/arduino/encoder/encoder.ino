@@ -56,7 +56,7 @@ Potentiometer pots []
 
 
 //encoders
-Quadrature gearbox_left(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
+VelocityQuadrature gearbox_left(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 //TODO Quadrature gearbox_right(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 //TODO Quadrature turntable(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 tfr_msgs::ArduinoReading arduinoReading;

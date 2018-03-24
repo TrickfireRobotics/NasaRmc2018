@@ -19,6 +19,7 @@ add_message_files(
   Echo.msg
   SystemStatus.msg
   EncoderReading.msg
+  PotentiometerReading.msg
 )
 
 # Generate services in the 'srv' folder

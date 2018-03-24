@@ -58,6 +58,10 @@ add_executable(fiducial_odom_publisher src/fiducial_odom_publisher.cpp)
 add_dependencies(fiducial_odom_publisher ${catkin_EXPORTED_TARGETS})
 target_link_libraries(fiducial_odom_publisher tf_manipulator ${catkin_LIBRARIES})
 
+add_executable(drivebase_odom_publisher src/drivebase_odom_publisher.cpp)
+add_dependencies(drivebase_odom_publisher ${catkin_EXPORTED_TARGETS})
+target_link_libraries(drivebase_odom_publisher tf_manipulator ${catkin_LIBRARIES})
+
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 if(TARGET ${PROJECT_NAME}-test)

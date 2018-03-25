@@ -4,7 +4,7 @@
     <node name="autnonomous_action_server" pkg="tfr_executive" type="autonomous_action_server" output="screen">
         <rosparam>
             localization: true
-            navigation_to: false
+            navigation_to: true 
             digging: false
             hole: false
             navigation_from: false

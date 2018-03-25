@@ -8,7 +8,7 @@ Navigator::Navigator(ros::NodeHandle &n,
         const NavigationGoalManager::GeometryConstraints &constraints, 
         const std::string &bin_frame) : 
         node{n}, 
-        goal_manager(bin_frame,constraints),
+        goal_manager("odom",constraints),
         server{n, "navigate", boost::bind(&Navigator::navigate, this, _1) ,false}, 
         nav_stack{"move_base", true}
 {

@@ -16,7 +16,7 @@ namespace tfr_control
     RobotInterface::RobotInterface(ros::NodeHandle &n, bool fakes, 
             const double *lower_lim, const double *upper_lim) :
         pwm{},
-        arduino{n.subscribe("arduino", 5, &RobotInterface::readArduino, this)},
+        arduino{n.subscribe("/sensors/arduino", 5, &RobotInterface::readArduino, this)},
         use_fake_values{fakes}, lower_limits{lower_lim},
         upper_limits{upper_lim}, drivebase_v0{std::make_pair(0,0)},
         last_update{ros::Time::now()}
@@ -219,7 +219,7 @@ namespace tfr_control
     {
         double goal = 0.785398;
         double tolerance = 0.01;
-        return abs(goal - position_values[static_cast<int>(Joint::BIN)]) < tolerance;
+        return goal - position_values[static_cast<int>(Joint::BIN)] < tolerance;
     }
 
 

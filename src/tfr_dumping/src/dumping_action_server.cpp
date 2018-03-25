@@ -98,6 +98,7 @@ class Dumper
          */
         void dump(const tfr_msgs::EmptyGoalConstPtr &goal) 
         {  
+            ROS_INFO("dumping action server started dumping procedure");
             //check to make sure we can see the board
             tfr_msgs::ArucoResult initial_estimate{};
             getArucoEstimate(initial_estimate);
@@ -137,6 +138,7 @@ class Dumper
                 }
             }
 
+            ROS_INFO("dumping action server detected light raising bin");
             std_msgs::Float64 bin_cmd;
             bin_cmd.data = BIN_EXTENDED;
             tfr_msgs::QuerySrv query;
@@ -194,7 +196,6 @@ class Dumper
          * */
         void stopMoving()
         {
-            ROS_INFO("Stopped");
             geometry_msgs::Twist cmd{};
             cmd.linear.x = 0;
             cmd.angular.z = 0;

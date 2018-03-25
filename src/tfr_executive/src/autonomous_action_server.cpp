@@ -42,6 +42,7 @@
 #include <tfr_msgs/EmptyAction.h>
 #include <tfr_msgs/DurationSrv.h>
 #include <actionlib/server/simple_action_server.h>
+#include <actionlib/client/simple_action_client.h>
 class AutonomousExecutive
 {
     public:
@@ -49,9 +50,16 @@ class AutonomousExecutive
             server{n, "autonomous_action_server", 
                 boost::bind(&AutonomousExecutive::autonomousMission, this, _1),
                 false},
+            localizationClient{n, "localize"},
             frequency{f}
         {
             ros::param::param<bool>("~localization", LOCALIZATION, true);
+            if (LOCALIZATION)
+            {
+                ROS_INFO("Autonomous Action Server: Connecting to localization server");
+                localizationClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to localization server");
+            }
             ros::param::param<bool>("~navigation_to", NAVIGATION_TO, true);
             ros::param::param<bool>("~digging", DIGGING, true);
             ros::param::param<bool>("~hole", HOLE, true);
@@ -97,10 +105,31 @@ class AutonomousExecutive
         {
             
             ROS_INFO("Autonomous Action Server: mission started");
+            if (server.isPreemptRequested() || ! ros::ok())
+            {
+                server.setPreempted();
+                return;
+            }
 
             if (LOCALIZATION)
             {
                 ROS_INFO("Autonomous Action Server: commencing localization");
+                tfr_msgs::EmptyGoal goal{};
+                localizationClient.sendGoal(goal);
+                //handle preemption
+                while (localizationClient.getState() !=
+                        actionlib::SimpleClientGoalState::SUCCEEDED && ros::ok())
+                {
+                    if (server.isPreemptRequested() || ! ros::ok())
+                    {
+                        localizationClient.cancelAllGoals();
+                        server.setPreempted();
+                        ROS_INFO("Autonomous Action Server: localization preempted");
+                        return;
+                    }
+                    frequency.sleep();
+                }
+
                 ROS_INFO("Autonomous Action Server: localization finished");
             }
 
@@ -145,6 +174,8 @@ class AutonomousExecutive
         }
 
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
+
+        actionlib::SimpleActionClient<tfr_msgs::EmptyAction> localizationClient;
 
         bool LOCALIZATION;
         bool NAVIGATION_TO;

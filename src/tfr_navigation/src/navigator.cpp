@@ -6,11 +6,10 @@
  * */
 Navigator::Navigator(ros::NodeHandle &n,
         const NavigationGoalManager::GeometryConstraints &constraints, 
-        const std::string &name, 
         const std::string &bin_frame) : 
         node{n}, 
         goal_manager(bin_frame,constraints),
-        server{n, name, boost::bind(&Navigator::navigate, this, _1) ,false}, 
+        server{n, "navigate", boost::bind(&Navigator::navigate, this, _1) ,false}, 
         nav_stack{"move_base", true}
 {
     ROS_DEBUG("Navigation server constructed %f", ros::Time::now().toSec());
@@ -18,8 +17,6 @@ Navigator::Navigator(ros::NodeHandle &n,
     ros::param::param<float>("~rate", rate, 1);
     ros::param::param<std::string>("~frame_id", frame_id, "base_footprint");
 
-    odom_subscriber = node.subscribe("odom", 5,
-            &Navigator::update_position, this);
 
     //display parameters to the user
     ROS_DEBUG(" frame_id:       %s", frame_id.c_str());
@@ -77,72 +74,25 @@ void Navigator::navigate(const tfr_msgs::NavigationGoalConstPtr &goal)
         {
             ROS_INFO("%s: preempted", ros::this_node::getName().c_str());
             nav_stack.cancelAllGoals();
-            tfr_msgs::NavigationResult result;
-            update_result(result, nav_goal);
-            server.setPreempted(result);
+            server.setPreempted();
             return;
         }
         else
         {
-            tfr_msgs::NavigationFeedback feedback{};
-            update_feedback(feedback, nav_goal);
-            server.publishFeedback(feedback);
-            ROS_INFO("servicing goal, %f", feedback.header.stamp.toSec());
             r.sleep();
         }
     }
 
-    tfr_msgs::NavigationResult result{};
-    update_result(result, nav_goal);
     if (nav_stack.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
-        server.setSucceeded(result);
+        server.setSucceeded();
     }
     else 
     {
         nav_stack.cancelAllGoals();
-        server.setAborted(result);
+        server.setAborted();
     }
     ROS_INFO("Navigation server finished");
 }
 
 
-/*
- * Prepare a result message for sending
- * */
-void Navigator::update_result(tfr_msgs::NavigationResult &result,
-        const move_base_msgs::MoveBaseGoal &nav_goal)
-{
-    auto thread_safe_local = current_position;
-    result.header.stamp = ros::Time::now();
-    result.header.frame_id = frame_id;
-    if (thread_safe_local != nullptr)
-        result.current = thread_safe_local->pose.pose;
-    result.goal = nav_goal.target_pose.pose;
-}
-
-/*
- * Prepare a feedback message for sending
- * */
-void Navigator::update_feedback(tfr_msgs::NavigationFeedback &feedback,
-        const move_base_msgs::MoveBaseGoal &nav_goal)
-{
-    auto thread_safe_local = current_position;
-    feedback.header.stamp = ros::Time::now();
-    feedback.header.frame_id = frame_id;
-    if (thread_safe_local != nullptr)
-        feedback.current = thread_safe_local->pose.pose;
-    feedback.goal = nav_goal.target_pose.pose;
-}
-
-
-/**
- * Callback for updating the most recent position
- * */
-void Navigator::update_position(const nav_msgs::OdometryConstPtr &msg)
-{
-    //get the pose without the covariance, not needed
-    //need to use shared pointer here for thread safety see:
-    //https://answers.ros.org/question/53234/processing-an-image-outside-the-callback-function/
-    current_position = msg;
-}

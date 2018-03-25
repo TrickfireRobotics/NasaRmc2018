@@ -41,8 +41,11 @@
 #include <ros/console.h>
 #include <tfr_msgs/EmptyAction.h>
 #include <tfr_msgs/DurationSrv.h>
+#include <tfr_msgs/NavigationAction.h>
+#include <tfr_utilities/location_codes.h>
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
+
 class AutonomousExecutive
 {
     public:
@@ -51,6 +54,7 @@ class AutonomousExecutive
                 boost::bind(&AutonomousExecutive::autonomousMission, this, _1),
                 false},
             localizationClient{n, "localize"},
+            navigationClient{n, "navigate"},
             frequency{f}
         {
             ros::param::param<bool>("~localization", LOCALIZATION, true);
@@ -61,9 +65,15 @@ class AutonomousExecutive
                 ROS_INFO("Autonomous Action Server: Connected to localization server");
             }
             ros::param::param<bool>("~navigation_to", NAVIGATION_TO, true);
+            ros::param::param<bool>("~navigation_from", NAVIGATION_FROM, true);
+            if (NAVIGATION_TO || NAVIGATION_FROM)
+            {
+                ROS_INFO("Autonomous Action Server: Connecting to navigation server");
+                navigationClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to navigation server");
+            }
             ros::param::param<bool>("~digging", DIGGING, true);
             ros::param::param<bool>("~hole", HOLE, true);
-            ros::param::param<bool>("~navigation_from", NAVIGATION_FROM, true);
             ros::param::param<bool>("~dumping", DUMPING, true);
             server.start();
             ROS_INFO("Autonomous Action Server: online, %f",
@@ -136,6 +146,25 @@ class AutonomousExecutive
             if (NAVIGATION_TO)
             {
                 ROS_INFO("Autonomous Action Server: commencing navigation");
+                tfr_msgs::NavigationGoal goal;
+                //messages can't support user defined types
+                goal.location_code= static_cast<uint8_t>(tfr_utilities::LocationCode::MINING);
+                navigationClient.sendGoal(goal);
+                //handle preemption
+                while ( navigationClient.getState() != actionlib::SimpleClientGoalState::SUCCEEDED ||
+                        navigationClient.getState() != actionlib::SimpleClientGoalState::ABORTED   && 
+                        ros::ok())
+                {
+                    if (server.isPreemptRequested() || ! ros::ok())
+                    {
+                        navigationClient.cancelAllGoals();
+                        server.setPreempted();
+                        ROS_INFO("Autonomous Action Server: navigation preempted");
+                        return;
+                    }
+                    frequency.sleep();
+                }
+
                 ROS_INFO("Autonomous Action Server: navigation finished");
             }
 
@@ -159,6 +188,25 @@ class AutonomousExecutive
             if (NAVIGATION_FROM)
             {
                 ROS_INFO("Autonomous Action Server: commencing navigation");
+                tfr_msgs::NavigationGoal goal;
+                //messages can't support user defined types
+                goal.location_code= static_cast<uint8_t>(tfr_utilities::LocationCode::DUMPING);
+                navigationClient.sendGoal(goal);
+                //handle preemption
+                while ( navigationClient.getState() != actionlib::SimpleClientGoalState::SUCCEEDED ||
+                        navigationClient.getState() != actionlib::SimpleClientGoalState::ABORTED   && 
+                        ros::ok())
+                {
+                    if (server.isPreemptRequested() || ! ros::ok())
+                    {
+                        navigationClient.cancelAllGoals();
+                        server.setPreempted();
+                        ROS_INFO("Autonomous Action Server: navigation preempted");
+                        return;
+                    }
+                    frequency.sleep();
+                }
+
                 ROS_INFO("Autonomous Action Server: navigation finished");
             }
 
@@ -176,6 +224,7 @@ class AutonomousExecutive
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
 
         actionlib::SimpleActionClient<tfr_msgs::EmptyAction> localizationClient;
+        actionlib::SimpleActionClient<tfr_msgs::NavigationAction> navigationClient;
 
         bool LOCALIZATION;
         bool NAVIGATION_TO;

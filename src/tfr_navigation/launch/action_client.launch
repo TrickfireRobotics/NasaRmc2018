@@ -1,5 +1,0 @@
-<launch>
-    <node name="navigation_action_client" pkg="tfr_navigation" type="navigation_action_client"
-        output="screen">
-    </node>
-</launch>

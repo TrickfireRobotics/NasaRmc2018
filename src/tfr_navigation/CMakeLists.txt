@@ -31,24 +31,12 @@ add_library( navigation_server
 add_dependencies(navigation_server ${catkin_EXPORTED_TARGETS})
 target_link_libraries(navigation_server ${catkin_LIBRARIES})
 
-add_library( navigation_client 
-    src/navigation_client.cpp
-)
-add_dependencies(navigation_client ${catkin_EXPORTED_TARGETS})
-target_link_libraries(navigation_server ${catkin_LIBRARIES})
-
 
 add_executable(navigation_action_server 
     src/navigation_action_server.cpp
 )
 add_dependencies(navigation_action_server ${catkin_EXPORTED_TARGETS})
 target_link_libraries(navigation_action_server navigation_server ${catkin_LIBRARIES})
-
-add_executable(navigation_action_client 
-    src/navigation_action_client.cpp
-)
-add_dependencies(navigation_action_client ${catkin_EXPORTED_TARGETS})
-target_link_libraries(navigation_action_client navigation_client ${catkin_LIBRARIES})
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 

@@ -7,4 +7,6 @@
         <rosparam file="$(find tfr_navigation)/params/global_costmap.yaml" command="load" />
         <rosparam file="$(find tfr_navigation)/params/planner.yaml" command="load" />
     </node>
+    <include file="$(find tfr_navigation)/launch/fusion.launch"/>
+    <node name="navigation_action_server" pkg="tfr_navigation" type="navigation_action_server.cpp"/>
 </launch>

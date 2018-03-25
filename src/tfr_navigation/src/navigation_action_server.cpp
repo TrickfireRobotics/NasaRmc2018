@@ -17,7 +17,7 @@ int main(int argc, char** argv)
     
     NavigationGoalManager::GeometryConstraints 
         constraints(safe_mining_distance, finish_line);
-    Navigator navigator(n, constraints, ros::this_node::getName(), bin_frame);
+    Navigator navigator(n, constraints, bin_frame);
     ros::spin();
     return 0;
 }

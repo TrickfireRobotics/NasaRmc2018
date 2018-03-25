@@ -231,7 +231,7 @@ namespace tfr_control
     bool RobotInterface::isBinExtended()
     {
         double goal = 0.785398;
-        double tolerance = 0.05;
+        double tolerance = 0.01;
         return goal - position_values[static_cast<int>(Joint::BIN)] < tolerance;
     }
 

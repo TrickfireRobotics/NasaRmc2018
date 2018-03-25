@@ -134,7 +134,6 @@ class Dumper
 
             //we detected the light, stop moving immediately
             stopMoving();
-
             ROS_INFO("dumping action server detected light raising bin");
             std_msgs::Float64 bin_cmd;
             bin_cmd.data = BIN_EXTENDED;

@@ -68,26 +68,29 @@ namespace tfr_control
         velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] = reading.tread_right_vel;
         effort_values[static_cast<int>(Joint::RIGHT_TREAD)] = 0;
 
-        //TURNTABLE
-        position_values[static_cast<int>(Joint::TURNTABLE)] = reading.arm_turntable_pos;
-        velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0;
-        effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
+        if (!use_fake_values)
+        {
+            //TURNTABLE
+            position_values[static_cast<int>(Joint::TURNTABLE)] = reading.arm_turntable_pos;
+            velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0;
+            effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
 
-        //LOWER_ARM
-        position_values[static_cast<int>(Joint::LOWER_ARM)] = 
+            //LOWER_ARM
+            position_values[static_cast<int>(Joint::LOWER_ARM)] = 
                 (reading.arm_lower_left_pos+ reading.arm_lower_right_pos)/2;
-        velocity_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
-        effort_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
+            velocity_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
+            effort_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
 
-        //UPPER_ARM
-        position_values[static_cast<int>(Joint::UPPER_ARM)] = reading.arm_upper_pos;
-        velocity_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
-        effort_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
+            //UPPER_ARM
+            position_values[static_cast<int>(Joint::UPPER_ARM)] = reading.arm_upper_pos;
+            velocity_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
+            effort_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
 
-        //SCOOP
-        position_values[static_cast<int>(Joint::SCOOP)] = reading.arm_scoop_pos;
-        velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
-        effort_values[static_cast<int>(Joint::SCOOP)] = 0;
+            //SCOOP
+            position_values[static_cast<int>(Joint::SCOOP)] = reading.arm_scoop_pos;
+            velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
+            effort_values[static_cast<int>(Joint::SCOOP)] = 0;
+        }
 
         //BIN
         position_values[static_cast<int>(Joint::BIN)] = 

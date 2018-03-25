@@ -99,7 +99,12 @@ void loop()
     ads1115_a.startADC_SingleEnded(0);
 //TODO    ads1115_b.startADC_SingleEnded(0);
     delay(8);
-    arduinoReading.arm_lower_left_pos = pots[ARM_LOWER_LEFT].getPosition(ads1115_a.collectADC_SingleEnded());
+    //TODO Get real values here
+    arduinoReading.arm_lower_right_pos = arduinoReading.arm_lower_left_pos = pots[ARM_LOWER_LEFT].getPosition(ads1115_a.collectADC_SingleEnded());
+    arduinoReading.arm_upper_pos = pots[ARM_UPPER].min_angle;
+    arduinoReading.arm_scoop_pos = pots[ARM_SCOOP].min_angle;
+    arduinoReading.bin_left_pos = pots[BIN_LEFT].min_angle;
+    arduinoReading.bin_right_pos = pots[BIN_RIGHT].min_angle;
 //TODO    arduinoReading.arm_scoop_pos = pots[ARM_SCOOP].getPosition(ads1115_b.collectADC_SingleEnded());
 
 

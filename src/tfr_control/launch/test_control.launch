@@ -4,4 +4,5 @@
     <!-- Launch all the hardware interface nodes -->
     <include file="$(find tfr_control)/launch/control.launch"/>
     <include file="$(find tfr_control)/launch/drivebase.launch"/>
+    <node name="test_e_stop" pkg="tfr_control" type="test_e_stop"/>
 </launch>

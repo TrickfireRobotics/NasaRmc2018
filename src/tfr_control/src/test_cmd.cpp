@@ -3,7 +3,6 @@
 #include "geometry_msgs/Twist.h"
 
 #include <sstream>
-#include <tfr_msgs/EmptySrv.h>
 #include <std_msgs/Float64.h>
 
 int main(int argc, char **argv)
@@ -20,9 +19,7 @@ int main(int argc, char **argv)
   ros::Rate loop_rate(30);
 
   int count = 0;
-  tfr_msgs::EmptySrv request;
 
-  while(!ros::service::call("toggle_motors", request));
 
 
 

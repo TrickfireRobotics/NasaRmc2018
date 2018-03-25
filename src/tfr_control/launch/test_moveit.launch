@@ -1,5 +1,4 @@
 <launch>
-    <node name="test_cmd" pkg="tfr_control" type="test_cmd"/>
     <node name="encoder_handler" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0" output="screen"/>
  
     <!-- Launch all the hardware interface nodes -->
@@ -10,4 +9,5 @@
 
     <!-- Launch rviz -->
     <include file="$(find tfr_visualization)/launch/moveit.launch"/>
+    <node name="test_e_stop" pkg="tfr_control" type="test_e_stop"/>
 </launch>

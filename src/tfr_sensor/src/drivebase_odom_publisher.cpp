@@ -32,11 +32,14 @@ class DrivebaseOdometryPublisher
             parent_frame{p_frame},
             child_frame{c_frame},
             wheel_span{wheel_sep},
-            t_0{ros::Time::now()}
+            t_0{ros::Time::now()},
+            x{},
+            y{},
+            angle{}
         {
             arduino_subscriber = 
                 n.subscribe("/arduino", 5, &DrivebaseOdometryPublisher::processOdometry, this);
-            odometry_publisher = n.advertise<tfr_msgs::ArduinoReading>("/drivebase_odometry", 5);
+            odometry_publisher = n.advertise<nav_msgs::Odometry>("/drivebase_odometry", 5);
         }
 
         ~DrivebaseOdometryPublisher() = default;
@@ -64,28 +67,35 @@ class DrivebaseOdometryPublisher
             //first we process the data
             auto t_1 = ros::Time::now();
             double d_t = (t_1 - t_0).toSec();
+
+            ROS_INFO("t_1, %f t_0 %f d_t %f", t_1.toSec(), t_0.toSec(), d_t);
             
             //message gives us velocity in meters/second from each individual
             //tread
             double v_l = reading.tread_left_vel;
             double v_r = reading.tread_right_vel;
+            ROS_INFO("v_r %f v_l %f, span %f", v_r, v_l, wheel_span);
 
             //basic differential kinematics to get combined velocities
             double v_ang = (v_r-v_l)/wheel_span;
             double v_lin = (v_r+v_l)/2;
-
+            ROS_INFO("v)ang %f v_lin %f", v_ang, v_lin);
             //break into xy components and increment
             double d_angle = v_ang * d_t;
             angle += d_angle;
+            ROS_INFO("angle %f", angle);
 
             double v_x = v_lin*d_t*cos(angle);
             double v_y = v_lin*d_t*sin(angle);
 
             double d_x = v_x * d_t;
+            ROS_INFO("x_0 %f d_x %f", x, d_x);
             x += d_x;
+            ROS_INFO("x %f", x);
 
             double d_y = v_y * d_t;
             y += d_y;
+            ROS_INFO("y %f", y);
 
             t_0 = t_1;
 
@@ -132,7 +142,7 @@ int main(int argc, char **argv)
     double wheel_span;
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
     ros::param::param<std::string>("~child_frame", child_frame, "odom");
-    ros::param::param<double>("wheel_span", wheel_span, 0.0);
+    ros::param::param<double>("~wheel_span", wheel_span, 0.0);
     DrivebaseOdometryPublisher publisher{n, parent_frame, child_frame, wheel_span};
     ros::spin();
     return 0;

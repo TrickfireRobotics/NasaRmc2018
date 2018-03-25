@@ -97,17 +97,8 @@ private:
                 {
                     ROS_INFO("Preempting Arm Action Server");
                     move_group.stop();
-                    // Get the current position to return in the result message
-                    std::vector<double> current_pos;
-                    move_group.getCurrentState()->copyJointGroupPositions(&joint_model_group, current_pos);
 
-                    // Populate the result message
                     tfr_msgs::ArmMoveResult result;
-                    result.pose.resize(4);
-                    result.pose[0] = current_pos[0];
-                    result.pose[1] = current_pos[1];
-                    result.pose[2] = current_pos[2];
-                    result.pose[3] = current_pos[3];
                     server.setPreempted(result);
                     digging_mutex.lock();
                     dig_status = -1;
@@ -121,17 +112,7 @@ private:
             ROS_WARN("Planning of movement failed, not executing");
         }
 
-        // Get the current position to return in the result message
-        std::vector<double> current_pos;
-        move_group.getCurrentState()->copyJointGroupPositions(&joint_model_group, current_pos);
-
-        // Populate the result message
         tfr_msgs::ArmMoveResult result;
-        result.pose.resize(4);
-        result.pose[0] = current_pos[0];
-        result.pose[1] = current_pos[1];
-        result.pose[2] = current_pos[2];
-        result.pose[3] = current_pos[3];
 
         // Send the result message and set the appropriate action server status
         // if both planning and execution was successful. It may be worthwile to

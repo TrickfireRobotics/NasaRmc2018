@@ -8,8 +8,4 @@ echo ""
 echo "----------------------------------- Navigation -----------------------------------"
 echo ""
 rosrun tfr_navigation tfr_navigation-test
-echo ""
-echo ""
-echo "------------------------------------- Control -------------------------------------"
-echo ""
-rosrun tfr_control tfr_control-test
+

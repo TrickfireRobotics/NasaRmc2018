@@ -1,6 +1,6 @@
 <launch>
     <node name="encoder_handler" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0" output="screen"/>
- 
+    
     <!-- Launch all the hardware interface nodes -->
     <include file="$(find tfr_control)/launch/control.launch"/>
 

@@ -3,5 +3,5 @@
     <include file="$(find tfr_control)/launch/test_moveit.launch" />
 
     <!-- Launch the action server -->
-    <node name="arm_action_server" pkg="tfr_control" type="arm_action_server" />
+    <node name="arm_action_server" pkg="tfr_control" type="arm_action_server" output="screen" />
 </launch>

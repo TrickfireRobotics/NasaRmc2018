@@ -182,11 +182,27 @@ namespace tfr_control
         drivebase_v0.second = velocity_values[static_cast<int>(Joint::RIGHT_TREAD)];
     }
 
+    /*
+     * Resets the commands to a safe neutral state
+     * */
     void RobotInterface::clearCommands()
     {
+        //TODO set position controllers to safe state
         for(auto& value : command_values)
             value = 0;
     }
+
+    /*
+     * Returns if the bin is extended or not
+     * */
+    bool RobotInterface::isBinExtended()
+    {
+        double goal = 0.785398;
+        double tolerance = 0.01;
+        return abs(goal - position_values[static_cast<int>(Joint::BIN)]) < tolerance;
+    }
+
+
 
     /*
      * Register this joint with each neccessary hardware interface

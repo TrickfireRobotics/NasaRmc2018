@@ -15,6 +15,7 @@
  */
 #include <ros/ros.h>
 #include <std_srvs/SetBool.h>
+#include <tfr_msgs/QuerySrv.h>
 #include <urdf/model.h>
 #include <sstream>
 #include <controller_manager/controller_manager.h>
@@ -80,6 +81,7 @@ class Control
             robot_interface{n, use_fake_values, lower_limits, upper_limits},
             controller_interface{&robot_interface},
             eStop{n.advertiseService("toggle_motors", &Control::toggle,this)},
+            binExtended{n.advertiseService("is_bin_extended", &Control::isExtended,this)},
             cycle{1/rate},
             enabled{false}
         {}
@@ -109,6 +111,9 @@ class Control
         //emergency stop
         ros::ServiceServer eStop;
 
+        //tells if bin is extended
+        ros::ServiceServer binExtended;
+
         //how fast to spin
         ros::Duration cycle;
 
@@ -122,6 +127,16 @@ class Control
                 std_srvs::SetBool::Response& response)
         {
             enabled = request.data;
+            return true;
+        }
+
+        /*
+         * Tells if the bin has been extended or not
+         * */
+        bool isExtended(tfr_msgs::QuerySrv::Request& request,
+                tfr_msgs::QuerySrv::Response& response)
+        {
+            response.data = robot_interface.isBinExtended();
             return true;
         }
 

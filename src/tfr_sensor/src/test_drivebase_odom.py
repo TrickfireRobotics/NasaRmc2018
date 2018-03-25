@@ -6,8 +6,11 @@ from tfr_msgs.msg import ArduinoReading
 def talker():
     pub = rospy.Publisher('/arduino', ArduinoReading, queue_size=10)
     rospy.init_node('talker', anonymous=True)
-    reading = ArduinoReading()
     rate = rospy.Rate(1)
+    rate.sleep()
+    rospy.loginfo("initializing")
+    reading = ArduinoReading()
+    pub.publish(reading)
     rate.sleep()
     rospy.loginfo("fwd")
     reading.tread_left_vel = 1;

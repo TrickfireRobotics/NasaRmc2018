@@ -12,6 +12,7 @@ find_package(OpenCV 3 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
     cv_bridge
     roscpp
+    tf
     tf2
     tf2_ros
     tf2_geometry_msgs

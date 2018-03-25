@@ -25,7 +25,8 @@ namespace tfr_mining
         return state;
     }
 
-    double DiggingSet::getTimeEstimate() {
+    double DiggingSet::getTimeEstimate()
+    {
         return time_estimate;
     }
 }

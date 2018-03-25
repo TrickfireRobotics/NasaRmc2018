@@ -6,13 +6,13 @@ namespace tfr_mining
     DiggingQueue::DiggingQueue(ros::NodeHandle nh) : sets{}
     {
         // Make 4 digging sets, going from 45 degrees right to 90 degrees left
-        //  - The reasoning for this is so that we can always dump our excess
-        //    to the left. We'll fill in our previous holes a bit as we go, and
-        //    it ensures that we never put digging material in a place we'll dig
-        //    later
         for (int j = 0; j < 4; j++)
         {
             DiggingSet set;
+            // Generates a digging set: it starts at 45 degrees to the left (that's the
+            // first PI/4) and then moves 45 degrees to the right every dig (that's the
+            // PI/4 times j). This setup allows us to always dump our excess in a previous
+            // hole so it doesn't get in the way of our next dig.
             generateDigAndDump(nh, set, 3.14159265 / 4 - ((3.14159265 / 4) * j), 1);
             generateDigAndDump(nh, set, 3.14159265 / 4 - ((3.14159265 / 4) * j), 2);
             generateDigAndDump(nh, set, 3.14159265 / 4 - ((3.14159265 / 4) * j), 3);
@@ -38,10 +38,12 @@ namespace tfr_mining
         // Ready (constant no matter what)
         std::vector<double> ready_pos;
         double ready_time;
-        if (!nh.getParam("positions/ready", ready_pos) || !nh.getParam("positions/ready_time", ready_time)) {
-            throw std::runtime_error("Error loading ready state");
+        if (!nh.getParam("positions/ready", ready_pos) || !nh.getParam("positions/ready_time", ready_time))
+        {
+            ROS_WARN("Error loading ready state");
+            return;
         }
-        std::vector<double>::iterator it = ready_pos.begin();
+        auto it = ready_pos.begin();
         ready_pos.insert(it, rotation);
         set.insertState(ready_pos, ready_time);
 
@@ -51,8 +53,10 @@ namespace tfr_mining
         std::stringstream dig_str, dig_time_str;
         dig_str << "positions/dig" << dig_number;
         dig_time_str << dig_str.str() << "_time";
-        if (!nh.getParam(dig_str.str(), dig_pos) || !nh.getParam(dig_time_str.str(), dig_time)) {
-            throw std::runtime_error("Error loading " + dig_str.str());
+        if (!nh.getParam(dig_str.str(), dig_pos) || !nh.getParam(dig_time_str.str(), dig_time))
+        {
+            ROS_WARN_STREAM("Error loading " << dig_str.str());
+            return;
         }
         it = dig_pos.begin();
         dig_pos.insert(it, rotation);
@@ -64,9 +68,18 @@ namespace tfr_mining
         std::stringstream scoop_str, scoop_time_str;
         scoop_str << "positions/scoop" << dig_number;
         scoop_time_str << scoop_str.str() << "_time";
-        if (!nh.getParam(scoop_str.str(), scoop_pos) || !nh.getParam(scoop_time_str.str(), scoop_time)) {
-            throw std::runtime_error("Error loading " + scoop_str.str());
+        // Loads the scoop position and scoop estimated time from the parameter server (this code repeats
+        // throughout all of the following code)
+        if (!nh.getParam(scoop_str.str(), scoop_pos) || !nh.getParam(scoop_time_str.str(), scoop_time))
+        {
+            ROS_WARN_STREAM("Error loading " << scoop_str.str());
+            return;
         }
+        // Prepends the turntable position to the position vector, if necessary (this code repeats throughout
+        // much of the following code, but not all of it)
+        //  - This is so that, for some of the positions which are "relative" (like the digs), we specify
+        //    which direcion it does it in, but for "static" positions (like dumping into the bin) we
+        //    specify all four values in the parameter server.
         it = scoop_pos.begin();
         scoop_pos.insert(it, rotation);
         set.insertState(scoop_pos, scoop_time);
@@ -74,43 +87,55 @@ namespace tfr_mining
         // Out (constant no matter what)
         std::vector<double> out_pos;
         double out_time;
-        if (!nh.getParam("positions/out", out_pos) || !nh.getParam("positions/out_time", out_time)) {
-            throw std::runtime_error("Error loading out state");
+        if (!nh.getParam("positions/out", out_pos) || !nh.getParam("positions/out_time", out_time))
+        {
+            ROS_WARN("Error loading out state");
+            return;
         }
         it = out_pos.begin();
         out_pos.insert(it, rotation);
         set.insertState(out_pos, out_time);
 
-        if (dig_number > 2) {
+        if (dig_number > 2)
+        {
             // Dump into the bin
             std::vector<double> dump_pos;
             double dump_time;
-            if (!nh.getParam("positions/bindump", dump_pos) || !nh.getParam("positions/bindump_time", dump_time)) {
-                throw std::runtime_error("Error loading bindump state");
+            if (!nh.getParam("positions/bindump", dump_pos) || !nh.getParam("positions/bindump_time", dump_time))
+            {
+                ROS_WARN("Error loading bindump state");
+                return;
             }
             set.insertState(dump_pos, dump_time);
 
             std::vector<double> release_pos;
             double release_time;
-            if (!nh.getParam("positions/binrelease", release_pos) || !nh.getParam("positions/binrelease_time", release_time)) {
-                throw std::runtime_error("Error loading binrelease state");
+            if (!nh.getParam("positions/binrelease", release_pos) || !nh.getParam("positions/binrelease_time", release_time))
+            {
+                ROS_WARN("Error loading binrelease state");
+                return;
             }
             set.insertState(release_pos, release_time);
         } else {
             // We need to dump to the side first
             std::vector<double> dump_pos;
             double dump_time;
-            if (!nh.getParam("positions/excessdump", dump_pos) || !nh.getParam("positions/excessdump_time", dump_time)) {
-                throw std::runtime_error("Error loading excessdump state");
+            if (!nh.getParam("positions/excessdump", dump_pos) || !nh.getParam("positions/excessdump_time", dump_time))
+            {
+                ROS_WARN("Error loading excessdump state");
+                return;
             }
             it = dump_pos.begin();
+            // Dumping 45 degrees to the left
             dump_pos.insert(it, rotation + (3.14159265 / 4));
             set.insertState(dump_pos, dump_time);
 
             std::vector<double> release_pos;
             double release_time;
-            if (!nh.getParam("positions/excessrelease", release_pos) || !nh.getParam("positions/excessrelease_time", release_time)) {
-                throw std::runtime_error("Error loading excessrelease state");
+            if (!nh.getParam("positions/excessrelease", release_pos) || !nh.getParam("positions/excessrelease_time", release_time))
+            {
+                ROS_WARN("Error loading excessrelease state");
+                return;
             }
             it = release_pos.begin();
             release_pos.insert(it, rotation + (3.14159265 / 4));

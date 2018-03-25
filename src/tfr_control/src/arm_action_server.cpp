@@ -55,7 +55,6 @@ private:
     // of this server. The provided goal is the "input"
     void execute(const tfr_msgs::ArmMoveGoalConstPtr& goal)
     {
-        ROS_INFO("Executing!");
         // Set up the joint space goal vector to travel to based on the input goal
         // from the action server
         std::vector<double> joint_group_positions(4);
@@ -79,7 +78,7 @@ private:
         if (success)
         {
             // Planning was successful, actually execute the movement
-            ROS_INFO("Executing movement");
+            ROS_DEBUG("Executing movement");
             move_group.asyncExecute(my_plan);
 
             ros::Rate rate(50);
@@ -89,7 +88,6 @@ private:
                 digging_mutex.lock();
                 if (dig_status >= 0)  // We're done digging (or it errored), break the loop
                 {
-                    ROS_INFO("Digging done, breaking!");
                     digging_mutex.unlock();
                     break;
                 }
@@ -111,7 +109,6 @@ private:
                     result.pose[2] = current_pos[2];
                     result.pose[3] = current_pos[3];
                     server.setPreempted(result);
-                    ROS_INFO("Done preempting");
                     digging_mutex.lock();
                     dig_status = -1;
                     digging_mutex.unlock();
@@ -149,11 +146,11 @@ private:
 
         if (success && dig_status == 0)
         {
-            ROS_INFO("Successful!");
+            ROS_DEBUG("Arm Action Server successful!");
             server.setSucceeded(result);
         } else
         {
-            ROS_INFO("Unsuccessful!...");
+            ROS_WARN("Arm Action Server unsuccessful...");
             server.setAborted(result);
         }
 

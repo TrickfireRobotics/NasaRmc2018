@@ -30,14 +30,9 @@ public:
     DiggingActionServer(ros::NodeHandle nh, ros::NodeHandle nh_priv) : nh_private{nh_priv}, queue{nh_priv}, server{nh, "dig", boost::bind(&DiggingActionServer::execute, this, _1), false}
     {
         server.start();
-        //server.registerPreemptCallback(boost::bind(&DiggingActionServer::preempted, this));
     }
 
 private:
-    /*void preempted()
-    {
-        ROS_WARN("Digging preempted");
-    }*/
 
     void execute(const tfr_msgs::DiggingGoalConstPtr& goal)
     {
@@ -52,7 +47,6 @@ private:
         client.waitForServer();
         ROS_DEBUG("Connected with arm action server");
 
-        // TODO: Handle preemption!
         while (!queue.isEmpty())
         {
             ROS_INFO("Time remaining: %f", (endTime - ros::Time::now()).toSec());

@@ -25,6 +25,7 @@ add_message_files(
  add_service_files(
    FILES
    EmptySrv.srv
+   Query.srv
    DurationSrv.srv
    LocalizePoint.srv
    WrappedImage.srv

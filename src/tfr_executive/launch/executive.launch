@@ -1,5 +1,15 @@
 <launch>
     <node name="clock_service" pkg="tfr_executive" type="clock_service" output="screen"/>
-    <node name="autnonomous_action_server" pkg="tfr_executive" type="autonomous_action_server" output="screen"/>
+
+    <node name="autnonomous_action_server" pkg="tfr_executive" type="autonomous_action_server" output="screen">
+        <rosparam>
+            localization: true
+            navigation_to: false
+            digging: false
+            hole: false
+            navigation_from: false
+            dumping: false
+        </rosparam>
+    </node>
     <node name="teleop_action_server" pkg="tfr_executive" type="teleop_action_server" output="screen"/> 
 </launch>

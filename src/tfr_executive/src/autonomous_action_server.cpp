@@ -26,6 +26,12 @@
  * 
  * PARAMETERS
  * - ~rate: the rate in hz to check to preemption during long running calls, (double, default: 10)
+ * - ~localization: whether to run localization or not (bool, default: true);
+ * - ~navigation_to: whether to run navigation_to or not (bool, default: true);
+ * - ~digging: whether to run digging or not (bool, default: true);
+ * - ~hole: whether to place the hole or not (bool, default: true);
+ * - ~navigation_from: whether to run from or not (bool, default: true);
+ * - ~dumping: whether to run dumping or not (bool, default: true);
  * 
  * PUBLISHED TOPICS
  * - /com 
@@ -45,6 +51,12 @@ class AutonomousExecutive
                 false},
             frequency{f}
         {
+            ros::param::param<bool>("~localization", LOCALIZATION, true);
+            ros::param::param<bool>("~navigation_to", NAVIGATION_TO, true);
+            ros::param::param<bool>("~digging", DIGGING, true);
+            ros::param::param<bool>("~hole", HOLE, true);
+            ros::param::param<bool>("~navigation_from", NAVIGATION_FROM, true);
+            ros::param::param<bool>("~dumping", DUMPING, true);
             server.start();
             ROS_INFO("Autonomous Action Server: online, %f",
                     ros::Time::now().toSec());
@@ -80,32 +92,52 @@ class AutonomousExecutive
          * ACTION COMPONENTS
          * - Goal: none
          * - Feedback: none
-         * - Result: none
-         */ 
+         * - Result: none */ 
         void autonomousMission(const tfr_msgs::EmptyGoalConstPtr &goal)
         {
+            
             ROS_INFO("Autonomous Action Server: mission started");
 
-            ROS_INFO("Autonomous Action Server: commencing localization");
-            ROS_INFO("Autonomous Action Server: localization finished");
+            if (LOCALIZATION)
+            {
+                ROS_INFO("Autonomous Action Server: commencing localization");
+                ROS_INFO("Autonomous Action Server: localization finished");
+            }
 
-            ROS_INFO("Autonomous Action Server: commencing navigation");
-            ROS_INFO("Autonomous Action Server: navigation finished");
+            if (NAVIGATION_TO)
+            {
+                ROS_INFO("Autonomous Action Server: commencing navigation");
+                ROS_INFO("Autonomous Action Server: navigation finished");
+            }
 
-            ROS_INFO("Autonomous Action Server: retrieving digging time");
-            tfr_msgs::DurationSrv digging_time;
-            ros::service::call("digging_time", digging_time);
-            ROS_INFO("Autonomous Action Server: digging time retreived %f",
-                    digging_time.response.duration.toSec());
+            if (DIGGING)
+            {
+                ROS_INFO("Autonomous Action Server: retrieving digging time");
+                tfr_msgs::DurationSrv digging_time;
+                ros::service::call("digging_time", digging_time);
+                ROS_INFO("Autonomous Action Server: digging time retreived %f",
+                        digging_time.response.duration.toSec());
+                ROS_INFO("Autonomous Action Server: commencing digging");
+                ROS_INFO("Autonomous Action Server: digging finished");
+            }
 
-            ROS_INFO("Autonomous Action Server: commencing digging");
-            ROS_INFO("Autonomous Action Server: digging finished");
+            if (HOLE)
+            {
+                ROS_INFO("Autonomous Action Server: placing hole");
+                ROS_INFO("Autonomous Action Server: hole_placed");
+            }
 
-            ROS_INFO("Autonomous Action Server: commencing navigation");
-            ROS_INFO("Autonomous Action Server: navigation finished");
+            if (NAVIGATION_FROM)
+            {
+                ROS_INFO("Autonomous Action Server: commencing navigation");
+                ROS_INFO("Autonomous Action Server: navigation finished");
+            }
 
-            ROS_INFO("Autonomous Action Server: commencing dumping");
-            ROS_INFO("Autonomous Action Server: dumping finished");
+            if (DUMPING)
+            {
+                ROS_INFO("Autonomous Action Server: commencing dumping");
+                ROS_INFO("Autonomous Action Server: dumping finished");
+            }
 
             tfr_msgs::EmptyResult result{};
             server.setSucceeded(result);
@@ -113,6 +145,13 @@ class AutonomousExecutive
         }
 
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
+
+        bool LOCALIZATION;
+        bool NAVIGATION_TO;
+        bool DIGGING;
+        bool HOLE;
+        bool NAVIGATION_FROM;
+        bool DUMPING;
         //how often to check for preemption
         ros::Duration frequency;
 };

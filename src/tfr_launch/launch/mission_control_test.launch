@@ -1,5 +1,4 @@
 <launch>
     <node name="mission_control" pkg="tfr_mission_control" type="tfr_mission_control" output="screen"/>
-    <include file="$(find tfr_executive)/launch/executive.launch"/>
-    <include file="$(find tfr_launch)/launch/localization.launch"/>
+    <include file="$(find tfr_launch)/launch/robot.launch"/>
 </launch>

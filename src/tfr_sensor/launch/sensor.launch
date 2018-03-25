@@ -1,8 +1,6 @@
 <launch>
-    <include file="$(find tfr_launch)/launch/core.launch"/>
     <include file="$(find tfr_sensor)/launch/sensor_platform.launch"/>
     <include file="$(find tfr_sensor)/launch/rear_cam_wrapper.launch"/>
     <include file="$(find tfr_aruco)/launch/aruco.launch"/>
-    <include file="$(find tfr_localization)/launch/localization.launch"/>
     <include file="$(find tfr_sensor)/launch/fiducial_odom.launch"/>
 </launch>

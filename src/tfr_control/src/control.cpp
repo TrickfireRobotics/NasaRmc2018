@@ -11,7 +11,8 @@
  *  ~rate: in hz how fast we want to run the control loop (double, default:10)
  * SERVICES:
  *  /toggle_motors - uses the empty service, needs to be explicitly turned on to work
- *  
+ *  /is_bin_extended - uses the query service to determine if the bin has been
+ *  extended
  */
 #include <ros/ros.h>
 #include <std_srvs/SetBool.h>

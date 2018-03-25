@@ -70,7 +70,7 @@ namespace tfr_control {
 
         /*
          * Clears all command values being sent and sets them to safe values
-         * TODO
+         * stops the treads and commands the arm to hold position.
          * */
         void clearCommands();
 

@@ -184,12 +184,32 @@ namespace tfr_control
 
     /*
      * Resets the commands to a safe neutral state
+     * Tells the treads to stop moving, and the arm to hold position
      * */
     void RobotInterface::clearCommands()
     {
-        //TODO set position controllers to safe state
-        for(auto& value : command_values)
-            value = 0;
+        //LEFT_TREAD
+        command_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
+
+        //RIGHT_TREAD
+        command_values[static_cast<int>(Joint::RIGHT_TREAD)] = 0;
+
+        //TURNTABLE
+        command_values[static_cast<int>(Joint::TURNTABLE)] = 
+            position_values[static_cast<int>(Joint::TURNTABLE)];
+
+        //LOWER_ARM
+        command_values[static_cast<int>(Joint::LOWER_ARM)] =
+            position_values[static_cast<int>(Joint::LOWER_ARM)];
+        //UPPER_ARM
+        command_values[static_cast<int>(Joint::UPPER_ARM)] =
+            position_values[static_cast<int>(Joint::UPPER_ARM)];
+        //SCOOP
+        command_values[static_cast<int>(Joint::SCOOP)] =
+            position_values[static_cast<int>(Joint::SCOOP)];
+        //BIN
+        command_values[static_cast<int>(Joint::BIN)] =
+            position_values[static_cast<int>(Joint::BIN)];
     }
 
     /*

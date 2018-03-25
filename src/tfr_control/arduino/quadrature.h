@@ -8,10 +8,10 @@
   call getVelocity in the main loop. This is designed to be used in a system 
   who only has one job, to read these quadrature encoders
   */
-class Quadrature
+class VelocityQuadrature
 {
   public:
-    Quadrature(int cpr, int a_pin, int b_pin):
+    VelocityQuadrature(int cpr, int a_pin, int b_pin):
     CPR{cpr}, data{}, encoder{a_pin,b_pin} {}
   /*
     Gives the velocity of controller in shaftrevloutions/sec, since the last time
@@ -34,7 +34,7 @@ class Quadrature
     data.t_1 = millis()*1e-3; 
 
     //calculate the velocity
-    double velocity = (data.p_1 - data.p_0)/((data.t_1-data.t_0)*CPR);
+    double velocity = (data.p_1 - data.p_0)/((double)(data.t_1-data.t_0)*CPR);
     
     data.p_0 = data.p_1;
     data.t_0 = data.t_1;
@@ -53,11 +53,37 @@ class Quadrature
       double t_1 = 0;
     };
 
-    const double CPR;
+    const int CPR;
 
     EncoderData data;
 
     Encoder encoder;
     
 };
+/*
+  Class for efficiently reading quadrature encoder data, instantiate, and
+  call getVelocity in the main loop. This is designed to be used in a system 
+  who only has one job, to read these quadrature encoders
+  */
+class PositionQuadrature
+{
+  public:
+    PositionQuadrature(int cpr, int a_pin, int b_pin):
+    CPR{cpr}, encoder{a_pin,b_pin} {}
+  /*
+   * absolute position in radians
+  */
+  double getPosition()
+  {
+    return (encoder.read() % CPR)/(double)CPR * 2 *3.14159;
+  }
+
+  private:
+
+    const int CPR;
+
+    Encoder encoder;
+    
+};
+
 #endif

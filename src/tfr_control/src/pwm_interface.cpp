@@ -38,7 +38,15 @@ void PWMInterface::set(Address address, double value )
 void PWMInterface::enablePWM(bool value)
 {
     gpioSetValue(gpio389, (value)? off : on);
-    set(Address::LEFT_TREAD, 0);
+    set(Address::TREAD_LEFT, 0);
+    set(Address::TREAD_RIGHT, 0);
+    set(Address::ARM_TURNTABLE, 0);
+    set(Address::ARM_LOWER_LEFT, 0);
+    set(Address::ARM_LOWER_RIGHT, 0);
+    set(Address::ARM_UPPER, 0);
+    set(Address::ARM_SCOOP, 0);
+    set(Address::BIN_LEFT, 0);
+    set(Address::BIN_RIGHT, 0);
 }
 
 

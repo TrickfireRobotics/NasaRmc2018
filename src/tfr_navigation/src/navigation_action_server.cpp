@@ -4,7 +4,10 @@
 #include <actionlib/client/simple_action_client.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <tfr_msgs/NavigationAction.h>
+<<<<<<< 936af39315ac5abfd08ee056fa1de8561ea1cfba
 #include <tfr_msgs/LocalizePoint.h>
+=======
+>>>>>>> greatly reduced complexity of navigatioon
 #include <tfr_utilities/location_codes.h>
 #include <boost/bind.hpp>
 #include <cstdint>

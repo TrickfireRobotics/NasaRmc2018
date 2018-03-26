@@ -24,26 +24,11 @@ catkin_package(
 )
 
 
-add_library( navigation_server
-    src/navigation_goal_manager.cpp
-    src/navigator.cpp
-)
-add_dependencies(navigation_server ${catkin_EXPORTED_TARGETS})
-target_link_libraries(navigation_server ${catkin_LIBRARIES})
-
-
 add_executable(navigation_action_server 
     src/navigation_action_server.cpp
 )
 add_dependencies(navigation_action_server ${catkin_EXPORTED_TARGETS})
-target_link_libraries(navigation_action_server navigation_server ${catkin_LIBRARIES})
+target_link_libraries(navigation_action_server ${catkin_LIBRARIES})
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-
-if (CATKIN_ENABLE_TESTING)
-    catkin_add_gtest(${PROJECT_NAME}-test test/test_goal_setting.cpp)
-    target_link_libraries(${PROJECT_NAME}-test navigation_server ${catkin_LIBRARIES})
-endif()
-
-
 

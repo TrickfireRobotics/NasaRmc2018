@@ -16,6 +16,7 @@ point_cloud_sensor: {
 
 update_frequency: 2.0
 publish_frequency: 2.0
+global_frame: /odom
 robot_base_frame: /base_footprint
 static_map: false
 rolling_window: true  

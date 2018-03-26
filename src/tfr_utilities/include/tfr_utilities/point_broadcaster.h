@@ -29,7 +29,7 @@ class PointBroadcaster
 {
     public:
         PointBroadcaster(ros::NodeHandle &n, const std::string &point_frame, const  std::string
-                &parent_frame, const std::string &service);
+                &parent_frame, const std::string &service, const double& height);
         ~PointBroadcaster(){};
 
         PointBroadcaster(const PointBroadcaster&) = delete;
@@ -47,6 +47,7 @@ class PointBroadcaster
         const std::string &broadcaster_frame;
         const std::string &map_frame;
         const std::string &service_name;
+        const double& height;
 
         bool localize_point(tfr_msgs::LocalizePoint::Request &request,
                 tfr_msgs::LocalizePoint::Response &response);

@@ -3,4 +3,5 @@
     <include file="$(find tfr_sensor)/launch/rear_cam_wrapper.launch"/>
     <include file="$(find tfr_aruco)/launch/aruco.launch"/>
     <include file="$(find tfr_sensor)/launch/fiducial_odom.launch"/>
+    <include file="$(find tfr_sensor)/launch/fusion.launch"/>
 </launch>

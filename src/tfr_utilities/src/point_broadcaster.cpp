@@ -15,6 +15,7 @@
  *      point_frame: the name of the frame you want to broadcast (typed = string default = "")
  *      service_name: the name of the service you want to broadcast (typed =
  *      string default = "")
+ *      height: height to put the point at. (type = double default: 0.0)
  *      hz: the frequency to pubish at. (type = doulbe default: 5.0)
  *
  * */
@@ -22,10 +23,16 @@
 /*
  * Initializes the broadcaster and data structures
  * */
-PointBroadcaster::PointBroadcaster(ros::NodeHandle& n, const std::string
-        &point_frame, const std::string &parent_frame, const std::string
-        &service) : node{n}, broadcaster_frame{point_frame},
-    map_frame{parent_frame}, service_name{service}
+PointBroadcaster::PointBroadcaster(
+        ros::NodeHandle& n, 
+        const std::string &point_frame, 
+        const std::string &parent_frame, 
+        const std::string &service, const double& h) : 
+    node{n}, 
+    broadcaster_frame{point_frame},
+    map_frame{parent_frame}, 
+    service_name{service}, 
+    height{h}
 {
     server = node.advertiseService(service_name,
             &PointBroadcaster::localize_point, this);
@@ -51,7 +58,7 @@ bool PointBroadcaster::localize_point(tfr_msgs::LocalizePoint::Request &request,
 {
     transform.transform.translation.x = request.pose.pose.position.x;
     transform.transform.translation.y = request.pose.pose.position.y;
-    transform.transform.translation.z = request.pose.pose.position.z;
+    transform.transform.translation.z = -height;
     transform.transform.rotation.x = request.pose.pose.orientation.x;
     transform.transform.rotation.y = request.pose.pose.orientation.y;
     transform.transform.rotation.z = request.pose.pose.orientation.z;
@@ -67,14 +74,16 @@ int main(int argc, char** argv)
 
     //get parameters
     std::string point_frame{}, parent_frame{}, service_name{};
-    double hz{};
+    double height, hz;
 
     ros::param::param<std::string>("~parent_frame", parent_frame, "");
     ros::param::param<std::string>("~point_frame", point_frame, "");
     ros::param::param<std::string>("~service_name", service_name, "");
+    ros::param::param<double>("~height", height, 0.0);
     ros::param::param<double>("~hz", hz, 5.0 );
 
-    PointBroadcaster broadcaster{n, point_frame, parent_frame, service_name};
+    PointBroadcaster broadcaster{n, point_frame, parent_frame, service_name,
+        height};
 
     //broadcast the point across the network
     ros::Rate rate(hz);

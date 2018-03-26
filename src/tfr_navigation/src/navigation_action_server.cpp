@@ -39,14 +39,15 @@ class Navigator
 
         Navigator(ros::NodeHandle& n,
                 const GeometryConstraints &c,
+                const double& height_adj,
                 const std::string &bin_f):
             node{n}, 
             rate{2},
+            height_adjustment{height_adj},
             constraints{c},
             server{n, "navigate", boost::bind(&Navigator::navigate, this, _1) ,false}, 
             nav_stack{"move_base", true},
             bin_frame{bin_f}
-
         {
             ROS_DEBUG("Navigation server constructed %f", ros::Time::now().toSec());
             
@@ -63,7 +64,6 @@ class Navigator
                 ROS_WARN("    finish_line: %f",
                         constraints.get_finish_line());
             }
-
 
             ROS_INFO("Navigation server connecting to nav_stack");
             nav_stack.waitForServer();
@@ -99,8 +99,7 @@ class Navigator
 
 
             //test for completion
-            while (nav_stack.getState() != actionlib::SimpleClientGoalState::SUCCEEDED
-                    || nav_stack.getState() != actionlib::SimpleClientGoalState::ABORTED)
+            while (!nav_stack.getState().isDone())
             {
                 //Deal with preemption or error
                 if (server.isPreemptRequested() || !ros::ok()) 
@@ -114,6 +113,7 @@ class Navigator
                 {
                     rate.sleep();
                 }
+                ROS_INFO("state %s", nav_stack.getState().toString().c_str());
             }
 
             if (nav_stack.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
@@ -127,8 +127,11 @@ class Navigator
                     request.pose.pose.orientation.z=1;
                     tfr_msgs::LocalizePoint::Response response;
                     while (!ros::service::call("localize_hole", request, response) 
-                            && !server.isPreemptRequested() && ros::ok() ) 
+                            && !server.isPreemptRequested() && ros::ok() )
+                    {
+                        ROS_INFO("placing hole");
                         rate.sleep();
+                    }
                 }
                 server.setSucceeded();
             }
@@ -150,6 +153,7 @@ class Navigator
         std::string bin_frame{};
         std::string action_name{};
         ros::Rate rate;
+        const double& height_adjustment;
         
         //the constraints to the problem
         const GeometryConstraints &constraints;
@@ -164,11 +168,14 @@ class Navigator
             switch(goal)
             {
                 case(tfr_utilities::LocationCode::MINING):
-                    nav_goal.target_pose.pose.position.x =
-                        constraints.get_safe_mining_distance();
+                    nav_goal.target_pose.pose.position.x = 0.5;
+           //TODO             constraints.get_safe_mining_distance();
+                    nav_goal.target_pose.pose.position.z = height_adjustment;
                     break;
                 case(tfr_utilities::LocationCode::DUMPING):
-                    nav_goal.target_pose.pose.position.x = constraints.get_finish_line();
+                    nav_goal.target_pose.pose.position.x = 0.5;
+          //TODO              constraints.get_finish_line();
+                    nav_goal.target_pose.pose.position.z = height_adjustment;
                     break;
                 case(tfr_utilities::LocationCode::UNSET):
                     //leave it alone
@@ -193,16 +200,17 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "navigation_action_server");
     ros::NodeHandle n;
-    double safe_mining_distance, finish_line;
+    double safe_mining_distance, finish_line, height_adjustment;
     std::string bin_frame;
 
     ros::param::param<double>("~safe_mining_distance", safe_mining_distance, 5.1);
     ros::param::param<double>("~finish_line", finish_line, 0.84);
+    ros::param::param<double>("~height_adjustment", height_adjustment, 0);
     ros::param::param<std::string>("~bin_frame", bin_frame, "bin_footprint");
 
     Navigator::GeometryConstraints 
         constraints(safe_mining_distance, finish_line);
-    Navigator navigator(n, constraints, bin_frame);
+    Navigator navigator(n, constraints, height_adjustment, bin_frame);
     ros::spin();
     return 0;
 }

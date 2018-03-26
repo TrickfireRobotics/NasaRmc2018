@@ -120,8 +120,7 @@ class AutonomousExecutive
                 tfr_msgs::EmptyGoal goal{};
                 localizationClient.sendGoal(goal);
                 //handle preemption
-                while (localizationClient.getState() !=
-                        actionlib::SimpleClientGoalState::SUCCEEDED && ros::ok())
+                while (!localizationClient.getState().isDone())
                 {
                     if (server.isPreemptRequested() || ! ros::ok())
                     {
@@ -132,7 +131,12 @@ class AutonomousExecutive
                     }
                     frequency.sleep();
                 }
-
+                if (localizationClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+                {
+                    ROS_INFO("Autonomous Action Server: localization failed");
+                    server.setAborted();
+                    return;
+                }
                 ROS_INFO("Autonomous Action Server: localization finished");
             }
 
@@ -149,9 +153,7 @@ class AutonomousExecutive
                 goal.location_code= static_cast<uint8_t>(tfr_utilities::LocationCode::MINING);
                 navigationClient.sendGoal(goal);
                 //handle preemption
-                while ( navigationClient.getState() != actionlib::SimpleClientGoalState::SUCCEEDED ||
-                        navigationClient.getState() != actionlib::SimpleClientGoalState::ABORTED   && 
-                        ros::ok())
+                while ( !navigationClient.getState().isDone() && ros::ok())
                 {
                     if (server.isPreemptRequested() || ! ros::ok())
                     {
@@ -163,11 +165,13 @@ class AutonomousExecutive
                     frequency.sleep();
                 }
 
-                bool success = 
-                    navigationClient.getState() == actionlib::SimpleClientGoalState::SUCCEEDED;
-
-                ROS_INFO("Autonomous Action Server: navigation finished %s",
-                        (success) ? "succeeded" : "FAILURE");
+                if (navigationClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+                {
+                    ROS_INFO("Autonomous Action Server: navigation to failed");
+                    server.setAborted();
+                    return;
+                }
+                ROS_INFO("Autonomous Action Server: navigation finished");
             }
 
             if (DIGGING)
@@ -218,6 +222,8 @@ class AutonomousExecutive
             {
 
             }
+            ROS_INFO("Autonomous Action Server: Success");
+            server.setSucceeded();
         }
 
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;

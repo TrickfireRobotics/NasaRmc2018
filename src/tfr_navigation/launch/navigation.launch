@@ -1,5 +1,9 @@
 <launch>
-    <node name="navigation_action_server" pkg="tfr_navigation" type="navigation_action_server" output="screen"/>
+    <node name="navigation_action_server" pkg="tfr_navigation" type="navigation_action_server" output="screen">
+        <rosparam>
+            height_adjustment: 0
+        </rosparam>
+    </node>
     <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
         <rosparam file="$(find tfr_navigation)/params/move_base.yaml" command="load" />
         <rosparam file="$(find tfr_navigation)/params/shared_costmap.yaml" command="load" ns="global_costmap" />

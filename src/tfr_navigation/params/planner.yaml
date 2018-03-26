@@ -8,6 +8,6 @@ TrajectoryPlannerROS:
     acc_lim_x: 1
     acc_lim_y: 1
 
-    yaw_goal_tolerance: 3.14
-    xy_goal_tolerance: 0.3
+    yaw_goal_tolerance: 0.4
+    xy_goal_tolerance: 0.2
     meter_scoring: true

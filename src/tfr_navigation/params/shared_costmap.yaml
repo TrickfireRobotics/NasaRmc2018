@@ -2,16 +2,27 @@
 obstacle_range: 1 
 raytrace_range: 1.5
 footprint: [[-0.375, -0.225],  [0.375, -0.225],[0.375, 0.225],[-0.375, 0.225]]
-observation_sources: point_cloud_sensor
+observation_sources: point_cloud_sensor hole_obstacle
+
 point_cloud_sensor: {
     sensor_frame: /duo3d/camera_frame, 
     data_type: PointCloud2, 
     min_obstacle_height: 0.08,
     max_obstacle_height: 1,
     topic: /sensors/duo3d/point_cloud/image_raw, 
-    marking: true, 
+    marking: true,
     clearing: true
 }
+
+hole_obstacle: {
+    sensor_frame: /hole, 
+    data_type: PointCloud2, 
+    min_obstacle_height: -0.5,
+    max_obstacle_height: 0.2,
+    topic: /obstacle_cloud, 
+    marking: true
+}
+
 
 
 update_frequency: 2.0

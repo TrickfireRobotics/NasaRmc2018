@@ -123,7 +123,7 @@ class Navigator
                     //drop the location of the hole for the return trip
                     tfr_msgs::LocalizePoint::Request request;
                     request.pose.pose.position.x=
-                        nav_goal.target_pose.pose.position.x + 0.5;
+                        nav_goal.target_pose.pose.position.x + 0.9;
                     request.pose.pose.orientation.z=1;
                     tfr_msgs::LocalizePoint::Response response;
                     while (!ros::service::call("localize_hole", request, response) 
@@ -168,12 +168,12 @@ class Navigator
             switch(goal)
             {
                 case(tfr_utilities::LocationCode::MINING):
-                    nav_goal.target_pose.pose.position.x = 0.5;
+                    nav_goal.target_pose.pose.position.x = 0.7;
            //TODO             constraints.get_safe_mining_distance();
                     nav_goal.target_pose.pose.position.z = height_adjustment;
                     break;
                 case(tfr_utilities::LocationCode::DUMPING):
-                    nav_goal.target_pose.pose.position.x = 0.5;
+                    nav_goal.target_pose.pose.position.x = 0.7;
           //TODO              constraints.get_finish_line();
                     nav_goal.target_pose.pose.position.z = height_adjustment;
                     break;
@@ -205,7 +205,7 @@ int main(int argc, char** argv)
 
     ros::param::param<double>("~safe_mining_distance", safe_mining_distance, 5.1);
     ros::param::param<double>("~finish_line", finish_line, 0.84);
-    ros::param::param<double>("~height_adjustment", height_adjustment, 0);
+    ros::param::param<double>("~height_adjustment", height_adjustment, -.16);
     ros::param::param<std::string>("~bin_frame", bin_frame, "bin_footprint");
 
     Navigator::GeometryConstraints 

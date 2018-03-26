@@ -23,8 +23,9 @@
  *      ~point_frame: the name of the frame you want to broadcast (type = string, default = "")
  *      ~service_name: the name of the service you want to broadcast (type = string, default = "")
  *      ~hz: the frequency to pubish at. (type = double, default: 5.0)
- *      ~diameter: the diameter of the obstacle in meters (type = double, default: 0.0)
  *
+ *      ~diameter: the diameter of the obstacle in meters (type = double, default: 0.0)
+ *      ~diameter: height adjustment  of the obstacle in meters (type = double, default: -.16)
  *  published topics:
  *      obstacle_cloud (PointCloud2) the cloud of points representing the obstacle
  * */
@@ -36,7 +37,8 @@ class ObstacleBroadcaster
                 const std::string &point_frame, 
                 const  std::string &parent_frame, 
                 const std::string &service, 
-                const double &diameter);
+                const double &diameter,
+                const double &height);
         ~ObstacleBroadcaster(){};
 
         ObstacleBroadcaster(const ObstacleBroadcaster&) = delete;
@@ -56,6 +58,7 @@ class ObstacleBroadcaster
         const std::string &map_frame;
         const std::string &service_name;
         const double &diameter;
+        const double &height;
         bool point_set;
 
         bool localizePoint(tfr_msgs::LocalizePoint::Request &request,

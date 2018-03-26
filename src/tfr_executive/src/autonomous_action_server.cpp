@@ -67,7 +67,6 @@ class AutonomousExecutive
             ros::param::param<bool>("~navigation_to", NAVIGATION_TO, true);
             ros::param::param<bool>("~navigation_from", NAVIGATION_FROM, true);
             ros::param::param<bool>("~digging", DIGGING, true);
-            ros::param::param<bool>("~hole", HOLE, true);
             ros::param::param<bool>("~dumping", DUMPING, true);
             server.start();
             ROS_INFO("Autonomous Action Server: online, %f",
@@ -164,7 +163,11 @@ class AutonomousExecutive
                     frequency.sleep();
                 }
 
-                ROS_INFO("Autonomous Action Server: navigation finished");
+                bool success = 
+                    navigationClient.getState() == actionlib::SimpleClientGoalState::SUCCEEDED;
+
+                ROS_INFO("Autonomous Action Server: navigation finished %s",
+                        (success) ? "succeeded" : "FAILURE");
             }
 
             if (DIGGING)
@@ -178,18 +181,17 @@ class AutonomousExecutive
                 ROS_INFO("Autonomous Action Server: digging finished");
             }
 
-            if (HOLE)
-            {
-                ROS_INFO("Autonomous Action Server: placing hole");
-                ROS_INFO("Autonomous Action Server: hole_placed");
-            }
-
             if (NAVIGATION_FROM)
             {
+                ROS_INFO("Autonomous Action Server: Connecting to navigation server");
+                navigationClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to navigation server");
+
                 ROS_INFO("Autonomous Action Server: commencing navigation");
+ 
                 tfr_msgs::NavigationGoal goal;
                 //messages can't support user defined types
-                goal.location_code= static_cast<uint8_t>(tfr_utilities::LocationCode::DUMPING);
+                goal.location_code= static_cast<uint8_t>(tfr_utilities::LocationCode::MINING);
                 navigationClient.sendGoal(goal);
                 //handle preemption
                 while ( navigationClient.getState() != actionlib::SimpleClientGoalState::SUCCEEDED ||
@@ -206,18 +208,16 @@ class AutonomousExecutive
                     frequency.sleep();
                 }
 
-                ROS_INFO("Autonomous Action Server: navigation finished");
-            }
+                bool success = 
+                    navigationClient.getState() == actionlib::SimpleClientGoalState::SUCCEEDED;
 
+                ROS_INFO("Autonomous Action Server: navigation finished %s",
+                        (success) ? "succeeded" : "FAILURE");
+            }
             if (DUMPING)
             {
-                ROS_INFO("Autonomous Action Server: commencing dumping");
-                ROS_INFO("Autonomous Action Server: dumping finished");
-            }
 
-            tfr_msgs::EmptyResult result{};
-            server.setSucceeded(result);
-            ROS_INFO("Autonomous Action Server: mission finished");
+            }
         }
 
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;

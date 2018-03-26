@@ -131,6 +131,7 @@ namespace tfr_control
                         std::max(std::min(position_values[i],
                                     upper_limits[i]), lower_limits[i]);
                 }
+                ROS_INFO("command %f", command_values[i]);
             }
         }
         else  // we are working with the real arm

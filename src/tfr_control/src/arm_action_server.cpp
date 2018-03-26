@@ -81,7 +81,7 @@ private:
             ROS_DEBUG("Executing movement");
             move_group.asyncExecute(my_plan);
 
-            ros::Rate rate(50);
+            ros::Rate rate(10);
 
             while (true)
             {

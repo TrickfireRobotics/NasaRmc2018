@@ -42,6 +42,7 @@
 #include <tfr_msgs/EmptyAction.h>
 #include <tfr_msgs/DurationSrv.h>
 #include <tfr_msgs/NavigationAction.h>
+#include <tfr_msgs/DiggingAction.h>
 #include <tfr_utilities/location_codes.h>
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
@@ -55,6 +56,7 @@ class AutonomousExecutive
                 false},
             localizationClient{n, "localize"},
             navigationClient{n, "navigate"},
+            diggingClient{n, "dig"},
             frequency{f}
         {
             ros::param::param<bool>("~localization", LOCALIZATION, true);
@@ -67,6 +69,12 @@ class AutonomousExecutive
             ros::param::param<bool>("~navigation_to", NAVIGATION_TO, true);
             ros::param::param<bool>("~navigation_from", NAVIGATION_FROM, true);
             ros::param::param<bool>("~digging", DIGGING, true);
+            if (DIGGING)
+            {
+                ROS_INFO("Autonomous Action Server: Connecting to digging server");
+                diggingClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to digging server");
+            }
             ros::param::param<bool>("~dumping", DUMPING, true);
             server.start();
             ROS_INFO("Autonomous Action Server: online, %f",
@@ -176,12 +184,34 @@ class AutonomousExecutive
 
             if (DIGGING)
             {
+                ROS_INFO("Autonomous Action Server: commencing digging");
+                tfr_msgs::DiggingGoal goal{};
                 ROS_INFO("Autonomous Action Server: retrieving digging time");
                 tfr_msgs::DurationSrv digging_time;
                 ros::service::call("digging_time", digging_time);
                 ROS_INFO("Autonomous Action Server: digging time retreived %f",
                         digging_time.response.duration.toSec());
-                ROS_INFO("Autonomous Action Server: commencing digging");
+                goal.diggingTime = digging_time.response.duration;
+                diggingClient.sendGoal(goal);
+
+                //handle preemption
+                while (!diggingClient.getState().isDone())
+                {
+                    if (server.isPreemptRequested() || ! ros::ok())
+                    {
+                        diggingClient.cancelAllGoals();
+                        server.setPreempted();
+                        ROS_INFO("Autonomous Action Server: digging preempted");
+                        return;
+                    }
+                    frequency.sleep();
+                }
+                if (localizationClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+                {
+                    ROS_INFO("Autonomous Action Server: digging failed");
+                    server.setAborted();
+                    return;
+                }
                 ROS_INFO("Autonomous Action Server: digging finished");
             }
 
@@ -230,6 +260,7 @@ class AutonomousExecutive
 
         actionlib::SimpleActionClient<tfr_msgs::EmptyAction> localizationClient;
         actionlib::SimpleActionClient<tfr_msgs::NavigationAction> navigationClient;
+        actionlib::SimpleActionClient<tfr_msgs::DiggingAction> diggingClient;
 
         bool LOCALIZATION;
         bool NAVIGATION_TO;

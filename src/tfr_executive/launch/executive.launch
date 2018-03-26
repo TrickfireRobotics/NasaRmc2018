@@ -5,7 +5,7 @@
         <rosparam>
             localization: true
             navigation_to: true 
-            digging: false
+            digging: true
             hole: false
             navigation_from: false
             dumping: false

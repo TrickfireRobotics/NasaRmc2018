@@ -70,10 +70,9 @@ private:
                 goal.pose[3] = state[3];
 
                 client.sendGoal(goal);
-                ros::Rate rate(50.0);
+                ros::Rate rate(10.0);
 
-                while ((client.getState() == actionlib::SimpleClientGoalState::ACTIVE
-                        || client.getState() == actionlib::SimpleClientGoalState::PENDING) && ros::ok())
+                while (!client.getState().isDone() && ros::ok())
                 {
                     if (server.isPreemptRequested())
                     {
@@ -84,6 +83,7 @@ private:
                         return;
                     }
 
+                    ROS_INFO("digging server iterating");
                     rate.sleep();
                 }
                 
@@ -118,10 +118,9 @@ private:
         }
 
         client.sendGoal(final_goal);
-        ros::Rate rate(50.0);
+        ros::Rate rate(10.0);
 
-        while ((client.getState() == actionlib::SimpleClientGoalState::ACTIVE
-                || client.getState() == actionlib::SimpleClientGoalState::PENDING) && ros::ok())
+        while (client.getState().isDone() && ros::ok())
         {
             if (server.isPreemptRequested())
             {
@@ -132,6 +131,7 @@ private:
                 return;
             }
 
+            ROS_INFO("digging server iterating");
             rate.sleep();
         }
         

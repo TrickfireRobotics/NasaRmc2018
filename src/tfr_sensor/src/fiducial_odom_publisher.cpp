@@ -160,17 +160,9 @@ class FiducialOdom
                 relative_transform.translation.y *= -1;
                 relative_transform.translation.z *= -1;
                 
-                //publish the transform
-                geometry_msgs::TransformStamped transform{};
-                transform.header.stamp = ros::Time::now();
-                transform.header.frame_id = odometry_frame;
-                transform.child_frame_id = footprint_frame;
-                transform.transform = relative_transform;
-//                broadcaster.sendTransform(transform);
-
                 //process the odometry
                 geometry_msgs::PoseStamped relative_pose;
-                relative_pose.header.stamp = transform.header.stamp;
+                relative_pose.header.stamp = unprocessed_pose.header.stamp;
                 relative_pose.header.frame_id = camera_frame;
                 relative_pose.pose.position.x = relative_transform.translation.x;
                 relative_pose.pose.position.y = relative_transform.translation.y;

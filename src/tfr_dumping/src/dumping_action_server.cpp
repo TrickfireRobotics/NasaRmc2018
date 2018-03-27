@@ -52,7 +52,7 @@ class Dumper
         
         Dumper(ros::NodeHandle &node, const std::string &service_name,
                 const DumpingConstraints &c) :
-            server{node, "dumping_action_server", boost::bind(&Dumper::dump, this, _1), false},
+            server{node, "dump", boost::bind(&Dumper::dump, this, _1), false},
             detector{"light_detection"},
             aruco{"aruco_action_server",true},
             //TODO add dumping controller here

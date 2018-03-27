@@ -57,6 +57,7 @@ class AutonomousExecutive
             localizationClient{n, "localize"},
             navigationClient{n, "navigate"},
             diggingClient{n, "dig"},
+            dumpingClient{n, "dump"},
             frequency{f}
         {
             ros::param::param<bool>("~localization", LOCALIZATION, true);
@@ -68,6 +69,12 @@ class AutonomousExecutive
             }
             ros::param::param<bool>("~navigation_to", NAVIGATION_TO, true);
             ros::param::param<bool>("~navigation_from", NAVIGATION_FROM, true);
+            if (NAVIGATION_TO || NAVIGATION_FROM)
+            {
+                ROS_INFO("Autonomous Action Server: Connecting to navigation server");
+                navigationClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to navigation server");
+            }
             ros::param::param<bool>("~digging", DIGGING, true);
             if (DIGGING)
             {
@@ -76,6 +83,12 @@ class AutonomousExecutive
                 ROS_INFO("Autonomous Action Server: Connected to digging server");
             }
             ros::param::param<bool>("~dumping", DUMPING, true);
+            if (DUMPING)
+            {
+                ROS_INFO("Autonomous Action Server: Connecting to digging server");
+                dumpingClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to digging server");
+            }
             server.start();
             ROS_INFO("Autonomous Action Server: online, %f",
                     ros::Time::now().toSec());
@@ -150,10 +163,6 @@ class AutonomousExecutive
 
             if (NAVIGATION_TO)
             {
-                ROS_INFO("Autonomous Action Server: Connecting to navigation server");
-                navigationClient.waitForServer();
-                ROS_INFO("Autonomous Action Server: Connected to navigation server");
-
                 ROS_INFO("Autonomous Action Server: commencing navigation");
  
                 tfr_msgs::NavigationGoal goal;
@@ -251,9 +260,37 @@ class AutonomousExecutive
             }
             if (DUMPING)
             {
+                ROS_INFO("Autonomous Action Server: Connecting to dumping server");
+                navigationClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to dumping server");
+
+                ROS_INFO("Autonomous Action Server: commencing dumping");
+ 
+                tfr_msgs::EmptyGoal goal;
+                dumpingClient.sendGoal(goal);
+                //handle preemption
+                while ( !dumpingClient.getState().isDone() && ros::ok())
+                {
+                    if (server.isPreemptRequested() || ! ros::ok())
+                    {
+                        dumpingClient.cancelAllGoals();
+                        server.setPreempted();
+                        ROS_INFO("Autonomous Action Server: dumping preempted");
+                        return;
+                    }
+                    frequency.sleep();
+                }
+
+                if (dumpingClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+                {
+                    ROS_INFO("Autonomous Action Server: dumping failed");
+                    server.setAborted();
+                    return;
+                }
+                ROS_INFO("Autonomous Action Server: dumping finished");
 
             }
-            ROS_INFO("Autonomous Action Server: Success");
+            ROS_INFO("Autonomous Action Server: AUTONOMOUS MISSION SUCCESS");
             server.setSucceeded();
         }
 
@@ -262,6 +299,7 @@ class AutonomousExecutive
         actionlib::SimpleActionClient<tfr_msgs::EmptyAction> localizationClient;
         actionlib::SimpleActionClient<tfr_msgs::NavigationAction> navigationClient;
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> diggingClient;
+        actionlib::SimpleActionClient<tfr_msgs::EmptyAction> dumpingClient;
 
         bool LOCALIZATION;
         bool NAVIGATION_TO;

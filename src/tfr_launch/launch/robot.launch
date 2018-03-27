@@ -7,4 +7,5 @@
     <include file="$(find tfr_localization)/launch/localization.launch"/>
     <include file="$(find tfr_navigation)/launch/navigation.launch"/>
     <include file="$(find tfr_mining)/launch/mining.launch"/>
+    <include file="$(find tfr_dumping)/launch/dumping.launch"/>
 </launch>

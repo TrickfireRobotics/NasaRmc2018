@@ -4,10 +4,10 @@
     <node name="autnonomous_action_server" pkg="tfr_executive" type="autonomous_action_server" output="screen">
         <rosparam>
             localization: true
-            navigation_to: true 
+            navigation_to: true
             digging: true
             navigation_from: true
-            dumping: false
+            dumping: true 
         </rosparam>
     </node>
     <node name="teleop_action_server" pkg="tfr_executive" type="teleop_action_server" output="screen"/> 

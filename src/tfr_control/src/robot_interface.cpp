@@ -120,19 +120,17 @@ namespace tfr_control
         double signal;
         if (use_fake_values) //test code  for working with rviz simulator
         {
-            // ADAM make sure to update this index when you need to
-            for (int i = 3; i < JOINT_COUNT; i++) 
-            {
-                position_values[i] = command_values[i];
-                // If this joint has limits, clamp the range down
-                if (abs(lower_limits[i]) >= 1E-3 || abs(upper_limits[i]) >= 1E-3) 
-                {
-                    position_values[i] =
-                        std::max(std::min(position_values[i],
-                                    upper_limits[i]), lower_limits[i]);
-                }
-                ROS_INFO("command %f", command_values[i]);
-            }
+            //TURNTABLE
+            adjustFakeJoint(Joint::TURNTABLE);
+
+            //LOWER_ARM
+            adjustFakeJoint(Joint::LOWER_ARM);
+
+            //UPPER_ARM
+            adjustFakeJoint(Joint::UPPER_ARM);
+
+            //SCOOP
+            adjustFakeJoint(Joint::SCOOP);
         }
         else  // we are working with the real arm
         {
@@ -182,6 +180,20 @@ namespace tfr_control
         drivebase_v0.first = velocity_values[static_cast<int>(Joint::LEFT_TREAD)];
         drivebase_v0.second = velocity_values[static_cast<int>(Joint::RIGHT_TREAD)];
     }
+
+    void RobotInterface::adjustFakeJoint(const Joint &j)
+    {
+        int i = static_cast<int>(j);
+        position_values[i] = command_values[i];
+        // If this joint has limits, clamp the range down
+        if (abs(lower_limits[i]) >= 1E-3 || abs(upper_limits[i]) >= 1E-3) 
+        {
+            position_values[i] =
+                std::max(std::min(position_values[i],
+                            upper_limits[i]), lower_limits[i]);
+        }
+    }
+
 
     /*
      * Resets the commands to a safe neutral state

@@ -27,7 +27,9 @@ typedef actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> Client;
 
 class DiggingActionServer {
 public:
-    DiggingActionServer(ros::NodeHandle nh, ros::NodeHandle nh_priv) : nh_private{nh_priv}, queue{nh_priv}, server{nh, "dig", boost::bind(&DiggingActionServer::execute, this, _1), false}
+    DiggingActionServer(ros::NodeHandle &nh, ros::NodeHandle &p_nh) :
+        priv_nh{p_nh}, queue{priv_nh}, 
+        server{nh, "dig", boost::bind(&DiggingActionServer::execute, this, _1), false}
     {
         server.start();
     }
@@ -51,11 +53,13 @@ private:
         {
             ROS_INFO("Time remaining: %f", (endTime - ros::Time::now()).toSec());
             tfr_mining::DiggingSet set = queue.popDiggingSet();
+            ros::Time now = ros::Time::now();
 
             // If we don't have enough time, bail on the action and exit
-            if ((endTime - ros::Time::now()).toSec() < set.getTimeEstimate())
+            if ((endTime - now).toSec() < set.getTimeEstimate())
             {
-                ROS_INFO("Not enough time to complete the next digging set, exiting...");
+                ROS_INFO("Not enough time to complete the next digging set, exiting. cost: %f remaining: %f",
+                        set.getTimeEstimate(), (endTime - now).toSec() );
                 break;
             }
 
@@ -83,7 +87,6 @@ private:
                         return;
                     }
 
-                    ROS_INFO("digging server iterating");
                     rate.sleep();
                 }
                 
@@ -102,7 +105,7 @@ private:
         final_goal.pose.resize(4);
 
         std::vector<double> final_angles;
-        if (!nh_private.getParam("positions/safe", final_angles))
+        if (!priv_nh.getParam("positions/safe", final_angles))
         {
             // Couldn't load parameter, go to predetermined final position
             final_goal.pose[0] = 0.0;
@@ -116,10 +119,12 @@ private:
             final_goal.pose[2] = final_angles[2];
             final_goal.pose[3] = final_angles[3];
         }
+        ROS_INFO("calculated goal");
 
         client.sendGoal(final_goal);
         ros::Rate rate(10.0);
 
+        ROS_INFO("sent goal");
         while (client.getState().isDone() && ros::ok())
         {
             if (server.isPreemptRequested())
@@ -131,33 +136,35 @@ private:
                 return;
             }
 
-            ROS_INFO("digging server iterating");
             rate.sleep();
         }
-        
+        ROS_INFO("finished goal");
         if (client.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
         {
             ROS_WARN("Error moving arm to final position, exiting.");
             tfr_msgs::DiggingResult result;
             server.setAborted(result);
+            return;
         }
 
+        ROS_INFO("set succeeedd");
         tfr_msgs::DiggingResult result;
         server.setSucceeded(result);
     }
 
+    ros::NodeHandle &priv_nh;
+
     tfr_mining::DiggingQueue queue;
     Server server;
-    ros::NodeHandle &nh_private;
 };
 
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "digging_server");
     ros::NodeHandle n;
-    ros::NodeHandle n_priv("~");
+    ros::NodeHandle p_n("~");
 
-    DiggingActionServer server(n, n_priv);
+    DiggingActionServer server(n, p_n);
     ros::spin();
     return 0;
 }

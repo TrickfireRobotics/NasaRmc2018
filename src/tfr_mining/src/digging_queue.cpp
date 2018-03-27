@@ -5,20 +5,9 @@ namespace tfr_mining
     // Must be a private node handle ("~")
     DiggingQueue::DiggingQueue(ros::NodeHandle nh) : sets{}
     {
-        // Make 4 digging sets, going from 45 degrees right to 90 degrees left
-        for (int j = 0; j < 4; j++)
-        {
-            DiggingSet set;
-            // Generates a digging set: it starts at 45 degrees to the left (that's the
-            // first PI/4) and then moves 45 degrees to the right every dig (that's the
-            // PI/4 times j). This setup allows us to always dump our excess in a previous
-            // hole so it doesn't get in the way of our next dig.
-            generateDigAndDump(nh, set, 3.14159265 / 4 - ((3.14159265 / 4) * j), 1);
-            generateDigAndDump(nh, set, 3.14159265 / 4 - ((3.14159265 / 4) * j), 2);
-            generateDigAndDump(nh, set, 3.14159265 / 4 - ((3.14159265 / 4) * j), 3);
-            generateDigAndDump(nh, set, 3.14159265 / 4 - ((3.14159265 / 4) * j), 4);
-            sets.push(set);
-        }
+        DiggingSet set;
+        generateDigAndDump(nh, set, 0, 1);
+        sets.push(set);
     }
 
     bool DiggingQueue::isEmpty()

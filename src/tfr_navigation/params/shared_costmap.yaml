@@ -32,5 +32,5 @@ robot_base_frame: /base_footprint
 static_map: false
 rolling_window: true  
 
-resolution: 0.1
+resolution: 0.15
 transform_tolerance: 0.2

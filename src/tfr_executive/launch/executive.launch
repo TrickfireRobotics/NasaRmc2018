@@ -6,8 +6,7 @@
             localization: true
             navigation_to: true 
             digging: true
-            hole: false
-            navigation_from: false
+            navigation_from: true
             dumping: false
         </rosparam>
     </node>

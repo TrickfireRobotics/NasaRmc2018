@@ -3,4 +3,5 @@
     <node name="test_client" pkg="tfr_control" type="test_client" output="screen">
         <rosparam file="$(find tfr_control)/data/test_client_positions.yaml" command="load" />
     </node>
+    <node name="test_e_stop" pkg="tfr_control" type="test_e_stop"/>
 </launch>

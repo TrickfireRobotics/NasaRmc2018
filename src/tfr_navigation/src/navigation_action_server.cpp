@@ -123,7 +123,7 @@ class Navigator
                     //drop the location of the hole for the return trip
                     tfr_msgs::LocalizePoint::Request request;
                     request.pose.pose.position.x=
-                        nav_goal.target_pose.pose.position.x + 0.9;
+                        nav_goal.target_pose.pose.position.x + 1.5;
                     request.pose.pose.orientation.z=1;
                     tfr_msgs::LocalizePoint::Response response;
                     while (!ros::service::call("localize_hole", request, response) 
@@ -168,12 +168,12 @@ class Navigator
             switch(goal)
             {
                 case(tfr_utilities::LocationCode::MINING):
-                    nav_goal.target_pose.pose.position.x = 0.7;
+                    nav_goal.target_pose.pose.position.x = 0.9;
            //TODO             constraints.get_safe_mining_distance();
                     nav_goal.target_pose.pose.position.z = height_adjustment;
                     break;
                 case(tfr_utilities::LocationCode::DUMPING):
-                    nav_goal.target_pose.pose.position.x = 0.7;
+                    nav_goal.target_pose.pose.position.x = 0.65;
           //TODO              constraints.get_finish_line();
                     nav_goal.target_pose.pose.position.z = height_adjustment;
                     break;

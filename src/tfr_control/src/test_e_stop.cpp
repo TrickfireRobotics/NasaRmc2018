@@ -11,5 +11,10 @@ int main(int argc, char** argv)
 
     while(!ros::service::call("toggle_motors", request))
         ROS_INFO("toggle");
+    while(ros::ok())
+    {
+        ros::service::call("toggle_motors", request);
+        ros::Duration(1).sleep();
+    }
     return 0;
 }

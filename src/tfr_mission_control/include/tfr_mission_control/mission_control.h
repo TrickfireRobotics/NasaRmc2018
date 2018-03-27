@@ -121,6 +121,9 @@ namespace tfr_mission_control {
             //sets control system to output commands
             void setControl(bool value);
 
+            //sets hardware system to output commands
+            void setMotors(bool value);
+
 
 
 
@@ -159,6 +162,7 @@ namespace tfr_mission_control {
     
                 //MISC
                 virtual void performTeleop(tfr_utilities::TeleopCode code);
+                virtual void toggleControl(bool state);    //e-stop and start
                 virtual void toggleMotors(bool state);    //e-stop and start
     
             signals:

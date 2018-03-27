@@ -68,19 +68,22 @@ namespace tfr_control {
          * */
         void write();
 
-        /*
-         * Clears all command values being sent and sets them to safe values
-         * stops the treads and commands the arm to hold position.
-         * */
-        void clearCommands();
 
         /*
          * Determines if the bin has been extened or not
          * */
         bool isBinExtended();
 
+        /*
+         * Clears all command values being sent and sets them to safe values
+         * stops the treads and commands the arm to hold position.
+         * */
+        void clearCommands();
 
-
+        /**
+         * A rigourous disabling measure that disables pwm out
+         * */
+        void hardCutoff(bool);
 
     private:
         //joint states for Joint state publisher package

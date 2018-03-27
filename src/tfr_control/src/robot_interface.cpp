@@ -38,7 +38,12 @@ namespace tfr_control
         registerInterface(&joint_state_interface);
         registerInterface(&joint_effort_interface);
         registerInterface(&joint_position_interface);
-        pwm.enablePWM(true);
+        hardCutoff(true);
+    }
+
+    void RobotInterface::hardCutoff(bool state)
+    {
+        pwm.enablePWM(!state);
     }
 
     /*
@@ -160,7 +165,8 @@ namespace tfr_control
         //LEFT_TREAD
         signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::LEFT_TREAD)],
                     drivebase_v0.first);
-        pwm.set(PWMInterface::Address::TREAD_LEFT, signal);
+        //TODO
+        pwm.set(PWMInterface::Address::TREAD_LEFT, 1);
 
         //RIGHT_TREAD
         signal =

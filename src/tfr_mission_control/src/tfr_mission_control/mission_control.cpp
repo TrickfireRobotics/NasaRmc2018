@@ -92,10 +92,10 @@ namespace tfr_mission_control {
         connect(ui.autonomy_button, &QPushButton::clicked, this,  &MissionControl::goAutonomousMode);
         connect(ui.teleop_button, &QPushButton::clicked, this,  &MissionControl::goTeleopMode);
 
-        connect(ui.enable_button,&QPushButton::clicked, [this] ()
-                {toggleMotors(true);});
-        connect(ui.disable_button,&QPushButton::clicked, [this] ()
-                {toggleMotors(false);});
+        connect(ui.control_enable_button,&QPushButton::clicked, [this] () {toggleControl(true);});
+        connect(ui.control_disable_button,&QPushButton::clicked, [this] () {toggleControl(false);});
+        connect(ui.motor_enable_button,&QPushButton::clicked, [this] () {toggleMotors(true);});
+        connect(ui.motor_disable_button,&QPushButton::clicked, [this] () {toggleMotors(false);});
         connect(countdown, &QTimer::timeout, this,  &MissionControl::renderClock);
         connect(this, &MissionControl::emitStatus, ui.status_log, &QPlainTextEdit::appendPlainText);
         connect(ui.status_log, &QPlainTextEdit::textChanged, this,  &MissionControl::renderStatus);
@@ -224,9 +224,19 @@ namespace tfr_mission_control {
      * */
     void MissionControl::setControl(bool value)
     {
-        ui.enable_button->setEnabled(!value);
-        ui.disable_button->setEnabled(value);
+        ui.control_enable_button->setEnabled(!value);
+        ui.control_disable_button->setEnabled(value);
     }
+
+    /*
+     * Toggles the control buttons
+     * */
+    void MissionControl::setMotors(bool value)
+    {
+        ui.motor_enable_button->setEnabled(!value);
+        ui.motor_disable_button->setEnabled(value);
+    }
+
 
     /*
      * Utility for stopping all motors
@@ -346,7 +356,7 @@ namespace tfr_mission_control {
     void MissionControl::startMission()
     {
         startTimeService();
-        toggleMotors(true);
+        toggleControl(true);
         goAutonomousMode();
     }
     
@@ -354,7 +364,7 @@ namespace tfr_mission_control {
     void MissionControl::startManual()
     {
         startTimeService();
-        toggleMotors(true);
+        toggleControl(true);
         goTeleopMode();
     }
 
@@ -390,14 +400,24 @@ namespace tfr_mission_control {
         teleop.sendGoal(goal);
     }
 
+    //toggles control for estop (on/off)
+    void MissionControl::toggleControl(bool state)
+    {
+        std_srvs::SetBool request;
+        request.request.data = state;
+        while(!ros::service::call("toggle_control", request));
+        setControl(state);
+    }
+
     //toggles the motors for estop (on/off)
     void MissionControl::toggleMotors(bool state)
     {
         std_srvs::SetBool request;
         request.request.data = state;
         while(!ros::service::call("toggle_motors", request));
-        setControl(state);
+        setMotors(state);
     }
+
 
     //self explanitory
     void MissionControl::renderClock()

@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>575</width>
+    <width>756</width>
     <height>417</height>
    </rect>
   </property>
@@ -223,7 +223,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="5">
+     <item row="1" column="6">
       <widget class="QPushButton" name="cw_button">
        <property name="enabled">
         <bool>false</bool>
@@ -239,7 +239,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="6">
+     <item row="1" column="7">
       <widget class="QPushButton" name="dump_button">
        <property name="enabled">
         <bool>false</bool>
@@ -255,7 +255,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="5">
+     <item row="0" column="6">
       <widget class="QPushButton" name="ccw_button">
        <property name="enabled">
         <bool>false</bool>
@@ -272,7 +272,7 @@
       </widget>
      </item>
      <item row="1" column="4">
-      <widget class="QPushButton" name="disable_button">
+      <widget class="QPushButton" name="control_disable_button">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -295,7 +295,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Disable</string>
+        <string>DisableControl</string>
        </property>
       </widget>
      </item>
@@ -337,7 +337,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="6">
+     <item row="0" column="7">
       <widget class="QPushButton" name="dig_button">
        <property name="enabled">
         <bool>false</bool>
@@ -354,7 +354,7 @@
       </widget>
      </item>
      <item row="0" column="4">
-      <widget class="QPushButton" name="enable_button">
+      <widget class="QPushButton" name="control_enable_button">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
          <horstretch>0</horstretch>
@@ -368,7 +368,42 @@
         </font>
        </property>
        <property name="text">
-        <string>Enable</string>
+        <string>Enable Control</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <widget class="QPushButton" name="motor_enable_button">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Enable Motors</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="5">
+      <widget class="QPushButton" name="motor_disable_button">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Disable Motors</string>
        </property>
       </widget>
      </item>

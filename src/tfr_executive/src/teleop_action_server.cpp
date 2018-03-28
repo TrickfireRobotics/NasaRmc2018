@@ -34,12 +34,14 @@
 #include <tfr_utilities/teleop_code.h>
 #include <tfr_utilities/control_code.h>
 #include <tfr_msgs/TeleopAction.h>
+#include <tfr_msgs/DiggingAction.h>
 #include <tfr_msgs/EmptySrv.h>
 #include <tfr_msgs/CodeSrv.h>
 #include <tfr_msgs/DurationSrv.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Float64.h>
 #include <actionlib/server/simple_action_server.h>
+#include <actionlib/client/simple_action_client.h>
 
 
 class TeleopExecutive
@@ -64,9 +66,11 @@ class TeleopExecutive
                 false},
             drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
             bin_publisher{n.advertise<std_msgs::Float64>("/bin_position_controller/command", 5)},
+            digging_client{n, "dig"},
             drive_stats{drive},
             frequency{f}
         {
+            digging_client.waitForServer();
             server.start();
             ROS_INFO("Teleop Action Server: Online %f", ros::Time::now().toSec());
         }
@@ -169,19 +173,55 @@ class TeleopExecutive
 
                 case (tfr_utilities::TeleopCode::DIG):
                     {
-                        // TODO integrate and check for preemption
-                        ROS_INFO("Teleop Action Server: Command Recieved, DIG");
+                        ROS_INFO("Teleop Action Server: commencing digging");
+                        tfr_msgs::DiggingGoal goal{};
+                        ROS_INFO("Teleop Action Server: retrieving digging time");
                         tfr_msgs::DurationSrv digging_time;
                         ros::service::call("digging_time", digging_time);
-                        ROS_INFO("Autonomous Action Server: digging time retreived %f",
+                        ROS_INFO("Teleop Action Server: digging time retreived %f",
                                 digging_time.response.duration.toSec());
+                        goal.diggingTime = digging_time.response.duration;
+                        digging_client.sendGoal(goal);
+
+                        //handle preemption
+                        while (!digging_client.getState().isDone())
+                        {
+                            if (server.isPreemptRequested() || ! ros::ok())
+                            {
+                                digging_client.cancelAllGoals();
+                                server.setPreempted();
+                                ROS_INFO("Teleop Action Server: digging preempted");
+                                return;
+                            }
+                            frequency.sleep();
+                        }
+                        ROS_INFO("Teleop Action Server: digging finished");
                         break;
                     }
 
                 case (tfr_utilities::TeleopCode::DUMP):
                     {
-                        // TODO integrate and check for preemption
+                        drivebase_publisher.publish(move_cmd);
                         ROS_INFO("Teleop Action Server: Command Recieved, DUMP");
+                        //all zeros by default
+                        std_msgs::Float64 bin_cmd;
+                        bin_cmd.data = tfr_utilities::JointAngles::BIN_MAX;
+                        tfr_msgs::CodeSrv query;
+                        while (!server.isPreemptRequested() && ros::ok())
+                        {
+                            ros::service::call("bin_state", query);
+                            if (static_cast<tfr_utilities::BinCode>(query.response.code) == tfr_utilities::BinCode::RAISED)
+                                break;
+                            bin_publisher.publish(bin_cmd);
+                            frequency.sleep();
+                        }
+                        if (server.isPreemptRequested())
+                        {
+                            ROS_INFO("Teleop Action Server: DUMP preempted");
+                            server.setPreempted();
+                            return;
+                        }
+                        ROS_INFO("Teleop Action Server: DUMP finished");
                         break;
                     }
 
@@ -191,18 +231,23 @@ class TeleopExecutive
                         ROS_INFO("Teleop Action Server: Command Recieved, RESET_DUMPING");
                         //all zeros by default
                         std_msgs::Float64 bin_cmd;
-                        bin_cmd.data = 0;
+                        bin_cmd.data = tfr_utilities::JointAngles::BIN_MIN;
                         tfr_msgs::CodeSrv query;
                         while (!server.isPreemptRequested() && ros::ok())
                         {
-                            ros::service::call("is_bin_lowered", query);
-                            if
-                                (static_cast<tfr_utilities::BinCode>(query.response.code) == tfr_utilities::BinCode::RAISED)
+                            ros::service::call("bin_state", query);
+                            if (static_cast<tfr_utilities::BinCode>(query.response.code) == tfr_utilities::BinCode::LOWERED)
                                 break;
                             bin_publisher.publish(bin_cmd);
                             frequency.sleep();
                         }
-
+                        if (server.isPreemptRequested())
+                        {
+                            ROS_INFO("Teleop Action Server: DUMPING_RESET preempted");
+                            server.setPreempted();
+                            return;
+                        }
+                        ROS_INFO("Teleop Action Server: DUMPING_RESET finished");
                         break;
                     }
 
@@ -229,6 +274,7 @@ class TeleopExecutive
         }
 
         actionlib::SimpleActionServer<tfr_msgs::TeleopAction> server;
+        actionlib::SimpleActionClient<tfr_msgs::DiggingAction> digging_client;
         ros::Publisher drivebase_publisher;
         ros::Publisher bin_publisher;
         DriveVelocity &drive_stats;

@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!--NOTE must match the constants in the control code header in utilities-->
 <robot name="excavator" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- Shared model level constants -->
   <!-- Inches to meters conversion -->

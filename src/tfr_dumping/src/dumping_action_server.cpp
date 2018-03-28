@@ -85,8 +85,6 @@ class Dumper
 
         const DumpingConstraints &constraints; 
 
-        //how far the max range of the bin is
-        static constexpr double BIN_RAISED  = 0.75398;
 
         /*
          * The business logic of the action server.
@@ -137,7 +135,7 @@ class Dumper
             stopMoving();
             ROS_INFO("dumping action server detected light raising bin");
             std_msgs::Float64 bin_cmd;
-            bin_cmd.data = BIN_RAISED;
+            bin_cmd.data = tfr_utilities::JointAngles::BIN_MAX;
             tfr_msgs::CodeSrv query;
             ros::Rate rate(10);
             while (!server.isPreemptRequested() && ros::ok())

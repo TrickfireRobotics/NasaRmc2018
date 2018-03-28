@@ -3,6 +3,7 @@
 #include <Adafruit_ADS1015.h>
 #include <ros.h>
 #include <tfr_msgs/ArduinoReading.h>
+#include <tfr_utilities/control_code.h>
 #include <quadrature.h>
 
 ros::NodeHandle nh;
@@ -46,12 +47,12 @@ enum Potentiometers
 
 Potentiometer pots []
 {
-  {4.88,  0.209, 1.693},      //ARM_LOWER_LEFT
-  {4.88,  0.209, 1.693},      //ARM_LOWER_RIGHT
-  {4.88,  0.000, 1.868},      //ARM_UPPER
-  {4.88, -0.873, 1.868},      //ARM_SCOOP
-  {4.88,  0.000, 0.786},      //BIN_LEFT
-  {4.88,  0.000, 0.786}       //BIN_RIGHT
+  {4.88, tfr_utilities::JointAngles::ARM_LOWER_MIN, tfr_utilities::JointAngles::ARM_LOWER_MAX},      //ARM_LOWER_LEFT
+  {4.88, tfr_utilities::JointAngles::ARM_LOWER_MIN, tfr_utilities::JointAngles::ARM_LOWER_MAX},      //ARM_LOWER_RIGHT
+  {4.88, tfr_utilities::JointAngles::ARM_UPPER_MIN, tfr_utilities::JointAngles::ARM_UPPER_MAX},      //ARM_UPPER
+  {4.88, tfr_utilities::JointAngles::ARM_SCOOP_MIN, tfr_utilities::JointAngles::ARM_SCOOP_MAX},      //ARM_SCOOP
+  {4.88, tfr_utilities::JointAngles::BIN_MIN, tfr_utilities::JointAngles::BIN_MAX},      //BIN_LEFT
+  {4.88, tfr_utilities::JointAngles::BIN_MIN, tfr_utilities::JointAngles::BIN_MAX}       //BIN_RIGHT
 };
 
 

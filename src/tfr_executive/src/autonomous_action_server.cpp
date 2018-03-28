@@ -215,7 +215,7 @@ class AutonomousExecutive
                     }
                     frequency.sleep();
                 }
-                if (localizationClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+                if (diggingClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
                 {
                     ROS_INFO("Autonomous Action Server: digging failed");
                     server.setAborted();
@@ -295,7 +295,6 @@ class AutonomousExecutive
         }
 
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
-
         actionlib::SimpleActionClient<tfr_msgs::EmptyAction> localizationClient;
         actionlib::SimpleActionClient<tfr_msgs::NavigationAction> navigationClient;
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> diggingClient;

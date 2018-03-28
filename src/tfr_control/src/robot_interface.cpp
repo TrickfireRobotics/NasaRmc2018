@@ -232,9 +232,9 @@ namespace tfr_control
     }
 
     /*
-     * Returns if the bin is extended or not
+     * Retrieved the state of the bin
      * */
-    bool RobotInterface::isBinExtended()
+    tfr_utilities::BinCode RobotInterface::getBinState()
     {
         double goal = 0.785398;
         double tolerance = 0.01;

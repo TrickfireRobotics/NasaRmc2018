@@ -32,10 +32,13 @@
 #include <ros/ros.h>
 #include <ros/console.h>
 #include <tfr_utilities/teleop_code.h>
+#include <tfr_utilities/control_code.h>
 #include <tfr_msgs/TeleopAction.h>
 #include <tfr_msgs/EmptySrv.h>
+#include <tfr_msgs/CodeSrv.h>
 #include <tfr_msgs/DurationSrv.h>
 #include <geometry_msgs/Twist.h>
+#include <std_msgs/Float64.h>
 #include <actionlib/server/simple_action_server.h>
 
 
@@ -59,7 +62,8 @@ class TeleopExecutive
             server{n, "teleop_action_server",
                 boost::bind(&TeleopExecutive::processCommand, this, _1),
                 false},
-            drivebase{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
+            drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
+            bin_publisher{n.advertise<std_msgs::Float64>("/bin_position_controller/command", 5)},
             drive_stats{drive},
             frequency{f}
         {
@@ -103,7 +107,7 @@ class TeleopExecutive
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, STOP_DRIVEBASE");
                         //all zeros by default
-                        drivebase.publish(move_cmd);
+                        drivebase_publisher.publish(move_cmd);
                         break;
                     }
 
@@ -119,7 +123,7 @@ class TeleopExecutive
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, FORWARD");
                         move_cmd.linear.x = drive_stats.getLinear();
-                        drivebase.publish(move_cmd);
+                        drivebase_publisher.publish(move_cmd);
                         break;
                     }
 
@@ -127,7 +131,7 @@ class TeleopExecutive
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, BACKWARD");
                         move_cmd.linear.x = -drive_stats.getLinear();
-                        drivebase.publish(move_cmd);
+                        drivebase_publisher.publish(move_cmd);
                         break;
                     }
 
@@ -135,7 +139,7 @@ class TeleopExecutive
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, LEFT");
                         move_cmd.angular.z = drive_stats.getAngular();
-                        drivebase.publish(move_cmd);
+                        drivebase_publisher.publish(move_cmd);
                         break;
                     }
 
@@ -143,7 +147,7 @@ class TeleopExecutive
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, RIGHT");
                         move_cmd.angular.z = -drive_stats.getAngular();
-                        drivebase.publish(move_cmd);
+                        drivebase_publisher.publish(move_cmd);
                         break;
                     }
 
@@ -151,7 +155,7 @@ class TeleopExecutive
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
                         move_cmd.angular.z = drive_stats.getAngular();
-                        drivebase.publish(move_cmd);
+                        drivebase_publisher.publish(move_cmd);
                         break;
                     }
 
@@ -159,7 +163,7 @@ class TeleopExecutive
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
                         move_cmd.angular.z = -drive_stats.getAngular();
-                        drivebase.publish(move_cmd);
+                        drivebase_publisher.publish(move_cmd);
                         break;
                     }
 
@@ -183,10 +187,22 @@ class TeleopExecutive
 
                 case (tfr_utilities::TeleopCode::RESET_DUMPING):
                     {
-                        // TODO integrate  
+                        drivebase_publisher.publish(move_cmd);
                         ROS_INFO("Teleop Action Server: Command Recieved, RESET_DUMPING");
                         //all zeros by default
-                        drivebase.publish(move_cmd);
+                        std_msgs::Float64 bin_cmd;
+                        bin_cmd.data = 0;
+                        tfr_msgs::CodeSrv query;
+                        while (!server.isPreemptRequested() && ros::ok())
+                        {
+                            ros::service::call("is_bin_lowered", query);
+                            if
+                                (static_cast<tfr_utilities::BinCode>(query.response.code) == tfr_utilities::BinCode::RAISED)
+                                break;
+                            bin_publisher.publish(bin_cmd);
+                            frequency.sleep();
+                        }
+
                         break;
                     }
 
@@ -195,7 +211,7 @@ class TeleopExecutive
                         // TODO integrate  
                         ROS_INFO("Teleop Action Server: Command Recieved, RESET_STARTING");
                         //all zeros by default
-                        drivebase.publish(move_cmd);
+                        drivebase_publisher.publish(move_cmd);
                         break;
                     }
 
@@ -213,7 +229,8 @@ class TeleopExecutive
         }
 
         actionlib::SimpleActionServer<tfr_msgs::TeleopAction> server;
-        ros::Publisher drivebase;
+        ros::Publisher drivebase_publisher;
+        ros::Publisher bin_publisher;
         DriveVelocity &drive_stats;
         //how often to check for preemption
         ros::Duration frequency;

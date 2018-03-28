@@ -26,6 +26,7 @@ add_message_files(
    FILES
    EmptySrv.srv
    QuerySrv.srv
+   CodeSrv.srv
    DurationSrv.srv
    LocalizePoint.srv
    WrappedImage.srv

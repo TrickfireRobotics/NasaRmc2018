@@ -22,6 +22,8 @@
 #include <utility>
 #include <algorithm>
 #include <tfr_msgs/ArduinoReading.h>
+#include <tfr_msgs/CodeSrv.h>
+#include <tfr_utilities/control_code.h>
 #include <pwm_interface.h>
 
 namespace tfr_control {
@@ -70,9 +72,9 @@ namespace tfr_control {
 
 
         /*
-         * Determines if the bin has been extened or not
+         * retrieves the state of the bin
          * */
-        bool isBinExtended();
+        tfr_utilities::BinCode getBinState();
 
         /*
          * Clears all command values being sent and sets them to safe values

@@ -4,7 +4,8 @@
 #include <tfr_msgs/EmptyAction.h>
 #include <tfr_msgs/ArucoAction.h>
 #include <tfr_msgs/WrappedImage.h>
-#include <tfr_msgs/QuerySrv.h>
+#include <tfr_msgs/CodeSrv.h>
+#include <tfr_utilities/control_code.h>
 #include <sensor_msgs/Image.h>
 #include <image_transport/image_transport.h>
 #include <actionlib/server/simple_action_server.h>
@@ -85,7 +86,7 @@ class Dumper
         const DumpingConstraints &constraints; 
 
         //how far the max range of the bin is
-        static constexpr double BIN_EXTENDED  = 0.75398;
+        static constexpr double BIN_RAISED  = 0.75398;
 
         /*
          * The business logic of the action server.
@@ -136,13 +137,13 @@ class Dumper
             stopMoving();
             ROS_INFO("dumping action server detected light raising bin");
             std_msgs::Float64 bin_cmd;
-            bin_cmd.data = BIN_EXTENDED;
-            tfr_msgs::QuerySrv query;
+            bin_cmd.data = BIN_RAISED;
+            tfr_msgs::CodeSrv query;
             ros::Rate rate(10);
             while (!server.isPreemptRequested() && ros::ok())
             {
-                ros::service::call("is_bin_extended", query);
-                if (query.response.data)
+                ros::service::call("bin_state", query);
+                if (static_cast<tfr_utilities::BinCode>(query.response.code) == tfr_utilities::BinCode::RAISED)
                     break;
                 bin_publisher.publish(bin_cmd);
                 stopMoving();

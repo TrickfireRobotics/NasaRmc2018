@@ -12,12 +12,13 @@
  * SERVICES:
  *  /toggle_control - uses the empty service, needs to be explicitly turned on to work
  *  /toggle_motors - uses the empty service, needs to be explicitly turned on to work
- *  /is_bin_extended - uses the query service to determine if the bin has been
+ *  /bin_state - uses the code service + tfr_utitlities::BinCode to determine if the bin has been
  *  extended
  */
 #include <ros/ros.h>
 #include <std_srvs/SetBool.h>
 #include <tfr_msgs/QuerySrv.h>
+#include <tfr_msgs/CodeSrv.h>
 #include <urdf/model.h>
 #include <sstream>
 #include <controller_manager/controller_manager.h>
@@ -89,7 +90,7 @@ class Control
             controller_interface{&robot_interface},
             eStopControl{n.advertiseService("toggle_control", &Control::toggleControl,this)},
             eStopMotors{n.advertiseService("toggle_motors", &Control::toggleMotors,this)},
-            binExtended{n.advertiseService("is_bin_extended", &Control::isExtended,this)},
+            binService{n.advertiseService("bin_state", &Control::getBinState,this)},
             cycle{1/rate},
             enabled{false}
         {}
@@ -121,7 +122,7 @@ class Control
         ros::ServiceServer eStopMotors;
 
         //tells if bin is extended
-        ros::ServiceServer binExtended;
+        ros::ServiceServer binService;
 
         //how fast to spin
         ros::Duration cycle;
@@ -153,10 +154,10 @@ class Control
         /*
          * Tells if the bin has been extended or not
          * */
-        bool isExtended(tfr_msgs::QuerySrv::Request& request,
-                tfr_msgs::QuerySrv::Response& response)
+        bool getBinState(tfr_msgs::CodeSrv::Request& request,
+                tfr_msgs::CodeSrv::Response& response)
         {
-            response.data = robot_interface.isBinExtended();
+            response.code = static_cast<uint8_t>(robot_interface.getBinState());
             return true;
         }
 

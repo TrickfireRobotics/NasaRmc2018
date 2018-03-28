@@ -1,0 +1,3 @@
+#srv for querying an 8 bit status code
+---
+uint8 code

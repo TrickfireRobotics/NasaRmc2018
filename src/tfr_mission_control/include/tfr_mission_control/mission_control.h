@@ -80,7 +80,7 @@ namespace tfr_mission_control {
             //how long to wait without keyborad input before killing the motors(hz)
             //NOTE can cause bouncy keys if user has too long of a delay for
             //repeated keys
-            const double MOTOR_INTERVAL = 1000/3;
+            const double MOTOR_INTERVAL = 1000/2;
 
             /* ======================================================================== */
             /* Variables                                                                */

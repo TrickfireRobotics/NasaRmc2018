@@ -291,25 +291,25 @@ namespace tfr_mission_control {
             {
                 motorKill->start(MOTOR_INTERVAL);
                 lastKey =k;
-                performTeleop(tfr_utilities::TeleopCode::FORWARD);
+                //performTeleop(tfr_utilities::TeleopCode::FORWARD);
             }
             else if(k == Qt::Key_S)
             {
                 motorKill->start(MOTOR_INTERVAL);
                 lastKey =k;
-                performTeleop(tfr_utilities::TeleopCode::BACKWARD);
+                //performTeleop(tfr_utilities::TeleopCode::BACKWARD);
             }
             else if(k == Qt::Key_A)
             {
                 motorKill->start(MOTOR_INTERVAL);
                 lastKey =k;
-                performTeleop(tfr_utilities::TeleopCode::LEFT);
+                //performTeleop(tfr_utilities::TeleopCode::LEFT);
             }
             else if(k == Qt::Key_D)
             {
                 motorKill->start(MOTOR_INTERVAL);
                 lastKey =k;
-                performTeleop(tfr_utilities::TeleopCode::RIGHT);
+                //performTeleop(tfr_utilities::TeleopCode::RIGHT);
             }
             //consume the key
             return true;

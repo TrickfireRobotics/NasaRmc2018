@@ -241,10 +241,10 @@
         <bool>true</bool>
        </property>
        <property name="autoRepeatDelay">
-        <number>75</number>
+        <number>50</number>
        </property>
        <property name="autoRepeatInterval">
-        <number>75</number>
+        <number>50</number>
        </property>
       </widget>
      </item>
@@ -282,10 +282,10 @@
         <bool>true</bool>
        </property>
        <property name="autoRepeatDelay">
-        <number>75</number>
+        <number>50</number>
        </property>
        <property name="autoRepeatInterval">
-        <number>75</number>
+        <number>50</number>
        </property>
       </widget>
      </item>

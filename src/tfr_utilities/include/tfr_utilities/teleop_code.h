@@ -14,7 +14,6 @@ namespace tfr_utilities
     enum class TeleopCode: uint8_t
     {
         STOP_DRIVEBASE,
-        STOP_TURNTABLE,
         FORWARD,
         BACKWARD,
         LEFT,

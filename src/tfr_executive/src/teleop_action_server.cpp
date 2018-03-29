@@ -123,14 +123,6 @@ class TeleopExecutive
                         break;
                     }
 
-                case (tfr_utilities::TeleopCode::STOP_TURNTABLE):
-                    {
-                        ROS_INFO("Teleop Action Server: Command Recieved, STOP_TURNTABLE");
-                        //all zeros by default
-                        //TODO integrate manual turntable control
-                        break;
-                    }
-
                 case (tfr_utilities::TeleopCode::FORWARD):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, FORWARD");
@@ -179,8 +171,8 @@ class TeleopExecutive
                             trajectory.joint_names[i] = arm_query.response.name[i];
                             trajectory.points[0].positions[i] = arm_query.response.position[i];
                         }
-                        trajectory.points[0].time_from_start = ros::Duration(0.04);
-                        trajectory.points[0].positions[0] -= 0.005;
+                        trajectory.points[0].time_from_start = ros::Duration(0.05);
+                        trajectory.points[0].positions[0] -= 0.01;
                         trajectory_publisher.publish(trajectory);
                         break;
                     }
@@ -202,7 +194,7 @@ class TeleopExecutive
                             trajectory.points[0].positions[i] = arm_query.response.position[i];
                         }
                         trajectory.points[0].time_from_start = ros::Duration(0.04);
-                        trajectory.points[0].positions[0] += 0.005;
+                        trajectory.points[0].positions[0] += 0.01;
                         trajectory_publisher.publish(trajectory);
                         break;
                     }

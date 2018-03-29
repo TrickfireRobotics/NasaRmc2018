@@ -120,14 +120,10 @@ namespace tfr_mission_control {
 
         /* for commands which do the turntable/drivebase we want to kill the
          * motors after release*/
-        connect(ui.cw_button,&QPushButton::pressed,
+        connect(ui.cw_button,&QPushButton::clicked,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::CLOCKWISE);});
-        connect(ui.cw_button,&QPushButton::released,
-                [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_TURNTABLE);});
-        connect(ui.ccw_button,&QPushButton::pressed,
+        connect(ui.ccw_button,&QPushButton::clicked,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::COUNTERCLOCKWISE);});
-        connect(ui.ccw_button,&QPushButton::released,
-                [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_TURNTABLE);});
         connect(ui.forward_button,&QPushButton::pressed,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::FORWARD);});
         connect(ui.forward_button,&QPushButton::released,
@@ -243,8 +239,6 @@ namespace tfr_mission_control {
     void MissionControl::softwareStop()
     {
         performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);
-        teleop.waitForResult();
-        performTeleop(tfr_utilities::TeleopCode::STOP_TURNTABLE);
         teleop.waitForResult();
     }
 

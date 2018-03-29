@@ -25,6 +25,7 @@
 #include <tfr_msgs/CodeSrv.h>
 #include <tfr_utilities/control_code.h>
 #include <pwm_interface.h>
+#include <vector>
 
 namespace tfr_control {
 
@@ -74,7 +75,12 @@ namespace tfr_control {
         /*
          * retrieves the state of the bin
          * */
-        tfr_utilities::BinCode getBinState();
+        double getBinState();
+
+        /*
+         * retrieves the state of the arm
+         * */
+        void getArmState(std::vector<double>&);
 
         /*
          * Clears all command values being sent and sets them to safe values

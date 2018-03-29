@@ -12,13 +12,14 @@
  * SERVICES:
  *  /toggle_control - uses the empty service, needs to be explicitly turned on to work
  *  /toggle_motors - uses the empty service, needs to be explicitly turned on to work
- *  /bin_state - uses the code service + tfr_utitlities::BinCode to determine if the bin has been
- *  extended
+ *  /bin_state - gives the position of the bin
+ *  /arm_state - gives the 4d position of the arm
  */
 #include <ros/ros.h>
 #include <std_srvs/SetBool.h>
 #include <tfr_msgs/QuerySrv.h>
-#include <tfr_msgs/CodeSrv.h>
+#include <tfr_msgs/BinStateSrv.h>
+#include <tfr_msgs/ArmStateSrv.h>
 #include <urdf/model.h>
 #include <sstream>
 #include <controller_manager/controller_manager.h>
@@ -91,6 +92,7 @@ class Control
             eStopControl{n.advertiseService("toggle_control", &Control::toggleControl,this)},
             eStopMotors{n.advertiseService("toggle_motors", &Control::toggleMotors,this)},
             binService{n.advertiseService("bin_state", &Control::getBinState,this)},
+            armService{n.advertiseService("arm_state", &Control::getArmState,this)},
             cycle{1/rate},
             enabled{false}
         {}
@@ -121,8 +123,9 @@ class Control
         ros::ServiceServer eStopControl;
         ros::ServiceServer eStopMotors;
 
-        //tells if bin is extended
+        //state services
         ros::ServiceServer binService;
+        ros::ServiceServer armService;
 
         //how fast to spin
         ros::Duration cycle;
@@ -152,14 +155,27 @@ class Control
 
 
         /*
-         * Tells if the bin has been extended or not
+         * Gets the state of the bin
          * */
-        bool getBinState(tfr_msgs::CodeSrv::Request& request,
-                tfr_msgs::CodeSrv::Response& response)
+        bool getBinState(tfr_msgs::BinStateSrv::Request& request,
+                tfr_msgs::BinStateSrv::Response& response)
         {
-            response.code = static_cast<uint8_t>(robot_interface.getBinState());
+            response.state = static_cast<double>(robot_interface.getBinState());
             return true;
         }
+
+        /*
+         * Gets the state of the arm
+         * */
+        bool getArmState(tfr_msgs::ArmStateSrv::Request& request,
+                tfr_msgs::ArmStateSrv::Response& response)
+        {
+            std::vector<double> states{};
+            robot_interface.getArmState(states);
+            response.states = states;
+            return true;
+        }
+
 
 };
 

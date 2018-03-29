@@ -1,6 +1,6 @@
 # Each of these three will be build as a ROS message
 # goal
-float32[] pose
+float64[] pose
 ---
 # result
 # whether the motion was successful or not

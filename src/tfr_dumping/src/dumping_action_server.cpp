@@ -4,7 +4,7 @@
 #include <tfr_msgs/EmptyAction.h>
 #include <tfr_msgs/ArucoAction.h>
 #include <tfr_msgs/WrappedImage.h>
-#include <tfr_msgs/CodeSrv.h>
+#include <tfr_msgs/BinStateSrv.h>
 #include <tfr_utilities/control_code.h>
 #include <sensor_msgs/Image.h>
 #include <image_transport/image_transport.h>
@@ -135,13 +135,14 @@ class Dumper
             stopMoving();
             ROS_INFO("dumping action server detected light raising bin");
             std_msgs::Float64 bin_cmd;
-            bin_cmd.data = tfr_utilities::JointAngles::BIN_MAX;
-            tfr_msgs::CodeSrv query;
+            bin_cmd.data = tfr_utilities::JointAngle::BIN_MAX;
+            tfr_msgs::BinStateSrv query;
             ros::Rate rate(10);
             while (!server.isPreemptRequested() && ros::ok())
             {
                 ros::service::call("bin_state", query);
-                if (static_cast<tfr_utilities::BinCode>(query.response.code) == tfr_utilities::BinCode::RAISED)
+                using namespace tfr_utilities;
+                if (JointAngle::BIN_MAX - query.response.state < JointAngle::ANGLE_TOLERANCE)
                     break;
                 bin_publisher.publish(bin_cmd);
                 stopMoving();

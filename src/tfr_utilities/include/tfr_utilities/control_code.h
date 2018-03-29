@@ -8,8 +8,9 @@
 
 namespace tfr_utilities
 {
-    namespace JointAngles
+    namespace JointAngle
     {
+        static const float ANGLE_TOLERANCE = 0.01;
         //NOTES must match up with constants in model
         static const float ARM_TURNTABLE_MAX = 6.28319;
         static const float ARM_TURNTABLE_MIN = 0.0;
@@ -22,14 +23,6 @@ namespace tfr_utilities
         static const float BIN_MAX = 0.785398;
         static const float BIN_MIN = 0.0;
     }
-    /*
-     * Codes for commands send back and forth in teleop mode
-     * */
-    enum class BinCode: uint8_t
-    {
-        RAISED,
-        LOWERED,
-        IN_BETWEEN
-    };
+
 }
 #endif

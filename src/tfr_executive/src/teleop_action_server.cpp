@@ -35,13 +35,16 @@
 #include <tfr_utilities/control_code.h>
 #include <tfr_msgs/TeleopAction.h>
 #include <tfr_msgs/DiggingAction.h>
+#include <tfr_msgs/ArmMoveAction.h>
 #include <tfr_msgs/EmptySrv.h>
-#include <tfr_msgs/CodeSrv.h>
+#include <tfr_msgs/BinStateSrv.h>
+#include <tfr_msgs/ArmStateSrv.h>
 #include <tfr_msgs/DurationSrv.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Float64.h>
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
+
 
 
 class TeleopExecutive
@@ -67,10 +70,12 @@ class TeleopExecutive
             drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
             bin_publisher{n.advertise<std_msgs::Float64>("/bin_position_controller/command", 5)},
             digging_client{n, "dig"},
+            arm_client{n, "move_arm"},
             drive_stats{drive},
             frequency{f}
         {
             digging_client.waitForServer();
+            arm_client.waitForServer();
             server.start();
             ROS_INFO("Teleop Action Server: Online %f", ros::Time::now().toSec());
         }
@@ -205,12 +210,13 @@ class TeleopExecutive
                         ROS_INFO("Teleop Action Server: Command Recieved, DUMP");
                         //all zeros by default
                         std_msgs::Float64 bin_cmd;
-                        bin_cmd.data = tfr_utilities::JointAngles::BIN_MAX;
-                        tfr_msgs::CodeSrv query;
+                        bin_cmd.data = tfr_utilities::JointAngle::BIN_MAX;
+                        tfr_msgs::BinStateSrv query;
                         while (!server.isPreemptRequested() && ros::ok())
                         {
                             ros::service::call("bin_state", query);
-                            if (static_cast<tfr_utilities::BinCode>(query.response.code) == tfr_utilities::BinCode::RAISED)
+                            using namespace tfr_utilities;
+                            if (JointAngle::BIN_MAX -  query.response.state < JointAngle::ANGLE_TOLERANCE)
                                 break;
                             bin_publisher.publish(bin_cmd);
                             frequency.sleep();
@@ -231,12 +237,13 @@ class TeleopExecutive
                         ROS_INFO("Teleop Action Server: Command Recieved, RESET_DUMPING");
                         //all zeros by default
                         std_msgs::Float64 bin_cmd;
-                        bin_cmd.data = tfr_utilities::JointAngles::BIN_MIN;
-                        tfr_msgs::CodeSrv query;
+                        bin_cmd.data = tfr_utilities::JointAngle::BIN_MIN;
+                        tfr_msgs::BinStateSrv query;
                         while (!server.isPreemptRequested() && ros::ok())
                         {
                             ros::service::call("bin_state", query);
-                            if (static_cast<tfr_utilities::BinCode>(query.response.code) == tfr_utilities::BinCode::LOWERED)
+                            using namespace tfr_utilities;
+                            if (query.response.state - JointAngle::BIN_MIN < JointAngle::ANGLE_TOLERANCE)
                                 break;
                             bin_publisher.publish(bin_cmd);
                             frequency.sleep();
@@ -253,10 +260,53 @@ class TeleopExecutive
 
                 case (tfr_utilities::TeleopCode::RESET_STARTING):
                     {
-                        // TODO integrate  
                         ROS_INFO("Teleop Action Server: Command Recieved, RESET_STARTING");
+
                         //all zeros by default
                         drivebase_publisher.publish(move_cmd);
+                        //first grab the current state of the arm
+                        tfr_msgs::ArmStateSrv query;
+                        ros::service::call("arm_state", query);
+                        tfr_msgs::ArmMoveGoal goal;
+                        //first we lift the arm up
+                        goal.pose.resize(4);
+                        goal.pose[0] = query.response.states[0];
+                        goal.pose[1] = tfr_utilities::JointAngle::ARM_LOWER_MIN;
+                        goal.pose[2] = tfr_utilities::JointAngle::ARM_UPPER_MIN;
+                        goal.pose[3] = tfr_utilities::JointAngle::ARM_SCOOP_MIN;
+
+                        arm_client.sendGoal(goal);
+
+                        //handle preemption
+                        while (!arm_client.getState().isDone())
+                        {
+                            if (server.isPreemptRequested() || ! ros::ok())
+                            {
+                                arm_client.cancelAllGoals();
+                                server.setPreempted();
+                                ROS_INFO("Teleop Action Server: arm reset preempted");
+                                return;
+                            }
+                            frequency.sleep();
+                        }
+                        
+                        goal.pose[0] = tfr_utilities::JointAngle::ARM_TURNTABLE_MIN;
+                        arm_client.sendGoal(goal);
+                        //handle preemption
+                        while (!arm_client.getState().isDone())
+                        {
+                            if (server.isPreemptRequested() || ! ros::ok())
+                            {
+                                arm_client.cancelAllGoals();
+                                server.setPreempted();
+                                ROS_INFO("Teleop Action Server: arm reset preempted");
+                                return;
+                            }
+                            frequency.sleep();
+                        }
+
+                        ROS_INFO("Teleop Action Server: arm reset finished");
+
                         break;
                     }
 
@@ -275,6 +325,7 @@ class TeleopExecutive
 
         actionlib::SimpleActionServer<tfr_msgs::TeleopAction> server;
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> digging_client;
+        actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
         ros::Publisher drivebase_publisher;
         ros::Publisher bin_publisher;
         DriveVelocity &drive_stats;

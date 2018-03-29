@@ -234,12 +234,22 @@ namespace tfr_control
     /*
      * Retrieved the state of the bin
      * */
-    tfr_utilities::BinCode RobotInterface::getBinState()
+    double RobotInterface::getBinState()
     {
-        double goal = 0.785398;
-        double tolerance = 0.01;
-        return goal - position_values[static_cast<int>(Joint::BIN)] < tolerance;
+        return position_values[static_cast<int>(Joint::BIN)];
     }
+
+    /*
+     * Retrieved the state of the arm
+     * */
+    void RobotInterface::getArmState(std::vector<double> &position)
+    {
+        position.push_back(position_values[static_cast<int>(Joint::TURNTABLE)]);
+        position.push_back(position_values[static_cast<int>(Joint::LOWER_ARM)]);
+        position.push_back(position_values[static_cast<int>(Joint::UPPER_ARM)]);
+        position.push_back(position_values[static_cast<int>(Joint::SCOOP)]);
+    }
+
 
 
 

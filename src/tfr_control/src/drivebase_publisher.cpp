@@ -55,9 +55,6 @@ namespace tfr_control
         double left_velocity = linear_v - (wheel_span * angular_v) / 2;
         double right_velocity = linear_v + (wheel_span * angular_v) / 2;
 
-        // Convert linear velocity to angular velocity of the wheel
-        left_tread = left_velocity / wheel_radius;
-        right_tread = right_velocity / wheel_radius;
     }
 
 }

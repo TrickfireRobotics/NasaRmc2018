@@ -12,6 +12,7 @@ find_package(OpenCV 3 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
     cv_bridge
     roscpp
+    tf
     tf2
     tf2_ros
     tf2_geometry_msgs
@@ -57,6 +58,10 @@ target_link_libraries(light_detection_action_client light_detector ${catkin_LIBR
 add_executable(fiducial_odom_publisher src/fiducial_odom_publisher.cpp)
 add_dependencies(fiducial_odom_publisher ${catkin_EXPORTED_TARGETS})
 target_link_libraries(fiducial_odom_publisher tf_manipulator ${catkin_LIBRARIES})
+
+add_executable(drivebase_odom_publisher src/drivebase_odom_publisher.cpp)
+add_dependencies(drivebase_odom_publisher ${catkin_EXPORTED_TARGETS})
+target_link_libraries(drivebase_odom_publisher tf_manipulator ${catkin_LIBRARIES})
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 

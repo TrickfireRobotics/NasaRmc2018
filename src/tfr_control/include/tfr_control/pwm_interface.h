@@ -16,8 +16,15 @@ class PWMInterface
     public:
         enum class Address
         {
-            //TODO finish adding these
-            LEFT_TREAD = 0
+            TREAD_LEFT = 0,
+            TREAD_RIGHT = 1,
+            ARM_TURNTABLE = 2,
+            ARM_LOWER_LEFT = 3,
+            ARM_LOWER_RIGHT = 4,
+            ARM_UPPER = 5,
+            ARM_SCOOP = 6,
+            BIN_LEFT = 7,
+            BIN_RIGHT = 8
         };
 
         PWMInterface();

@@ -19,8 +19,9 @@
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/robot_hw.h>
+#include <utility>
 #include <algorithm>
-#include <tfr_msgs/EncoderReading.h>
+#include <tfr_msgs/ArduinoReading.h>
 #include <pwm_interface.h>
 
 namespace tfr_control {
@@ -72,17 +73,17 @@ namespace tfr_control {
     private:
         //joint states for Joint state publisher package
         hardware_interface::JointStateInterface joint_state_interface;
-        //cmd states for effort controllers package relies on joint states
+        //cmd states for position driven joints
+        hardware_interface::PositionJointInterface joint_position_interface;
+        //cmd states for velocity driven joints
         hardware_interface::EffortJointInterface joint_effort_interface;
 
         //the pwm bridge
         PWMInterface pwm;
         //reads from arduino encoder publisher
-        ros::Subscriber encoders;
-        tfr_msgs::EncoderReadingConstPtr latest_encoders;
+        ros::Subscriber arduino;
+        tfr_msgs::ArduinoReadingConstPtr latest_arduino;
 
-        //callback for publisher
-        void readEncoders(const tfr_msgs::EncoderReadingConstPtr &msg);
 
         // Populated by controller layer for us to use
         double command_values[JOINT_COUNT]{};
@@ -94,28 +95,45 @@ namespace tfr_control {
         // Populated by us for controller layer to use
         double effort_values[JOINT_COUNT]{};
 
-        /**
-         * Adam uses this for testing the arm
-         */
-        bool use_fake_values = false;
+        //used to limit acceleration pull on the drivebase
+        std::pair<double, double> drivebase_v0;
+        ros::Time last_update;
 
-        // The time of the previous update cycle (update at the end of write)
-        ros::Time prev_time;
         
-        void registerJoint(std::string name, Joint joint);
+        void registerTreadJoint(std::string name, Joint joint);
+        void registerBinJoint(std::string name, Joint joint);
+        void registerArmJoint(std::string name, Joint joint);
+
+
+        //callback for publisher
+        void readArduino(const tfr_msgs::ArduinoReadingConstPtr &msg);
 
         /**
-         * Gets the time in seconds since the last update cycle
-         */
-        double getUpdateTime();
+         * Gets the PWM appropriate output for an angle joint at the current time
+         * */
+        double angleToPWM(const double &desired, const double &measured);
+
+        /**
+         * Gets the PWM appropriate output for turntable at the current time
+         * */
+        double turntableAngleToPWM(const double &desired, const double &measured);
+
+        /**
+         * Gets the PWM appropriate output for turntable at the current time
+         * */
+        std::pair<double, double> twinAngleToPWM(const double &desired, 
+                const double &measured_left, const double &measured_right);
 
         /**
          * Gets the PWM appropriate output for a joint at the current time
          * */
-        double velocityToPWM(const double &velocity);
+        double drivebaseVelocityToPWM(const double &v_1, const double &v_0);
 
+        // THESE DATA MEMBERS ARE FOR SIMULATION ONLY
         // Holds the lower and upper limits of the URDF model joint
+        bool use_fake_values = false;
         const double *lower_limits, *upper_limits;
+
     };
 }
 

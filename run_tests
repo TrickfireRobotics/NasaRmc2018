@@ -5,34 +5,7 @@ echo "------------------------------------ Utilites ----------------------------
 echo ""
 rosrun tfr_utilities tfr_utilities-test
 echo ""
-echo "------------------------------------- Sensor -------------------------------------"
-echo ""
-rosrun tfr_sensor tfr_sensor-test
-echo ""
 echo "----------------------------------- Navigation -----------------------------------"
 echo ""
 rosrun tfr_navigation tfr_navigation-test
-echo ""
-echo "------------------------------------- Mining -------------------------------------"
-echo ""
-rosrun tfr_mining tfr_mining-test
-echo ""
-echo "---------------------------------- Localization ----------------------------------"
-echo ""
-rosrun tfr_localization tfr_localization-test
-echo ""
-echo "----------------------------------- Executive ------------------------------------"
-echo ""
-rosrun tfr_executive tfr_executive-test
-echo ""
-echo "------------------------------------- Dumping -------------------------------------"
-echo ""
-rosrun tfr_dumping tfr_dumping-test
-echo ""
-echo "------------------------------------- Control -------------------------------------"
-echo ""
-rosrun tfr_control tfr_control-test
-echo ""
-echo "---------------------------------- Communication ----------------------------------"
-echo ""
-rosrun tfr_control tfr_control-test
+

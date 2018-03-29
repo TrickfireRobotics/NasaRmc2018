@@ -18,7 +18,7 @@ add_message_files(
   FILES
   Echo.msg
   SystemStatus.msg
-  EncoderReading.msg
+  ArduinoReading.msg
 )
 
 # Generate services in the 'srv' folder
@@ -40,6 +40,7 @@ add_action_files(
   Aruco.action
   ArmMove.action
   Empty.action
+  Digging.action
 )
 
 # Generate added messages and services with any dependencies listed here

@@ -1,0 +1,33 @@
+# Holds all of the positions for the test client to travel to (order doesn't
+# matter in this file, but this is the correct order for a dig cycle)
+positions:
+  ready: [1.65, 0.0, -0.85]
+  dig1: [1.5, 0.6, -0.85]
+  scoop1: [1.35, 0.9, 0.7]
+  dig2: [1.5, 0.6, -0.85]
+  scoop2: [1.35, 0.9, 0.7]
+  dig3: [1.5, 0.6, -0.85]
+  scoop3: [1.35, 0.9, 0.7]
+  dig4: [1.5, 0.6, -0.85]
+  scoop4: [1.35, 0.9, 0.7]
+  out: [1.2, 0.9, 1.0]
+  excessdump: [0.25, 1.25, 1.1]
+  bindump: [3.14159265, 0.25, 1.25, 1.1]
+  excessrelease: [0.21, 1.25, -0.75]
+  binrelease: [3.14159265, 0.21, 1.25, -0.75]
+  safe: [0.0, 0.21, 0.0, 0.0]
+
+  ready_time: 3.5
+  dig1_time: 3.5
+  scoop1_time: 3.5
+  dig2_time: 3.5
+  scoop2_time: 3.5
+  dig3_time: 3.5
+  scoop3_time: 3.5
+  dig4_time: 3.5
+  scoop4_time: 3.5
+  out_time: 3.5
+  excessdump_time: 3.5
+  bindump_time: 3.5
+  excessrelease_time: 3.5
+  binrelease_time: 3.5

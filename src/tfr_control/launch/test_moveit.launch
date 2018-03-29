@@ -1,10 +1,13 @@
 <launch>
-  <!-- Launch all the hardware interface nodes -->
-  <include file="$(find tfr_control)/launch/test_controller.launch"/>
+    <node name="encoder_handler" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0" output="screen"/>
+    
+    <!-- Launch all the hardware interface nodes -->
+    <include file="$(find tfr_control)/launch/control.launch"/>
 
-  <!-- Launch all the MoveIt! nodes -->
-  <include file="$(find tfr_moveit)/launch/move_group.launch"/>
+    <!-- Launch all the MoveIt! nodes -->
+    <include file="$(find tfr_moveit)/launch/move_group.launch"/>
 
-  <!-- Launch rviz -->
-  <include file="$(find tfr_visualization)/launch/moveit.launch"/>
+    <!-- Launch rviz -->
+    <include file="$(find tfr_visualization)/launch/moveit.launch"/>
+    <node name="test_e_stop" pkg="tfr_control" type="test_e_stop"/>
 </launch>

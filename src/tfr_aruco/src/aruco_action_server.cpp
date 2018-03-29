@@ -9,8 +9,9 @@
 #include <tfr_msgs/ArucoAction.h>
 #include <actionlib/server/simple_action_server.h>
 #include <tf2/LinearMath/Quaternion.h>
+#include "generatedMarker.h"
 
-
+#include <iostream>
 typedef actionlib::SimpleActionServer<tfr_msgs::ArucoAction> Server;
 
 class TFR_Aruco {
@@ -26,36 +27,8 @@ class TFR_Aruco {
             // set up board. This method is temporary until an official board is created. Works for now
             // represents the board that comes in the folder of this project
             std::vector<std::vector<cv::Point3f> > boardCorners;
-
-            // push top-left corners of markers
-            // This is only temporarily hardcoded
-            // TODO: write a program that generates both the code to do this from a "aruco board file"
-            // and an image that, when printed, will map directly to that code
-            boardCorners.push_back(std::vector<cv::Point3f>(1, cv::Point3f(0, 0, 0)));
-            boardCorners.push_back(std::vector<cv::Point3f>(1, cv::Point3f(6, 0, 0)));
-
-            boardCorners.push_back(std::vector<cv::Point3f>(1, cv::Point3f(0, 6, 0)));
-            boardCorners.push_back(std::vector<cv::Point3f>(1, cv::Point3f(6, 6, 0)));
-
-            boardCorners.push_back(std::vector<cv::Point3f>(1, cv::Point3f(0, 12, 0)));
-            boardCorners.push_back(std::vector<cv::Point3f>(1, cv::Point3f(6, 12, 0)));
-
-            boardCorners.push_back(std::vector<cv::Point3f>(1, cv::Point3f(0, 18, 0)));
-            boardCorners.push_back(std::vector<cv::Point3f>(1, cv::Point3f(6, 18, 0)));
-
-            // add rest of marker from the top left points (all the same size)
-            for(auto &marker : boardCorners) 
-            {
-                marker.push_back(marker[0] + cv::Point3f(3.2, 0,   0));
-                marker.push_back(marker[0] + cv::Point3f(3.2, 3.2, 0));
-                marker.push_back(marker[0] + cv::Point3f(0,   3.2, 0));
-
-                // from cm to meters
-                for(auto &p : marker) {
-                    p *= .01;
-                }
-            }
-            std::vector<int> boardIds = {1, 2, 3, 4, 5, 6, 7, 8};
+            std::vector<int> boardIds;
+            setBoardData(boardCorners, boardIds);
 
             board = cv::aruco::Board::create(std::move(boardCorners), dictionary, std::move(boardIds));
 

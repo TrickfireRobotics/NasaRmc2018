@@ -41,7 +41,6 @@
 #include <tfr_msgs/ArmStateSrv.h>
 #include <tfr_msgs/DurationSrv.h>
 #include <trajectory_msgs/JointTrajectory.h>
-#include <control_msgs/QueryTrajectoryState.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Float64.h>
 #include <actionlib/server/simple_action_server.h>
@@ -158,20 +157,20 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::CLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
-                        control_msgs::QueryTrajectoryState arm_query{};
-                        arm_query.request.time = ros::Time::now();
-                        ros::service::call("arm_controller/query_state", arm_query);
+                        tfr_msgs::ArmStateSrv query;
+                        ros::service::call("arm_state", query);
                         trajectory_msgs::JointTrajectory trajectory;
                         trajectory.header.stamp = ros::Time::now();
                         trajectory.joint_names.resize(3);
                         trajectory.points.resize(1);
                         trajectory.points[0].positions.resize(3);
-                        for (int i = 0; i < 3; i++)
-                        {
-                            trajectory.joint_names[i] = arm_query.response.name[i];
-                            trajectory.points[0].positions[i] = arm_query.response.position[i];
-                        }
-                        trajectory.points[0].time_from_start = ros::Duration(0.05);
+                        trajectory.joint_names[0]="turntable_joint";
+                        trajectory.joint_names[1]="lower_arm_joint";
+                        trajectory.joint_names[2]="upper_arm_joint";
+                        trajectory.points[0].positions[0] = query.response.states[0];
+                        trajectory.points[0].positions[1] = query.response.states[1];
+                        trajectory.points[0].positions[2] = query.response.states[2];
+                        trajectory.points[0].time_from_start = ros::Duration(0.04);
                         trajectory.points[0].positions[0] -= 0.01;
                         trajectory_publisher.publish(trajectory);
                         break;
@@ -180,19 +179,19 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
-                        control_msgs::QueryTrajectoryState arm_query{};
-                        arm_query.request.time = ros::Time::now();
-                        ros::service::call("arm_controller/query_state", arm_query);
+                        tfr_msgs::ArmStateSrv query;
+                        ros::service::call("arm_state", query);
                         trajectory_msgs::JointTrajectory trajectory;
                         trajectory.header.stamp = ros::Time::now();
                         trajectory.joint_names.resize(3);
                         trajectory.points.resize(1);
                         trajectory.points[0].positions.resize(3);
-                        for (int i = 0; i < 3; i++)
-                        {
-                            trajectory.joint_names[i] = arm_query.response.name[i];
-                            trajectory.points[0].positions[i] = arm_query.response.position[i];
-                        }
+                        trajectory.joint_names[0]="turntable_joint";
+                        trajectory.joint_names[1]="lower_arm_joint";
+                        trajectory.joint_names[2]="upper_arm_joint";
+                        trajectory.points[0].positions[0] = query.response.states[0];
+                        trajectory.points[0].positions[1] = query.response.states[1];
+                        trajectory.points[0].positions[2] = query.response.states[2];
                         trajectory.points[0].time_from_start = ros::Duration(0.04);
                         trajectory.points[0].positions[0] += 0.01;
                         trajectory_publisher.publish(trajectory);

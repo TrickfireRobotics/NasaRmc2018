@@ -1,12 +1,13 @@
 //test code never see again
 #include <ros/ros.h>
-#include <tfr_msgs/EmptySrv.h>
+#include <std_srvs/SetBool.h>
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "test_e_stop");
     ros::NodeHandle n;
 
-        tfr_msgs::EmptySrv request;
+    std_srvs::SetBool request;
+    request.request.data = true;
 
     while(!ros::service::call("toggle_motors", request));
     return 0;

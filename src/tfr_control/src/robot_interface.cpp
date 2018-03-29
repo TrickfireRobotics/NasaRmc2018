@@ -16,7 +16,7 @@ namespace tfr_control
     RobotInterface::RobotInterface(ros::NodeHandle &n, bool fakes, 
             const double *lower_lim, const double *upper_lim) :
         pwm{},
-        arduino{n.subscribe("arduino", 5, &RobotInterface::readArduino, this)},
+        arduino{n.subscribe("/sensors/arduino", 5, &RobotInterface::readArduino, this)},
         use_fake_values{fakes}, lower_limits{lower_lim},
         upper_limits{upper_lim}, drivebase_v0{std::make_pair(0,0)},
         last_update{ros::Time::now()}
@@ -182,11 +182,47 @@ namespace tfr_control
         drivebase_v0.second = velocity_values[static_cast<int>(Joint::RIGHT_TREAD)];
     }
 
+    /*
+     * Resets the commands to a safe neutral state
+     * Tells the treads to stop moving, and the arm to hold position
+     * */
     void RobotInterface::clearCommands()
     {
-        for(auto& value : command_values)
-            value = 0;
+        //LEFT_TREAD
+        command_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
+
+        //RIGHT_TREAD
+        command_values[static_cast<int>(Joint::RIGHT_TREAD)] = 0;
+
+        //TURNTABLE
+        command_values[static_cast<int>(Joint::TURNTABLE)] = 
+            position_values[static_cast<int>(Joint::TURNTABLE)];
+
+        //LOWER_ARM
+        command_values[static_cast<int>(Joint::LOWER_ARM)] =
+            position_values[static_cast<int>(Joint::LOWER_ARM)];
+        //UPPER_ARM
+        command_values[static_cast<int>(Joint::UPPER_ARM)] =
+            position_values[static_cast<int>(Joint::UPPER_ARM)];
+        //SCOOP
+        command_values[static_cast<int>(Joint::SCOOP)] =
+            position_values[static_cast<int>(Joint::SCOOP)];
+        //BIN
+        command_values[static_cast<int>(Joint::BIN)] =
+            position_values[static_cast<int>(Joint::BIN)];
     }
+
+    /*
+     * Returns if the bin is extended or not
+     * */
+    bool RobotInterface::isBinExtended()
+    {
+        double goal = 0.785398;
+        double tolerance = 0.01;
+        return goal - position_values[static_cast<int>(Joint::BIN)] < tolerance;
+    }
+
+
 
     /*
      * Register this joint with each neccessary hardware interface

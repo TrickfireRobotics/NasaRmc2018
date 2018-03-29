@@ -1,8 +1,10 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
+#include <std_msgs/Float64.h>
 #include <tfr_msgs/EmptyAction.h>
 #include <tfr_msgs/ArucoAction.h>
 #include <tfr_msgs/WrappedImage.h>
+#include <tfr_msgs/QuerySrv.h>
 #include <sensor_msgs/Image.h>
 #include <image_transport/image_transport.h>
 #include <actionlib/server/simple_action_server.h>
@@ -23,6 +25,11 @@
  * the camera of interest for backing up. 
  *
  * This is currently filled by the camera_topic_wrapper in sensors
+ *
+ * published topics:
+ *   -/cmd_vel geometry_msgs/Twist the drivebase velocity
+ *   -/bin_position_controller/command std_msgs/Float64 the position of the bin
+ *
  * */
 class Dumper
 {
@@ -58,6 +65,7 @@ class Dumper
             image_client = node.serviceClient<tfr_msgs::WrappedImage>(service_name);
 
             velocity_publisher = node.advertise<geometry_msgs::Twist>("cmd_vel", 10);
+            bin_publisher = node.advertise<std_msgs::Float64>("/bin_position_controller/command", 10);
 
             server.start();
             ROS_INFO("dumping action server initialized");
@@ -78,14 +86,19 @@ class Dumper
 
         ros::ServiceClient image_client;
         ros::Publisher velocity_publisher;
+        ros::Publisher bin_publisher;
 
         const DumpingConstraints &constraints; 
+
+        //how far the max range of the bin is
+        static constexpr double BIN_EXTENDED  = 0.75398;
 
         /*
          * The business logic of the action server.
          */
         void dump(const tfr_msgs::EmptyGoalConstPtr &goal) 
         {  
+            ROS_INFO("dumping action server started dumping procedure");
             //check to make sure we can see the board
             tfr_msgs::ArucoResult initial_estimate{};
             getArucoEstimate(initial_estimate);
@@ -124,8 +137,22 @@ class Dumper
                     velocity_publisher.publish(cmd);
                 }
             }
-            //TODO raise the bin
-            stopMoving();
+
+            ROS_INFO("dumping action server detected light raising bin");
+            std_msgs::Float64 bin_cmd;
+            bin_cmd.data = BIN_EXTENDED;
+            tfr_msgs::QuerySrv query;
+            ros::Rate rate(10);
+            while (!server.isPreemptRequested() && ros::ok())
+            {
+                ros::service::call("is_bin_extended", query);
+                if (query.response.data)
+                    break;
+                bin_publisher.publish(bin_cmd);
+                stopMoving();
+                rate.sleep();
+            }
+            
             server.setSucceeded();
         }
 
@@ -169,7 +196,6 @@ class Dumper
          * */
         void stopMoving()
         {
-            ROS_INFO("Stopped");
             geometry_msgs::Twist cmd{};
             cmd.linear.x = 0;
             cmd.angular.z = 0;

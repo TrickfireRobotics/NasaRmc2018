@@ -40,6 +40,8 @@
 #include <tfr_msgs/BinStateSrv.h>
 #include <tfr_msgs/ArmStateSrv.h>
 #include <tfr_msgs/DurationSrv.h>
+#include <trajectory_msgs/JointTrajectory.h>
+#include <control_msgs/QueryTrajectoryState.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Float64.h>
 #include <actionlib/server/simple_action_server.h>
@@ -68,6 +70,7 @@ class TeleopExecutive
                 boost::bind(&TeleopExecutive::processCommand, this, _1),
                 false},
             drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
+            trajectory_publisher{n.advertise<trajectory_msgs::JointTrajectory>("/arm_controller/command", 5)},
             bin_publisher{n.advertise<std_msgs::Float64>("/bin_position_controller/command", 5)},
             digging_client{n, "dig"},
             arm_client{n, "move_arm"},
@@ -163,16 +166,44 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::CLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
-                        move_cmd.angular.z = drive_stats.getAngular();
-                        drivebase_publisher.publish(move_cmd);
+                        control_msgs::QueryTrajectoryState arm_query{};
+                        arm_query.request.time = ros::Time::now();
+                        ros::service::call("arm_controller/query_state", arm_query);
+                        trajectory_msgs::JointTrajectory trajectory;
+                        trajectory.header.stamp = ros::Time::now();
+                        trajectory.joint_names.resize(3);
+                        trajectory.points.resize(1);
+                        trajectory.points[0].positions.resize(3);
+                        for (int i = 0; i < 3; i++)
+                        {
+                            trajectory.joint_names[i] = arm_query.response.name[i];
+                            trajectory.points[0].positions[i] = arm_query.response.position[i];
+                        }
+                        trajectory.points[0].time_from_start = ros::Duration(0.04);
+                        trajectory.points[0].positions[0] -= 0.005;
+                        trajectory_publisher.publish(trajectory);
                         break;
                     }
 
                 case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
-                        move_cmd.angular.z = -drive_stats.getAngular();
-                        drivebase_publisher.publish(move_cmd);
+                        control_msgs::QueryTrajectoryState arm_query{};
+                        arm_query.request.time = ros::Time::now();
+                        ros::service::call("arm_controller/query_state", arm_query);
+                        trajectory_msgs::JointTrajectory trajectory;
+                        trajectory.header.stamp = ros::Time::now();
+                        trajectory.joint_names.resize(3);
+                        trajectory.points.resize(1);
+                        trajectory.points[0].positions.resize(3);
+                        for (int i = 0; i < 3; i++)
+                        {
+                            trajectory.joint_names[i] = arm_query.response.name[i];
+                            trajectory.points[0].positions[i] = arm_query.response.position[i];
+                        }
+                        trajectory.points[0].time_from_start = ros::Duration(0.04);
+                        trajectory.points[0].positions[0] += 0.005;
+                        trajectory_publisher.publish(trajectory);
                         break;
                     }
 
@@ -327,6 +358,7 @@ class TeleopExecutive
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> digging_client;
         actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
         ros::Publisher drivebase_publisher;
+        ros::Publisher trajectory_publisher;
         ros::Publisher bin_publisher;
         DriveVelocity &drive_stats;
         //how often to check for preemption

@@ -22,7 +22,6 @@
 #include <utility>
 #include <algorithm>
 #include <tfr_msgs/ArduinoReading.h>
-#include <tfr_msgs/CodeSrv.h>
 #include <tfr_utilities/control_code.h>
 #include <pwm_interface.h>
 #include <vector>
@@ -123,8 +122,7 @@ namespace tfr_control {
         ros::Time last_update;
 
         
-        void registerTreadJoint(std::string name, Joint joint);
-        void registerBinJoint(std::string name, Joint joint);
+        void registerJoint(std::string name, Joint joint);
         void registerArmJoint(std::string name, Joint joint);
 
 

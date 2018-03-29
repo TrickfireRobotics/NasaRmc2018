@@ -27,9 +27,9 @@ namespace tfr_control
 
         // Connect and register each joint with appropriate interfaces at our
         // layer
-        registerTreadJoint("left_tread_joint", Joint::LEFT_TREAD);
-        registerTreadJoint("right_tread_joint", Joint::RIGHT_TREAD);
-        registerBinJoint("bin_joint", Joint::BIN); 
+        registerJoint("left_tread_joint", Joint::LEFT_TREAD);
+        registerJoint("right_tread_joint", Joint::RIGHT_TREAD);
+        registerJoint("bin_joint", Joint::BIN); 
         registerArmJoint("turntable_joint", Joint::TURNTABLE);
         registerArmJoint("lower_arm_joint", Joint::LOWER_ARM);
         registerArmJoint("upper_arm_joint", Joint::UPPER_ARM);
@@ -256,23 +256,7 @@ namespace tfr_control
     /*
      * Register this joint with each neccessary hardware interface
      * */
-    void RobotInterface::registerTreadJoint(std::string name, Joint joint) 
-    {
-        auto idx = static_cast<int>(joint);
-        //give the joint a state
-        JointStateHandle state_handle(name, &position_values[idx],
-            &velocity_values[idx], &effort_values[idx]);
-        joint_state_interface.registerHandle(state_handle);
-
-        //allow the joint to be commanded
-        JointHandle handle(state_handle, &command_values[idx]);
-        joint_effort_interface.registerHandle(handle);
-    }
-
-    /*
-     * Register this joint with each neccessary hardware interface
-     * */
-    void RobotInterface::registerBinJoint(std::string name, Joint joint) 
+    void RobotInterface::registerJoint(std::string name, Joint joint) 
     {
         auto idx = static_cast<int>(joint);
         //give the joint a state

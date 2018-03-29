@@ -16,14 +16,17 @@ Installing the code requres, in addition to the standard `ros-kinetic-desktop-fu
  * `ros-kinetic-moveit`
  * `ros-kinetic-moveit-ros`
  * `ros-kinetic-cv-camera`
+ * `ros-kinetic-vision-opencv`
  * `ros-kinetic-rosserial`
  * `ros-kinetic-rosserial-arduino`
  * `ros-kinetic-rqt`
  * `ros-kinetic-rqt-common-plugins`
  * `ros-kinetic-rqt-robot-plugins`
- * `qt 5.3` or greater
+ * `qtbase5-dev`
  * `ros-kinetic-ros-control`
  * `ros-kinetic-ros-controllers`
+ * `libi2c-dev`
+ * `libgtest-dev`
 
 # Arduino Libraries
 Some of our control software is installed on arduino. Modifications require the Encoder library to be installed. https://www.pjrc.com/teensy/td_libs_Encoder.html

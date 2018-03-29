@@ -4,8 +4,4 @@ echo ""
 echo "------------------------------------ Utilites ------------------------------------"
 echo ""
 rosrun tfr_utilities tfr_utilities-test
-echo ""
-echo ""
-echo "------------------------------------- Control -------------------------------------"
-echo ""
-rosrun tfr_control tfr_control-test
+

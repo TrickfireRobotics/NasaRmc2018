@@ -11,7 +11,7 @@
 
     <node name="duo3d" pkg="duo3d_driver" type="duo3d_driver">
         <param name="frame_rate" value="30"/>
-        <rosparam param="image_size">[640,480]</rosparam>
+        <rosparam param="image_size">[352,224]</rosparam>
         <param name="dense3d_license" value="OVMZU-ZHFE2-9K41K-NQL44-WX3DV"/>
         <rosparam command="load" file="$(find tfr_sensor)/params/duo3d.yaml"/>
     </node>

@@ -1,4 +1,4 @@
 <launch>
-    <include file="$(find tfr_sensor)/launch/duo3d.launch"/>
-    <!--    <include file="$(find openni_launch)/launch/openni.launch"/> -->
+    <!--<include file="$(find tfr_sensor)/launch/duo3d.launch"/>-->
+    <include file="$(find openni_launch)/launch/openni.launch"/>
 </launch>

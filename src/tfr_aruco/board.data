@@ -1,0 +1,17 @@
+150 27.5 300
+
+# format reminder(everything in cm):
+# S size padding x y
+# G x-count y-count | size padding x y
+
+# remember: camerea height is at 11.5 in. or 29.21 cm
+
+# the big marker on the left and right
+S 27.5 2 0 0
+S 27.5 2 122.5 0
+
+# some small sized markers in the middle (95cm wide and 25cm tall)
+G 14 1 | 6.8 .8 27.5 17
+
+# some medium sized markers on the middle board with the small ones
+G 6 1 | 15.5 1.5 27.5 0

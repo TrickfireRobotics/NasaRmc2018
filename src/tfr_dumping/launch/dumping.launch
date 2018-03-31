@@ -1,5 +1,9 @@
 <launch>
-    <node name="light_detection_action_server" pkg="tfr_sensor" type="light_detection_action_server"/>
+    <node name="light_detection_action_server" pkg="tfr_sensor" type="light_detection_action_server" output="screen">
+        <rosparam>
+            threshold: 0.4
+        </rosparam>
+    </node>
     <node name="dumping_action_server" pkg="tfr_dumping" type="dumping_action_server" output="screen">
         <rosparam>
             min_lin_vel: 0.1

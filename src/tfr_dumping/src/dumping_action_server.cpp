@@ -107,7 +107,7 @@ class Dumper
             detector.sendGoal(empty_goal);
 
             //loop until we see the light
-            while (detector.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
+            while (!detector.getState().isDone())
             {
                 //handle preemption
                 if (server.isPreemptRequested() || !ros::ok())

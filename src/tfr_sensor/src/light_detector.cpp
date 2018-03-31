@@ -60,13 +60,18 @@ bool LightDetector::is_on()
     //ROS_INFO("int: %f %f %f", total.r_ave, total.g_ave, total.b_ave);
     ColorStats recent = brightness.front();
 
-    double recent_ave = (recent.r_ave + recent.g_ave + recent.b_ave)/3;
-    double total_ave = (total.r_ave + total.g_ave + total.b_ave)/3;
+    double delta_b = recent.b_ave - total.b_ave; 
+    double delta_g = recent.g_ave - total.g_ave; 
+    double delta_r = recent.r_ave - total.r_ave; 
+    double ave_delta = (delta_g + delta_r)/2;
+
+
+    ROS_INFO("%f %f %f %f %f", delta_r, delta_g, delta_b, ave_delta,
+            delta_b-ave_delta);
 
 
     //lets keep this for when we tune it to a color
-    ROS_INFO("frame_calculated, recent- total: %f, threshold: %f", recent_ave - total_ave , threshold*total_ave);
-    return (recent_ave - total_ave) > threshold*total_ave;
+    return (delta_b-ave_delta) > threshold*ave_delta;
 }
 
 /*

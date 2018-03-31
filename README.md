@@ -25,6 +25,8 @@ Installing the code requres, in addition to the standard `ros-kinetic-desktop-fu
  * `qtbase5-dev`
  * `ros-kinetic-ros-control`
  * `ros-kinetic-ros-controllers`
+ * `ros-kinetic-openni-launch`
+ * `ros-kinetic-openni-camera`
  * `libi2c-dev`
  * `libgtest-dev`
 

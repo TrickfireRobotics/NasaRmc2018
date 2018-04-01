@@ -79,7 +79,7 @@ int main(int argc, char**argv)
     int window_size;
     ros::param::param<int>("~window_size", window_size, 5);
     double threshold;
-    ros::param::param<double>("~threshold", threshold, 0.1);
+    ros::param::param<double>("~threshold", threshold, 0.0);
     
     DetectionActionServer server{n, "light_detection", image_topic,
             window_size, threshold};

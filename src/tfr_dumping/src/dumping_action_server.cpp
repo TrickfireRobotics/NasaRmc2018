@@ -63,7 +63,7 @@ class Dumper
         {
             ROS_INFO("dumping action server initializing");
             detector.waitForServer();
-            aruco.waitForServer();
+            //aruco.waitForServer();
             server.start();
             ROS_INFO("dumping action server initialized");
         }
@@ -93,13 +93,13 @@ class Dumper
         {  
             ROS_INFO("dumping action server started dumping procedure");
             //check to make sure we can see the board
-            tfr_msgs::ArucoResult initial_estimate{};
-            getArucoEstimate(initial_estimate);
-            if (initial_estimate.number_found == 0)
-            {
-                server.setAborted();
-                return;
-            }
+//            tfr_msgs::ArucoResult initial_estimate{};
+//            getArucoEstimate(initial_estimate);
+//            if (initial_estimate.number_found == 0)
+//            {
+//                server.setAborted();
+//                return;
+//            }
 
             //initialize
             tfr_msgs::EmptyGoal empty_goal{};

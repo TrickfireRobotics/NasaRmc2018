@@ -24,37 +24,16 @@ namespace tfr_control
 
     void DrivebasePublisher::subscriptionCallback(const geometry_msgs::Twist::ConstPtr& msg)
     {
-        double left_tread, right_tread;
 
-        DrivebasePublisher::twistToDifferential(msg->linear.x, msg->angular.z,
-            this->wheel_span, this->wheel_radius, left_tread, right_tread);
+        double left_velocity = msg->linear.x - (wheel_span * msg->angular.z) / 2;
+        double right_velocity = msg->linear.x + (wheel_span * msg->angular.z) / 2;
 
         std_msgs::Float64 left_cmd;
-        left_cmd.data = left_tread;
+        left_cmd.data = left_velocity;
         std_msgs::Float64 right_cmd;
-        right_cmd.data = right_tread;
+        right_cmd.data = right_velocity;
         left_tread_publisher.publish(left_cmd);
         right_tread_publisher.publish(right_cmd);
-    }
-
-    // left_tread and right_tread are output parameters; the rest are inputs.
-    void DrivebasePublisher::twistToDifferential(const double linear_v, const double angular_v,
-        const double wheel_radius, const double wheel_span, double& left_tread, double& right_tread)
-    {
-        if (wheel_radius <= 0)
-        {
-            throw std::invalid_argument("Wheel radius may not be zero or negative.");
-        }
-
-        if (wheel_span <= 0)
-        {
-            throw std::invalid_argument("Wheel span may not be zero or negative.");
-        }
-
-        // Desired velocity across the ground for each wheel
-        double left_velocity = linear_v - (wheel_span * angular_v) / 2;
-        double right_velocity = linear_v + (wheel_span * angular_v) / 2;
-
     }
 
 }

@@ -23,15 +23,13 @@ int main(int argc, char **argv)
 
 
 
+
   bool sign = false;
   while (ros::ok())
   {
     geometry_msgs::Twist msg;
-    std_msgs::Float64 bin{};
-    bin.data = 0.785;
-    bin_pub.publish(bin);
-
-    msg.linear.x= (sign)? -1:1;
+ 
+    msg.linear.x= 0.3;
     sign = !sign;
 
     chatter_pub.publish(msg);

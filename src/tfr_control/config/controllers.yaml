@@ -20,12 +20,12 @@ joint_state_controller:
 left_tread_velocity_controller:
     type: effort_controllers/JointVelocityController
     joint: left_tread_joint
-    pid: {p: 0.5, i: 0, d: 0} #NOTE these are purposely not tuned
+    pid: {p: 0.3, i: 0, d: 0} #NOTE these are purposely not tuned
 
 right_tread_velocity_controller:
     type: effort_controllers/JointVelocityController
     joint: right_tread_joint
-    pid: {p: 0.5, i: 0, d: 0}
+    pid: {p: 0.3, i: 0, d: 0}
 
 
 bin_position_controller:

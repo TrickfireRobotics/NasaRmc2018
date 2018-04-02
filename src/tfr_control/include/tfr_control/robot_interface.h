@@ -21,7 +21,8 @@
 #include <hardware_interface/robot_hw.h>
 #include <utility>
 #include <algorithm>
-#include <tfr_msgs/ArduinoReading.h>
+#include <tfr_msgs/ArduinoAReading.h>
+#include <tfr_msgs/ArduinoBReading.h>
 #include <tfr_utilities/control_code.h>
 #include <pwm_interface.h>
 #include <vector>
@@ -103,8 +104,10 @@ namespace tfr_control {
         //the pwm bridge
         PWMInterface pwm;
         //reads from arduino encoder publisher
-        ros::Subscriber arduino;
-        tfr_msgs::ArduinoReadingConstPtr latest_arduino;
+        ros::Subscriber arduino_a;
+        ros::Subscriber arduino_b;
+        tfr_msgs::ArduinoAReadingConstPtr latest_arduino_a;
+        tfr_msgs::ArduinoBReadingConstPtr latest_arduino_b;
 
 
         // Populated by controller layer for us to use
@@ -127,7 +130,9 @@ namespace tfr_control {
 
 
         //callback for publisher
-        void readArduino(const tfr_msgs::ArduinoReadingConstPtr &msg);
+        void readArduinoA(const tfr_msgs::ArduinoAReadingConstPtr &msg);
+        //callback for publisher
+        void readArduinoB(const tfr_msgs::ArduinoBReadingConstPtr &msg);
 
         /**
          * Gets the PWM appropriate output for an angle joint at the current time

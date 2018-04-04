@@ -1,12 +1,19 @@
 <launch>
 
     <node pkg="tf2_ros" type="static_transform_publisher" name="kinect_broadcaster" 
-        args="0.37 0 0.005 0 0 0 base_link /camera_link" />
+       args="0.3875 -.1842 0.3048 0 0 0 base_link /kinect_link" />
     <include file="$(find openni_launch)/launch/openni.launch">
+        <arg name="camera" value="kinect"/>
         <arg name="ir_processing" value="false"/>
         <arg name="depth_registered_processing" value="false"/>
         <arg name="disparity_processing" value="false"/>
         <arg name="hw_registered_processing" value="false"/>
         <arg name="sw_registered_processing" value="false"/>
     </include>
+    <node name="kinect_wrapper" pkg="tfr_sensor" type="image_topic_wrapper">
+        <rosparam>
+            camera_topic: /sensors/kinect/rgb/image_raw
+            service_name: /on_demand/kinect/image_raw
+        </rosparam>
+    </node>
 </launch>

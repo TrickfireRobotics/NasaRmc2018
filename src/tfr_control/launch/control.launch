@@ -1,24 +1,29 @@
 <launch>
-  <!-- Load all of the motor controllers -->
-  <rosparam file="$(find tfr_control)/config/controllers.yaml" command="load"/>
+    <!-- Load all of the motor controllers -->
+    <rosparam file="$(find tfr_control)/config/controllers.yaml" command="load"/>
 
-  <param name="robot_description" command="$(find xacro)/xacro --inorder
-                                '$(find tfr_description)/xacro/model.xacro'" />
-  
-  <!-- Publishes the state of the robot to TF for Rviz or other usages -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher"
-                type="robot_state_publisher" respawn="false" output="screen" />
+    <param name="robot_description" command="$(find xacro)/xacro --inorder
+        '$(find tfr_description)/xacro/model.xacro'" />
 
-  <!-- Load the controller manager plugin for the drivebase -->
-  <node name="control" pkg="tfr_control"
-                                  type="control" output="screen" />
+    <!-- Publishes the state of the robot to TF for Rviz or other usages -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher"
+        type="robot_state_publisher" respawn="false" output="screen" />
 
-  <!-- Spawn the controllers -->
-  <node name="controller_spawner" pkg="controller_manager" type="spawner"
-          args="joint_state_controller
-                left_tread_velocity_controller
-                right_tread_velocity_controller
-                bin_position_controller
-                arm_controller
-                arm_end_controller"/>
+    <!-- Load the controller manager plugin for the drivebase -->
+    <node name="control" pkg="tfr_control"
+        type="control" output="screen" />
+
+    <!-- Spawn the controllers -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner"
+        args="joint_state_controller
+        left_tread_velocity_controller
+        right_tread_velocity_controller
+        bin_position_controller
+        arm_controller
+        arm_end_controller"/>
+
+    <!-- Launch all the MoveIt! nodes -->
+    <include file="$(find tfr_moveit)/launch/move_group.launch"/>
+
+    <node name="arm_action_server" pkg="tfr_control" type="arm_action_server" output="screen"/>
 </launch>

@@ -9,6 +9,12 @@ int main(int argc, char** argv)
     std_srvs::SetBool request;
     request.request.data = true;
 
-    while(!ros::service::call("toggle_motors", request));
+    while(!ros::service::call("toggle_motors", request))
+        ROS_INFO("toggle");
+    while(ros::ok())
+    {
+        ros::service::call("toggle_motors", request);
+        ros::Duration(1).sleep();
+    }
     return 0;
 }

@@ -15,7 +15,7 @@
  *   ~camera_frame: The reference frame of the camera (string, default="camera_link")
  *   ~footprint_frame: The reference frame of the robot_footprint(string,
  *   default="footprint")
- *   ~bin_frame: The reference frame of the bin (string, default="bin_link")
+ *   ~bin_frame: The reference frame of the bin (string, default="bin_footprint")
  *   ~odom_frame: The reference frame of odom  (string, default="odom")
  *   ~debug: print debugging info (bool, default: false)
  * subscribed topics:
@@ -160,17 +160,9 @@ class FiducialOdom
                 relative_transform.translation.y *= -1;
                 relative_transform.translation.z *= -1;
                 
-                //publish the transform
-                geometry_msgs::TransformStamped transform{};
-                transform.header.stamp = ros::Time::now();
-                transform.header.frame_id = odometry_frame;
-                transform.child_frame_id = footprint_frame;
-                transform.transform = relative_transform;
-                broadcaster.sendTransform(transform);
-
                 //process the odometry
                 geometry_msgs::PoseStamped relative_pose;
-                relative_pose.header.stamp = transform.header.stamp;
+                relative_pose.header.stamp = unprocessed_pose.header.stamp;
                 relative_pose.header.frame_id = camera_frame;
                 relative_pose.pose.position.x = relative_transform.translation.x;
                 relative_pose.pose.position.y = relative_transform.translation.y;
@@ -288,7 +280,7 @@ int main(int argc, char** argv)
     bool debug;
     ros::param::param<std::string>("~camera_frame", camera_frame, "camera_link");
     ros::param::param<std::string>("~footprint_frame", footprint_frame, "footprint");
-    ros::param::param<std::string>("~bin_frame", bin_frame, "bin_link");
+    ros::param::param<std::string>("~bin_frame", bin_frame, "bin_footprint");
     ros::param::param<std::string>("~odometry_frame", odometry_frame, "odom");
     ros::param::param<bool>("~debug",debug, false);
 

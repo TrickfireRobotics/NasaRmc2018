@@ -6,7 +6,7 @@ gain: 41.0
 gyro_range: 0
 horizontal_flip: false
 image_scale: 3 
-imu_rate: 50.0
+imu_rate: 25.0
 led: 89.0
 num_disparities: 9
 pre_filter_cap: 18

@@ -52,21 +52,17 @@ class Dumper
         
         Dumper(ros::NodeHandle &node, const std::string &service_name,
                 const DumpingConstraints &c) :
-            server{node, "dumping_action_server", boost::bind(&Dumper::dump, this, _1), false},
+            server{node, "dump", boost::bind(&Dumper::dump, this, _1), false},
+            image_client{node.serviceClient<tfr_msgs::WrappedImage>(service_name)},
+            velocity_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 10)},
+            bin_publisher{node.advertise<std_msgs::Float64>("/bin_position_controller/command", 10)},
             detector{"light_detection"},
             aruco{"aruco_action_server",true},
-            //TODO add dumping controller here
             constraints{c}
         {
             ROS_INFO("dumping action server initializing");
             detector.waitForServer();
             aruco.waitForServer();
-
-            image_client = node.serviceClient<tfr_msgs::WrappedImage>(service_name);
-
-            velocity_publisher = node.advertise<geometry_msgs::Twist>("cmd_vel", 10);
-            bin_publisher = node.advertise<std_msgs::Float64>("/bin_position_controller/command", 10);
-
             server.start();
             ROS_INFO("dumping action server initialized");
         }
@@ -81,8 +77,6 @@ class Dumper
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
         actionlib::SimpleActionClient<tfr_msgs::EmptyAction> detector;
         actionlib::SimpleActionClient<tfr_msgs::ArucoAction> aruco;
-
-        //TODO add the Dumping Controller here
 
         ros::ServiceClient image_client;
         ros::Publisher velocity_publisher;
@@ -137,6 +131,9 @@ class Dumper
                     velocity_publisher.publish(cmd);
                 }
             }
+
+            //we detected the light, stop moving immediately
+            stopMoving();
 
             ROS_INFO("dumping action server detected light raising bin");
             std_msgs::Float64 bin_cmd;

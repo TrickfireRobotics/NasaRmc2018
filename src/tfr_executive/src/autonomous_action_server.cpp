@@ -26,6 +26,12 @@
  * 
  * PARAMETERS
  * - ~rate: the rate in hz to check to preemption during long running calls, (double, default: 10)
+ * - ~localization: whether to run localization or not (bool, default: true);
+ * - ~navigation_to: whether to run navigation_to or not (bool, default: true);
+ * - ~digging: whether to run digging or not (bool, default: true);
+ * - ~hole: whether to place the hole or not (bool, default: true);
+ * - ~navigation_from: whether to run from or not (bool, default: true);
+ * - ~dumping: whether to run dumping or not (bool, default: true);
  * 
  * PUBLISHED TOPICS
  * - /com 
@@ -35,7 +41,12 @@
 #include <ros/console.h>
 #include <tfr_msgs/EmptyAction.h>
 #include <tfr_msgs/DurationSrv.h>
+#include <tfr_msgs/NavigationAction.h>
+#include <tfr_msgs/DiggingAction.h>
+#include <tfr_utilities/location_codes.h>
 #include <actionlib/server/simple_action_server.h>
+#include <actionlib/client/simple_action_client.h>
+
 class AutonomousExecutive
 {
     public:
@@ -43,8 +54,41 @@ class AutonomousExecutive
             server{n, "autonomous_action_server", 
                 boost::bind(&AutonomousExecutive::autonomousMission, this, _1),
                 false},
+            localizationClient{n, "localize"},
+            navigationClient{n, "navigate"},
+            diggingClient{n, "dig"},
+            dumpingClient{n, "dump"},
             frequency{f}
         {
+            ros::param::param<bool>("~localization", LOCALIZATION, true);
+            if (LOCALIZATION)
+            {
+                ROS_INFO("Autonomous Action Server: Connecting to localization server");
+                localizationClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to localization server");
+            }
+            ros::param::param<bool>("~navigation_to", NAVIGATION_TO, true);
+            ros::param::param<bool>("~navigation_from", NAVIGATION_FROM, true);
+            if (NAVIGATION_TO || NAVIGATION_FROM)
+            {
+                ROS_INFO("Autonomous Action Server: Connecting to navigation server");
+                navigationClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to navigation server");
+            }
+            ros::param::param<bool>("~digging", DIGGING, true);
+            if (DIGGING)
+            {
+                ROS_INFO("Autonomous Action Server: Connecting to digging server");
+                diggingClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to digging server");
+            }
+            ros::param::param<bool>("~dumping", DUMPING, true);
+            if (DUMPING)
+            {
+                ROS_INFO("Autonomous Action Server: Connecting to digging server");
+                dumpingClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to digging server");
+            }
             server.start();
             ROS_INFO("Autonomous Action Server: online, %f",
                     ros::Time::now().toSec());
@@ -80,39 +124,189 @@ class AutonomousExecutive
          * ACTION COMPONENTS
          * - Goal: none
          * - Feedback: none
-         * - Result: none
-         */ 
+         * - Result: none */ 
         void autonomousMission(const tfr_msgs::EmptyGoalConstPtr &goal)
         {
+            
             ROS_INFO("Autonomous Action Server: mission started");
+            if (server.isPreemptRequested() || ! ros::ok())
+            {
+                server.setPreempted();
+                return;
+            }
 
-            ROS_INFO("Autonomous Action Server: commencing localization");
-            ROS_INFO("Autonomous Action Server: localization finished");
+            if (LOCALIZATION)
+            {
+                ROS_INFO("Autonomous Action Server: commencing localization");
+                tfr_msgs::EmptyGoal goal{};
+                localizationClient.sendGoal(goal);
+                //handle preemption
+                while (!localizationClient.getState().isDone())
+                {
+                    if (server.isPreemptRequested() || ! ros::ok())
+                    {
+                        localizationClient.cancelAllGoals();
+                        server.setPreempted();
+                        ROS_INFO("Autonomous Action Server: localization preempted");
+                        return;
+                    }
+                    frequency.sleep();
+                }
+                if (localizationClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+                {
+                    ROS_INFO("Autonomous Action Server: localization failed");
+                    server.setAborted();
+                    return;
+                }
+                ROS_INFO("Autonomous Action Server: localization finished");
+            }
 
-            ROS_INFO("Autonomous Action Server: commencing navigation");
-            ROS_INFO("Autonomous Action Server: navigation finished");
+            if (NAVIGATION_TO)
+            {
+                ROS_INFO("Autonomous Action Server: commencing navigation");
+ 
+                tfr_msgs::NavigationGoal goal;
+                //messages can't support user defined types
+                goal.location_code= static_cast<uint8_t>(tfr_utilities::LocationCode::MINING);
+                navigationClient.sendGoal(goal);
+                //handle preemption
+                while ( !navigationClient.getState().isDone() && ros::ok())
+                {
+                    if (server.isPreemptRequested() || ! ros::ok())
+                    {
+                        navigationClient.cancelAllGoals();
+                        server.setPreempted();
+                        ROS_INFO("Autonomous Action Server: navigation preempted");
+                        return;
+                    }
+                    frequency.sleep();
+                }
 
-            ROS_INFO("Autonomous Action Server: retrieving digging time");
-            tfr_msgs::DurationSrv digging_time;
-            ros::service::call("digging_time", digging_time);
-            ROS_INFO("Autonomous Action Server: digging time retreived %f",
-                    digging_time.response.duration.toSec());
+                if (navigationClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+                {
+                    ROS_INFO("Autonomous Action Server: navigation to failed");
+                    server.setAborted();
+                    return;
+                }
+                ROS_INFO("Autonomous Action Server: navigation finished");
+            }
 
-            ROS_INFO("Autonomous Action Server: commencing digging");
-            ROS_INFO("Autonomous Action Server: digging finished");
+            if (DIGGING)
+            {
+                ROS_INFO("Autonomous Action Server: commencing digging");
+                tfr_msgs::DiggingGoal goal{};
+                ROS_INFO("Autonomous Action Server: retrieving digging time");
+                tfr_msgs::DurationSrv digging_time;
+                ros::service::call("digging_time", digging_time);
+                ROS_INFO("Autonomous Action Server: digging time retreived %f",
+                        digging_time.response.duration.toSec());
+                goal.diggingTime = digging_time.response.duration;
+                diggingClient.sendGoal(goal);
 
-            ROS_INFO("Autonomous Action Server: commencing navigation");
-            ROS_INFO("Autonomous Action Server: navigation finished");
+                //handle preemption
+                while (!diggingClient.getState().isDone())
+                {
+                    if (server.isPreemptRequested() || ! ros::ok())
+                    {
+                        diggingClient.cancelAllGoals();
+                        server.setPreempted();
+                        ROS_INFO("Autonomous Action Server: digging preempted");
+                        return;
+                    }
+                    frequency.sleep();
+                }
+                if (localizationClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+                {
+                    ROS_INFO("Autonomous Action Server: digging failed");
+                    server.setAborted();
+                    return;
+                }
+                ROS_INFO("Autonomous Action Server: digging finished");
+            }
 
-            ROS_INFO("Autonomous Action Server: commencing dumping");
-            ROS_INFO("Autonomous Action Server: dumping finished");
+            if (NAVIGATION_FROM)
+            {
+                ROS_INFO("Autonomous Action Server: Connecting to navigation server");
+                navigationClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to navigation server");
 
-            tfr_msgs::EmptyResult result{};
-            server.setSucceeded(result);
-            ROS_INFO("Autonomous Action Server: mission finished");
+                ROS_INFO("Autonomous Action Server: commencing navigation");
+ 
+                tfr_msgs::NavigationGoal goal;
+                //messages can't support user defined types
+                goal.location_code=
+                    static_cast<uint8_t>(tfr_utilities::LocationCode::DUMPING);
+                navigationClient.sendGoal(goal);
+                //handle preemption
+                while ( !navigationClient.getState().isDone() && ros::ok())
+                {
+                    if (server.isPreemptRequested() || ! ros::ok())
+                    {
+                        navigationClient.cancelAllGoals();
+                        server.setPreempted();
+                        ROS_INFO("Autonomous Action Server: navigation preempted");
+                        return;
+                    }
+                    frequency.sleep();
+                }
+
+                if (navigationClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+                {
+                    ROS_INFO("Autonomous Action Server: navigation to failed");
+                    server.setAborted();
+                    return;
+                }
+                ROS_INFO("Autonomous Action Server: navigation finished");
+            }
+            if (DUMPING)
+            {
+                ROS_INFO("Autonomous Action Server: Connecting to dumping server");
+                navigationClient.waitForServer();
+                ROS_INFO("Autonomous Action Server: Connected to dumping server");
+
+                ROS_INFO("Autonomous Action Server: commencing dumping");
+ 
+                tfr_msgs::EmptyGoal goal;
+                dumpingClient.sendGoal(goal);
+                //handle preemption
+                while ( !dumpingClient.getState().isDone() && ros::ok())
+                {
+                    if (server.isPreemptRequested() || ! ros::ok())
+                    {
+                        dumpingClient.cancelAllGoals();
+                        server.setPreempted();
+                        ROS_INFO("Autonomous Action Server: dumping preempted");
+                        return;
+                    }
+                    frequency.sleep();
+                }
+
+                if (dumpingClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+                {
+                    ROS_INFO("Autonomous Action Server: dumping failed");
+                    server.setAborted();
+                    return;
+                }
+                ROS_INFO("Autonomous Action Server: dumping finished");
+
+            }
+            ROS_INFO("Autonomous Action Server: AUTONOMOUS MISSION SUCCESS");
+            server.setSucceeded();
         }
 
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
+
+        actionlib::SimpleActionClient<tfr_msgs::EmptyAction> localizationClient;
+        actionlib::SimpleActionClient<tfr_msgs::NavigationAction> navigationClient;
+        actionlib::SimpleActionClient<tfr_msgs::DiggingAction> diggingClient;
+        actionlib::SimpleActionClient<tfr_msgs::EmptyAction> dumpingClient;
+
+        bool LOCALIZATION;
+        bool NAVIGATION_TO;
+        bool DIGGING;
+        bool HOLE;
+        bool NAVIGATION_FROM;
+        bool DUMPING;
         //how often to check for preemption
         ros::Duration frequency;
 };

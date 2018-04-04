@@ -141,6 +141,8 @@ namespace tfr_control {
          * */
         double drivebaseVelocityToPWM(const double &v_1, const double &v_0);
 
+        void adjustFakeJoint(const Joint &joint);
+
         // THESE DATA MEMBERS ARE FOR SIMULATION ONLY
         // Holds the lower and upper limits of the URDF model joint
         bool use_fake_values = false;

@@ -1,10 +1,10 @@
 <launch>
     <node name="hole_broadcaster" pkg="tfr_utilities" output="screen" type="obstacle_broadcaster">
         <rosparam>
-            parent_frame: odom
+            parent_frame: bin_footprint
             point_frame: hole
             service_name: localize_hole
-            hz: 10
+            hz: 5 
             diameter: 0.5
         </rosparam>
     </node>

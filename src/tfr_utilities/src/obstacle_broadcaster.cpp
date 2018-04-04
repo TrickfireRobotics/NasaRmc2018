@@ -8,13 +8,15 @@ ObstacleBroadcaster::ObstacleBroadcaster(
         const std::string &point_frame, 
         const std::string &parent_frame, 
         const std::string &service,
-        const double &d) : 
+        const double &d,
+        const double &h) : 
 
     node{n}, 
     broadcaster_frame{point_frame},
     map_frame{parent_frame}, 
     service_name{service},
     diameter{d},
+    height{h},
     point_set{false}
 {
     server = node.advertiseService(service_name,
@@ -53,12 +55,15 @@ bool ObstacleBroadcaster::localizePoint(tfr_msgs::LocalizePoint::Request &reques
 {
     transform.transform.translation.x = request.pose.pose.position.x;
     transform.transform.translation.y = request.pose.pose.position.y;
-    transform.transform.translation.z = request.pose.pose.position.z;
+    transform.transform.translation.z = height;
     transform.transform.rotation.x = request.pose.pose.orientation.x;
     transform.transform.rotation.y = request.pose.pose.orientation.y;
     transform.transform.rotation.z = request.pose.pose.orientation.z;
     transform.transform.rotation.w = request.pose.pose.orientation.w;
     point_set = true;
+    transform.header.stamp = ros::Time::now();
+    broadcaster.sendTransform(transform);
+    ros::Duration(0.1).sleep();
     return true;
 }
 
@@ -75,7 +80,8 @@ void ObstacleBroadcaster::generateCloud(pcl::PointCloud<pcl::PointXYZ> &cloud)
     cloud.is_dense = true;
     double radius = diameter/2, offset = 0.0;
     for (int i = 0;  i < 16; i++, offset += PI/8) 
-        cloud.points.push_back(pcl::PointXYZ( radius*cos(offset), radius*sin(offset), 0.15));
+        cloud.points.push_back(pcl::PointXYZ( radius*cos(offset),
+                    radius*sin(offset), 0));
 
 }
 
@@ -87,15 +93,17 @@ int main(int argc, char** argv)
 
     //get parameters
     std::string point_frame{}, parent_frame{}, service_name{};
-    double hz{}, diameter{};
+    double hz{}, diameter{}, height{};
 
     ros::param::param<std::string>("~parent_frame", parent_frame, "");
     ros::param::param<std::string>("~point_frame", point_frame, "");
     ros::param::param<std::string>("~service_name", service_name, "");
     ros::param::param<double>("~hz", hz, 5.0 );
     ros::param::param<double>("~diameter", diameter, 0.0 );
+    ros::param::param<double>("~height", height, -.16 );
 
-    ObstacleBroadcaster broadcaster{n, point_frame, parent_frame, service_name, diameter};
+    ObstacleBroadcaster broadcaster{n, point_frame, parent_frame, service_name,
+        diameter, height};
 
     //wait to be called, then broadcast
     ros::Rate rate(hz);

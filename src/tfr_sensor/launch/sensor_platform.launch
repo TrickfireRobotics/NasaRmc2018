@@ -2,7 +2,8 @@
     <group ns="sensors">
         <include file="$(find tfr_sensor)/launch/rear_cam.launch"/>
         <include file="$(find tfr_sensor)/launch/duo3d.launch"/>
-        <include file="$(find tfr_sensor)/launch/xsens.launch"/>
+
+        <!--TODO  <include file="$(find tfr_sensor)/launch/xsens.launch"/> -->
         <node name="encoder_handler" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0" output="screen"/>
     </group>
 </launch>

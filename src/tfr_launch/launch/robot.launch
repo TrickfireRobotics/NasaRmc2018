@@ -1,0 +1,11 @@
+<!--The main launch file for the robot-->
+<launch>
+    <include file="$(find tfr_launch)/launch/core.launch"/>
+    <include file="$(find tfr_executive)/launch/executive.launch"/>
+    <include file="$(find tfr_sensor)/launch/sensor.launch"/>
+    <include file="$(find tfr_control)/launch/control.launch"/>
+    <include file="$(find tfr_localization)/launch/localization.launch"/>
+    <include file="$(find tfr_navigation)/launch/navigation.launch"/>
+    <include file="$(find tfr_mining)/launch/mining.launch"/>
+    <include file="$(find tfr_dumping)/launch/dumping.launch"/>
+</launch>

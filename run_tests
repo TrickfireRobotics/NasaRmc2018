@@ -4,8 +4,4 @@ echo ""
 echo "------------------------------------ Utilites ------------------------------------"
 echo ""
 rosrun tfr_utilities tfr_utilities-test
-echo ""
-echo "----------------------------------- Navigation -----------------------------------"
-echo ""
-rosrun tfr_navigation tfr_navigation-test
 

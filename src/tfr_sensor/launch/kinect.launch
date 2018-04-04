@@ -1,0 +1,12 @@
+<launch>
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="kinect_broadcaster" 
+        args="0.37 0 0.005 0 0 0 base_link /camera_link" />
+    <include file="$(find openni_launch)/launch/openni.launch">
+        <arg name="ir_processing" value="false"/>
+        <arg name="depth_registered_processing" value="false"/>
+        <arg name="disparity_processing" value="false"/>
+        <arg name="hw_registered_processing" value="false"/>
+        <arg name="sw_registered_processing" value="false"/>
+    </include>
+</launch>

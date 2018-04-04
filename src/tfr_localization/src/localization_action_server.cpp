@@ -41,9 +41,11 @@ class Localizer
             ROS_INFO("Localization Action Server: Connected Aruco");
 
             ROS_INFO("Localization Action Server: Connecting Image Client");
-            image_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/rear_cam/image_raw");
+            rear_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/rear_cam/image_raw");
+            kinect_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/kinect/image_raw");
             tfr_msgs::WrappedImage request{};
-            while(!image_client.call(request));
+            while(!rear_cam_client.call(request));
+            while(!kinect_client.call(request));
             ROS_INFO("Localization Action Server: Connected Image Client");
             ROS_INFO("Localization Action Server: Starting");
             server.start();
@@ -58,7 +60,8 @@ class Localizer
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
         actionlib::SimpleActionClient<tfr_msgs::ArucoAction> aruco;
         ros::Publisher cmd_publisher;
-        ros::ServiceClient image_client;
+        ros::ServiceClient rear_cam_client;
+        ros::ServiceClient kinect_client;
         TfManipulator tf_manipulator;
         const double& turn_velocity;
         const double& turn_duration;
@@ -77,35 +80,34 @@ class Localizer
                     server.setPreempted();
                     break;
                 }
-                tfr_msgs::WrappedImage request{};
+
+                tfr_msgs::WrappedImage rear_cam{}, kinect{};
                 //grab an image
-                if(!image_client.call(request))
-                {
-                    ROS_WARN("Localization Action Server: Could not reach image client");
-                    continue;
-                }
-                
+                rear_cam_client.call(rear_cam);
+                kinect_client.call(kinect);
+
+                tfr_msgs::ArucoResultConstPtr result = nullptr;
 
                 tfr_msgs::ArucoGoal goal;
-                goal.image = request.response.image;
-                goal.camera_info = request.response.camera_info;
+                goal.image = rear_cam.response.image;
+                goal.camera_info = rear_cam.response.camera_info;
                 //send it to the server
                 aruco.sendGoal(goal);
-                if (aruco.waitForResult())
+                aruco.waitForResult();
+                result = aruco.getResult();
+
+                if (result != nullptr && result->number_found == 0)
                 {
-                    //make sure we can see
-                    auto result = aruco.getResult();
-                    if (result->number_found ==0)
-                    {
-                        ROS_INFO("Localization Action Server: No markers detected, turning");
-                        geometry_msgs::Twist cmd;
-                        cmd.angular.z = turn_velocity;
-                        cmd_publisher.publish(cmd);
-                        ros::Duration(turn_duration).sleep();
-                        cmd.angular.z = 0;
-                        cmd_publisher.publish(cmd);
-                        continue;
-                    }
+                    goal.image = kinect.response.image;
+                    goal.camera_info = kinect.response.camera_info;
+                    aruco.sendGoal(goal);
+                    aruco.waitForResult();
+                    result = aruco.getResult();
+                }
+
+                if (result != nullptr && result->number_found !=0)
+                {
+                    ROS_INFO("found something");
                     //We found something, transform relative to the base
                     geometry_msgs::PoseStamped bin_pose{};
                     if (!tf_manipulator.transform_pose(
@@ -142,7 +144,16 @@ class Localizer
                         ROS_INFO("Localization Action Server: retrying to localize movable point");
                 }
                 else
-                    ROS_WARN("Localization Action Server: Could not reach aruco");
+                {
+                    ROS_INFO("Localization Action Server: No markers detected, turning");
+                    geometry_msgs::Twist cmd;
+                    cmd.angular.z = turn_velocity;
+                    cmd_publisher.publish(cmd);
+                    ros::Duration(turn_duration).sleep();
+                    cmd.angular.z = 0;
+                    cmd_publisher.publish(cmd);
+                    continue;
+                }
 
             }
             //teardown

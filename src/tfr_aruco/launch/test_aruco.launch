@@ -1,13 +1,15 @@
 <launch>
   <!-- load up the camrea. To select a different camera then use `rosparam set cv_camera/device_id 1` -->
-  <node type="cv_camera_node" name="cv_camera" pkg="cv_camera" />
+  <group ns="sensors">
+      <include file="$(find tfr_sensor)/launch/kinect.launch"/>
+  </group>
 
   <!-- load up the server -->
   <node type="aruco_action_server"  name="aruco_action_server" pkg="tfr_aruco" output="screen"/>
 
   <!-- load up the client and remap so that it gets the right images -->
-  <remap from="/image_raw" to="/sensors/rear_cam/image_raw" />
-  <remap from="/camera_info" to="/sensors/rear_cam/camera_info" />
+  <remap from="/image_raw" to="/sensors/kinect/rgb/image_raw" />
+  <remap from="/camera_info" to="/sensors/kinect/rgb/camera_info" />
   <node type="aruco_action_client" name="tfr_aruco_example_client" pkg="tfr_aruco" output="screen" /> 
 </launch>
 

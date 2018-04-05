@@ -52,9 +52,6 @@ target_link_libraries(image_topic_wrapper ${catkin_LIBRARIES})
 add_executable(light_detection_action_server ./src/light_detection_action_server.cpp)
 target_link_libraries(light_detection_action_server light_detector ${catkin_LIBRARIES})
 
-add_executable(light_detection_action_client ./src/light_detection_action_client.cpp)
-target_link_libraries(light_detection_action_client light_detector ${catkin_LIBRARIES})
-
 add_executable(fiducial_odom_publisher src/fiducial_odom_publisher.cpp)
 add_dependencies(fiducial_odom_publisher ${catkin_EXPORTED_TARGETS})
 target_link_libraries(fiducial_odom_publisher tf_manipulator ${catkin_LIBRARIES})

@@ -217,7 +217,6 @@ namespace tfr_control
      * */
     void RobotInterface::clearCommands()
     {
-        ROS_INFO("clearing");
         //LEFT_TREAD
         command_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
 

@@ -24,8 +24,8 @@
   <depend>tf2_geometry_msgs</depend>
   <depend>tf2_ros</depend>
   <depend>actionlib</depend>
-  <depend>image_transport</depend>
   <depend>cv_bridge</depend>
+  <depend>image_transport</depend>
   <exec_depend>cv_camera</exec_depend>
   <exec_depend>xsens_driver</exec_depend>
   <exec_depend>duo3d_driver</exec_depend>

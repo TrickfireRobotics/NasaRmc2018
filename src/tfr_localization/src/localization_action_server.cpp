@@ -46,7 +46,7 @@ class Localizer
             tfr_msgs::WrappedImage request{};
             while(!rear_cam_client.call(request));
             while(!kinect_client.call(request));
-            ROS_INFO("Localization Action Server: Connected Image Client");
+            ROS_INFO("Localization Action Server: Connected Image Clients");
             ROS_INFO("Localization Action Server: Starting");
             server.start();
             ROS_INFO("Localization Action Server: Started");

@@ -4,7 +4,7 @@
 #We also have not delved into covariances at all, and this is still //TODO
 
 #outputting at pretty low frequency
-frequency: 5
+frequency: 10 
 
 #stock settings for robots without gps and no big hills
 odom_frame: odom

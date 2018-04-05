@@ -1,7 +1,8 @@
 <launch>
-    <node name="light_detection_action_server" pkg="tfr_sensor" type="light_detection_action_server">
+    <node name="light_detection_action_server" pkg="tfr_sensor" type="light_detection_action_server" output="screen">
+        <remap from="image" to="/sensors/rear_cam/image_raw"/>
         <rosparam>
-            threshold: 0.1
+            threshold: 1.33
         </rosparam>
     </node>
     <node name="dumping_action_server" pkg="tfr_dumping" type="dumping_action_server" output="screen">

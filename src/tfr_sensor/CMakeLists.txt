@@ -40,17 +40,13 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-add_library(light_detector
-    src/light_detector.cpp
-)
-add_dependencies(light_detector ${catkin_EXPORTED_TARGETS})
 
 add_executable(image_topic_wrapper ./src/image_topic_wrapper.cpp)
 add_dependencies(image_topic_wrapper ${catkin_EXPORTED_TARGETS})
 target_link_libraries(image_topic_wrapper ${catkin_LIBRARIES})
 
 add_executable(light_detection_action_server ./src/light_detection_action_server.cpp)
-target_link_libraries(light_detection_action_server light_detector ${catkin_LIBRARIES})
+target_link_libraries(light_detection_action_server ${catkin_LIBRARIES})
 
 add_executable(fiducial_odom_publisher src/fiducial_odom_publisher.cpp)
 add_dependencies(fiducial_odom_publisher ${catkin_EXPORTED_TARGETS})

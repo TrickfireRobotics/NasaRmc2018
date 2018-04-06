@@ -52,13 +52,16 @@ class RegenerateMarkers:
         # get meter equivilents of the cm measurements
         [meter_x, meter_y, meter_size] = [w * .01 for w in [x, y, size]]
 
+        # move board half-width, from centimeters to meters
+        meter_x -= self.board_width / 100 / 2
+
         # write our the source for this line
         self.header_out.write('\tmarkerPoints = \n')
         self.header_out.write('\t{\n')
         self.header_out.write('\tcv::Point3f(' + str(meter_x) + ', ' + str(meter_y) + ', 0),\n')
         self.header_out.write('\tcv::Point3f(' + str(meter_x+meter_size) + ', ' + str(meter_y) + ', 0),\n')
-        self.header_out.write('\tcv::Point3f(' + str(meter_x) + ', ' + str(meter_y+meter_size) + ', 0),\n')
-        self.header_out.write('\tcv::Point3f(' + str(meter_x+meter_size) + ', ' + str(meter_y+meter_size) + ', 0)\n')
+        self.header_out.write('\tcv::Point3f(' + str(meter_x+meter_size) + ', ' + str(meter_y+meter_size) + ', 0),\n')
+        self.header_out.write('\tcv::Point3f(' + str(meter_x) + ', ' + str(meter_y+meter_size) + ', 0)\n')
         self.header_out.write('\t};\n')
         self.header_out.write('\tboardCorners.push_back(markerPoints);\n')
         self.header_out.write('\tboardIds.push_back(' + str(self.current_id) + ');\n\n')
@@ -133,12 +136,12 @@ class RegenerateMarkers:
                 values = list_str_to_float(line.split())
                 if(len(values) != 3):
                     print('ERROR, expeced width, height and resolution on first line')
-                board_width = values[0]
-                board_height = values[1]
+                self.board_width = values[0]
+                self.board_height = values[1]
                 self.pixels_per_cm = values[2]/2.54 # from dpi to dots per cm
 
-                res_x = int(board_width*self.pixels_per_cm)
-                res_y = int(board_height*self.pixels_per_cm)
+                res_x = int(self.board_width*self.pixels_per_cm)
+                res_y = int(self.board_height*self.pixels_per_cm)
                 self.image_out = numpy.ones((res_y, res_x),numpy.uint8)*255
                 continue
         

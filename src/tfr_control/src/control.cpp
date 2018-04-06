@@ -10,6 +10,7 @@
  * PARAMETERS:
  *  ~rate: in hz how fast we want to run the control loop (double, default:10)
  * SERVICES:
+ *  /toggle_control - uses the empty service, needs to be explicitly turned on to work
  *  /toggle_motors - uses the empty service, needs to be explicitly turned on to work
  *  /is_bin_extended - uses the query service to determine if the bin has been
  *  extended
@@ -86,7 +87,8 @@ class Control
         Control(ros::NodeHandle &n, const double& rate):
             robot_interface{n, use_fake_values, lower_limits, upper_limits},
             controller_interface{&robot_interface},
-            eStop{n.advertiseService("toggle_motors", &Control::toggle,this)},
+            eStopControl{n.advertiseService("toggle_control", &Control::toggleControl,this)},
+            eStopMotors{n.advertiseService("toggle_motors", &Control::toggleMotors,this)},
             binExtended{n.advertiseService("is_bin_extended", &Control::isExtended,this)},
             cycle{1/rate},
             enabled{false}
@@ -115,7 +117,8 @@ class Control
         controller_manager::ControllerManager controller_interface;
 
         //emergency stop
-        ros::ServiceServer eStop;
+        ros::ServiceServer eStopControl;
+        ros::ServiceServer eStopMotors;
 
         //tells if bin is extended
         ros::ServiceServer binExtended;
@@ -129,12 +132,23 @@ class Control
         /*
          * Toggles the emergency stop on and off
          * */
-        bool toggle(std_srvs::SetBool::Request& request,
+        bool toggleControl(std_srvs::SetBool::Request& request,
                 std_srvs::SetBool::Response& response)
         {
             enabled = request.data;
             return true;
         }
+
+        /*
+         * Toggles the emergency stop on and off
+         * */
+        bool toggleMotors(std_srvs::SetBool::Request& request,
+                std_srvs::SetBool::Response& response)
+        {
+            robot_interface.hardCutoff(!request.data);
+            return true;
+        }
+
 
         /*
          * Tells if the bin has been extended or not

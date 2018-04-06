@@ -6,9 +6,7 @@ PWMInterface::PWMInterface()
     gpioExport(gpio389);
     gpioSetDirection(gpio389, outputPin);
     enablePWM(false);
-    ROS_INFO("here");
     int err = pca9685->openPCA9685();
-    ROS_INFO("here %d", err);
     if (err < 0)
     {
         ROS_WARN("Error: %d", pca9685->error);

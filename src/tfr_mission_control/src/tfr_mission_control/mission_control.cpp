@@ -87,12 +87,15 @@ namespace tfr_mission_control {
          * if you need to have synchronous state passing, do it through the 
          * signal/slot system, and you should be fine. 
          * */
-        connect(ui.start_button, &QPushButton::pressed,this, &MissionControl::startMission);
-        connect(ui.clock_button, &QPushButton::pressed,this, &MissionControl::startManual);
-        connect(ui.autonomy_button, &QPushButton::pressed, this,  &MissionControl::goAutonomousMode);
-        connect(ui.teleop_button, &QPushButton::pressed, this,  &MissionControl::goTeleopMode);
+        connect(ui.start_button, &QPushButton::clicked,this, &MissionControl::startMission);
+        connect(ui.clock_button, &QPushButton::clicked,this, &MissionControl::startManual);
+        connect(ui.autonomy_button, &QPushButton::clicked, this,  &MissionControl::goAutonomousMode);
+        connect(ui.teleop_button, &QPushButton::clicked, this,  &MissionControl::goTeleopMode);
 
-        connect(ui.motor_button,&QPushButton::pressed, this, &MissionControl::toggleMotors);
+        connect(ui.control_enable_button,&QPushButton::clicked, [this] () {toggleControl(true);});
+        connect(ui.control_disable_button,&QPushButton::clicked, [this] () {toggleControl(false);});
+        connect(ui.motor_enable_button,&QPushButton::clicked, [this] () {toggleMotors(true);});
+        connect(ui.motor_disable_button,&QPushButton::clicked, [this] () {toggleMotors(false);});
         connect(countdown, &QTimer::timeout, this,  &MissionControl::renderClock);
         connect(this, &MissionControl::emitStatus, ui.status_log, &QPlainTextEdit::appendPlainText);
         connect(ui.status_log, &QPlainTextEdit::textChanged, this,  &MissionControl::renderStatus);
@@ -107,13 +110,13 @@ namespace tfr_mission_control {
         connect(motorKill, &QTimer::timeout, 
                 [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);});
 
-        connect(ui.reset_starting_button,&QPushButton::pressed,
+        connect(ui.reset_starting_button,&QPushButton::clicked,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::RESET_STARTING);});
-        connect(ui.reset_dumping_button,&QPushButton::pressed,
+        connect(ui.reset_dumping_button,&QPushButton::clicked,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::RESET_DUMPING);});
-        connect(ui.dump_button,&QPushButton::pressed,
+        connect(ui.dump_button,&QPushButton::clicked,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::DUMP);});
-        connect(ui.dig_button,&QPushButton::pressed,
+        connect(ui.dig_button,&QPushButton::clicked,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::DIG);});
 
         /* for commands which do the turntable/drivebase we want to kill the
@@ -215,6 +218,25 @@ namespace tfr_mission_control {
     {
         ui.teleop_button->setEnabled(value);
     }
+
+    /*
+     * Toggles the control buttons
+     * */
+    void MissionControl::setControl(bool value)
+    {
+        ui.control_enable_button->setEnabled(!value);
+        ui.control_disable_button->setEnabled(value);
+    }
+
+    /*
+     * Toggles the control buttons
+     * */
+    void MissionControl::setMotors(bool value)
+    {
+        ui.motor_enable_button->setEnabled(!value);
+        ui.motor_disable_button->setEnabled(value);
+    }
+
 
     /*
      * Utility for stopping all motors
@@ -334,6 +356,7 @@ namespace tfr_mission_control {
     void MissionControl::startMission()
     {
         startTimeService();
+        toggleControl(true);
         goAutonomousMode();
     }
     
@@ -341,6 +364,7 @@ namespace tfr_mission_control {
     void MissionControl::startManual()
     {
         startTimeService();
+        toggleControl(true);
         goTeleopMode();
     }
 
@@ -348,6 +372,7 @@ namespace tfr_mission_control {
     void MissionControl::goAutonomousMode()
     {
         softwareStop();
+        ROS_INFO("goAutonomous");
         setAutonomy(true);
         tfr_msgs::EmptyGoal goal{};
         while (!teleop.getState().isDone()) teleop.cancelAllGoals();
@@ -375,12 +400,24 @@ namespace tfr_mission_control {
         teleop.sendGoal(goal);
     }
 
-    //toggles the motors for estop (on/off)
-    void MissionControl::toggleMotors()
+    //toggles control for estop (on/off)
+    void MissionControl::toggleControl(bool state)
     {
-        tfr_msgs::EmptySrv toggle;
-        ros::service::call("toggle_motors", toggle);
+        std_srvs::SetBool request;
+        request.request.data = state;
+        while(!ros::service::call("toggle_control", request));
+        setControl(state);
     }
+
+    //toggles the motors for estop (on/off)
+    void MissionControl::toggleMotors(bool state)
+    {
+        std_srvs::SetBool request;
+        request.request.data = state;
+        while(!ros::service::call("toggle_motors", request));
+        setMotors(state);
+    }
+
 
     //self explanitory
     void MissionControl::renderClock()

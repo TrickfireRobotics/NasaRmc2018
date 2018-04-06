@@ -7,6 +7,7 @@
 #include <ros/console.h>
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
+#include <std_srvs/SetBool.h>
 
 #include <tfr_msgs/EmptySrv.h>
 #include <tfr_msgs/SystemStatus.h>
@@ -117,6 +118,13 @@ namespace tfr_mission_control {
             //sets system state to autonomy ready
             void setAutonomy(bool value);
 
+            //sets control system to output commands
+            void setControl(bool value);
+
+            //sets hardware system to output commands
+            void setMotors(bool value);
+
+
 
 
             /* ======================================================================== */
@@ -154,7 +162,8 @@ namespace tfr_mission_control {
     
                 //MISC
                 virtual void performTeleop(tfr_utilities::TeleopCode code);
-                virtual void toggleMotors();    //e-stop and start
+                virtual void toggleControl(bool state);    //e-stop and start
+                virtual void toggleMotors(bool state);    //e-stop and start
     
             signals:
                 /* ======================================================================== */

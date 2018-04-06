@@ -6,6 +6,8 @@
             bin_frame: bin_footprint
             odom_frame: odom
         </rosparam>
+
         <remap from="image" to="/sensors/rear_cam/image_raw"/>
+        <remap from="/odom" to="/sensors/fiducial_odom"/>
     </node>
 </launch>

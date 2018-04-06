@@ -38,8 +38,8 @@ class DrivebaseOdometryPublisher
             y{},
             angle{}
         {
-            arduino_a = n.subscribe("/arduino_a", 15, &DrivebaseOdometryPublisher::readArduinoA, this);
-            arduino_b = n.subscribe("/arduino_b", 15, &DrivebaseOdometryPublisher::readArduinoB, this);
+            arduino_a = n.subscribe("/sensors/arduino_a", 15, &DrivebaseOdometryPublisher::readArduinoA, this);
+            arduino_b = n.subscribe("/sensors/arduino_b", 15, &DrivebaseOdometryPublisher::readArduinoB, this);
             odometry_publisher = n.advertise<nav_msgs::Odometry>("/drivebase_odometry", 15);
         }
 
@@ -55,13 +55,13 @@ class DrivebaseOdometryPublisher
          * */
         void processOdometry()
         {
-        //Grab the neccessary data
-        tfr_msgs::ArduinoAReading reading_a;
-        tfr_msgs::ArduinoBReading reading_b;
-        if (latest_arduino_a != nullptr)
-            reading_a = *latest_arduino_a;
-        if (latest_arduino_b != nullptr)
-            reading_b = *latest_arduino_b;
+            //Grab the neccessary data
+            tfr_msgs::ArduinoAReading reading_a{};
+            tfr_msgs::ArduinoBReading reading_b{};
+            if (latest_arduino_a != nullptr)
+                reading_a = *latest_arduino_a;
+            if (latest_arduino_b != nullptr)
+                reading_b = *latest_arduino_b;
 
             //first we process the data
             auto t_1 = ros::Time::now();
@@ -166,19 +166,18 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "drivebase_odometry_publisher");
     ros::NodeHandle n;
     std::string parent_frame, child_frame;
-    double wheel_span;
+    double wheel_span, r;
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
     ros::param::param<std::string>("~child_frame", child_frame, "odom");
     ros::param::param<double>("~wheel_span", wheel_span, 0.0);
-    ros::param::param<double>("~rate", wheel_span, 10.0);
+    ros::param::param<double>("~rate", r, 10.0);
     DrivebaseOdometryPublisher publisher{n, parent_frame, child_frame, wheel_span};
-    ros::Rate rate(rate);
+    ros::Rate rate(r);
     while(ros::ok())
     {
         publisher.processOdometry();
         ros::spinOnce();
         rate.sleep();
-
     }
     return 0;
 }

@@ -37,7 +37,6 @@
 #include <tf2/LinearMath/Scalar.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-#include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
 
 class FiducialOdom
@@ -269,7 +268,6 @@ class FiducialOdom
         ros::ServiceClient rear_cam_client;
         ros::ServiceClient kinect_client;
         actionlib::SimpleActionClient<tfr_msgs::ArucoAction> aruco;
-        tf2_ros::TransformBroadcaster broadcaster;
         TfManipulator tf_manipulator;
 
         geometry_msgs::PoseStamped last_pose;

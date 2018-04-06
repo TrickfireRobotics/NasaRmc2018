@@ -43,12 +43,25 @@ imu0_remove_gravitational_acceleration: true
 #basic 2d configuration for the fiducial odom publisher we don't use it's
 #velocity, because it is very unreliable, and we get good velocity 
 #data from the imu's.
-odom0: /odom
+odom0: /sensors/fiducial_odom
 odom0_config: [true, true,  true,
                false, false,  true,
                false, false, false,
                false,  false,  false,
                false,  false,  false]
-odom0_differential: false
+odom0_differential: true
 odom0_relative: false
 odom0_queue_size: 10
+
+#basic 2d configuration for the fiducial odom publisher we don't use it's
+#velocity, because it is very unreliable, and we get good velocity 
+#data from the imu's.
+odom1: /sensors/drivebase_odom
+odom1_config: [true, true,  true,
+               false, false,  true,
+               false, false, false,
+               false,  false,  false,
+               false,  false,  false]
+odom1_differential: false
+odom1_relative: false
+odom1_queue_size: 10

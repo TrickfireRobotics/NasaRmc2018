@@ -5,5 +5,6 @@
             child_frame: base_footprint
             wheel_span: 55.88
         </rosparam>
+        <remap from="/drivebase_odometry" to="/sensors/drivebase_odom"/>
     </node>
 </launch>

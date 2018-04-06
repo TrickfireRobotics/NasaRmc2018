@@ -177,13 +177,13 @@ namespace tfr_control
         //LEFT_TREAD
         signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::LEFT_TREAD)],
                     drivebase_v0.first);
-        pwm.set(PWMInterface::Address::TREAD_LEFT, 0.1);
+        pwm.set(PWMInterface::Address::TREAD_LEFT, signal);
         auto left = signal;
 
         //RIGHT_TREAD
         signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
                     drivebase_v0.second);
-        pwm.set(PWMInterface::Address::TREAD_RIGHT, 0.1);
+        pwm.set(PWMInterface::Address::TREAD_RIGHT, signal);
         auto right = signal;
 
 
@@ -390,7 +390,7 @@ namespace tfr_control
         //we don't anticipate this changing very much keep at method level
         double max_vel = 0.5;
         int sign = (vel < 0) ? -1 : 1;
-        double magnitude = std::min((vel*sign)/max_vel, 0.3);
+        double magnitude = std::min((vel*sign)/max_vel, 1.0);
         return sign * magnitude;
     }
 

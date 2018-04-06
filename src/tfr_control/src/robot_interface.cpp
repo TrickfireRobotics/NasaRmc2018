@@ -182,8 +182,8 @@ namespace tfr_control
         auto right = signal;
 
 
-        ROS_INFO("signal %f %f ", command_values[static_cast<int>(Joint::LEFT_TREAD)],command_values[static_cast<int>(Joint::RIGHT_TREAD)] );
-        ROS_INFO("pwm %f %f ", left,right);
+        //ROS_INFO("signal %f %f ", command_values[static_cast<int>(Joint::LEFT_TREAD)],command_values[static_cast<int>(Joint::RIGHT_TREAD)] );
+        //ROS_INFO("pwm %f %f ", left,right);
 
 
         //BIN
@@ -219,7 +219,7 @@ namespace tfr_control
      * */
     void RobotInterface::clearCommands()
     {
-        ROS_INFO("clearing");
+        //ROS_INFO("clearing");
         //LEFT_TREAD
         command_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
 

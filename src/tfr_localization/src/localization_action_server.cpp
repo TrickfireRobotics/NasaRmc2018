@@ -91,6 +91,7 @@ class Localizer
                 tfr_msgs::ArucoGoal goal;
                 goal.image = rear_cam.response.image;
                 goal.camera_info = rear_cam.response.camera_info;
+
                 //send it to the server
                 aruco.sendGoal(goal);
                 aruco.waitForResult();
@@ -109,34 +110,56 @@ class Localizer
                 {
                     ROS_INFO("found something");
                     //We found something, transform relative to the base
-                    geometry_msgs::PoseStamped bin_pose{};
-                    if (!tf_manipulator.transform_pose(
-                                result->relative_pose, 
-                                bin_pose, 
-                                "base_footprint"))
+
+                    geometry_msgs::PoseStamped unprocessed_pose = result->relative_pose;
+                    if (unprocessed_pose.header.frame_id == "kinect_rgb_optical_frame")
                     {
-                        ROS_WARN("Localization Action Server: Transformation failed");
-                        continue;
+                        unprocessed_pose.header.frame_id = "kinect_link";
                     }
-                    bin_pose.pose.position.y *=-1;
-                    bin_pose.pose.position.z *=-1;
-                    bin_pose.header.frame_id = "odom";
-                    bin_pose.header.stamp = ros::Time::now();
+                        ROS_INFO("unprocessed data %s %f %f %f %f %f %f %f",
+                                unprocessed_pose.header.frame_id.c_str(),
+                                unprocessed_pose.pose.position.x,
+                                unprocessed_pose.pose.position.y,
+                                unprocessed_pose.pose.position.z,
+                                unprocessed_pose.pose.orientation.x,
+                                unprocessed_pose.pose.orientation.y,
+                                unprocessed_pose.pose.orientation.z,
+                                unprocessed_pose.pose.orientation.w);
+
+                    //transform from camera to footprint perspective
+                    geometry_msgs::PoseStamped processed_pose;
+                    if (!tf_manipulator.transform_pose(unprocessed_pose,
+                                processed_pose, "base_footprint"))
+                        return;
+
+                    processed_pose.pose.position.z = 0;
+                        ROS_INFO("AAAAAAAprocessed data %s %f %f %f %f %f %f %f",
+                                processed_pose.header.frame_id.c_str(),
+                                processed_pose.pose.position.x,
+                                processed_pose.pose.position.y,
+                                processed_pose.pose.position.z,
+                                processed_pose.pose.orientation.x,
+                                processed_pose.pose.orientation.y,
+                                processed_pose.pose.orientation.z,
+                                processed_pose.pose.orientation.w);
+
+                    processed_pose.header.stamp = ros::Time::now();
 
                     //send the message
-                    tfr_msgs::LocalizePoint::Request request;
-                    request.pose = bin_pose;
+                    tfr_msgs::LocalizePoint::Request request{};
+                    request.pose = processed_pose;
                     tfr_msgs::LocalizePoint::Response response;
                     if(ros::service::call("localize_bin", request, response))
                     {
-                        ROS_INFO("Localization Action Server: Success %f, %f, %f, %f, %f, %f, %f",
-                                bin_pose.pose.position.x,
-                                bin_pose.pose.position.y,
-                                bin_pose.pose.position.z,
-                                bin_pose.pose.orientation.x,
-                                bin_pose.pose.orientation.y,
-                                bin_pose.pose.orientation.z,
-                                bin_pose.pose.orientation.w);
+                        ROS_INFO("Localization Action Server: Success %f, %f, %f, %f, %f, %f, %f %s $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+                                request.pose.pose.position.x,
+                                request.pose.pose.position.y,
+                                request.pose.pose.position.z,
+                                request.pose.pose.orientation.x,
+                                request.pose.pose.orientation.y,
+                                request.pose.pose.orientation.z,
+                                request.pose.pose.orientation.w,
+                                request.pose.header.frame_id.c_str());
                         server.setSucceeded();
                         break;
                     }

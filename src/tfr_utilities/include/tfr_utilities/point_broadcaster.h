@@ -44,8 +44,6 @@ class PointBroadcaster
         tf2_ros::TransformBroadcaster broadcaster{};
         geometry_msgs::TransformStamped transform{};
         ros::ServiceServer server;
-        const std::string &broadcaster_frame;
-        const std::string &map_frame;
         const std::string &service_name;
         const double& height;
 

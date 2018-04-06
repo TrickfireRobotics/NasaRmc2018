@@ -8,13 +8,12 @@
  *  Listens for updates about the point on a specified service. The service
  *  takes in a tfr_msgs/LocalizePoint.srv
  *
- *  It will report (0 0 0) (0 0 0 0) until it is given a proper location
+ *  It will report (0 0 0) (0 0 0 1) until it is given a proper location
  *
  *  parameters:
  *      parent_frame: the parent frame of this point (type = string default = "")
- *      point_frame: the name of the frame you want to broadcast (typed = string default = "")
- *      service_name: the name of the service you want to broadcast (typed =
- *      string default = "")
+ *      point_frame: the name of the frame you want to broadcast (type = string default = "")
+ *      service_name: the name of the service you want to broadcast (type = string default = "")
  *      height: height to put the point at. (type = double default: 0.0)
  *      hz: the frequency to pubish at. (type = doulbe default: 5.0)
  *
@@ -29,15 +28,13 @@ PointBroadcaster::PointBroadcaster(
         const std::string &parent_frame, 
         const std::string &service, const double& h) : 
     node{n}, 
-    broadcaster_frame{point_frame},
-    map_frame{parent_frame}, 
     service_name{service}, 
     height{h}
 {
     server = node.advertiseService(service_name,
             &PointBroadcaster::localize_point, this);
-    transform.header.frame_id = map_frame;
-    transform.child_frame_id = broadcaster_frame;
+    transform.header.frame_id = point_frame;
+    transform.child_frame_id = parent_frame;
     transform.transform.rotation.w = 1;
 }
 
@@ -56,6 +53,15 @@ void PointBroadcaster::broadcast()
 bool PointBroadcaster::localize_point(tfr_msgs::LocalizePoint::Request &request,
         tfr_msgs::LocalizePoint::Response &resonse)
 {
+    ROS_INFO("AAAAAAASSSSSSSSSSSSSSSSSSSSSSS %f %f %f %f %f %f %f",
+            request.pose.pose.position.x,
+            request.pose.pose.position.y,
+            request.pose.pose.position.z,
+            request.pose.pose.orientation.x,
+            request.pose.pose.orientation.y,
+            request.pose.pose.orientation.z,
+            request.pose.pose.orientation.w);
+
     transform.transform.translation.x = request.pose.pose.position.x;
     transform.transform.translation.y = request.pose.pose.position.y;
     transform.transform.translation.z = -height;
@@ -63,6 +69,15 @@ bool PointBroadcaster::localize_point(tfr_msgs::LocalizePoint::Request &request,
     transform.transform.rotation.y = request.pose.pose.orientation.y;
     transform.transform.rotation.z = request.pose.pose.orientation.z;
     transform.transform.rotation.w = request.pose.pose.orientation.w;
+    ROS_INFO("SAAAAAAASSSSSSSSSSSSSSSSSSSSSSS %f %f %f %f %f %f %f",
+            transform.transform.translation.x,
+            transform.transform.translation.y,
+            transform.transform.translation.z,
+            transform.transform.rotation.x,
+            transform.transform.rotation.y,
+            transform.transform.rotation.z,
+            transform.transform.rotation.w);
+
     return true;
 }
 

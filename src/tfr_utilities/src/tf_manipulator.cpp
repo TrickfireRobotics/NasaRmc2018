@@ -42,8 +42,8 @@ bool TfManipulator::transform_pose(const geometry_msgs::PoseStamped &pose,
     geometry_msgs::TransformStamped transform;
     try{
         transform = buffer.lookupTransform(
-                pose.header.frame_id,
                 desired_frame, 
+                pose.header.frame_id,
                 ros::Time(0));
     }
     catch (tf2::TransformException &ex) {
@@ -62,8 +62,8 @@ bool TfManipulator::get_transform(geometry_msgs::Transform &transform,
 {
     try{
         transform = buffer.lookupTransform(
-                current_frame,
                 desired_frame, 
+                current_frame,
                 ros::Time(0)).transform;
     }
     catch (tf2::TransformException &ex) {

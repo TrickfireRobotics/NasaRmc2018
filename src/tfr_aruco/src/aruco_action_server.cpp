@@ -94,6 +94,13 @@ class TFR_Aruco {
                 result.relative_pose.pose.position.x = boardTransVec[2];
                 result.relative_pose.pose.position.y = boardTransVec[0] * -1; /*y-axis is inverted*/
                 result.relative_pose.pose.position.z = 0;
+                ROS_INFO("%f %f %f %f %f %f",
+                        boardTransVec[2],
+                        boardTransVec[0]*-1,
+                        0.0,
+                        0.0,
+                        0.0,
+                        boardRotVec[1] );
                 //let tf do the euler angle -> quaternion math
                 tf2::Quaternion rotated{};
                 //change rotated perspective RPY aruco output to ros coordinate system (2d)

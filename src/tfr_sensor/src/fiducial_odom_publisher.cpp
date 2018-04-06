@@ -12,7 +12,6 @@
  * It only publishes odometry if the fiducial action server is successful.
  *
  * parameters:
- *   ~camera_frame: The reference frame of the camera (string, default="camera_link")
  *   ~footprint_frame: The reference frame of the robot_footprint(string,
  *   default="footprint")
  *   ~bin_frame: The reference frame of the bin (string, default="bin_footprint")
@@ -44,18 +43,15 @@ class FiducialOdom
 {
     public:
         FiducialOdom(ros::NodeHandle& n, 
-                const std::string& c_frame, 
                 const std::string& f_frame, 
                 const std::string& b_frame,
                 const std::string& o_frame,
                 bool debugging) :
             aruco{"aruco_action_server", true},
             tf_manipulator{},
-            camera_frame{c_frame},
             footprint_frame{f_frame},
             bin_frame{b_frame},
             odometry_frame{o_frame},
-            last_pose{},
             debug{debugging}
         {
             rear_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/rear_cam/image_raw");
@@ -90,6 +86,7 @@ class FiducialOdom
             tfr_msgs::ArucoGoal goal;
             goal.image = rear_cam.response.image;
             goal.camera_info = rear_cam.response.camera_info;
+
             //send it to the server
             aruco.sendGoal(goal);
             aruco.waitForResult();
@@ -107,7 +104,14 @@ class FiducialOdom
             if (result != nullptr && result->number_found !=0)
 			{
 
-				geometry_msgs::PoseStamped unprocessed_pose = result->relative_pose;
+                geometry_msgs::PoseStamped unprocessed_pose = result->relative_pose;
+                if (unprocessed_pose.header.frame_id == "kinect_rgb_optical_frame")
+                {
+                    //note we have to reverse signs here
+                    unprocessed_pose.header.frame_id = "kinect_link";
+                }
+
+
 
 				if (debug)
 					ROS_INFO("unprocessed data %s %f %f %f %f %f %f %f",
@@ -125,9 +129,8 @@ class FiducialOdom
 				if (!tf_manipulator.transform_pose(unprocessed_pose,
 							processed_pose, footprint_frame))
 					return;
-				//note we have to reverse signs here
-				processed_pose.pose.position.y *= -1;
-                processed_pose.pose.position.z *= -1;
+
+                processed_pose.pose.position.z = 0;
                 if (debug)
                     ROS_INFO("processed data %s %f %f %f %f %f %f %f",
                             processed_pose.header.frame_id.c_str(),
@@ -138,14 +141,15 @@ class FiducialOdom
                             processed_pose.pose.orientation.y,
                             processed_pose.pose.orientation.z,
                             processed_pose.pose.orientation.w);
-                //so we have a point in terms of the footprint and bin
 
                 //we need to express that in terms of odom
                 geometry_msgs::Transform relative_bin_transform;
+
                 //get odom bin transform
                 if (!tf_manipulator.get_transform(relative_bin_transform,
                             odometry_frame, bin_frame))
                     return;
+
                 if (debug)
                     ROS_INFO("relative transform %f %f %f %f %f %f %f",
                             relative_bin_transform.translation.x,
@@ -155,7 +159,6 @@ class FiducialOdom
                             relative_bin_transform.rotation.y,
                             relative_bin_transform.rotation.z,
                             relative_bin_transform.rotation.w);
-                //take a difference of the two transforms to find the
 
                 //odom_camera transform
                 tf2::Transform p_0{};
@@ -167,29 +170,23 @@ class FiducialOdom
                 auto difference = p_1.inverseTimes(p_0);
                 geometry_msgs::Transform relative_transform{};
                 relative_transform = tf2::toMsg(difference);
-
-                relative_transform.translation.x *= -1;
-                relative_transform.translation.y *= -1;
-                relative_transform.translation.z *= -1;
-
+                
                 //process the odometry
-                geometry_msgs::PoseStamped relative_pose;
-                relative_pose.header.stamp = unprocessed_pose.header.stamp;
-                relative_pose.header.frame_id = camera_frame;
-                relative_pose.pose.position.x = relative_transform.translation.x;
-                relative_pose.pose.position.y = relative_transform.translation.y;
-                relative_pose.pose.position.z = relative_transform.translation.z;
-                relative_pose.pose.orientation = relative_transform.rotation;
+                geometry_msgs::Pose relative_pose;
+                relative_pose.position.x = relative_transform.translation.x;
+                relative_pose.position.y = relative_transform.translation.y;
+                relative_pose.position.z = 0;
+                relative_pose.orientation = relative_transform.rotation;
+
                 if (debug)
-                    ROS_INFO("relative data %s %f %f %f %f %f %f %f",
-                            relative_pose.header.frame_id.c_str(),
-                            relative_pose.pose.position.x,
-                            relative_pose.pose.position.y,
-                            relative_pose.pose.position.z,
-                            relative_pose.pose.orientation.x,
-                            relative_pose.pose.orientation.y,
-                            relative_pose.pose.orientation.z,
-                            relative_pose.pose.orientation.w);
+                    ROS_INFO("relative data %f %f %f %f %f %f %f",
+                            relative_pose.position.x,
+                            relative_pose.position.y,
+                            relative_pose.position.z,
+                            relative_pose.orientation.x,
+                            relative_pose.orientation.y,
+                            relative_pose.orientation.z,
+                            relative_pose.orientation.w);
 
                 // handle odometry data
                 nav_msgs::Odometry odom;
@@ -198,69 +195,15 @@ class FiducialOdom
                 odom.child_frame_id = footprint_frame;
 
                 //get our pose and fudge some covariances
-                odom.pose.pose = relative_pose.pose;
+                odom.pose.pose = relative_pose;
                 odom.pose.covariance = {  1e-1,   0,   0,   0,   0,   0,
                     0,1e-1,   0,   0,   0,   0,
                     0,   0,1e-1,   0,   0,   0,
                     0,   0,   0,1e-1,   0,   0,
                     0,   0,   0,   0,1e-1,   0,
                     0,   0,   0,   0,   0,1e-1};
-
-
-                //handle uninitialized data
-                if (    last_pose.pose.orientation.x == 0 &&
-                        last_pose.pose.orientation.y == 0 &&
-                        last_pose.pose.orientation.z == 0 &&
-                        last_pose.pose.orientation.w == 0)
-                    last_pose.pose.orientation.w = 1;
-
-                //velocities are harder, we need to take a diffence and do some
-                //conversions
-                tf2::Transform t_0{};
-                tf2::convert(last_pose.pose, t_0);
-                tf2::Transform t_1{};
-                tf2::convert(relative_pose.pose, t_1);
-
-                /* take fast difference to get linear and angular delta inbetween
-                 * timestamps
-                 * https://answers.ros.org/question/12654/relative-pose-between-two-tftransforms/
-                 */
-                auto deltas = t_0.inverseTimes(t_1);
-                auto out_deltas = tf2::toMsg(deltas);
-                if (debug)
-                    ROS_INFO("deltas %f %f %f %f %f %f %f",
-                            out_deltas.translation.x,
-                            out_deltas.translation.y,
-                            out_deltas.translation.z,
-                            out_deltas.rotation.x,
-                            out_deltas.rotation.y,
-                            out_deltas.rotation.z,
-                            out_deltas.rotation.w);
-                auto linear_deltas = deltas.getOrigin();
-                auto angular_deltas = deltas.getRotation();
-
-                //convert from quaternion to rpy for odom compatibility
-                tf2::Matrix3x3 converter{};
-                converter.setRotation(angular_deltas);
-                tf2::Vector3 rpy_deltas{};
-                converter.getRPY(rpy_deltas[0], rpy_deltas[1], rpy_deltas[2]); 
-
-                const tf2Scalar delta_t{
-                    relative_pose.header.stamp.toSec() - last_pose.header.stamp.toSec()};
-
-                odom.twist.twist.linear =  tf2::toMsg(linear_deltas/delta_t);
-                odom.twist.twist.angular = tf2::toMsg(rpy_deltas/delta_t);
-
-                odom.twist.covariance = {  1e-1,   0,   0,   0,   0,   0,
-                    0,1e-1,   0,   0,   0,   0,
-                    0,   0,1e-1,   0,   0,   0,
-                    0,   0,   0,1e-1,   0,   0,
-                    0,   0,   0,   0,1e-1,   0,
-                    0,   0,   0,   0,   0,1e-1};
-
                 //fire it off! and cleanup
                 publisher.publish(odom);
-                last_pose = relative_pose;
             }
         }
 
@@ -272,9 +215,7 @@ class FiducialOdom
         tf2_ros::TransformBroadcaster broadcaster;
         TfManipulator tf_manipulator;
 
-        geometry_msgs::PoseStamped last_pose;
 
-        const std::string& camera_frame;
         const std::string& footprint_frame;
         const std::string& bin_frame;
         const std::string& odometry_frame;
@@ -286,17 +227,16 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "fiducial_odom_publisher");
     ros::NodeHandle n{};
 
-    std::string camera_frame, footprint_frame, bin_frame, odometry_frame;
+    std::string footprint_frame, bin_frame, odometry_frame;
     bool debug;
     double rate;
-    ros::param::param<std::string>("~camera_frame", camera_frame, "camera_link");
     ros::param::param<std::string>("~footprint_frame", footprint_frame, "footprint");
     ros::param::param<std::string>("~bin_frame", bin_frame, "bin_footprint");
     ros::param::param<std::string>("~odometry_frame", odometry_frame, "odom");
     ros::param::param<double>("~rate",rate, 5);
     ros::param::param<bool>("~debug",debug, false);
 
-    FiducialOdom fiducial_odom{n, camera_frame,footprint_frame, bin_frame,
+    FiducialOdom fiducial_odom{n, footprint_frame, bin_frame,
         odometry_frame, debug};
 
     ros::Rate r(rate);

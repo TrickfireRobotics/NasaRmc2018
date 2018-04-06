@@ -16,13 +16,13 @@ find_package(catkin REQUIRED COMPONENTS
     tf2
     tf2_ros
     tf2_geometry_msgs
-    image_transport
     actionlib
     geometry_msgs
     sensor_msgs
     nav_msgs
     tfr_msgs
     tfr_utilities
+    image_transport
 )
 
 find_package(GTest REQUIRED)

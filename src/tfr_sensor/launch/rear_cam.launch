@@ -1,6 +1,6 @@
 <launch>
     <node name="read_cam_tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher"
-        args="-0.38 0 0.01 0 0 1 0 base_link rear_cam_link"/>
+        args="-0.36195 -.146 0.2667 0 0 1 0 base_link rear_cam_link"/>
     <node name="rear_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
             device_id: 1
@@ -8,6 +8,12 @@
             image_height: 720
             frame_id: rear_cam_link
             camera_info_url: file:///home/nvidia/trickfire/NasaRmc2018/src/tfr_sensor/calib/ost.yaml
+        </rosparam>
+    </node>
+    <node name="rear_cam_wrapper" pkg="tfr_sensor" type="image_topic_wrapper">
+        <rosparam>
+            camera_topic: /sensors/rear_cam/image_raw
+            service_name: /on_demand/rear_cam/image_raw
         </rosparam>
     </node>
 </launch>

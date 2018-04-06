@@ -92,7 +92,7 @@ class TFR_Aruco {
                  *  coordinate system and are rotated here.
                  * */
                 result.relative_pose.pose.position.x = boardTransVec[2];
-                result.relative_pose.pose.position.y = boardTransVec[0];
+                result.relative_pose.pose.position.y = boardTransVec[0] * -1; /*y-axis is inverted*/
                 result.relative_pose.pose.position.z = 0;
                 //let tf do the euler angle -> quaternion math
                 tf2::Quaternion rotated{};

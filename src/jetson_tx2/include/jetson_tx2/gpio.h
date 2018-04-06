@@ -72,7 +72,7 @@ enum pinValues {
 
 enum jetsonTX2GPIONumber {
 //    gpio388 = 388 //J21 pin 37 -> GPIO8_ALS_PROX_INT output
-    gpio389 = 389 //J21 pin 33 -> GPIO11_AP_WAKE_BT output
+    gpioPin = 393 //J21 pin 33 -> GPIO11_AP_WAKE_BT output
 } ;
 
 

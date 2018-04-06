@@ -16,7 +16,10 @@ namespace tfr_control
     RobotInterface::RobotInterface(ros::NodeHandle &n, bool fakes, 
             const double *lower_lim, const double *upper_lim) :
         pwm{},
-        arduino{n.subscribe("/sensors/arduino", 5, &RobotInterface::readArduino, this)},
+        arduino_a{n.subscribe("/sensors/arduino_a", 5,
+                &RobotInterface::readArduinoA, this)},
+        arduino_b{n.subscribe("/sensors/arduino_b", 5,
+                &RobotInterface::readArduinoB, this)},
         use_fake_values{fakes}, lower_limits{lower_lim},
         upper_limits{upper_lim}, drivebase_v0{std::make_pair(0,0)},
         last_update{ros::Time::now()}
@@ -59,47 +62,50 @@ namespace tfr_control
     void RobotInterface::read() 
     {
         //Grab the neccessary data
-        tfr_msgs::ArduinoReading reading;
-        if (latest_arduino != nullptr)
-            reading = *latest_arduino;
+        tfr_msgs::ArduinoAReading reading_a;
+        tfr_msgs::ArduinoBReading reading_b;
+        if (latest_arduino_a != nullptr)
+            reading_a = *latest_arduino_a;
+        if (latest_arduino_b != nullptr)
+            reading_b = *latest_arduino_b;
 
         //LEFT_TREAD
         position_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
-        velocity_values[static_cast<int>(Joint::LEFT_TREAD)] = reading.tread_left_vel;
+        velocity_values[static_cast<int>(Joint::LEFT_TREAD)] = reading_a.tread_left_vel;
         effort_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
 
         //RIGHT_TREAD
         position_values[static_cast<int>(Joint::RIGHT_TREAD)] = 0;
-        velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] = reading.tread_right_vel;
+        velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] = reading_b.tread_right_vel;
         effort_values[static_cast<int>(Joint::RIGHT_TREAD)] = 0;
 
         if (!use_fake_values)
         {
             //TURNTABLE
-            position_values[static_cast<int>(Joint::TURNTABLE)] = reading.arm_turntable_pos;
+            position_values[static_cast<int>(Joint::TURNTABLE)] = reading_b.arm_turntable_pos;
             velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0;
             effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
 
             //LOWER_ARM
             position_values[static_cast<int>(Joint::LOWER_ARM)] = 
-                (reading.arm_lower_left_pos+ reading.arm_lower_right_pos)/2;
+                (reading_a.arm_lower_left_pos+ reading_a.arm_lower_right_pos)/2;
             velocity_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
             effort_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
 
             //UPPER_ARM
-            position_values[static_cast<int>(Joint::UPPER_ARM)] = reading.arm_upper_pos;
+            position_values[static_cast<int>(Joint::UPPER_ARM)] = reading_a.arm_upper_pos;
             velocity_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
             effort_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
 
             //SCOOP
-            position_values[static_cast<int>(Joint::SCOOP)] = reading.arm_scoop_pos;
+            position_values[static_cast<int>(Joint::SCOOP)] = reading_a.arm_scoop_pos;
             velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
             effort_values[static_cast<int>(Joint::SCOOP)] = 0;
         }
 
         //BIN
         position_values[static_cast<int>(Joint::BIN)] = 
-            (reading.bin_left_pos + reading.bin_right_pos)/2;
+            (reading_a.bin_left_pos + reading_a.bin_right_pos)/2;
         velocity_values[static_cast<int>(Joint::BIN)] = 0;
         effort_values[static_cast<int>(Joint::BIN)] = 0;
 
@@ -118,9 +124,10 @@ namespace tfr_control
     void RobotInterface::write() 
     {
         //Grab the neccessary data
-        tfr_msgs::ArduinoReading reading;
-        if (latest_arduino != nullptr)
-            reading = *latest_arduino;
+        tfr_msgs::ArduinoAReading reading_a;
+        tfr_msgs::ArduinoBReading reading_b;
+        if (latest_arduino_a != nullptr)
+            reading_a = *latest_arduino_a;
 
         double signal;
         if (use_fake_values) //test code  for working with rviz simulator
@@ -146,8 +153,8 @@ namespace tfr_control
 
             //LOWER_ARM
             auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::LOWER_ARM)],
-                        reading.arm_lower_left_pos,
-                        reading.arm_lower_right_pos);
+                        reading_a.arm_lower_left_pos,
+                        reading_a.arm_lower_right_pos);
             pwm.set(PWMInterface::Address::ARM_LOWER_LEFT, twin_signal.first);
             pwm.set(PWMInterface::Address::ARM_LOWER_RIGHT, twin_signal.second);
 
@@ -165,18 +172,24 @@ namespace tfr_control
         //LEFT_TREAD
         signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::LEFT_TREAD)],
                     drivebase_v0.first);
-        //TODO
-        pwm.set(PWMInterface::Address::TREAD_LEFT, 1);
+        pwm.set(PWMInterface::Address::TREAD_LEFT, signal);
+        auto left = signal;
 
         //RIGHT_TREAD
         signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
                     drivebase_v0.second);
         pwm.set(PWMInterface::Address::TREAD_RIGHT, signal);
+        auto right = signal;
+
+
+        ROS_INFO("signal %f %f ", command_values[static_cast<int>(Joint::LEFT_TREAD)],command_values[static_cast<int>(Joint::RIGHT_TREAD)] );
+        ROS_INFO("pwm %f %f ", left,right);
+
 
         //BIN
         auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::BIN)],
-                    reading.bin_left_pos,
-                    reading.bin_left_pos);
+                    reading_a.bin_left_pos,
+                    reading_a.bin_left_pos);
         pwm.set(PWMInterface::Address::BIN_LEFT, twin_signal.first);
         pwm.set(PWMInterface::Address::BIN_RIGHT, twin_signal.second);
         
@@ -206,6 +219,7 @@ namespace tfr_control
      * */
     void RobotInterface::clearCommands()
     {
+        ROS_INFO("clearing");
         //LEFT_TREAD
         command_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
 
@@ -350,35 +364,44 @@ namespace tfr_control
     double RobotInterface::drivebaseVelocityToPWM(const double& v_1, const double& v_0)
     {
         //limit for acceleration
-        double vel = v_1, d_v = v_1 - v_0 , d_t = (ros::Time::now()- last_update).toSec();
-        double max_a = 1;
-
-        /*
-         * d_v/d_t = max_a
-         * d_v = max_a * d_t && d_v = v_1 - v_0
-         * v_1 = max_a * d_t - v_0
-         * */
-        if (abs(d_v/d_t) > max_a)
-        {
-            if (d_v < 0)
-                max_a = -1;
-            vel = max_a * d_t - v_0;
-        }
-        
+//        double vel = v_1, d_v = v_1 - v_0 , d_t = (ros::Time::now()- last_update).toSec();
+//        double max_a = 2;
+//
+//        /*
+//         * d_v/d_t = max_a
+//         * d_v = max_a * d_t && d_v = v_1 - v_0
+//         * v_1 = max_a * d_t - v_0
+//         * */
+//        if (abs(d_v/d_t) > max_a)
+//        {
+//            if (d_v < 0)
+//                max_a = -2;
+//            vel = max_a * d_t - v_0;
+//        }
+//        
         //limit for max velocity
         //we don't anticipate this changing very much keep at method level
-        double max_vel = 1;
-        int sign = (vel < 0) ? -1 : 1;
-        double magnitude = std::min((vel*sign)/max_vel, 1.0);
+        double max_vel = 0.5;
+        int sign = (v_1 < 0) ? -1 : 1;
+        double magnitude = std::min((v_1*sign)/max_vel, 0.1);
         return sign * magnitude;
     }
 
     /*
      * Callback for our encoder subscriber
      * */
-    void RobotInterface::readArduino(const tfr_msgs::ArduinoReadingConstPtr &msg)
+    void RobotInterface::readArduinoA(const tfr_msgs::ArduinoAReadingConstPtr &msg)
     {
-        latest_arduino = msg;
+        latest_arduino_a = msg;
     }
+
+    /*
+     * Callback for our encoder subscriber
+     * */
+    void RobotInterface::readArduinoB(const tfr_msgs::ArduinoBReadingConstPtr &msg)
+    {
+        latest_arduino_b = msg;
+    }
+
 
 }

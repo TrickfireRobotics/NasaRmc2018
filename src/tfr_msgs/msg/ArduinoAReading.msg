@@ -1,7 +1,4 @@
 float64 tread_left_vel #m/s
-float64 tread_right_vel #m/s
-float64 arm_turntable_pos #rad
-#TODO name potentiometers
 float32 arm_lower_left_pos #m
 float32 arm_lower_right_pos #m
 float32 arm_upper_pos #m

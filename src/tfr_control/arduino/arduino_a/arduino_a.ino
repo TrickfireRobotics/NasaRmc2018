@@ -1,9 +1,9 @@
+
 #include <Encoder.h>
 #include <Wire.h>
 #include <Adafruit_ADS1015.h>
 #include <ros.h>
-#include <tfr_msgs/ArduinoReading.h>
-#include <std_msgs/Float32.h>
+#include <tfr_msgs/ArduinoAReading.h>
 #include <tfr_utilities/control_code.h>
 #include <quadrature.h>
 
@@ -11,14 +11,13 @@ ros::NodeHandle nh;
 
 //encoder level constants
 const double CPR = 4096; //pulse per revolution
-//TODO note this revolution/m is acually 3.3314, but I had to step it up to make testing work
-const double GEARBOX_RPM = 60; 
-//TODO note this rev/rev is acually 0.208, but I had to step it up to make testing work
-const double TURNTABLE_RPR = 60;
+const double GEARBOX_RPM = 3.3314; 
 
 //pin constants
 const int GEARBOX_LEFT_A = 2;
 const int GEARBOX_LEFT_B = 3;
+
+
 
 
 
@@ -59,10 +58,8 @@ Potentiometer pots []
 
 //encoders
 VelocityQuadrature gearbox_left(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
-//TODO Quadrature gearbox_right(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
-//TODO Quadrature turntable(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
-tfr_msgs::ArduinoReading arduinoReading;
-ros::Publisher arduino("arduino", &arduinoReading);
+tfr_msgs::ArduinoAReading arduinoReading;
+ros::Publisher arduino("arduino_a", &arduinoReading);
 
 //potentiometers
 /*
@@ -94,8 +91,6 @@ void setup()
 void loop()
 {
     arduinoReading.tread_left_vel = gearbox_left.getVelocity()/GEARBOX_RPM;
-//TODO    arduinoReading.tread_right_vel = gearbox_right.getVelocity()/GEARBOX_RPM;
-//TODO    arduinoReading.arm_turntable_pos = turntable.getVelocity()/TURNTABLE_RPR;
 
 
     ads1115_a.startADC_SingleEnded(0);
@@ -106,20 +101,21 @@ void loop()
     arduinoReading.arm_upper_pos = pots[ARM_UPPER].min_angle;
     arduinoReading.arm_scoop_pos = pots[ARM_SCOOP].min_angle;
     arduinoReading.bin_right_pos = arduinoReading.bin_left_pos = pots[BIN_LEFT].getPosition(ads1115_a.collectADC_SingleEnded());
-
+    nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
 //TODO    arduinoReading.arm_scoop_pos = pots[ARM_SCOOP].getPosition(ads1115_b.collectADC_SingleEnded());
 
 
 
 //TODO    ads1115_a.startADC_SingleEnded(1);
 //TODO    ads1115_b.startADC_SingleEnded(1);
-//TODO    delay(8);
+          delay(8);
+          nh.spinOnce();
 //TODO    arduinoReading.arm_lower_right = pots[ARM_LOWER_RIGHT].getPosition(ads1115_a.collectADC_SingleEnded());
 //TODO    arduinoReading.bin_left_pos = pots[BIN_LEFT].getPosition(ads1115_b.collectADC_SingleEnded());
 
 //TODO    ads1115_a.startADC_SingleEnded(2);
 //TODO    ads1115_b.startADC_SingleEnded(2);
-//TODO    delay(8);
+          delay(8);
 //TODO    arduinoReading.arm_upper = pots[ARM_UPPER].getPosition(ads1115_a.collectADC_SingleEnded());
 //TODO    arduinoReading.bin_right = pots[BIN_RIGHT].getPosition(ads1115_b.collectADC_SingleEnded());
 

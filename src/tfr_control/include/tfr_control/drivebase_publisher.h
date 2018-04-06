@@ -35,12 +35,6 @@ namespace tfr_control
         DrivebasePublisher& operator=(DrivebasePublisher&&) = delete;
         
 
-        // Making this static allows for unit-testing without 
-        // creating a DrivebasePublisher object
-        // left_tread and right_tread are output parameters; the rest are inputs.
-        static void twistToDifferential(const double linear_v, const double angular_v, const double wheel_radius, 
-                                        const double wheel_span, double& left_tread, double& right_tread);
-
     private:
         void subscriptionCallback(const geometry_msgs::Twist::ConstPtr& msg);
 

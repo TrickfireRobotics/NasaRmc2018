@@ -3,8 +3,8 @@
 
 PWMInterface::PWMInterface()
 {
-    gpioExport(gpio389);
-    gpioSetDirection(gpio389, outputPin);
+    gpioExport(gpioPin);
+    gpioSetDirection(gpioPin, outputPin);
     enablePWM(false);
     int err = pca9685->openPCA9685();
     if (err < 0)
@@ -19,8 +19,8 @@ PWMInterface::PWMInterface()
 
 PWMInterface::~PWMInterface()
 {
-    gpioUnexport(gpio389);
-    gpioClose(gpio389);
+    gpioUnexport(gpioPin);
+    gpioClose(gpioPin);
 }
 
 void PWMInterface::set(Address address, double value )
@@ -35,7 +35,7 @@ void PWMInterface::set(Address address, double value )
 
 void PWMInterface::enablePWM(bool value)
 {
-    gpioSetValue(gpio389, (value)? off : on);
+    gpioSetValue(gpioPin, (value)? off : on);
     set(Address::TREAD_LEFT, 0);
     set(Address::TREAD_RIGHT, 0);
     set(Address::ARM_TURNTABLE, 0);

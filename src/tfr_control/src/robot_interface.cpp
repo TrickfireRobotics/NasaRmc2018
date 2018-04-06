@@ -169,8 +169,7 @@ namespace tfr_control
         pwm.set(PWMInterface::Address::TREAD_LEFT, 1);
 
         //RIGHT_TREAD
-        signal =
-            drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
+        signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
                     drivebase_v0.second);
         pwm.set(PWMInterface::Address::TREAD_RIGHT, signal);
 
@@ -232,7 +231,7 @@ namespace tfr_control
     }
 
     /*
-     * Retrieved the state of the bin
+     * Retrieves the state of the bin
      * */
     double RobotInterface::getBinState()
     {

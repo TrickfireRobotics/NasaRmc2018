@@ -57,6 +57,8 @@ namespace tfr_control {
 
         RobotInterface(ros::NodeHandle &n, bool fakes, const double lower_lim[JOINT_COUNT],
                 const double upper_lim[JOINT_COUNT]);
+        ~RobotInterface();
+
 
         
         /*

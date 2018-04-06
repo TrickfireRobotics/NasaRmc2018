@@ -49,6 +49,11 @@ namespace tfr_control
         pwm.enablePWM(!state);
     }
 
+    RobotInterface::~RobotInterface()
+    {
+        hardCutoff(true);
+    }
+
     /*
      * Reads from our hardware and populates from shared memory.  
      *
@@ -172,13 +177,13 @@ namespace tfr_control
         //LEFT_TREAD
         signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::LEFT_TREAD)],
                     drivebase_v0.first);
-        pwm.set(PWMInterface::Address::TREAD_LEFT, signal);
+        pwm.set(PWMInterface::Address::TREAD_LEFT, 0.1);
         auto left = signal;
 
         //RIGHT_TREAD
         signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
                     drivebase_v0.second);
-        pwm.set(PWMInterface::Address::TREAD_RIGHT, signal);
+        pwm.set(PWMInterface::Address::TREAD_RIGHT, 0.1);
         auto right = signal;
 
 
@@ -364,26 +369,28 @@ namespace tfr_control
     double RobotInterface::drivebaseVelocityToPWM(const double& v_1, const double& v_0)
     {
         //limit for acceleration
-//        double vel = v_1, d_v = v_1 - v_0 , d_t = (ros::Time::now()- last_update).toSec();
-//        double max_a = 2;
-//
-//        /*
-//         * d_v/d_t = max_a
-//         * d_v = max_a * d_t && d_v = v_1 - v_0
-//         * v_1 = max_a * d_t - v_0
-//         * */
-//        if (abs(d_v/d_t) > max_a)
-//        {
-//            if (d_v < 0)
-//                max_a = -2;
-//            vel = max_a * d_t - v_0;
-//        }
-//        
+        double vel = v_1, d_v = v_1 - v_0 , d_t = (ros::Time::now()- last_update).toSec();
+        double max_a = 0.75;
+
+        /*
+         * d_v/d_t = max_a
+         * d_v = max_a * d_t && d_v = v_1 - v_0
+         * v_1 = max_a * d_t - v_0
+         * */
+        if (std::abs(d_v/d_t) > max_a)
+        {
+            if (d_v < 0)
+                max_a *= -1;
+            vel = v_0 + max_a * d_t;
+        }
+
+        ROS_INFO("v_0 %f, v_1 %f", v_1, vel);
+        
         //limit for max velocity
         //we don't anticipate this changing very much keep at method level
         double max_vel = 0.5;
-        int sign = (v_1 < 0) ? -1 : 1;
-        double magnitude = std::min((v_1*sign)/max_vel, 0.1);
+        int sign = (vel < 0) ? -1 : 1;
+        double magnitude = std::min((vel*sign)/max_vel, 0.3);
         return sign * magnitude;
     }
 

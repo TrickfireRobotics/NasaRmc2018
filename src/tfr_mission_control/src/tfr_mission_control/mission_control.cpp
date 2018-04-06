@@ -34,6 +34,9 @@ namespace tfr_mission_control {
         delete countdownClock;
         delete motorKill;
         delete widget;
+        toggleMotors(false);
+        toggleControl(false);
+        
     }
 
     /* ========================================================================== */
@@ -339,6 +342,7 @@ namespace tfr_mission_control {
     {
         startTimeService();
         toggleControl(true);
+        toggleMotors(true);
         goAutonomousMode();
     }
     
@@ -347,6 +351,7 @@ namespace tfr_mission_control {
     {
         startTimeService();
         toggleControl(true);
+        toggleMotors(true);
         goTeleopMode();
     }
 

@@ -3,6 +3,8 @@
 #include <Adafruit_ADS1015.h>
 #include <ros.h>
 #include <tfr_msgs/ArduinoReading.h>
+#include <std_msgs/Float32.h>
+#include <tfr_utilities/control_code.h>
 #include <quadrature.h>
 
 ros::NodeHandle nh;
@@ -46,12 +48,12 @@ enum Potentiometers
 
 Potentiometer pots []
 {
-  {4.88,  0.209, 1.693},      //ARM_LOWER_LEFT
-  {4.88,  0.209, 1.693},      //ARM_LOWER_RIGHT
-  {4.88,  0.000, 1.868},      //ARM_UPPER
-  {4.88, -0.873, 1.868},      //ARM_SCOOP
-  {4.88,  0.000, 0.786},      //BIN_LEFT
-  {4.88,  0.000, 0.786}       //BIN_RIGHT
+  {4.88, tfr_utilities::JointAngle::ARM_LOWER_MIN, tfr_utilities::JointAngle::ARM_LOWER_MAX},      //ARM_LOWER_LEFT
+  {4.88, tfr_utilities::JointAngle::ARM_LOWER_MIN, tfr_utilities::JointAngle::ARM_LOWER_MAX},      //ARM_LOWER_RIGHT
+  {4.88, tfr_utilities::JointAngle::ARM_UPPER_MIN, tfr_utilities::JointAngle::ARM_UPPER_MAX},      //ARM_UPPER
+  {4.88, tfr_utilities::JointAngle::ARM_SCOOP_MIN, tfr_utilities::JointAngle::ARM_SCOOP_MAX},      //ARM_SCOOP
+  {4.88, tfr_utilities::JointAngle::BIN_MIN, tfr_utilities::JointAngle::BIN_MAX},      //BIN_LEFT
+  {4.88, tfr_utilities::JointAngle::BIN_MIN, tfr_utilities::JointAngle::BIN_MAX}       //BIN_RIGHT
 };
 
 
@@ -79,7 +81,7 @@ ads1115_b =>
 */
 
 Adafruit_ADS1115 ads1115_a;
-Adafruit_ADS1115 ads1115_b;
+//TODO Adafruit_ADS1115 ads1115_b;
 
 void setup()
 {
@@ -104,6 +106,7 @@ void loop()
     arduinoReading.arm_upper_pos = pots[ARM_UPPER].min_angle;
     arduinoReading.arm_scoop_pos = pots[ARM_SCOOP].min_angle;
     arduinoReading.bin_right_pos = arduinoReading.bin_left_pos = pots[BIN_LEFT].getPosition(ads1115_a.collectADC_SingleEnded());
+
 //TODO    arduinoReading.arm_scoop_pos = pots[ARM_SCOOP].getPosition(ads1115_b.collectADC_SingleEnded());
 
 

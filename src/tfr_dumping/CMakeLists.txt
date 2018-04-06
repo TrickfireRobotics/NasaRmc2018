@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
     geometry_msgs
     sensor_msgs
     image_transport
+    tfr_utilities
 )
 
 find_package(GTest REQUIRED)

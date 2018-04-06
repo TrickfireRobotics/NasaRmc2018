@@ -237,6 +237,15 @@
        <property name="text">
         <string>cw</string>
        </property>
+       <property name="autoRepeat">
+        <bool>true</bool>
+       </property>
+       <property name="autoRepeatDelay">
+        <number>50</number>
+       </property>
+       <property name="autoRepeatInterval">
+        <number>50</number>
+       </property>
       </widget>
      </item>
      <item row="1" column="7">
@@ -268,6 +277,15 @@
        </property>
        <property name="text">
         <string>ccw</string>
+       </property>
+       <property name="autoRepeat">
+        <bool>true</bool>
+       </property>
+       <property name="autoRepeatDelay">
+        <number>50</number>
+       </property>
+       <property name="autoRepeatInterval">
+        <number>50</number>
        </property>
       </widget>
      </item>

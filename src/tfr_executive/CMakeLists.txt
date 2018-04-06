@@ -7,6 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     tfr_utilities
     tfr_msgs
+    trajectory_msgs
     geometry_msgs
     actionlib
 )

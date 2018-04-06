@@ -1,0 +1,3 @@
+#srv for querying an 8 bit status code
+---
+float64 state

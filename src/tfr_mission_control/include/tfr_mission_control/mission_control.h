@@ -80,7 +80,7 @@ namespace tfr_mission_control {
             //how long to wait without keyborad input before killing the motors(hz)
             //NOTE can cause bouncy keys if user has too long of a delay for
             //repeated keys
-            const double MOTOR_INTERVAL = 1000/3;
+            const double MOTOR_INTERVAL = 1000/4;
 
             /* ======================================================================== */
             /* Variables                                                                */
@@ -91,7 +91,7 @@ namespace tfr_mission_control {
             //Out application context
             QWidget* widget;
             //the mission timer
-            QTimer* countdown;
+            QTimer* countdownClock;
             //The watchdog for the motors
             QTimer* motorKill;
 
@@ -103,8 +103,6 @@ namespace tfr_mission_control {
             //our message subscriber
             ros::Subscriber com;
 
-            //the last key we pressed (for debouncing)
-            int lastKey;
             //Whether teleop commands should be accepted
             bool teleopEnabled;
 

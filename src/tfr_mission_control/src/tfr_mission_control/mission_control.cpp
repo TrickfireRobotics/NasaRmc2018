@@ -18,8 +18,7 @@ namespace tfr_mission_control {
         autonomy{"autonomous_action_server",true},
         teleop{"teleop_action_server",true},
         com{nh.subscribe("com", 5, &MissionControl::updateStatus, this)},
-        teleopEnabled{false},
-        lastKey{0}
+        teleopEnabled{false}
     {
         setObjectName("MissionControl");
     }
@@ -32,7 +31,7 @@ namespace tfr_mission_control {
      * */
     MissionControl::~MissionControl()
     {
-        delete countdown;
+        delete countdownClock;
         delete motorKill;
         delete widget;
     }
@@ -64,7 +63,7 @@ namespace tfr_mission_control {
         //boilerplate
         context.addWidget(widget);
 
-        countdown = new QTimer(this); //mission clock, runs repeatedly
+        countdownClock = new QTimer(this); //mission clock, runs repeatedly
         motorKill = new QTimer(this); //motor watchdog
         motorKill->setSingleShot(true); //tells it to only run on demand
 
@@ -96,7 +95,7 @@ namespace tfr_mission_control {
         connect(ui.control_disable_button,&QPushButton::clicked, [this] () {toggleControl(false);});
         connect(ui.motor_enable_button,&QPushButton::clicked, [this] () {toggleMotors(true);});
         connect(ui.motor_disable_button,&QPushButton::clicked, [this] () {toggleMotors(false);});
-        connect(countdown, &QTimer::timeout, this,  &MissionControl::renderClock);
+        connect(countdownClock, &QTimer::timeout, this,  &MissionControl::renderClock);
         connect(this, &MissionControl::emitStatus, ui.status_log, &QPlainTextEdit::appendPlainText);
         connect(ui.status_log, &QPlainTextEdit::textChanged, this,  &MissionControl::renderStatus);
 
@@ -121,14 +120,10 @@ namespace tfr_mission_control {
 
         /* for commands which do the turntable/drivebase we want to kill the
          * motors after release*/
-        connect(ui.cw_button,&QPushButton::pressed,
+        connect(ui.cw_button,&QPushButton::clicked,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::CLOCKWISE);});
-        connect(ui.cw_button,&QPushButton::released,
-                [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_TURNTABLE);});
-        connect(ui.ccw_button,&QPushButton::pressed,
+        connect(ui.ccw_button,&QPushButton::clicked,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::COUNTERCLOCKWISE);});
-        connect(ui.ccw_button,&QPushButton::released,
-                [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_TURNTABLE);});
         connect(ui.forward_button,&QPushButton::pressed,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::FORWARD);});
         connect(ui.forward_button,&QPushButton::released,
@@ -245,8 +240,6 @@ namespace tfr_mission_control {
     {
         performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);
         teleop.waitForResult();
-        performTeleop(tfr_utilities::TeleopCode::STOP_TURNTABLE);
-        teleop.waitForResult();
     }
 
     /* ========================================================================== */
@@ -278,38 +271,27 @@ namespace tfr_mission_control {
     {
         if (event->type()==QEvent::KeyPress && teleopEnabled) {
             QKeyEvent* key = static_cast<QKeyEvent*>(event);
-            int k = key->key();
-            //repeated key?
-            if(k == lastKey && motorKill->isActive())
+            auto  k = static_cast<Qt::Key>(key->key());
+
+            switch(k)
             {
-                //extend the watchdog
-                motorKill->start(MOTOR_INTERVAL);
-                return true;
-            }
-            //process the key and start watchdog
-            if (k == Qt::Key_W)
-            {
-                motorKill->start(MOTOR_INTERVAL);
-                lastKey =k;
-                performTeleop(tfr_utilities::TeleopCode::FORWARD);
-            }
-            else if(k == Qt::Key_S)
-            {
-                motorKill->start(MOTOR_INTERVAL);
-                lastKey =k;
-                performTeleop(tfr_utilities::TeleopCode::BACKWARD);
-            }
-            else if(k == Qt::Key_A)
-            {
-                motorKill->start(MOTOR_INTERVAL);
-                lastKey =k;
-                performTeleop(tfr_utilities::TeleopCode::LEFT);
-            }
-            else if(k == Qt::Key_D)
-            {
-                motorKill->start(MOTOR_INTERVAL);
-                lastKey =k;
-                performTeleop(tfr_utilities::TeleopCode::RIGHT);
+                //process the key and start watchdog
+                case (Qt::Key_W):
+                    motorKill->start(MOTOR_INTERVAL);
+                    performTeleop(tfr_utilities::TeleopCode::FORWARD);
+                    break;
+                case (Qt::Key_S):
+                    motorKill->start(MOTOR_INTERVAL);
+                    performTeleop(tfr_utilities::TeleopCode::BACKWARD);
+                    break;
+                case (Qt::Key_A):
+                    motorKill->start(MOTOR_INTERVAL);
+                    performTeleop(tfr_utilities::TeleopCode::LEFT);
+                    break;
+                case (Qt::Key_D):
+                    motorKill->start(MOTOR_INTERVAL);
+                    performTeleop(tfr_utilities::TeleopCode::RIGHT);
+                    break;
             }
             //consume the key
             return true;
@@ -349,7 +331,7 @@ namespace tfr_mission_control {
         tfr_msgs::EmptySrv start;
         ros::service::call("start_mission", start);
         //start updating the gui mission clock
-        countdown->start(500);
+        countdownClock->start(500);
     }
 
     //starts mission in autonomous mode
@@ -432,6 +414,7 @@ namespace tfr_mission_control {
     {
         ui.status_log->verticalScrollBar()->setValue(ui.status_log->verticalScrollBar()->maximum());
     }
+
 
 
 

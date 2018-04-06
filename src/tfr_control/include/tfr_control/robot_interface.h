@@ -22,7 +22,9 @@
 #include <utility>
 #include <algorithm>
 #include <tfr_msgs/ArduinoReading.h>
+#include <tfr_utilities/control_code.h>
 #include <pwm_interface.h>
+#include <vector>
 
 namespace tfr_control {
 
@@ -70,9 +72,14 @@ namespace tfr_control {
 
 
         /*
-         * Determines if the bin has been extened or not
+         * retrieves the state of the bin
          * */
-        bool isBinExtended();
+        double getBinState();
+
+        /*
+         * retrieves the state of the arm
+         * */
+        void getArmState(std::vector<double>&);
 
         /*
          * Clears all command values being sent and sets them to safe values
@@ -115,8 +122,7 @@ namespace tfr_control {
         ros::Time last_update;
 
         
-        void registerTreadJoint(std::string name, Joint joint);
-        void registerBinJoint(std::string name, Joint joint);
+        void registerJoint(std::string name, Joint joint);
         void registerArmJoint(std::string name, Joint joint);
 
 

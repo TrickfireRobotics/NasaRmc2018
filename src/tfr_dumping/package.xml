@@ -13,6 +13,7 @@
   <depend>roscpp</depend>
   <depend>actionlib</depend>
   <depend>tfr_msgs</depend>
+  <depend>tfr_utilities</depend>
   <depend>geometry_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>image_transport</depend>

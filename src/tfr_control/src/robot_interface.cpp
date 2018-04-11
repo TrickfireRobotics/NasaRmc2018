@@ -384,7 +384,9 @@ namespace tfr_control
         double max_vel = 0.5;
         int sign = (v_1 < 0) ? -1 : 1;
         double magnitude = std::min((v_1*sign)/max_vel, 0.1);
-        return sign * magnitude;
+        if (v_1 < 0.05 && v_1 > -0.05)
+            sign = 0;
+        return sign * 0.45;
     }
 
     /*

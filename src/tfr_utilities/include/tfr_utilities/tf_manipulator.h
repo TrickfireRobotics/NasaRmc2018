@@ -23,10 +23,10 @@ class TfManipulator
         TfManipulator& operator=(TfManipulator&&)=delete;
         geometry_msgs::PoseStamped wrap_pose(const geometry_msgs::Pose &pose,
                 const std::string &pose_frame);
-        bool transform_pose(const geometry_msgs::PoseStamped &pose, 
-                geometry_msgs::PoseStamped &out, const std::string &desired_frame);
+        bool transform_pose(const geometry_msgs::PoseStamped &from_pose, 
+                geometry_msgs::PoseStamped &out, const std::string &to_frame);
         bool get_transform(geometry_msgs::Transform &transform, 
-                const std::string &current_frame,const std::string &desired_frame);
+                const std::string &from_frame,const std::string &to_frame);
     private:
         tf2_ros::Buffer buffer;
         tf2_ros::TransformListener listener;

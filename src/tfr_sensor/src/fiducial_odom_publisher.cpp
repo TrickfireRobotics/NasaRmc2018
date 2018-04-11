@@ -64,8 +64,8 @@ class FiducialOdom
             ros::Duration(2).sleep();
             //connect to the image clients
             tfr_msgs::WrappedImage request{};
-            while(!rear_cam_client.call(request));
-            while(!kinect_client.call(request));
+            while(!rear_cam_client.call(request)) ROS_INFO("rear");
+            while(!kinect_client.call(request)) ROS_INFO("kinect");
             ROS_INFO("Fiducial Odom Publisher: Connected Image Clients");
         }
 
@@ -74,32 +74,20 @@ class FiducialOdom
         FiducialOdom& operator=(const FiducialOdom&) = delete;
         FiducialOdom(FiducialOdom&&) = delete;
         FiducialOdom& operator=(FiducialOdom&&) = delete;
+
         void processOdometry()
         {
-            tfr_msgs::WrappedImage rear_cam{}, kinect{};
-            //grab an image
-            rear_cam_client.call(rear_cam);
-            kinect_client.call(kinect);
-
             tfr_msgs::ArucoResultConstPtr result = nullptr;
+            tfr_msgs::WrappedImage image_wrapper{};
 
-            tfr_msgs::ArucoGoal goal;
-            goal.image = rear_cam.response.image;
-            goal.camera_info = rear_cam.response.camera_info;
+            //grab an image
+            if (rear_cam_client.call(image_wrapper))
+                result = sendAruco(image_wrapper);
 
-            //send it to the server
-            aruco.sendGoal(goal);
-            aruco.waitForResult();
-            result = aruco.getResult();
+            if ((result == nullptr || result->number_found == 0) && kinect_client.call(image_wrapper))
+                result = sendAruco(image_wrapper);
 
-            if (result != nullptr && result->number_found == 0)
-            {
-                goal.image = kinect.response.image;
-                goal.camera_info = kinect.response.camera_info;
-                aruco.sendGoal(goal);
-                aruco.waitForResult();
-                result = aruco.getResult();
-            }
+            
 
             if (result != nullptr && result->number_found !=0)
 			{
@@ -143,36 +131,97 @@ class FiducialOdom
                             processed_pose.pose.orientation.w);
 
                 //we need to express that in terms of odom
-                geometry_msgs::Transform relative_bin_transform;
+
+                geometry_msgs::Transform relative_bin_transform{};
 
                 //get odom bin transform
                 if (!tf_manipulator.get_transform(relative_bin_transform,
                             odometry_frame, bin_frame))
                     return;
 
+                     //get odom bin transform
+                    if (!tf_manipulator.get_transform(relative_bin_transform,
+                                odometry_frame, bin_frame))
+                        return;
+
+                    if (debug)
+                        ROS_INFO("relative transform %f %f %f %f %f %f %f",
+                                relative_bin_transform.translation.x,
+                                relative_bin_transform.translation.y,
+                                relative_bin_transform.translation.z,
+                                relative_bin_transform.rotation.x,
+                                relative_bin_transform.rotation.y,
+                                relative_bin_transform.rotation.z,
+                                relative_bin_transform.rotation.w);
+
+                    //footprint_odom transform
+                    tf2::Transform p_0{};
+                    tf2::convert(processed_pose.pose, p_0);
+                    tf2::Transform p_1{};
+                    tf2::convert(relative_bin_transform, p_1);
+
+               geometry_msgs::Transform relative_transform{};
+                //get the difference between the two transforms deal with gimble
+                //lock
+                if (!isUntouched(p_1))
+                {
+                    geometry_msgs::Transform relative_bin_transform_2{};
+                    //get odom bin transform
+                    if (!tf_manipulator.get_transform(relative_bin_transform_2,
+                                bin_frame, odometry_frame))
+                        return;
+
+                    tf2::Transform p_1{};
+                    tf2::convert(relative_bin_transform_2, p_1);
+
+                    if (isInverted(p_0) != isInverted(p_1))
+                    {
+                        ROS_INFO("processing");
+                        auto difference = p_0.inverseTimes(p_1);
+                        relative_transform = tf2::toMsg(difference);
+                    }
+                    else
+                    {
+
+                        ROS_INFO("processing normal");
+                        auto difference = p_1.inverseTimes(p_0);
+                        relative_transform = tf2::toMsg(difference);
+                    }
+                }
+                else
+                {
+                    auto difference = p_0.inverseTimes(p_1);
+                    relative_transform = tf2::toMsg(difference);
+                }
+
+
                 if (debug)
-                    ROS_INFO("relative transform %f %f %f %f %f %f %f",
-                            relative_bin_transform.translation.x,
-                            relative_bin_transform.translation.y,
-                            relative_bin_transform.translation.z,
-                            relative_bin_transform.rotation.x,
-                            relative_bin_transform.rotation.y,
-                            relative_bin_transform.rotation.z,
-                            relative_bin_transform.rotation.w);
+                {
+                    auto origin = p_0.getOrigin();
+                    auto rotation = p_0.getRotation();
+                    ROS_INFO("rotated data p_0 %f %f %f %f %f %f %f",
+                            origin.x(),
+                            origin.y(),
+                            origin.z(),
+                            rotation.x(),
+                            rotation.y(),
+                            rotation.z(),
+                            rotation.w());
+                    origin = p_1.getOrigin();
+                    rotation = p_1.getRotation();
+                    ROS_INFO("rotated data p_1 %f %f %f %f %f %f %f",
+                            origin.x(),
+                            origin.y(),
+                            origin.z(),
+                            rotation.x(),
+                            rotation.y(),
+                            rotation.z(),
+                            rotation.w());
+                }
 
-                //odom_camera transform
-                tf2::Transform p_0{};
-                tf2::convert(processed_pose.pose, p_0);
-                tf2::Transform p_1{};
-                tf2::convert(relative_bin_transform, p_1);
 
-                //get the difference between the two transforms
-                auto difference = p_1.inverseTimes(p_0);
-                geometry_msgs::Transform relative_transform{};
-                relative_transform = tf2::toMsg(difference);
-                
                 //process the odometry
-                geometry_msgs::Pose relative_pose;
+                geometry_msgs::Pose relative_pose{};
                 relative_pose.position.x = relative_transform.translation.x;
                 relative_pose.position.y = relative_transform.translation.y;
                 relative_pose.position.z = 0;
@@ -215,11 +264,42 @@ class FiducialOdom
         tf2_ros::TransformBroadcaster broadcaster;
         TfManipulator tf_manipulator;
 
-
         const std::string& footprint_frame;
         const std::string& bin_frame;
         const std::string& odometry_frame;
         bool debug;
+
+        tfr_msgs::ArucoResultConstPtr sendAruco(const tfr_msgs::WrappedImage& msg)
+        {
+            tfr_msgs::ArucoGoal goal;
+            goal.image = msg.response.image;
+            goal.camera_info = msg.response.camera_info;
+            //send it to the server
+            aruco.sendGoal(goal);
+            aruco.waitForResult();
+            return aruco.getResult();
+        }
+
+        //Gives if the quaternion is > 90 yaw in either direction
+        bool isInverted(const tf2::Transform& q)
+        {
+            return std::abs(q.getRotation().z()) > 0.707;
+        }
+
+        bool isUntouched(const tf2::Transform& t)
+        {
+            auto origin = t.getOrigin();
+            auto rotation = t.getRotation();
+            return  origin.x() == 0.0 &&
+                    origin.y() == 0.0 &&
+                    origin.z() == 0.0 &&
+                    rotation.x() == 0.0 &&
+                    rotation.y() == 0.0 &&
+                    rotation.z() == 0.0 &&
+                    rotation.w() == 1.0;
+        }
+
+
 };
 
 int main(int argc, char** argv)

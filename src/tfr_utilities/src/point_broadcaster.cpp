@@ -33,8 +33,8 @@ PointBroadcaster::PointBroadcaster(
 {
     server = node.advertiseService(service_name,
             &PointBroadcaster::localize_point, this);
-    transform.header.frame_id = point_frame;
-    transform.child_frame_id = parent_frame;
+    transform.header.frame_id = parent_frame;
+    transform.child_frame_id = point_frame;
     transform.transform.rotation.w = 1;
 }
 

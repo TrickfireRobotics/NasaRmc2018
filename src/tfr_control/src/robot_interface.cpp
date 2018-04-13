@@ -170,7 +170,7 @@ namespace tfr_control
         }
 
         //LEFT_TREAD
-        signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::LEFT_TREAD)],
+        signal = drivebaseVelocityToPWM( -command_values[static_cast<int>(Joint::LEFT_TREAD)],
                     drivebase_v0.first);
         pwm.set(PWMInterface::Address::TREAD_LEFT, signal);
         auto left = signal;
@@ -181,10 +181,8 @@ namespace tfr_control
         pwm.set(PWMInterface::Address::TREAD_RIGHT, signal);
         auto right = signal;
 
-
-        //ROS_INFO("signal %f %f ", command_values[static_cast<int>(Joint::LEFT_TREAD)],command_values[static_cast<int>(Joint::RIGHT_TREAD)] );
-        //ROS_INFO("pwm %f %f ", left,right);
-
+        ROS_INFO("signal %f %f ", -command_values[static_cast<int>(Joint::LEFT_TREAD)],command_values[static_cast<int>(Joint::RIGHT_TREAD)] );
+        ROS_INFO("pwm %f %f ", left,right);
 
         //BIN
         auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::BIN)],

@@ -376,15 +376,12 @@ namespace tfr_control
 //                max_a = -2;
 //            vel = max_a * d_t - v_0;
 //        }
-//        
         //limit for max velocity
         //we don't anticipate this changing very much keep at method level
         double max_vel = 0.5;
         int sign = (v_1 < 0) ? -1 : 1;
-        double magnitude = std::min((v_1*sign)/max_vel, 0.1);
-        if (v_1 < 0.05 && v_1 > -0.05)
-            sign = 0;
-        return sign * 0.45;
+        double magnitude = std::min(std::abs(v_1)/max_vel, 0.65);
+        return sign * magnitude;
     }
 
     /*

@@ -165,32 +165,24 @@ class FiducialOdom
                 //lock
                 if (!isUntouched(p_1))
                 {
-                    geometry_msgs::Transform relative_bin_transform_2{};
-                    //get odom bin transform
-                    if (!tf_manipulator.get_transform(relative_bin_transform_2,
-                                bin_frame, odometry_frame))
-                        return;
-
-                    tf2::Transform p_1{};
-                    tf2::convert(relative_bin_transform_2, p_1);
 
                     if (isInverted(p_0) != isInverted(p_1))
                     {
                         ROS_INFO("processing");
-                        auto difference = p_0.inverseTimes(p_1);
+                        auto difference = p_1.inverse().inverseTimes(p_0.inverse());
                         relative_transform = tf2::toMsg(difference);
                     }
                     else
                     {
 
                         ROS_INFO("processing normal");
-                        auto difference = p_1.inverseTimes(p_0);
+                        auto difference = p_1.inverse().inverseTimes(p_0.inverse());
                         relative_transform = tf2::toMsg(difference);
                     }
                 }
                 else
                 {
-                    auto difference = p_0.inverseTimes(p_1);
+                    auto difference = p_1.inverse().inverseTimes(p_0.inverse());
                     relative_transform = tf2::toMsg(difference);
                 }
 

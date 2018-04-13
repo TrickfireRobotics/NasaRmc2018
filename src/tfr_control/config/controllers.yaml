@@ -25,7 +25,13 @@ left_tread_velocity_controller:
 right_tread_velocity_controller:
     type: effort_controllers/JointVelocityController
     joint: right_tread_joint
-    pid: {p: 0.3, i: 0, d: 0}
+    pid: { 
+        p: 0.75, 
+        i: 0.35, 
+        d: 0.0001, 
+        i_clamp_min: -0.03, 
+        i_clamp_max: 0.03 
+    }
 
 
 bin_position_controller:

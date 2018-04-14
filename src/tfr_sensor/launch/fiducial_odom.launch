@@ -5,7 +5,6 @@
             footprint_frame: base_footprint
             bin_frame: bin_footprint
             odom_frame: odom
-            debug: true
         </rosparam>
 
         <remap from="image" to="/sensors/rear_cam/image_raw"/>

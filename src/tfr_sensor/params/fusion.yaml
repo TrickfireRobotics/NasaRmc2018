@@ -43,7 +43,7 @@ print_diagnostics: true
 #basic 2d configuration for the fiducial odom publisher we don't use it's
 #velocity, because it is very unreliable, and we get good velocity 
 #data from the imu's.
-odom0: /odom
+odom0: /fiducial_odom
 odom0_config: [true, true,  true,
                false, false,  true,
                false, false, false,

@@ -53,15 +53,6 @@ void PointBroadcaster::broadcast()
 bool PointBroadcaster::localize_point(tfr_msgs::LocalizePoint::Request &request,
         tfr_msgs::LocalizePoint::Response &resonse)
 {
-    ROS_INFO("AAAAAAASSSSSSSSSSSSSSSSSSSSSSS %f %f %f %f %f %f %f",
-            request.pose.pose.position.x,
-            request.pose.pose.position.y,
-            request.pose.pose.position.z,
-            request.pose.pose.orientation.x,
-            request.pose.pose.orientation.y,
-            request.pose.pose.orientation.z,
-            request.pose.pose.orientation.w);
-
     transform.transform.translation.x = request.pose.pose.position.x;
     transform.transform.translation.y = request.pose.pose.position.y;
     transform.transform.translation.z = -height;
@@ -69,15 +60,6 @@ bool PointBroadcaster::localize_point(tfr_msgs::LocalizePoint::Request &request,
     transform.transform.rotation.y = request.pose.pose.orientation.y;
     transform.transform.rotation.z = request.pose.pose.orientation.z;
     transform.transform.rotation.w = request.pose.pose.orientation.w;
-    ROS_INFO("SAAAAAAASSSSSSSSSSSSSSSSSSSSSSS %f %f %f %f %f %f %f",
-            transform.transform.translation.x,
-            transform.transform.translation.y,
-            transform.transform.translation.z,
-            transform.transform.rotation.x,
-            transform.transform.rotation.y,
-            transform.transform.rotation.z,
-            transform.transform.rotation.w);
-
     return true;
 }
 

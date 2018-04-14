@@ -60,23 +60,12 @@ bool TfManipulator::transform_pose(const geometry_msgs::PoseStamped &from_pose,
 bool TfManipulator::get_transform(geometry_msgs::Transform &output, 
         const std::string &from_frame, const std::string &to_frame)
 {
-    ROS_INFO("from_frame %s to_frame %s", from_frame.c_str(), to_frame.c_str());
     geometry_msgs::TransformStamped transform;
     try{
         transform = buffer.lookupTransform(
                 from_frame,
                 to_frame, 
                 ros::Time(0));
-        ROS_INFO("tf_manipulator: %s %s %f %f %f %f %f %f %f",
-                transform.header.frame_id.c_str(),
-                transform.child_frame_id.c_str(),
-                transform.transform.translation.x,
-                transform.transform.translation.y,
-                transform.transform.translation.z,
-                transform.transform.rotation.x,
-                transform.transform.rotation.y,
-                transform.transform.rotation.z,
-                transform.transform.rotation.w);
          output = transform.transform;
     }
     catch (tf2::TransformException &ex) {

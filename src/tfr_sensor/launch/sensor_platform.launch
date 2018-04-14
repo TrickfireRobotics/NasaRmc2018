@@ -1,6 +1,7 @@
 <launch>
     <group ns="sensors">
         <include file="$(find tfr_sensor)/launch/rear_cam.launch"/>
+        <include file="$(find tfr_sensor)/launch/side_cams.launch"/>
         <include file="$(find tfr_sensor)/launch/kinect.launch"/>
         <include file="$(find tfr_sensor)/launch/xsens.launch"/>
         <node name="encoder_a_handler" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM1" output="screen"/>

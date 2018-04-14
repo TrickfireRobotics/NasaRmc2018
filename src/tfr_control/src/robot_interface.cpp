@@ -195,10 +195,9 @@ namespace tfr_control
         pwm.set(PWMInterface::Address::TREAD_RIGHT, signal);
         auto right = signal;
 
-        ROS_INFO("encoder %f %f ",
-                -velocity_values[static_cast<int>(Joint::LEFT_TREAD)],velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] );
-        ROS_INFO("command %f %f ", -command_values[static_cast<int>(Joint::LEFT_TREAD)],command_values[static_cast<int>(Joint::RIGHT_TREAD)] );
-        ROS_INFO("pwm %f %f ", left,right);
+////        ROS_INFO("encoder %f %f ", -velocity_values[static_cast<int>(Joint::LEFT_TREAD)],velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] );
+//        ROS_INFO("command %f %f ", -command_values[static_cast<int>(Joint::LEFT_TREAD)],command_values[static_cast<int>(Joint::RIGHT_TREAD)] );
+//        ROS_INFO("pwm %f %f ", left,right);
 
         //BIN
         auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::BIN)],

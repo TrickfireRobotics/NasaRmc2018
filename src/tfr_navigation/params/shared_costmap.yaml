@@ -1,15 +1,15 @@
 
-obstacle_range: 1 
-raytrace_range: 1.5
-footprint: [[-0.375, -0.225],  [0.375, -0.225],[0.375, 0.225],[-0.375, 0.225]]
+obstacle_range: 3
+raytrace_range: 3.5
+footprint: [[-0.66, -0.368],  [0.66, -0.368], [0.66, 0.368], [-0.66, 0.368]]
 observation_sources: point_cloud_sensor hole_obstacle
 
 point_cloud_sensor: {
-    sensor_frame: /duo3d/camera_frame, 
-    data_type: PointCloud2, 
+    sensor_frame: /kinect_link,
+    data_type: PointCloud2 ,
     min_obstacle_height: 0.08,
     max_obstacle_height: 1,
-    topic: /sensors/duo3d/point_cloud/image_raw, 
+    topic: /sensors/kinect/depth/points/image_raw, 
     marking: true,
     clearing: true
 }

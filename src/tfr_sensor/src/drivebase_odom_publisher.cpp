@@ -17,10 +17,14 @@
  * Published topics: 
  *   - /drivebase_odom : (nav_msgs/Odometry) the location of the
  *   base_footprint tracked by tread motion.
+ * Services:
+ *  - /set_drivebase_odometry : (tfr_msgs/SetOdometry) resets the basis of
+ *  odometry to a new position
  * */
 #include <ros/ros.h>
 #include <tfr_msgs/ArduinoAReading.h>
 #include <tfr_msgs/ArduinoBReading.h>
+#include <tfr_msgs/SetOdometry.h>
 #include <nav_msgs/Odometry.h>
 #include <tf/transform_datatypes.h>
 
@@ -41,6 +45,7 @@ class DrivebaseOdometryPublisher
             arduino_a = n.subscribe("/sensors/arduino_a", 15, &DrivebaseOdometryPublisher::readArduinoA, this);
             arduino_b = n.subscribe("/sensors/arduino_b", 15, &DrivebaseOdometryPublisher::readArduinoB, this);
             odometry_publisher = n.advertise<nav_msgs::Odometry>("/drivebase_odom", 15);
+            set_odometry = n.advertiseService("set_drivebase_odometry", &DrivebaseOdometryPublisher::setOdometry, this);
         }
 
         ~DrivebaseOdometryPublisher() = default;
@@ -55,13 +60,13 @@ class DrivebaseOdometryPublisher
          * */
         void processOdometry()
         {
-        //Grab the neccessary data
-        tfr_msgs::ArduinoAReading reading_a;
-        tfr_msgs::ArduinoBReading reading_b;
-        if (latest_arduino_a != nullptr)
-            reading_a = *latest_arduino_a;
-        if (latest_arduino_b != nullptr)
-            reading_b = *latest_arduino_b;
+            //Grab the neccessary data
+            tfr_msgs::ArduinoAReading reading_a;
+            tfr_msgs::ArduinoBReading reading_b;
+            if (latest_arduino_a != nullptr)
+                reading_a = *latest_arduino_a;
+            if (latest_arduino_b != nullptr)
+                reading_b = *latest_arduino_b;
 
             //first we process the data
             auto t_1 = ros::Time::now();
@@ -78,7 +83,7 @@ class DrivebaseOdometryPublisher
             //tread
             double v_l = -reading_a.tread_left_vel;
             double v_r = reading_b.tread_right_vel;
-        
+
 
 
             //basic differential kinematics to get combined velocities
@@ -92,7 +97,7 @@ class DrivebaseOdometryPublisher
             double v_x = v_lin*cos(angle);
             double v_y = v_lin*sin(angle);
 
-            
+
             double d_x = v_x * d_t;
             x += d_x;
 
@@ -112,11 +117,11 @@ class DrivebaseOdometryPublisher
             msg.pose.pose.position.z = 0;
             msg.pose.pose.orientation = tf::createQuaternionMsgFromYaw(angle);
             msg.pose.covariance = { 1e-1,    0,    0,    0,    0,    0,
-                                       0, 1e-1,    0,    0,    0,    0,
-                                       0,    0, 1e-1,    0,    0,    0,
-                                       0,    0,    0, 1e-1,    0,    0,
-                                       0,    0,    0,    0, 1e-1,    0,
-                                       0,    0,    0,    0,    0, 1e-1 };
+                0, 1e-1,    0,    0,    0,    0,
+                0,    0, 1e-1,    0,    0,    0,
+                0,    0,    0, 1e-1,    0,    0,
+                0,    0,    0,    0, 1e-1,    0,
+                0,    0,    0,    0,    0, 1e-1 };
 
             msg.twist.twist.linear.x = v_x;
             msg.twist.twist.linear.y = v_y;
@@ -125,12 +130,12 @@ class DrivebaseOdometryPublisher
             msg.twist.twist.angular.y = 0;
             msg.twist.twist.angular.z = v_ang;
             msg.twist.covariance = { 1e-1,    0,    0,    0,    0,    0,
-                                        0, 1e-1,    0,    0,    0,    0,
-                                        0,    0, 1e-1,    0,    0,    0,
-                                        0,    0,    0, 1e-1,    0,    0,
-                                        0,    0,    0,    0, 1e-1,    0,
-                                        0,    0,    0,    0,    0, 1e-1 };
-            
+                0, 1e-1,    0,    0,    0,    0,
+                0,    0, 1e-1,    0,    0,    0,
+                0,    0,    0, 1e-1,    0,    0,
+                0,    0,    0,    0, 1e-1,    0,
+                0,    0,    0,    0,    0, 1e-1 };
+
             //finally send it across the network
             odometry_publisher.publish(msg);
         }
@@ -142,6 +147,7 @@ class DrivebaseOdometryPublisher
         tfr_msgs::ArduinoAReadingConstPtr latest_arduino_a;
         tfr_msgs::ArduinoBReadingConstPtr latest_arduino_b;
         ros::Publisher odometry_publisher; //the pub for our processed data
+        ros::ServiceServer set_odometry;
         const std::string& parent_frame; //the parent frame of the robot
         const std::string& child_frame; //the child frame of the robot
         const double& wheel_span;
@@ -161,6 +167,17 @@ class DrivebaseOdometryPublisher
         {
             latest_arduino_b = msg;
         }
+
+        bool setOdometry(tfr_msgs::SetOdometry::Request& request,
+                tfr_msgs::SetOdometry::Response& response)
+        {
+            x = request.pose.position.x;
+            y = request.pose.position.y;
+            auto siny = +2.0 * (request.pose.orientation.w * request.pose.orientation.z + request.pose.orientation.x * request.pose.orientation.y);
+            auto cosy = +1.0 - 2.0 * (request.pose.orientation.y * request.pose.orientation.y + request.pose.orientation.z * request.pose.orientation.z );  
+            angle = atan2(siny, cosy);
+            return true;
+        }
  
 
 };
@@ -172,7 +189,7 @@ int main(int argc, char **argv)
     std::string parent_frame, child_frame;
     double wheel_span, r;
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
-    ros::param::param<std::string>("~child_frame", child_frame, "odom");
+    ros::param::param<std::string>("~child_frame", child_frame, "base_footprint");
     ros::param::param<double>("~wheel_span", wheel_span, 0.58);
     ros::param::param<double>("~rate", r, 10.0);
     DrivebaseOdometryPublisher publisher{n, parent_frame, child_frame, wheel_span};

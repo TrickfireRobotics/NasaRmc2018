@@ -43,6 +43,7 @@
 #include <tfr_msgs/DurationSrv.h>
 #include <tfr_msgs/NavigationAction.h>
 #include <tfr_msgs/DiggingAction.h>
+#include <tfr_msgs/SetOdometry.h>
 #include <tfr_utilities/location_codes.h>
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
@@ -158,7 +159,18 @@ class AutonomousExecutive
                     server.setAborted();
                     return;
                 }
+
+                ROS_INFO("Autonomous Action Server: stabilizing odometry");
+                tfr_msgs::SetOdometry::Request req;
+                req.pose.orientation.w = 1;
+                tfr_msgs::SetOdometry::Response res;
+
+            
+                while (!ros::service::call("set_drivebase_odometry", req, res));
+                ros::Duration(5.0).sleep();
+                ROS_INFO("Autonomous Action Server: odometry stabilized");
                 ROS_INFO("Autonomous Action Server: localization finished");
+
             }
 
             if (NAVIGATION_TO)

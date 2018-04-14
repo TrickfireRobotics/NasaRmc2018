@@ -2,6 +2,8 @@
     <node name="navigation_action_server" pkg="tfr_navigation" type="navigation_action_server" output="screen">
         <rosparam>
             height_adjustment: 0
+            safe_mining_distance: 2.2
+            finish_line: 1
         </rosparam>
     </node>
     <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">

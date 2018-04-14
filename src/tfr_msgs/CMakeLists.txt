@@ -32,6 +32,7 @@ add_message_files(
    DurationSrv.srv
    LocalizePoint.srv
    WrappedImage.srv
+   SetOdometry.srv
  )
 
 # Generate actions in the 'action' folder

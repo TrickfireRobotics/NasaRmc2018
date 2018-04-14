@@ -172,6 +172,8 @@ namespace tfr_control
         //LEFT_TREAD
         signal = drivebaseVelocityToPWM( -command_values[static_cast<int>(Joint::LEFT_TREAD)],
                     drivebase_v0.first);
+        signal = scalePWM(signal, pwm_values[static_cast<int>(Joint::LEFT_TREAD)]);
+        pwm_values[static_cast<int>(Joint::LEFT_TREAD)] = signal;
         pwm.set(PWMInterface::Address::TREAD_LEFT, signal);
         auto left = signal;
 
@@ -361,9 +363,9 @@ namespace tfr_control
      * */
     double RobotInterface::drivebaseVelocityToPWM(const double& v_1, const double& v_0)
     {
-        //limit for acceleration
+//        //limit for acceleration
 //        double vel = v_1, d_v = v_1 - v_0 , d_t = (ros::Time::now()- last_update).toSec();
-//        double max_a = 2;
+//        double max_a = 0.5;
 //
 //        /*
 //         * d_v/d_t = max_a
@@ -382,6 +384,16 @@ namespace tfr_control
         int sign = (v_1 < 0) ? -1 : 1;
         double magnitude = std::min(std::abs(v_1)/max_vel, 0.65);
         return sign * magnitude;
+    }
+
+    /*
+     * Prevents large pwm changes to avoid brown out
+     * */
+    double RobotInterface::scalePWM(const double& pwm_1, const double& pwm_0)
+    {
+        double sign = ((pwm_1 - pwm_0) > 0) ? 1 : -1;
+        double magnitude = std::min(std::abs(pwm_1-pwm_0), 0.05);
+        return pwm_0 + sign * magnitude;
     }
 
     /*

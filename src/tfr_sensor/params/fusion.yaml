@@ -27,23 +27,23 @@ print_diagnostics: true
 #NOTE: I also don't do any outlier removal or thresholding, it doesn't play
 #well with fiducial odometry
     
-#basic 2d settings for xsens
-imu0: /sensors/mti/sensor/imu
-imu0_config: [false, false, false,
-              false,  false,  true,
-              false, false, false,
-              false,  false,  true,
-              true,  true,  false]
-imu0_differential: true
-imu0_relative: false
-#outputs at ~50 hz whic is >> than fusion hz (10) so we need a big queue
-imu0_queue_size: 40  
-imu0_remove_gravitational_acceleration: true
+    ##basic 2d settings for xsens
+    #imu0: /sensors/mti/sensor/imu
+    #imu0_config: [false, false, false,
+    #              false,  false,  true,
+    #              false, false, false,
+    #              false,  false,  true,
+    #              true,  true,  false]
+    #imu0_differential: true
+    #imu0_relative: false
+    ##outputs at ~50 hz whic is >> than fusion hz (10) so we need a big queue
+    #imu0_queue_size: 40  
+    #imu0_remove_gravitational_acceleration: true
 
 #basic 2d configuration for the fiducial odom publisher we don't use it's
 #velocity, because it is very unreliable, and we get good velocity 
 #data from the imu's.
-odom0: /odom
+odom0: /fiducial_odom
 odom0_config: [true, true,  true,
                false, false,  true,
                false, false, false,

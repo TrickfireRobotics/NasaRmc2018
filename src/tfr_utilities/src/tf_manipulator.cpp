@@ -9,7 +9,7 @@
  * Starts up the buffer and let's it fill momentarily to help avoid startup
  * errors
  * */
-TfManipulator::TfManipulator():buffer(),listener(buffer)
+TfManipulator::TfManipulator():buffer{}, listener{buffer}
 {
     //sleep for 1/2 a second to fill our transform buffer
     ros::Duration(0.5).sleep();
@@ -36,35 +36,37 @@ geometry_msgs::PoseStamped TfManipulator::wrap_pose(const geometry_msgs::Pose
  *  called before either reference frame has published transforms for a few
  *  seconds, it will fail, just repeatedly call it.
  * */
-bool TfManipulator::transform_pose(const geometry_msgs::PoseStamped &pose, 
-        geometry_msgs::PoseStamped &out, const std::string &desired_frame)
+bool TfManipulator::transform_pose(const geometry_msgs::PoseStamped &from_pose, 
+        geometry_msgs::PoseStamped &out, const std::string &to_frame)
 {
     geometry_msgs::TransformStamped transform;
     try{
         transform = buffer.lookupTransform(
-                pose.header.frame_id,
-                desired_frame, 
+                to_frame, 
+                from_pose.header.frame_id,
                 ros::Time(0));
     }
     catch (tf2::TransformException &ex) {
         ROS_WARN("%s",ex.what());
         return false;
     }
-    tf2::doTransform(pose, out, transform);
+    tf2::doTransform(from_pose, out, transform);
     return true;
 }
 /**
- *  east interface for looking up a transform
+ *  easy interface for looking up a transform
  *
  * */
-bool TfManipulator::get_transform(geometry_msgs::Transform &transform, 
-        const std::string &current_frame, const std::string &desired_frame)
+bool TfManipulator::get_transform(geometry_msgs::Transform &output, 
+        const std::string &from_frame, const std::string &to_frame)
 {
+    geometry_msgs::TransformStamped transform;
     try{
         transform = buffer.lookupTransform(
-                current_frame,
-                desired_frame, 
-                ros::Time(0)).transform;
+                from_frame,
+                to_frame, 
+                ros::Time(0));
+         output = transform.transform;
     }
     catch (tf2::TransformException &ex) {
         ROS_WARN("%s",ex.what());

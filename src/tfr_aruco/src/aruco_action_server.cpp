@@ -35,7 +35,6 @@ class TFR_Aruco {
             // set up params
             params = cv::Ptr<cv::aruco::DetectorParameters>(new cv::aruco::DetectorParameters);
             params->cornerRefinementMethod = cv::aruco::CORNER_REFINE_SUBPIX;
-            //params->cornerRefinementMethod = cv::aruco::CORNER_REFINE_CONTOUR;
             params->cornerRefinementWinSize = 10;
         }
 
@@ -75,9 +74,8 @@ class TFR_Aruco {
             cv::Mat cameraMatrix = cv::Mat(cameraModel.fullIntrinsicMatrix()).clone();
             cv::Mat distCoeffs = cameraModel.distortionCoeffs().clone();
 
-            std::vector< cv::Vec3d > rvecs, tvecs;
-            cv::aruco::estimatePoseSingleMarkers(markerCorners, 0.05, cameraMatrix, distCoeffs, rvecs, tvecs);
-
+            
+ 
             cv::Vec3d boardRotVec, boardTransVec;
             int markersDetected = cv::aruco::estimatePoseBoard(markerCorners, markerIds, board, cameraMatrix, distCoeffs, boardRotVec, boardTransVec);
 
@@ -92,12 +90,12 @@ class TFR_Aruco {
                  *  coordinate system and are rotated here.
                  * */
                 result.relative_pose.pose.position.x = boardTransVec[2];
-                result.relative_pose.pose.position.y = boardTransVec[0];
+                result.relative_pose.pose.position.y = boardTransVec[0] * -1; /*y-axis is inverted*/
                 result.relative_pose.pose.position.z = 0;
                 //let tf do the euler angle -> quaternion math
                 tf2::Quaternion rotated{};
                 //change rotated perspective RPY aruco output to ros coordinate system (2d)
-                rotated.setRPY(0,0, PI + boardRotVec[1]);
+                rotated.setRPY(0,0, -(PI + boardRotVec[1]));
                 result.relative_pose.pose.orientation.x = rotated.x();
                 result.relative_pose.pose.orientation.y = rotated.y();
                 result.relative_pose.pose.orientation.z = rotated.z();

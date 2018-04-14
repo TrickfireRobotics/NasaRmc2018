@@ -44,8 +44,11 @@ class Localizer
             rear_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/rear_cam/image_raw");
             kinect_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/kinect/image_raw");
             tfr_msgs::WrappedImage request{};
-            while(!rear_cam_client.call(request));
-            while(!kinect_client.call(request));
+            ros::Duration busy_wait{0.1};
+            while(!rear_cam_client.call(request)) 
+                busy_wait.sleep();
+            while(!kinect_client.call(request))
+                busy_wait.sleep();
             ROS_INFO("Localization Action Server: Connected Image Clients");
             ROS_INFO("Localization Action Server: Starting");
             server.start();
@@ -81,62 +84,38 @@ class Localizer
                     break;
                 }
 
-                tfr_msgs::WrappedImage rear_cam{}, kinect{};
-                //grab an image
-                rear_cam_client.call(rear_cam);
-                kinect_client.call(kinect);
 
                 tfr_msgs::ArucoResultConstPtr result = nullptr;
+                tfr_msgs::WrappedImage image_wrapper{};
+                if (rear_cam_client.call(image_wrapper))
+                    result = sendAruco(image_wrapper);
 
-                tfr_msgs::ArucoGoal goal;
-                goal.image = rear_cam.response.image;
-                goal.camera_info = rear_cam.response.camera_info;
-                //send it to the server
-                aruco.sendGoal(goal);
-                aruco.waitForResult();
-                result = aruco.getResult();
-
-                if (result != nullptr && result->number_found == 0)
-                {
-                    goal.image = kinect.response.image;
-                    goal.camera_info = kinect.response.camera_info;
-                    aruco.sendGoal(goal);
-                    aruco.waitForResult();
-                    result = aruco.getResult();
-                }
+                if (result != nullptr && result->number_found == 0 && kinect_client.call(image_wrapper))
+                    result = sendAruco(image_wrapper);
 
                 if (result != nullptr && result->number_found !=0)
                 {
-                    ROS_INFO("found something");
-                    //We found something, transform relative to the base
-                    geometry_msgs::PoseStamped bin_pose{};
-                    if (!tf_manipulator.transform_pose(
-                                result->relative_pose, 
-                                bin_pose, 
-                                "base_footprint"))
-                    {
-                        ROS_WARN("Localization Action Server: Transformation failed");
-                        continue;
-                    }
-                    bin_pose.pose.position.y *=-1;
-                    bin_pose.pose.position.z *=-1;
-                    bin_pose.header.frame_id = "odom";
-                    bin_pose.header.stamp = ros::Time::now();
+                    //we found something
+                    geometry_msgs::PoseStamped unprocessed_pose = result->relative_pose;
+
+                    //the kinect driver uses a weird frame, use ours instead 
+                    if (unprocessed_pose.header.frame_id == "kinect_rgb_optical_frame")
+                        unprocessed_pose.header.frame_id = "kinect_link";
+
+                    //transform from camera to footprint perspective
+                    geometry_msgs::PoseStamped processed_pose;
+                    if (!tf_manipulator.transform_pose(unprocessed_pose, processed_pose, "base_footprint"))
+                        return;
+
+                    processed_pose.pose.position.z = 0;
+                    processed_pose.header.stamp = ros::Time::now();
 
                     //send the message
-                    tfr_msgs::LocalizePoint::Request request;
-                    request.pose = bin_pose;
+                    tfr_msgs::LocalizePoint::Request request{};
+                    request.pose = processed_pose;
                     tfr_msgs::LocalizePoint::Response response;
                     if(ros::service::call("localize_bin", request, response))
                     {
-                        ROS_INFO("Localization Action Server: Success %f, %f, %f, %f, %f, %f, %f",
-                                bin_pose.pose.position.x,
-                                bin_pose.pose.position.y,
-                                bin_pose.pose.position.z,
-                                bin_pose.pose.orientation.x,
-                                bin_pose.pose.orientation.y,
-                                bin_pose.pose.orientation.z,
-                                bin_pose.pose.orientation.w);
                         server.setSucceeded();
                         break;
                     }
@@ -159,6 +138,18 @@ class Localizer
             //teardown
             ROS_INFO("Localization Action Server: Localize Finished");
         }
+
+        tfr_msgs::ArucoResultConstPtr sendAruco(const tfr_msgs::WrappedImage& msg)
+        {
+            tfr_msgs::ArucoGoal goal;
+            goal.image = msg.response.image;
+            goal.camera_info = msg.response.camera_info;
+            //send it to the server
+            aruco.sendGoal(goal);
+            aruco.waitForResult();
+            return aruco.getResult();
+        }
+
 };
 
 int main(int argc, char** argv)

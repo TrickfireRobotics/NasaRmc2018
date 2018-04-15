@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <tfr_msgs/ArduinoAReading.h>
 #include <tfr_msgs/ArduinoBReading.h>
+#include <tfr_msgs/PwmCommand.h>
 #include <tfr_utilities/control_code.h>
 #include <pwm_interface.h>
 #include <vector>
@@ -97,11 +98,11 @@ namespace tfr_control {
         //cmd states for velocity driven joints
         hardware_interface::EffortJointInterface joint_effort_interface;
 
-        //the pwm bridge
-        PWMInterface pwm;
         //reads from arduino encoder publisher
         ros::Subscriber arduino_a;
         ros::Subscriber arduino_b;
+        ros::Publisher pwm_publisher;
+        bool enabled;
         tfr_msgs::ArduinoAReadingConstPtr latest_arduino_a;
         tfr_msgs::ArduinoBReadingConstPtr latest_arduino_b;
 

@@ -20,6 +20,7 @@ add_message_files(
   SystemStatus.msg
   ArduinoAReading.msg
   ArduinoBReading.msg
+  PwmCommand.msg
 )
 
 # Generate services in the 'srv' folder

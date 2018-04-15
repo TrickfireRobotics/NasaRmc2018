@@ -19,6 +19,7 @@ namespace tfr_control
                 &RobotInterface::readArduinoA, this)},
         arduino_b{n.subscribe("/sensors/arduino_b", 5,
                 &RobotInterface::readArduinoB, this)},
+        pwm_publisher{n.advertise<tfr_msgs::PwmCommand>("/motor_output", 15)},
         use_fake_values{fakes}, lower_limits{lower_lim},
         upper_limits{upper_lim}, drivebase_v0{std::make_pair(0,0)},
         last_update{ros::Time::now()},

@@ -2,7 +2,7 @@
     <node name="navigation_action_server" pkg="tfr_navigation" type="navigation_action_server" output="screen">
         <rosparam>
             height_adjustment: 0
-            safe_mining_distance: 2.2
+            safe_mining_distance: 2.5
             finish_line: 1
         </rosparam>
     </node>

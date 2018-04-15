@@ -89,11 +89,6 @@ namespace tfr_control {
          * */
         void clearCommands();
 
-        /**
-         * A rigourous disabling measure that disables pwm out
-         * */
-        void hardCutoff(bool);
-
     private:
         //joint states for Joint state publisher package
         hardware_interface::JointStateInterface joint_state_interface;
@@ -120,10 +115,6 @@ namespace tfr_control {
         double velocity_values[JOINT_COUNT]{};
         // Populated by us for controller layer to use
         double effort_values[JOINT_COUNT]{};
-
-        //used to avoid brown out and too high of a delta
-        double pwm_values[JOINT_COUNT]{};
-
         //used to limit acceleration pull on the drivebase
         std::pair<double, double> drivebase_v0;
         ros::Time last_update;

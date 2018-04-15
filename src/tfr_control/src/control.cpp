@@ -90,7 +90,6 @@ class Control
             robot_interface{n, use_fake_values, lower_limits, upper_limits},
             controller_interface{&robot_interface},
             eStopControl{n.advertiseService("toggle_control", &Control::toggleControl,this)},
-            eStopMotors{n.advertiseService("toggle_motors", &Control::toggleMotors,this)},
             binService{n.advertiseService("bin_state", &Control::getBinState,this)},
             armService{n.advertiseService("arm_state", &Control::getArmState,this)},
             cycle{1/rate},
@@ -121,7 +120,6 @@ class Control
 
         //emergency stop
         ros::ServiceServer eStopControl;
-        ros::ServiceServer eStopMotors;
 
         //state services
         ros::ServiceServer binService;
@@ -140,16 +138,6 @@ class Control
                 std_srvs::SetBool::Response& response)
         {
             enabled = request.data;
-            return true;
-        }
-
-        /*
-         * Toggles the emergency stop on and off
-         * */
-        bool toggleMotors(std_srvs::SetBool::Request& request,
-                std_srvs::SetBool::Response& response)
-        {
-            robot_interface.hardCutoff(!request.data);
             return true;
         }
 

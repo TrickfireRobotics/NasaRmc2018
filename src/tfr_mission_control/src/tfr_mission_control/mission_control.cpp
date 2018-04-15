@@ -93,8 +93,6 @@ namespace tfr_mission_control {
 
         connect(ui.control_enable_button,&QPushButton::clicked, [this] () {toggleControl(true);});
         connect(ui.control_disable_button,&QPushButton::clicked, [this] () {toggleControl(false);});
-        connect(ui.motor_enable_button,&QPushButton::clicked, [this] () {toggleMotors(true);});
-        connect(ui.motor_disable_button,&QPushButton::clicked, [this] () {toggleMotors(false);});
         connect(countdownClock, &QTimer::timeout, this,  &MissionControl::renderClock);
         connect(this, &MissionControl::emitStatus, ui.status_log, &QPlainTextEdit::appendPlainText);
         connect(ui.status_log, &QPlainTextEdit::textChanged, this,  &MissionControl::renderStatus);
@@ -222,16 +220,6 @@ namespace tfr_mission_control {
         ui.control_enable_button->setEnabled(!value);
         ui.control_disable_button->setEnabled(value);
     }
-
-    /*
-     * Toggles the control buttons
-     * */
-    void MissionControl::setMotors(bool value)
-    {
-        ui.motor_enable_button->setEnabled(!value);
-        ui.motor_disable_button->setEnabled(value);
-    }
-
 
     /*
      * Utility for stopping all motors
@@ -391,14 +379,6 @@ namespace tfr_mission_control {
         setControl(state);
     }
 
-    //toggles the motors for estop (on/off)
-    void MissionControl::toggleMotors(bool state)
-    {
-        std_srvs::SetBool request;
-        request.request.data = state;
-        while(!ros::service::call("toggle_motors", request));
-        setMotors(state);
-    }
 
 
     //self explanitory

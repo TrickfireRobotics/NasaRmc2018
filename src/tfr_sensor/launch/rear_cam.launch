@@ -3,7 +3,7 @@
         args="-0.635 0 0 0 0 1 0 base_link rear_cam_link"/>
     <node name="rear_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
-            device_id: 1
+            device_id: 0
             image_width: 1280
             image_height: 720
             frame_id: rear_cam_link

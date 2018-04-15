@@ -12,8 +12,8 @@
     </node>
     <node name="teleop_action_server" pkg="tfr_executive" type="teleop_action_server" output="screen">
         <rosparam>
-            linear_velocity: 0.33
-            angular_velocity: 0.66
+            linear_velocity: 0.45
+            angular_velocity: 0.9
         </rosparam>
 
     </node> 

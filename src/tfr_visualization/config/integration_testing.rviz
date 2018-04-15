@@ -1,6 +1,6 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 75
+    Help Height: 78
     Name: Displays
     Property Tree Widget:
       Expanded:
@@ -8,7 +8,7 @@ Panels:
         - /TF1/Frames1
         - /Pose2
       Splitter Ratio: 0.5
-    Tree Height: 362
+    Tree Height: 359
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -27,20 +27,19 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: PointCloud2
   - Class: rviz/Displays
-    Help Height: 75
+    Help Height: 78
     Name: Displays
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /TF1
         - /TF1/Frames1
         - /Image1
       Splitter Ratio: 0.497041434
-    Tree Height: 362
+    Tree Height: 275
   - Class: rviz/Displays
-    Help Height: 75
+    Help Height: 78
     Name: Displays
     Property Tree Widget:
       Expanded:
@@ -51,7 +50,7 @@ Panels:
         - /RobotModel1/Links1
         - /Odometry2
       Splitter Ratio: 0.5
-    Tree Height: 781
+    Tree Height: 359
 Visualization Manager:
   Class: ""
   Displays:
@@ -98,8 +97,6 @@ Visualization Manager:
           Value: false
         kinect_rgb_optical_frame:
           Value: false
-        left_cam_link:
-          Value: true
         left_tread:
           Value: false
         lower_arm:
@@ -107,8 +104,6 @@ Visualization Manager:
         odom:
           Value: true
         rear_cam_link:
-          Value: true
-        right_cam_link:
           Value: true
         right_tread:
           Value: false
@@ -126,33 +121,33 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        base_footprint:
-          base_link:
-            bin:
-              {}
-            kinect_link:
-              kinect_depth_frame:
-                kinect_depth_optical_frame:
-                  {}
-              kinect_rgb_frame:
-                kinect_rgb_optical_frame:
-                  {}
-            left_cam_link:
-              {}
-            left_tread:
-              {}
-            rear_cam_link:
-              {}
-            right_cam_link:
-              {}
-            right_tread:
-              {}
-            turntable:
-              lower_arm:
-                upper_arm:
-                  scoop:
+        odom:
+          base_footprint:
+            base_link:
+              bin:
+                {}
+              kinect_link:
+                kinect_depth_frame:
+                  kinect_depth_optical_frame:
                     {}
-            xsens_link:
+                kinect_rgb_frame:
+                  kinect_rgb_optical_frame:
+                    {}
+              left_tread:
+                {}
+              rear_cam_link:
+                {}
+              right_tread:
+                {}
+              turntable:
+                lower_arm:
+                  upper_arm:
+                    scoop:
+                      {}
+              xsens_link:
+                {}
+          bin_footprint:
+            hole:
               {}
       Update Interval: 0
       Value: true
@@ -210,22 +205,22 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: false
+      Enabled: true
       Name: Map
       Topic: /move_base/local_costmap/costmap
       Unreliable: false
       Use Timestamp: false
-      Value: false
+      Value: true
     - Alpha: 0.699999988
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: false
+      Enabled: true
       Name: Map
       Topic: /move_base/global_costmap/costmap
       Unreliable: false
       Use Timestamp: false
-      Value: false
+      Value: true
     - Angle Tolerance: 0.100000001
       Class: rviz/Odometry
       Covariance:
@@ -355,11 +350,64 @@ Visualization Manager:
       Topic: /odom
       Unreliable: false
       Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.00999999978
+      Style: Flat Squares
+      Topic: /sensors/kinect/depth/points
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Class: rviz/Image
+      Enabled: false
+      Image Topic: /sensors/kinect/rgb/image_mono
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: false
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /sensors/kinect/rgb/image_mono
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Default Light: true
-    Fixed Frame: base_link
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -380,7 +428,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.84596229
+      Distance: 3.52614069
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -402,13 +450,13 @@ Visualization Manager:
     Saved: ~
 Window Geometry:
   Displays:
-    collapsed: true
+    collapsed: false
   Height: 1028
-  Hide Left Dock: true
-  Hide Right Dock: true
+  Hide Left Dock: false
+  Hide Right Dock: false
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000036700000399fc020000000cfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007300000000280000011c000000d700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000100044006900730070006c00610079007300000000280000013b000000d700fffffffb0000000c00430061006d00650072006100000002e0000000160000000000000000fb0000000a0049006d00610067006500000001f8000001c90000001600fffffffb000000100044006900730070006c006100790073000000002800000399000000d700ffffff000000010000010f00000396fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000002800000396000000ad00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000003a00000003bfc0100000002fb0000000800540069006d00650100000000000003a00000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000003a00000037d00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000003670000037dfc020000000efb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006400fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007300000000280000037d000000dd00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000100044006900730070006c0061007900730100000028000001a2000000dd00fffffffb0000000c00430061006d00650072006100000002e0000000160000000000000000fb0000000a0049006d006100670065000000010b000000ef0000001600fffffffb000000100044006900730070006c006100790073000000018200000223000000dd00fffffffb0000000a0049006d006100670065000000015f000002460000001600fffffffb0000000a0049006d00610067006501000001d0000001d50000001600ffffff000000010000010f0000037dfc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a0056006900650077007300000000280000037d000000b000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000003a00000003bfc0100000002fb0000000800540069006d00650100000000000003a00000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000000330000037d00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -416,7 +464,7 @@ Window Geometry:
   Tool Properties:
     collapsed: false
   Views:
-    collapsed: true
+    collapsed: false
   Width: 928
   X: 992
   Y: 24

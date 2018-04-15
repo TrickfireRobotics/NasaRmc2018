@@ -124,7 +124,7 @@ class TeleopExecutive
 
                 case (tfr_utilities::TeleopCode::FORWARD):
                     {
-                        ROS_INFO("Teleop Action Server: Command Recieved, FORWARD");
+                        ROS_INFO("Teleop Action Server: Command Recieved, FORWARD %f",drive_stats.getLinear());
                         move_cmd.linear.x = drive_stats.getLinear();
                         drivebase_publisher.publish(move_cmd);
                         break;

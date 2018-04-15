@@ -5,6 +5,7 @@
 #include <tfr_msgs/ArduinoBReading.h>
 #include <tfr_utilities/control_code.h>
 #include <quadrature.h>
+#include <std_msgs/Int32.h>
 #include <tfr_msgs/PwmCommand.h>
 
 ros::NodeHandle nh;
@@ -17,8 +18,9 @@ const double TURNTABLE_RPR = 60;
 //pin constants
 const int GEARBOX_RIGHT_A = 2;
 const int GEARBOX_RIGHT_B = 3;
+const int NEUTRAL = 470;
 
-enum class Address
+enum class Address : int16_t
 {
     TREAD_LEFT = 0,
     TREAD_RIGHT = 1,
@@ -32,18 +34,17 @@ enum class Address
 };
 
 
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 //encoders
 VelocityQuadrature gearbox_right(CPR, GEARBOX_RIGHT_A, GEARBOX_RIGHT_B);
 //TODO Quadrature turntable(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 tfr_msgs::ArduinoBReading arduino_reading;
-
 ros::Publisher arduino("arduino_b", &arduino_reading);
 void motorOutput(const tfr_msgs::PwmCommand& command);
-ros::Subscriber<tfr_msgs::PwmCommand> motor_subscriber("motor_output", &motorOutput );
+ros::Subscriber<tfr_msgs::PwmCommand> motor_subscriber("/motor_output", &motorOutput );
 
-int pwm_values[9] {};
+uint16_t pwm_values[9] {};
 
 
 void setup()
@@ -61,6 +62,9 @@ void setup()
     setAddress(Address::ARM_UPPER, 0);
     setAddress(Address::ARM_SCOOP, 0);
     setAddress(Address::BIN_LEFT, 0);
+    pinMode(13, OUTPUT);
+    for (auto& val : pwm_values)
+        val = 520;
 }
 
 void loop()
@@ -70,16 +74,16 @@ void loop()
     delay(8);
     nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
     delay(8);
-    nh.spinOnce();
-    delay(8);
-    nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
     arduino.publish(&arduino_reading);
+    nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
 }
 
 void motorOutput(const tfr_msgs::PwmCommand& command)
 {
+
     if(command.enabled)
     {
+      digitalWrite(13, HIGH-digitalRead(13));   // blink the led
         setAddress(Address::TREAD_LEFT, command.tread_left);
         setAddress(Address::TREAD_RIGHT, command.tread_right);
         setAddress(Address::ARM_TURNTABLE, command.arm_turntable);
@@ -101,6 +105,7 @@ void motorOutput(const tfr_msgs::PwmCommand& command)
         setAddress(Address::BIN_LEFT, 0);
     }
 
+
 }
 
 
@@ -113,17 +118,30 @@ void setAddress(const Address &addr, float val)
     if (val < -1 || val > 1)
         return;
 
-    int address = static_cast<int>(addr);
+    int16_t address = static_cast<int16_t>(addr);
 
     //translate from input value to pwm
-    float magnitude = val * 180.0;
-    uint16_t pwm_signal = 520 + round(magnitude);
+    float magnitude = val * 170.0;
+
+    //round the value
+    int16_t rounded{};
+    if (magnitude >= 0)
+        rounded = static_cast<int16_t>(magnitude + 0.5);
+    else
+        rounded = static_cast<int16_t>(magnitude - 0.5);
+    
+    
+    uint16_t pwm_signal = NEUTRAL + rounded;
+
+
 
     //scale the value to control change
-    int sign = (pwm_signal-pwm_values[address] > 0) ? 1 : -1;
-    if (abs(pwm_signal-pwm_values[address]) > 5)
-        pwm_signal = pwm_values[address] + sign*5;
-        
+    int16_t delta = pwm_signal-pwm_values[address];
+
+    int16_t sign = (delta >= 0) ? 1 : -1;
+    if (((delta >= 0) ? delta : -delta) > 15)
+        pwm_signal = pwm_values[address] + (sign*15);
+    
     pwm_values[address] = pwm_signal;
     pwm.setPWM(address, 0, pwm_signal);
 }

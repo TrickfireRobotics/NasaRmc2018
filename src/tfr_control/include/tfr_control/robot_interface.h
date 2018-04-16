@@ -90,6 +90,8 @@ namespace tfr_control {
          * */
         void clearCommands();
 
+        void setEnabled(bool val);
+
     private:
         //joint states for Joint state publisher package
         hardware_interface::JointStateInterface joint_state_interface;

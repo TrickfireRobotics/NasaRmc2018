@@ -200,6 +200,11 @@ namespace tfr_control
         drivebase_v0.second = velocity_values[static_cast<int>(Joint::RIGHT_TREAD)];
     }
 
+    void RobotInterface::setEnabled(bool val)
+    {
+        enabled = val;
+    }
+
     void RobotInterface::adjustFakeJoint(const Joint &j)
     {
         int i = static_cast<int>(j);

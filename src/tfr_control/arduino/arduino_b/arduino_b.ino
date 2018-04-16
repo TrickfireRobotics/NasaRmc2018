@@ -18,6 +18,7 @@ const double TURNTABLE_RPR = 60;
 //pin constants
 const int GEARBOX_RIGHT_A = 2;
 const int GEARBOX_RIGHT_B = 3;
+const int OUTPUT_ENABLE = 4;
 const int NEUTRAL = 470;
 
 enum class Address : int16_t
@@ -62,7 +63,7 @@ void setup()
     setAddress(Address::ARM_UPPER, 0);
     setAddress(Address::ARM_SCOOP, 0);
     setAddress(Address::BIN_LEFT, 0);
-    pinMode(13, OUTPUT);
+    pinMode(OUTPUT_ENABLE, OUTPUT);
     for (auto& val : pwm_values)
         val = 520;
 }
@@ -83,7 +84,7 @@ void motorOutput(const tfr_msgs::PwmCommand& command)
 
     if(command.enabled)
     {
-      digitalWrite(13, HIGH-digitalRead(13));   // blink the led
+      	digitalWrite(OUTPUT_ENABLE, LOW);
         setAddress(Address::TREAD_LEFT, command.tread_left);
         setAddress(Address::TREAD_RIGHT, command.tread_right);
         setAddress(Address::ARM_TURNTABLE, command.arm_turntable);
@@ -95,6 +96,7 @@ void motorOutput(const tfr_msgs::PwmCommand& command)
     }
     else
     {
+      	digitalWrite(OUTPUT_ENABLE, HIGH);
         setAddress(Address::TREAD_LEFT, 0);
         setAddress(Address::TREAD_RIGHT, 0);
         setAddress(Address::ARM_TURNTABLE, 0);

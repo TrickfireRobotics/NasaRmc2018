@@ -4,13 +4,62 @@
   <link name="base_link" >
     <visual>
       <geometry>
-        <box size="${base_length} ${base_width} ${base_height}" />
+        <box size="${base_length} ${tube_width} ${drivebase_total_height}"/>
       </geometry>
+      <origin xyz="0 ${drivebase_beam_width / 2 + tube_width / 2} 0" />
     </visual>
+
+    <visual>
+      <geometry>
+        <box size="${base_length} ${tube_width} ${drivebase_total_height}"/>
+      </geometry>
+      <origin xyz="0 ${-drivebase_beam_width / 2 - tube_width / 2} 0" />
+    </visual>
+
+    <!-- Front beam -->
+    <visual>
+      <geometry>
+        <box size="${tube_width} ${drivebase_beam_width} ${drivebase_front_beam_height}"/>
+      </geometry>
+      <origin xyz="${base_length / 2 - tube_width / 2} 0 ${drivebase_front_beam_height / 2 - drivebase_total_height / 2}" />
+    </visual>
+
+    <!-- Rear beam -->
+    <visual>
+      <geometry>
+        <box size="${tube_width} ${drivebase_beam_width} ${drivebase_total_height}"/>
+      </geometry>
+      <origin xyz="${tube_width / 2 - base_length / 2} 0 0" />
+    </visual>
+
     <collision>
       <geometry>
-        <box size="${base_length} ${base_width} ${base_height}" />
+        <box size="${base_length} ${tube_width} ${drivebase_total_height}"/>
       </geometry>
+      <origin xyz="0 ${drivebase_beam_width / 2 + tube_width / 2} 0" />
+    </collision>
+
+    <collision>
+      <geometry>
+        <box size="${base_length} ${tube_width} ${drivebase_total_height}"/>
+      </geometry>
+      <origin xyz="0 ${-drivebase_beam_width / 2 - tube_width / 2} 0" />
+    </collision>
+
+    <!-- Front beam -->
+    <collision>
+      <geometry>
+        <box size="${tube_width} ${drivebase_beam_width} ${drivebase_front_beam_height}"/>
+      </geometry>
+      <origin xyz="${base_length / 2 - tube_width / 2} 0 ${drivebase_front_beam_height / 2 - drivebase_total_height / 2}" />
+    </collision>
+
+    <!-- Rear beam -->
+    <collision>
+      <geometry>
+        <box size="${tube_width} ${drivebase_beam_width} ${drivebase_total_height}"/>
+      </geometry>
+      <origin xyz="${tube_width / 2 - base_length / 2} 0 0" />
     </collision>
   </link>
 

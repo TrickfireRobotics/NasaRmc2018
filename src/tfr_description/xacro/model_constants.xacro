@@ -12,6 +12,11 @@
   <xacro:property name="base_length" value="${50*itom}" />
   <xacro:property name="base_height" value="${6*itom}" />
 
+  <xacro:property name="tube_width" value="${2*itom}" />
+  <xacro:property name="drivebase_beam_width" value="${11.5*itom}" />
+  <xacro:property name="drivebase_front_beam_height" value="${4*itom}" />
+  <xacro:property name="drivebase_total_height" value="${6*itom}" />
+
   <!-- Wheel parameters -->
   <xacro:property name="wheel_radius" value="${5.5*itom}" />
   <xacro:property name="wheel_width" value="${5.75*itom}" />

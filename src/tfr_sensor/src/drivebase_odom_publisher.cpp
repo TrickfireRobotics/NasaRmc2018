@@ -116,12 +116,12 @@ class DrivebaseOdometryPublisher
             msg.pose.pose.position.y = y;
             msg.pose.pose.position.z = 0;
             msg.pose.pose.orientation = tf::createQuaternionMsgFromYaw(angle);
-            msg.pose.covariance = { 1e-1,    0,    0,    0,    0,    0,
-                0, 1e-1,    0,    0,    0,    0,
-                0,    0, 1e-1,    0,    0,    0,
-                0,    0,    0, 1e-1,    0,    0,
-                0,    0,    0,    0, 1e-1,    0,
-                0,    0,    0,    0,    0, 1e-1 };
+            msg.pose.covariance = { 8e-1,    0,    0,    0,    0,    0,
+                0, 8e-1,    0,    0,    0,    0,
+                0,    0, 8e-1,    0,    0,    0,
+                0,    0,    0, 8e-1,    0,    0,
+                0,    0,    0,    0, 8e-1,    0,
+                0,    0,    0,    0,    0, 8e-1 };
 
             msg.twist.twist.linear.x = v_x;
             msg.twist.twist.linear.y = v_y;
@@ -129,12 +129,12 @@ class DrivebaseOdometryPublisher
             msg.twist.twist.angular.x = 0;
             msg.twist.twist.angular.y = 0;
             msg.twist.twist.angular.z = v_ang;
-            msg.twist.covariance = { 1e-1,    0,    0,    0,    0,    0,
-                0, 1e-1,    0,    0,    0,    0,
-                0,    0, 1e-1,    0,    0,    0,
-                0,    0,    0, 1e-1,    0,    0,
-                0,    0,    0,    0, 1e-1,    0,
-                0,    0,    0,    0,    0, 1e-1 };
+            msg.twist.covariance = { 5e-1,    0,    0,    0,    0,    0,
+                0, 5e-1,    0,    0,    0,    0,
+                0,    0, 5e-1,    0,    0,    0,
+                0,    0,    0, 5e-1,    0,    0,
+                0,    0,    0,    0, 5e-1,    0,
+                0,    0,    0,    0,    0, 5e-1 };
 
             //finally send it across the network
             odometry_publisher.publish(msg);

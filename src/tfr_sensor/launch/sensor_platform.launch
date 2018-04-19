@@ -2,7 +2,7 @@
     <group ns="sensors">
         <include file="$(find tfr_sensor)/launch/fiducial_cam.launch"/>
         <include file="$(find tfr_sensor)/launch/kinect.launch"/>
-        <include file="$(find tfr_sensor)/launch/xsens.launch"/>
+        <!-- TODO <include file="$(find tfr_sensor)/launch/xsens.launch"/> --> 
         <node name="encoder_a_handler" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM1" output="screen"/>
         <node name="encoder_b_handler" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0" output="screen"/>
     </group>

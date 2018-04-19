@@ -4,10 +4,9 @@
     <node name="front_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
             device_id: 0
-            image_width: 1280
-            image_height: 720
             frame_id: front_cam_link
-            camera_info_url: file:///home/nvidia/trickfire/nasarmc2018/src/tfr_sensor/calib/rear.yaml
+            camera_info_url: file:///home/nvidia/trickfire/NasaRmc2018/src/tfr_sensor/calib/front.yaml
+            rate: 30 
         </rosparam>
     </node>
     <node name="front_cam_wrapper" pkg="tfr_sensor" type="image_topic_wrapper">
@@ -21,10 +20,9 @@
     <node name="rear_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
             device_id: 1
-            image_width: 1280
-            image_height: 720
             frame_id: rear_cam_link
-            camera_info_url: file:///home/nvidia/trickfire/nasarmc2018/src/tfr_sensor/calib/rear.yaml
+            camera_info_url: file:///home/nvidia/trickfire/NasaRmc2018/src/tfr_sensor/calib/rear.yaml
+            rate: 30 
         </rosparam>
     </node>
     <node name="rear_cam_wrapper" pkg="tfr_sensor" type="image_topic_wrapper">

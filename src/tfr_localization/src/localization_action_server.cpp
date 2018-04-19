@@ -42,12 +42,12 @@ class Localizer
 
             ROS_INFO("Localization Action Server: Connecting Image Client");
             rear_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/rear_cam/image_raw");
-            kinect_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/kinect/image_raw");
+            front_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/front_cam/image_raw");
             tfr_msgs::WrappedImage request{};
             ros::Duration busy_wait{0.1};
             while(!rear_cam_client.call(request)) 
                 busy_wait.sleep();
-            while(!kinect_client.call(request))
+            while(!front_cam_client.call(request))
                 busy_wait.sleep();
             ROS_INFO("Localization Action Server: Connected Image Clients");
             ROS_INFO("Localization Action Server: Starting");
@@ -64,7 +64,7 @@ class Localizer
         actionlib::SimpleActionClient<tfr_msgs::ArucoAction> aruco;
         ros::Publisher cmd_publisher;
         ros::ServiceClient rear_cam_client;
-        ros::ServiceClient kinect_client;
+        ros::ServiceClient front_cam_client;
         TfManipulator tf_manipulator;
         const double& turn_velocity;
         const double& turn_duration;
@@ -93,17 +93,13 @@ class Localizer
                 if (rear_cam_client.call(image_wrapper))
                     result = sendAruco(image_wrapper);
 
-                if (result != nullptr && result->number_found == 0 && kinect_client.call(image_wrapper))
+                if (result != nullptr && result->number_found == 0 && front_cam_client.call(image_wrapper))
                     result = sendAruco(image_wrapper);
 
                 if (result != nullptr && result->number_found !=0)
                 {
                     //we found something
                     geometry_msgs::PoseStamped unprocessed_pose = result->relative_pose;
-
-                    //the kinect driver uses a weird frame, use ours instead 
-                    if (unprocessed_pose.header.frame_id == "kinect_rgb_optical_frame")
-                        unprocessed_pose.header.frame_id = "kinect_link";
 
                     //transform from camera to footprint perspective
                     geometry_msgs::PoseStamped processed_pose;

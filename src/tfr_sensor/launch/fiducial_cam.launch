@@ -1,0 +1,36 @@
+<launch>
+    <node name="front_cam_tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher"
+        args="-0.635 0 0 0 0 1 0 base_link front_cam_link"/>
+    <node name="front_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
+        <rosparam>
+            device_id: 0
+            image_width: 1280
+            image_height: 720
+            frame_id: front_cam_link
+            camera_info_url: file:///home/nvidia/trickfire/nasarmc2018/src/tfr_sensor/calib/rear.yaml
+        </rosparam>
+    </node>
+    <node name="front_cam_wrapper" pkg="tfr_sensor" type="image_topic_wrapper">
+        <rosparam>
+            camera_topic: /sensors/front_cam/image_raw
+            service_name: /on_demand/front_cam/image_raw
+        </rosparam>
+    </node>
+    <node name="rear_cam_tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher"
+        args="-0.635 0 0 0 0 1 0 base_link rear_cam_link"/>
+    <node name="rear_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
+        <rosparam>
+            device_id: 1
+            image_width: 1280
+            image_height: 720
+            frame_id: rear_cam_link
+            camera_info_url: file:///home/nvidia/trickfire/nasarmc2018/src/tfr_sensor/calib/rear.yaml
+        </rosparam>
+    </node>
+    <node name="rear_cam_wrapper" pkg="tfr_sensor" type="image_topic_wrapper">
+        <rosparam>
+            camera_topic: /sensors/rear_cam/image_raw
+            service_name: /on_demand/rear_cam/image_raw
+        </rosparam>
+    </node>
+</launch>

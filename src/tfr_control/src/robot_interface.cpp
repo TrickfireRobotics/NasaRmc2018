@@ -71,7 +71,7 @@ namespace tfr_control
 
         //LEFT_TREAD
         position_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
-        velocity_values[static_cast<int>(Joint::LEFT_TREAD)] = reading_a.tread_left_vel;
+        velocity_values[static_cast<int>(Joint::LEFT_TREAD)] = -reading_a.tread_left_vel;
         effort_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
 
         //RIGHT_TREAD
@@ -148,48 +148,66 @@ namespace tfr_control
         {
             //TURNTABLE
             signal = turntableAngleToPWM(command_values[static_cast<int>(Joint::TURNTABLE)],
-                        position_values[static_cast<int>(Joint::TURNTABLE)]);
+                    position_values[static_cast<int>(Joint::TURNTABLE)]);
+            signal = scalePWM(signal, pwm_values[static_cast<int>(Joint::TURNTABLE)]);
+            pwm_values[static_cast<int>(Joint::TURNTABLE)] = signal;
             pwm.set(PWMInterface::Address::ARM_TURNTABLE, signal);
 
             //LOWER_ARM
             auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::LOWER_ARM)],
                         reading_a.arm_lower_left_pos,
                         reading_a.arm_lower_right_pos);
+            twin_signal.first = scalePWM(twin_signal.first, pwm_values[static_cast<int>(Joint::LOWER_ARM)]);
+            pwm_values[static_cast<int>(Joint::LOWER_ARM)] = twin_signal.first;
+            twin_signal.second = scalePWM(twin_signal.second, pwm_values[static_cast<int>(Joint::LOWER_ARM)]);
+            pwm_values[static_cast<int>(Joint::LOWER_ARM)] = twin_signal.second;
             pwm.set(PWMInterface::Address::ARM_LOWER_LEFT, twin_signal.first);
             pwm.set(PWMInterface::Address::ARM_LOWER_RIGHT, twin_signal.second);
 
             //UPPER_ARM
             signal = angleToPWM(command_values[static_cast<int>(Joint::UPPER_ARM)],
                         position_values[static_cast<int>(Joint::UPPER_ARM)]);
+            signal = scalePWM(signal, pwm_values[static_cast<int>(Joint::UPPER_ARM)]);
+            pwm_values[static_cast<int>(Joint::UPPER_ARM)] = signal;
             pwm.set(PWMInterface::Address::ARM_UPPER, signal);
 
             //SCOOP
             signal = angleToPWM(command_values[static_cast<int>(Joint::SCOOP)],
                         position_values[static_cast<int>(Joint::SCOOP)]);
+            signal = scalePWM(signal, pwm_values[static_cast<int>(Joint::SCOOP)]);
+            pwm_values[static_cast<int>(Joint::SCOOP)] = signal;
             pwm.set(PWMInterface::Address::ARM_SCOOP, signal);
         }
 
         //LEFT_TREAD
-        signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::LEFT_TREAD)],
+        signal = drivebaseVelocityToPWM( -command_values[static_cast<int>(Joint::LEFT_TREAD)],
                     drivebase_v0.first);
+        signal = scalePWM(signal, pwm_values[static_cast<int>(Joint::LEFT_TREAD)]);
+        pwm_values[static_cast<int>(Joint::LEFT_TREAD)] = signal;
         pwm.set(PWMInterface::Address::TREAD_LEFT, signal);
         auto left = signal;
 
         //RIGHT_TREAD
         signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
                     drivebase_v0.second);
+        signal = scalePWM(signal, pwm_values[static_cast<int>(Joint::RIGHT_TREAD)]);
+        pwm_values[static_cast<int>(Joint::RIGHT_TREAD)] = signal;
         pwm.set(PWMInterface::Address::TREAD_RIGHT, signal);
         auto right = signal;
 
-
-        //ROS_INFO("signal %f %f ", command_values[static_cast<int>(Joint::LEFT_TREAD)],command_values[static_cast<int>(Joint::RIGHT_TREAD)] );
-        //ROS_INFO("pwm %f %f ", left,right);
-
+        ROS_INFO("encoder %f %f ",
+                -velocity_values[static_cast<int>(Joint::LEFT_TREAD)],velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] );
+        ROS_INFO("command %f %f ", -command_values[static_cast<int>(Joint::LEFT_TREAD)],command_values[static_cast<int>(Joint::RIGHT_TREAD)] );
+        ROS_INFO("pwm %f %f ", left,right);
 
         //BIN
         auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::BIN)],
                     reading_a.bin_left_pos,
                     reading_a.bin_left_pos);
+            twin_signal.first = scalePWM(twin_signal.first, pwm_values[static_cast<int>(Joint::BIN)]);
+            pwm_values[static_cast<int>(Joint::BIN)] = twin_signal.first;
+            twin_signal.second = scalePWM(twin_signal.second, pwm_values[static_cast<int>(Joint::BIN)]);
+            pwm_values[static_cast<int>(Joint::BIN)] = twin_signal.second;
         pwm.set(PWMInterface::Address::BIN_LEFT, twin_signal.first);
         pwm.set(PWMInterface::Address::BIN_RIGHT, twin_signal.second);
         
@@ -262,8 +280,6 @@ namespace tfr_control
         position.push_back(position_values[static_cast<int>(Joint::UPPER_ARM)]);
         position.push_back(position_values[static_cast<int>(Joint::SCOOP)]);
     }
-
-
 
 
     /*
@@ -363,28 +379,22 @@ namespace tfr_control
      * */
     double RobotInterface::drivebaseVelocityToPWM(const double& v_1, const double& v_0)
     {
-        //limit for acceleration
-//        double vel = v_1, d_v = v_1 - v_0 , d_t = (ros::Time::now()- last_update).toSec();
-//        double max_a = 2;
-//
-//        /*
-//         * d_v/d_t = max_a
-//         * d_v = max_a * d_t && d_v = v_1 - v_0
-//         * v_1 = max_a * d_t - v_0
-//         * */
-//        if (abs(d_v/d_t) > max_a)
-//        {
-//            if (d_v < 0)
-//                max_a = -2;
-//            vel = max_a * d_t - v_0;
-//        }
-//        
         //limit for max velocity
         //we don't anticipate this changing very much keep at method level
-        double max_vel = 0.5;
+        double max_vel = 0.4;
         int sign = (v_1 < 0) ? -1 : 1;
-        double magnitude = std::min((v_1*sign)/max_vel, 0.1);
+        double magnitude = std::min(std::abs(v_1)/max_vel, 0.65);
         return sign * magnitude;
+    }
+
+    /*
+     * Prevents large pwm changes to avoid brown out
+     * */
+    double RobotInterface::scalePWM(const double& pwm_1, const double& pwm_0)
+    {
+        double sign = ((pwm_1 - pwm_0) > 0) ? 1 : -1;
+        double magnitude = std::min(std::abs(pwm_1-pwm_0), 0.025);
+        return pwm_0 + sign * magnitude;
     }
 
     /*

@@ -363,7 +363,7 @@ int main(int argc, char** argv)
     ros::NodeHandle n{};
     double linear_velocity, angular_velocity, rate;
     ros::param::param<double>("~linear_velocity", linear_velocity, 0.25);
-    ros::param::param<double>("~angular_velocity", angular_velocity, 0.1);
+    ros::param::param<double>("~angular_velocity", angular_velocity, 0.3);
     ros::param::param<double>("~rate", rate, 10.0);
     TeleopExecutive::DriveVelocity velocities{linear_velocity, angular_velocity};
     TeleopExecutive teleop{n, velocities, 1.0/rate};

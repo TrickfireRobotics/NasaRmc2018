@@ -10,5 +10,11 @@
             dumping: false
         </rosparam>
     </node>
-    <node name="teleop_action_server" pkg="tfr_executive" type="teleop_action_server" output="screen"/> 
+    <node name="teleop_action_server" pkg="tfr_executive" type="teleop_action_server" output="screen">
+        <rosparam>
+            linear_velocity: 0.33
+            angular_velocity: 0.66
+        </rosparam>
+
+    </node> 
 </launch>

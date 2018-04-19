@@ -55,6 +55,7 @@ namespace tfr_control {
         //Number of joints we need to control in our layer
         static const int JOINT_COUNT = 7;
 
+
         RobotInterface(ros::NodeHandle &n, bool fakes, const double lower_lim[JOINT_COUNT],
                 const double upper_lim[JOINT_COUNT]);
 
@@ -120,6 +121,9 @@ namespace tfr_control {
         // Populated by us for controller layer to use
         double effort_values[JOINT_COUNT]{};
 
+        //used to avoid brown out and too high of a delta
+        double pwm_values[JOINT_COUNT]{};
+
         //used to limit acceleration pull on the drivebase
         std::pair<double, double> drivebase_v0;
         ros::Time last_update;
@@ -154,6 +158,11 @@ namespace tfr_control {
          * Gets the PWM appropriate output for a joint at the current time
          * */
         double drivebaseVelocityToPWM(const double &v_1, const double &v_0);
+
+        /*
+         * Scale the PWM outputs to avoid browning out 
+         * */
+        double scalePWM(const double &pwm_1, const double &pwm_0);
 
         void adjustFakeJoint(const Joint &joint);
 

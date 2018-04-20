@@ -1,5 +1,4 @@
-/*
- * Converts measured wheel velocities into an an odometry message for use in
+/* * Converts measured wheel velocities into an an odometry message for use in
  * sensor fusion.
  * 
  * Not currently configured to publish transforms, as that is the job of sensor
@@ -46,6 +45,7 @@ class DrivebaseOdometryPublisher
             arduino_b = n.subscribe("/sensors/arduino_b", 15, &DrivebaseOdometryPublisher::readArduinoB, this);
             odometry_publisher = n.advertise<nav_msgs::Odometry>("/drivebase_odom", 15);
             set_odometry = n.advertiseService("set_drivebase_odometry", &DrivebaseOdometryPublisher::setOdometry, this);
+            reset_odometry = n.advertiseService("reset_drivebase_odometry", &DrivebaseOdometryPublisher::resetOdometry, this);
         }
 
         ~DrivebaseOdometryPublisher() = default;
@@ -116,12 +116,12 @@ class DrivebaseOdometryPublisher
             msg.pose.pose.position.y = y;
             msg.pose.pose.position.z = 0;
             msg.pose.pose.orientation = tf::createQuaternionMsgFromYaw(angle);
-            msg.pose.covariance = { 8e-1,    0,    0,    0,    0,    0,
-                0, 8e-1,    0,    0,    0,    0,
-                0,    0, 8e-1,    0,    0,    0,
-                0,    0,    0, 8e-1,    0,    0,
-                0,    0,    0,    0, 8e-1,    0,
-                0,    0,    0,    0,    0, 8e-1 };
+            msg.pose.covariance = { 1e-1,    0,    0,    0,    0,    0,
+                0, 1e-1,    0,    0,    0,    0,
+                0,    0, 1e-1,    0,    0,    0,
+                0,    0,    0, 1e-1,    0,    0,
+                0,    0,    0,    0, 1e-1,    0,
+                0,    0,    0,    0,    0, 1e-1 };
 
             msg.twist.twist.linear.x = v_x;
             msg.twist.twist.linear.y = v_y;
@@ -129,12 +129,12 @@ class DrivebaseOdometryPublisher
             msg.twist.twist.angular.x = 0;
             msg.twist.twist.angular.y = 0;
             msg.twist.twist.angular.z = v_ang;
-            msg.twist.covariance = { 5e-1,    0,    0,    0,    0,    0,
-                0, 5e-1,    0,    0,    0,    0,
-                0,    0, 5e-1,    0,    0,    0,
-                0,    0,    0, 5e-1,    0,    0,
-                0,    0,    0,    0, 5e-1,    0,
-                0,    0,    0,    0,    0, 5e-1 };
+            msg.twist.covariance = { 5e-2,    0,    0,    0,    0,    0,
+                0, 5e-2,    0,    0,    0,    0,
+                0,    0, 5e-2,    0,    0,    0,
+                0,    0,    0, 5e-2,    0,    0,
+                0,    0,    0,    0, 5e-2,    0,
+                0,    0,    0,    0,    0, 5e-2 };
 
             //finally send it across the network
             odometry_publisher.publish(msg);
@@ -148,12 +148,15 @@ class DrivebaseOdometryPublisher
         tfr_msgs::ArduinoBReadingConstPtr latest_arduino_b;
         ros::Publisher odometry_publisher; //the pub for our processed data
         ros::ServiceServer set_odometry;
+        ros::ServiceServer reset_odometry;
         const std::string& parent_frame; //the parent frame of the robot
         const std::string& child_frame; //the child frame of the robot
         const double& wheel_span;
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
         double angle; //angle of rotation around the z axis (radians)
+        const double MAX_XY_DELTA = 0.05;
+        const double MAX_THETA_DELTA = 0.1;
         ros::Time t_0;
 
         //callback for publisher
@@ -168,9 +171,40 @@ class DrivebaseOdometryPublisher
             latest_arduino_b = msg;
         }
 
+        /*
+         * Set odometry from fiducial markers, provides smoothing
+         * */
         bool setOdometry(tfr_msgs::SetOdometry::Request& request,
                 tfr_msgs::SetOdometry::Response& response)
         {
+
+            auto dx = request.pose.position.x - x;
+            if (std::abs(dx) >= MAX_XY_DELTA)
+                dx = (dx >= 0) ? MAX_XY_DELTA : -MAX_XY_DELTA;
+            x += dx;
+
+            auto dy = request.pose.position.y - y;
+            if (std::abs(dy) > MAX_XY_DELTA)
+                dy = (dy >= 0) ? MAX_XY_DELTA : -MAX_XY_DELTA;
+            y += dy;
+            
+            auto siny = +2.0 * (request.pose.orientation.w * request.pose.orientation.z + request.pose.orientation.x * request.pose.orientation.y);
+            auto cosy = +1.0 - 2.0 * (request.pose.orientation.y * request.pose.orientation.y + request.pose.orientation.z * request.pose.orientation.z );  
+
+            auto dth = atan2(siny, cosy) - angle;
+            if (std::abs(dth) > MAX_THETA_DELTA)
+                dth = (dth >= 0) ? MAX_THETA_DELTA : -MAX_THETA_DELTA;
+            angle += dth;
+            return true;
+        }
+
+        /*
+         * Set odometry from fiducial markers, provides no smoothing
+         * */
+        bool resetOdometry(tfr_msgs::SetOdometry::Request& request,
+                tfr_msgs::SetOdometry::Response& response)
+        {
+
             x = request.pose.position.x;
             y = request.pose.position.y;
             auto siny = +2.0 * (request.pose.orientation.w * request.pose.orientation.z + request.pose.orientation.x * request.pose.orientation.y);
@@ -178,6 +212,8 @@ class DrivebaseOdometryPublisher
             angle = atan2(siny, cosy);
             return true;
         }
+ 
+
  
 
 };

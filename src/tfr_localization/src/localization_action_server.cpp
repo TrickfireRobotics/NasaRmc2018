@@ -19,7 +19,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/server/simple_action_server.h>
 #include <tfr_msgs/ArucoAction.h>
-#include <tfr_msgs/EmptyAction.h>
+#include <tfr_msgs/LocalizationAction.h>
 #include <tfr_msgs/WrappedImage.h>
 #include <tfr_msgs/LocalizePoint.h>
 #include <tfr_utilities/tf_manipulator.h>
@@ -60,7 +60,7 @@ class Localizer
         Localizer(Localizer&&) = delete;
         Localizer& operator=(Localizer&&) = delete;
     private:
-        actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
+        actionlib::SimpleActionServer<tfr_msgs::LocalizationAction> server;
         actionlib::SimpleActionClient<tfr_msgs::ArucoAction> aruco;
         ros::Publisher cmd_publisher;
         ros::ServiceClient rear_cam_client;
@@ -69,7 +69,7 @@ class Localizer
         const double& turn_velocity;
         const double& turn_duration;
 
-        void localize( const tfr_msgs::EmptyGoalConstPtr &goal)
+        void localize( const tfr_msgs::LocalizationGoalConstPtr &goal)
         {
             ROS_INFO("Localization Action Server: Localize Starting");
             //setup
@@ -96,15 +96,20 @@ class Localizer
                 if (result != nullptr && result->number_found == 0 && front_cam_client.call(image_wrapper))
                     result = sendAruco(image_wrapper);
 
-                if (result != nullptr && result->number_found !=0)
+                if (result != nullptr && result->number_found > 4)
                 {
                     //we found something
+                    cmd.angular.z = 0;
+                    cmd_publisher.publish(cmd);
                     geometry_msgs::PoseStamped unprocessed_pose = result->relative_pose;
 
                     //transform from camera to footprint perspective
                     geometry_msgs::PoseStamped processed_pose;
                     if (!tf_manipulator.transform_pose(unprocessed_pose, processed_pose, "base_footprint"))
+                    {
                         return;
+                    }
+                    
 
                     processed_pose.pose.position.z = 0;
                     processed_pose.header.stamp = ros::Time::now();
@@ -113,13 +118,23 @@ class Localizer
                     tfr_msgs::LocalizePoint::Request request{};
                     request.pose = processed_pose;
                     tfr_msgs::LocalizePoint::Response response;
-                    if(ros::service::call("localize_bin", request, response))
+                    if (goal->set_odometry)
                     {
-                        server.setSucceeded();
-                        break;
+
+                        if(ros::service::call("localize_bin", request, response))
+                        {
+                            server.setSucceeded();
+                            cmd.angular.z = 0;
+                            cmd_publisher.publish(cmd);
+                            break;
+                        }
+                        else
+                        {
+                            cmd.angular.z = 0;
+                            cmd_publisher.publish(cmd);
+                            ROS_INFO("Localization Action Server: retrying to localize movable point");
+                        }
                     }
-                    else
-                        ROS_INFO("Localization Action Server: retrying to localize movable point");
                 }
                 else
                 {
@@ -130,7 +145,7 @@ class Localizer
                     ros::Duration(turn_duration).sleep();
                     cmd.angular.z = 0;
                     cmd_publisher.publish(cmd);
-                    ros::Duration(turn_duration/2).sleep();
+                    ros::Duration(turn_duration).sleep();
                     continue;
                 }
 

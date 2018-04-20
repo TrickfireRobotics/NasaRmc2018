@@ -4,7 +4,7 @@
 #We also have not delved into covariances at all, and this is still //TODO
 
 #outputting at pretty low frequency
-frequency: 10 
+frequency: 7
 
 #stock settings for robots without gps and no big hills
 odom_frame: odom
@@ -49,7 +49,7 @@ odom0_config: [true,  true, false,
                false, false, false,
                false,  false,  false,
                false,  false,  false]
-odom0_differential: true 
+odom0_differential:  false
 odom0_relative: false
 odom0_queue_size: 10
 
@@ -63,3 +63,24 @@ odom1_differential: false
 odom1_relative: false
 odom1_queue_size: 10
 
+
+# Whether or not we use the control input during predicition. Defaults to false.
+use_control: true
+# Whether the input (assumed to be cmd_vel) is a geometry_msgs/Twist or geometry_msgs/TwistStamped message. Defaults to
+# false.
+stamped_control: false
+# The last issued control command will be used in prediction for this period. Defaults to 0.2.
+control_timeout: 0.2
+# Which velocities are being controlled. Order is vx, vy, vz, vroll, vpitch, vyaw.
+control_config: [true, false, false, false, false, true]
+# Places limits on how large the acceleration term will be. Should match your robot's kinematics.
+acceleration_limits: [1.3, 0.0, 0.0, 0.0, 0.0, 1.3]
+# Acceleration and deceleration limits are not always the same for robots.
+deceleration_limits: [1.3, 0.0, 0.0, 0.0, 0.0, 1.3]
+
+#if your robot cannot instantaneously reach its acceleration limit, the permitted change can be controlled with these
+# gains
+acceleration_gains: [1.0, 0.0, 0.0, 0.0, 0.0,1.0 ]
+# If your robot cannot instantaneously reach its deceleration limit, the permitted change can be controlled with these
+# gains
+deceleration_gains: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0]

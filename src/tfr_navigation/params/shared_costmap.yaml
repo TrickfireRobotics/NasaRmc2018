@@ -32,4 +32,4 @@ static_map: false
 rolling_window: true  
 
 resolution: 0.15
-transform_tolerance: 0.2
+transform_tolerance: 0.4

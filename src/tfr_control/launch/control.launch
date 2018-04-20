@@ -12,7 +12,11 @@
     <node name="drivebase" pkg="tfr_control" type="drivebase" output="screen"/>
 
     <!-- Load the controller manager plugin for the drivebase -->
-    <node name="control" pkg="tfr_control" type="control" output="screen" />
+    <node name="control" pkg="tfr_control" type="control" output="screen">
+        <rosparam>
+            rate: 20
+        </rosparam>
+    </node>
 
     <!-- Spawn the controllers -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner"

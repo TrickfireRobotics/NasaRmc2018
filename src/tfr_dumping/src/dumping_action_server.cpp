@@ -38,16 +38,18 @@ class Dumper
         struct DumpingConstraints
         {
             private:
-                double min_lin_vel, max_lin_vel, min_ang_vel, max_ang_vel;
+                double min_lin_vel, max_lin_vel, min_ang_vel, max_ang_vel, ang_tolerance;
             public:
                 DumpingConstraints(double min_lin, double max_lin, 
-                        double min_ang, double max_ang):
+                        double min_ang, double max_ang, double ang_tol):
                     min_lin_vel(min_lin), max_lin_vel(max_lin),
-                    min_ang_vel(min_ang), max_ang_vel(max_ang) {}
+                    min_ang_vel(min_ang), max_ang_vel(max_ang),
+                    ang_tolerance(ang_tol){}
                 double getMinLinVel() const {return min_lin_vel;}
                 double getMaxLinVel() const {return max_lin_vel;}
                 double getMinAngVel() const {return min_ang_vel;}
                 double getMaxAngVel() const {return max_ang_vel;}
+                double getAngTolerance() const {return ang_tolerance;}
         };
 
         
@@ -161,19 +163,23 @@ class Dumper
         {
             //back up
             cmd.linear.x = -1 * constraints.getMaxLinVel();
-            /*
-             * Maintenence note:
-             *
-             * How do we decide if we are going left or right?
-             * 
-             * Well the estimate will return a pose describing displacement from our
-             * rear camera, a +y displacement means the center of the board is to the
-             * left(ccw), -y to the right (cw). 
-             *
-             * This conforms to rep 103
-             * */
-            int sign = (estimate.relative_pose.pose.position.y < 0) ? 1 : -1;
-            cmd.angular.z = sign*constraints.getMaxAngVel();
+            if (std::abs(estimate.relative_pose.pose.position.y) >
+                    constraints.getAngTolerance())
+            {
+                /*
+                 * Maintenence note:
+                 *
+                 * How do we decide if we are going left or right?
+                 * 
+                 * Well the estimate will return a pose describing displacement from our
+                 * rear camera, a +y displacement means the center of the board is to the
+                 * left(ccw), -y to the right (cw). 
+                 *
+                 * This conforms to rep 103
+                 * */
+                int sign = (estimate.relative_pose.pose.position.y < 0) ? 1 : -1;
+                cmd.angular.z = sign*constraints.getMaxAngVel();
+            }
         }
 
         /*
@@ -222,15 +228,16 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "dumping_action_server");
     ros::NodeHandle n;
-    double min_lin_vel, max_lin_vel, min_ang_vel, max_ang_vel;
+    double min_lin_vel, max_lin_vel, min_ang_vel, max_ang_vel, ang_tolerance;
     ros::param::param<double>("~min_lin_vel",min_lin_vel, 0);
     ros::param::param<double>("~max_lin_vel",max_lin_vel, 0);
     ros::param::param<double>("~min_ang_vel",min_ang_vel, 0);
     ros::param::param<double>("~max_ang_vel",max_ang_vel, 0);
+    ros::param::param<double>("~ang_tolerance",ang_tolerance, 0);
     std::string service_name;
     ros::param::param<std::string>("~image_service_name", service_name, "");
     Dumper::DumpingConstraints constraints(min_lin_vel, max_lin_vel,
-            min_ang_vel, max_ang_vel);
+            min_ang_vel, max_ang_vel, ang_tolerance);
     Dumper dumper(n, service_name, constraints);
     ros::spin();
     return 0;

@@ -42,6 +42,7 @@ add_action_files(
   Teleop.action
   Example.action
   Navigation.action
+  Localization.action
   Bin.action
   Aruco.action
   ArmMove.action

@@ -20,6 +20,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <tfr_msgs/ArucoAction.h>
 #include <tfr_msgs/WrappedImage.h>
+#include <tfr_msgs/SetOdometry.h>
 #include <tfr_utilities/tf_manipulator.h>
 #include <actionlib/client/simple_action_client.h>
 #include <tf2/convert.h>
@@ -126,14 +127,21 @@ class FiducialOdom
 
                 //get our pose and fudge some covariances
                 odom.pose.pose = relative_pose;
-                odom.pose.covariance = {  1e-1,   0,   0,   0,   0,   0,
-                    0,1e-1,   0,   0,   0,   0,
-                    0,   0,1e-1,   0,   0,   0,
-                    0,   0,   0,1e-1,   0,   0,
-                    0,   0,   0,   0,1e-1,   0,
-                    0,   0,   0,   0,   0,1e-1};
+                odom.pose.covariance = {  3e-1,   0,   0,   0,   0,   0,
+                    0,3e-1,   0,   0,   0,   0,
+                    0,   0,3e-1,   0,   0,   0,
+                    0,   0,   0,3e-1,   0,   0,
+                    0,   0,   0,   0,3e-1,   0,
+                    0,   0,   0,   0,   0,3e-1};
                 //fire it off! and cleanup
                 publisher.publish(odom);
+
+                //control error propagation in the drivebase odometry publisher
+                tfr_msgs::SetOdometryRequest odom_req{};
+                odom_req.pose = odom.pose.pose;
+                tfr_msgs::SetOdometryResponse odom_res{};
+                ros::service::call("/set_drivebase_odometry", odom_req, odom_res);
+
             }
         }
 

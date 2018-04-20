@@ -20,13 +20,13 @@
   <!-- Drivetrain parameters -->
   <xacro:property name="tread_end_height" value="${11*itom}" />
   <xacro:property name="tread_end_length" value="${11*itom}" />
-  <xacro:property name="tread_mid_height" value="${12.89*itom}" />
-  <xacro:property name="tread_mid_length" value="${base_length - (tread_end_length * 2)}" />
+  <xacro:property name="tread_end_radius" value="${(5.5+1.25)*itom}" />
+  <xacro:property name="tread_mid_height" value="${(12.89+(1.25*2))*itom}" />
+  <xacro:property name="tread_mid_length" value="${24*itom}" />
   <xacro:property name="tread_width" value="${5.75*itom}" />
-
-  <!-- Wheel parameters -->
-  <xacro:property name="wheel_radius" value="${5.5*itom}" />
-  <xacro:property name="wheel_width" value="${5.75*itom}" />
+  <xacro:property name="tread_spacing" value="${16*itom}" />
+  <xacro:property name="intertread_length" value="${39*itom}" />
+  <xacro:property name="tread_slope_length" value="${11*itom}" />
 
   <!-- Bin parameters -->
   <!-- Length of top of bin, length of bottom is 13.86 -->

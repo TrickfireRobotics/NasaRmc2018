@@ -76,7 +76,7 @@
   <joint name="tread_left_joint" type="fixed">
     <parent link="base_link" />
     <child link="tread_left_link" />
-    <origin xyz="0 ${(drivebase_beam_width / 2) + tube_width + (tread_width / 2)} 0" />
+    <origin xyz="0 ${tread_spacing / 2 + tread_width / 2} 0" />
   </joint>
 
   <link name="tread_right_link">
@@ -90,63 +90,82 @@
   <joint name="tread_right_joint" type="fixed">
     <parent link="base_link" />
     <child link="tread_right_link" />
-    <origin xyz="0 ${-(drivebase_beam_width / 2) - tube_width - (tread_width / 2)} 0" />
+    <origin xyz="0 ${-tread_spacing / 2 - tread_width / 2} 0" />
   </joint>
 
   <link name="tread_left_front_link">
     <visual>
       <geometry>
-        <box size="${tread_end_length} ${tread_width} ${tread_end_height}"/>
+        <cylinder radius="${tread_end_radius}" length="${tread_width}" />
       </geometry>
+      <origin rpy="${pi/2} 0.0 0.0" />
     </visual>
   </link>
 
   <joint name="tread_left_front_joint" type="fixed">
     <parent link="tread_left_link" />
     <child link="tread_left_front_link" />
-    <origin xyz="${(tread_mid_length / 2) + (tread_end_length / 2)} 0 ${(tread_end_height / 2) - (tread_mid_height / 2)}" />
+    <origin xyz="${intertread_length / 2} 0 ${-1.38*itom}" />
   </joint>
 
   <link name="tread_left_rear_link">
     <visual>
       <geometry>
-        <box size="${tread_end_length} ${tread_width} ${tread_end_height}"/>
+        <cylinder radius="${tread_end_radius}" length="${tread_width}" />
       </geometry>
+      <origin rpy="${pi/2} 0.0 0.0" />
     </visual>
   </link>
 
   <joint name="tread_left_rear_joint" type="fixed">
     <parent link="tread_left_link" />
     <child link="tread_left_rear_link" />
-    <origin xyz="${-(tread_mid_length / 2) - (tread_end_length / 2)} 0 ${(tread_end_height / 2) - (tread_mid_height / 2)}" />
+    <origin xyz="${-intertread_length / 2} 0 ${-1.38*itom}" />
   </joint>
 
   <link name="tread_right_front_link">
     <visual>
       <geometry>
-        <box size="${tread_end_length} ${tread_width} ${tread_end_height}"/>
+        <cylinder radius="${tread_end_radius}" length="${tread_width}" />
       </geometry>
+      <origin rpy="${pi/2} 0.0 0.0" />
     </visual>
   </link>
 
   <joint name="tread_right_front_joint" type="fixed">
     <parent link="tread_right_link" />
     <child link="tread_right_front_link" />
-    <origin xyz="${(tread_mid_length / 2) + (tread_end_length / 2)} 0 ${(tread_end_height / 2) - (tread_mid_height / 2)}" />
+    <origin xyz="${intertread_length / 2} 0 ${-1.38*itom}" />
   </joint>
 
   <link name="tread_right_rear_link">
     <visual>
       <geometry>
-        <box size="${tread_end_length} ${tread_width} ${tread_end_height}"/>
+        <cylinder radius="${tread_end_radius}" length="${tread_width}" />
       </geometry>
+      <origin rpy="${pi/2} 0.0 0.0" />
     </visual>
   </link>
 
   <joint name="tread_right_rear_joint" type="fixed">
     <parent link="tread_right_link" />
     <child link="tread_right_rear_link" />
-    <origin xyz="${-(tread_mid_length / 2) - (tread_end_length / 2)} 0 ${(tread_end_height / 2) - (tread_mid_height / 2)}" />
+    <origin xyz="${-intertread_length / 2} 0 ${-1.38*itom}" />
+  </joint>
+
+  <link name="front_right_slope_link">
+    <visual>
+      <geometry>
+        <box size="${tread_slope_length} ${tread_width} ${1.25*itom}"/>
+      </geometry>
+      <origin xyz="${tread_slope_length/2} 0.0 ${-1.25/2*itom}" />
+    </visual>
+  </link>
+
+  <joint name="front_right_slope_joint" type="fixed">
+    <parent link="tread_right_link" />
+    <child link="front_right_slope_link" />
+    <origin xyz="${tread_mid_length/2} 0.0 ${tread_mid_height/2}" rpy="0.0 ${(180-164.1)*dtor} 0.0" />
   </joint>
 
   <!-- BIN -->

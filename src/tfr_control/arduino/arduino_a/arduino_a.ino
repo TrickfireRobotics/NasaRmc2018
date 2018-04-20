@@ -11,7 +11,7 @@ ros::NodeHandle nh;
 
 //encoder level constants
 const double CPR = 4096; //pulse per revolution
-const double GEARBOX_MPR = 0.88; 
+const double GEARBOX_MPR = 3.33; 
 
 //pin constants
 const int GEARBOX_LEFT_A = 2;

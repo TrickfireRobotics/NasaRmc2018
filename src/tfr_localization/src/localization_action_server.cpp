@@ -123,14 +123,14 @@ class Localizer
                 }
                 else
                 {
-                //TODO uncomment if not good enough
-//                    ROS_INFO("Localization Action Server: No markers detected, turning");
-//                    geometry_msgs::Twist cmd;
-//                    cmd.angular.z = turn_velocity;
-//                    cmd_publisher.publish(cmd);
-//                    ros::Duration(turn_duration).sleep();
-//                    cmd.angular.z = 0;
-//                    cmd_publisher.publish(cmd);
+                    ROS_INFO("Localization Action Server: No markers detected, turning");
+                    geometry_msgs::Twist cmd;
+                    cmd.angular.z = turn_velocity;
+                    cmd_publisher.publish(cmd);
+                    ros::Duration(turn_duration).sleep();
+                    cmd.angular.z = 0;
+                    cmd_publisher.publish(cmd);
+                    ros::Duration(turn_duration/2).sleep();
                     continue;
                 }
 

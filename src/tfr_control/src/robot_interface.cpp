@@ -371,7 +371,7 @@ namespace tfr_control
         //we don't anticipate this changing very much keep at method level
         double max_vel = 0.4;
         int sign = (v_1 < 0) ? -1 : 1;
-        double magnitude = std::min(std::abs(v_1)/max_vel, 0.65);
+        double magnitude = std::min(std::abs(v_1)/max_vel, 0.8);
         return sign * magnitude;
     }
 

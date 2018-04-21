@@ -4,7 +4,7 @@
     <node name="autnonomous_action_server" pkg="tfr_executive" type="autonomous_action_server" output="screen">
         <rosparam>
             localization: true 
-            navigation_to: true 
+            navigation_to: false 
             digging: false 
             navigation_from: false
             dumping: false
@@ -13,7 +13,7 @@
     <node name="teleop_action_server" pkg="tfr_executive" type="teleop_action_server" output="screen">
         <rosparam>
             linear_velocity: 0.45
-            angular_velocity: 0.9
+            angular_velocity: 1.3
         </rosparam>
 
     </node> 

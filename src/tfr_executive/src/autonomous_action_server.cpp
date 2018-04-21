@@ -171,7 +171,7 @@ class AutonomousExecutive
                 std_srvs::EmptyRequest clear_req;
                 std_srvs::EmptyRequest clear_res;
                 ROS_INFO("Autonomous Action Server: clearing costmaps");
-                while(!ros::service::call("clear_costmaps", clear_req, clear_res));
+                while(!ros::service::call("/move_base/clear_costmaps", clear_req, clear_res));
                 ROS_INFO("Autonomous Action Server: costmaps cleared");
 
                 ROS_INFO("Autonomous Action Server: localization finished");

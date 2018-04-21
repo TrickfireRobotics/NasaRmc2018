@@ -229,6 +229,21 @@
     <origin xyz="${tread_mid_length/2} 0.0 ${tread_mid_height/2}" rpy="0.0 ${(180-160)*dtor} 0.0" />
   </joint>
 
+  <link name="front_left_slope_link">
+    <visual>
+      <geometry>
+        <box size="${tread_slope_length} ${tread_width} ${1.25*itom}"/>
+      </geometry>
+      <origin xyz="${tread_slope_length/2} 0.0 ${-1.25/2*itom}" />
+    </visual>
+  </link>
+
+  <joint name="front_left_slope_joint" type="fixed">
+    <parent link="tread_left_link" />
+    <child link="front_left_slope_link" />
+    <origin xyz="${tread_mid_length/2} 0.0 ${tread_mid_height/2}" rpy="0.0 ${(180-164.1)*dtor} 0.0" />
+  </joint>
+
   <!-- BIN -->
   <link name="bin_back" >
     <visual>

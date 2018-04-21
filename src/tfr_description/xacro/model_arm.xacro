@@ -20,7 +20,7 @@
   <joint name="turntable_joint" type="continuous">
     <parent link="base_link" />
     <child link="turntable" />
-    <origin xyz="${base_length/2-base_width/3-3*itom} 0 ${base_height/2}" />
+    <origin xyz="${base_length/2-drivebase_beam_width/3-3*itom} 0 ${drivebase_total_height/2}" />
     <axis xyz="0 0 1" />
     <limit effort="1.0" velocity="1.0" />
   </joint>

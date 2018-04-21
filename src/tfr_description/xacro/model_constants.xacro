@@ -6,11 +6,10 @@
   <xacro:property name="itom" value="0.0254" />
   <!-- Degrees to radians conversion -->
   <xacro:property name="dtor" value="${pi/180}" />
+  <xacro:property name="sqrt2" value="1.41421" />
 
   <!-- Drivebase parameters -->
-  <xacro:property name="base_width" value="${20*itom}" />
   <xacro:property name="base_length" value="${50*itom}" />
-  <xacro:property name="base_height" value="${6*itom}" />
 
   <xacro:property name="tube_width" value="${2*itom}" />
   <xacro:property name="drivebase_beam_width" value="${11.5*itom}" />
@@ -32,8 +31,8 @@
   <!-- Length of top of bin, length of bottom is 13.86 -->
   <!-- Using the bigger size as a box instead of making complex angled shape -->
   <xacro:property name="bin_length" value="${25.78*itom}" />
-  <xacro:property name="bin_width" value="${base_width}" />
-  <xacro:property name="bin_height" value="${12*itom}" />
+  <xacro:property name="bin_width" value="${11*itom}" />
+  <xacro:property name="bin_height" value="${11.5*itom}" />
 
   <!-- Turntable parameters -->
   <xacro:property name="turntable_radius" value="${6*itom}" />

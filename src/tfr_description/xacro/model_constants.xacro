@@ -35,10 +35,10 @@
   <xacro:property name="bin_height" value="${11.5*itom}" />
 
   <!-- Turntable parameters -->
-  <xacro:property name="turntable_radius" value="${6*itom}" />
+  <xacro:property name="turntable_radius" value="${4.92*itom}" />
   <!-- 1" in model plus undefined height for mounting and extra components -->
   <!-- Rounded to 2" for now -->
-  <xacro:property name="turntable_height" value="${2*itom}" />
+  <xacro:property name="turntable_height" value="${1.2*itom}" />
 
   <!-- Lower arm parameters -->
   <xacro:property name="lower_arm_length" value="${22*itom}" />

@@ -21,7 +21,7 @@
 #include <tfr_msgs/ArucoAction.h>
 #include <tfr_msgs/LocalizationAction.h>
 #include <tfr_msgs/WrappedImage.h>
-#include <tfr_msgs/LocalizePoint.h>
+#include <tfr_msgs/PoseSrv.h>
 #include <tfr_utilities/tf_manipulator.h>
 #include <geometry_msgs/Twist.h>
 
@@ -115,9 +115,9 @@ class Localizer
                     processed_pose.header.stamp = ros::Time::now();
 
                     //send the message
-                    tfr_msgs::LocalizePoint::Request request{};
+                    tfr_msgs::PoseSrv::Request request{};
                     request.pose = processed_pose;
-                    tfr_msgs::LocalizePoint::Response response;
+                    tfr_msgs::PoseSrv::Response response;
                     if (goal->set_odometry)
                     {
 

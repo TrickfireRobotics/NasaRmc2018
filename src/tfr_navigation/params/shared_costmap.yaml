@@ -26,7 +26,7 @@ hole_obstacle: {
 
 update_frequency: 1.5
 publish_frequency: 1.5
-global_frame: /odom
+global_frame: /map
 robot_base_frame: /base_footprint
 static_map: false
 rolling_window: true  

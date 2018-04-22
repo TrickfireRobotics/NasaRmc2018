@@ -162,9 +162,11 @@ class Dumper
                 geometry_msgs::Twist &cmd)
         {
             //back up
-            cmd.linear.x = -1 * constraints.getMaxLinVel();
-            if (std::abs(estimate.relative_pose.pose.position.y) >
-                    constraints.getAngTolerance())
+            auto siny = +2.0 * (estimate.relative_pose.pose.orientation.w * estimate.relative_pose.pose.orientation.z + estimate.relative_pose.pose.orientation.x * estimate.relative_pose.pose.orientation.y);
+            auto cosy = +1.0 - 2.0 * (estimate.relative_pose.pose.orientation.y * estimate.relative_pose.pose.orientation.y +  estimate.relative_pose.pose.orientation.z * estimate.relative_pose.pose.orientation.z );  
+            auto angle = atan2(siny, cosy);
+            ROS_INFO("ang %f", angle);
+            if (3.14159 - std::abs(angle) > constraints.getAngTolerance())
             {
                 /*
                  * Maintenence note:
@@ -177,8 +179,12 @@ class Dumper
                  *
                  * This conforms to rep 103
                  * */
-                int sign = (estimate.relative_pose.pose.position.y < 0) ? 1 : -1;
+                int sign = (estimate.relative_pose.pose.position.y < 0) ? -1 : 1;
                 cmd.angular.z = sign*constraints.getMaxAngVel();
+            }
+            else
+            {
+                cmd.linear.x = -1 * constraints.getMaxLinVel();
             }
         }
 

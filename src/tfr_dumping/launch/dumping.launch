@@ -11,6 +11,7 @@
             max_lin_vel: 0.3
             min_ang_vel: 0.3
             max_ang_vel: 0.5
+            ang_tolerance: 0.05
             image_service_name: /on_demand/rear_cam/image_raw
         </rosparam>
     </node>

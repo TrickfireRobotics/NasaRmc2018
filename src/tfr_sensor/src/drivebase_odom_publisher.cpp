@@ -152,7 +152,6 @@ class DrivebaseOdometryPublisher
             transform.transform.translation.z = msg.pose.pose.position.z;
             transform.transform.rotation = msg.pose.pose.orientation;
             tf_broadcaster.sendTransform(transform);
-            
         }
 
 
@@ -202,22 +201,22 @@ class DrivebaseOdometryPublisher
             auto dy = request.pose.position.y - y;
             if (std::abs(dy) > MAX_XY_DELTA)
                 dy = (dy >= 0) ? MAX_XY_DELTA : -MAX_XY_DELTA;
- //           y += dy;
+//            y += dy;
             
             auto siny = +2.0 * (request.pose.orientation.w * request.pose.orientation.z + request.pose.orientation.x * request.pose.orientation.y);
             auto cosy = +1.0 - 2.0 * (request.pose.orientation.y * request.pose.orientation.y + request.pose.orientation.z * request.pose.orientation.z );  
             auto new_ang = atan2(siny, cosy);
 
             auto dth = new_ang - angle;
-            //angle += dth;
+//            angle += dth;
 
             if (std::abs(dth) > MAX_THETA_DELTA)
                 dth = (dth >= 0) ? MAX_THETA_DELTA : -MAX_THETA_DELTA;
 
             //if the map moves we need to do
             tfr_msgs::PoseSrv::Request set_request{};
-            set_request.pose.pose.position.x = request.pose.position.x;
-            set_request.pose.pose.position.y = request.pose.position.y;
+            set_request.pose.pose.position.x = x;
+            set_request.pose.pose.position.y = y;
             double cy = cos(new_ang * 0.5);
             double sy = sin(new_ang * 0.5);
             double cr = cos(0 * 0.5);
@@ -256,10 +255,6 @@ class DrivebaseOdometryPublisher
             ros::service::call("set_map", set_request, set_response);
             return true;
         }
- 
-
- 
-
 };
 
 int main(int argc, char **argv)

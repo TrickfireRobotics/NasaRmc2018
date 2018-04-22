@@ -41,16 +41,10 @@
   <link name="lower_arm">
     <visual>
       <geometry>
-        <box size="${lower_arm_height} ${lower_arm_width} ${lower_arm_length}"/>
+        <box size="${lower_arm_height} ${lower_arm_width} ${lower_arm_primary_length}"/>
       </geometry>
-      <origin xyz="${-lower_arm_height/2} 0 ${lower_arm_length/2}" />
+      <origin xyz="${-lower_arm_height/2} 0 ${14*itom}" />
     </visual>
-    <collision>
-      <geometry>
-        <box size="${lower_arm_height} ${lower_arm_width} ${lower_arm_length}"/>
-      </geometry>
-      <origin xyz="${-lower_arm_height/2} 0 ${lower_arm_length/2}" />
-    </collision>
   </link>
   <joint name="lower_arm_joint" type="revolute">
     <parent link="turntable" />
@@ -73,6 +67,33 @@
       <motorTorqueConstant>1</motorTorqueConstant>
     </actuator>
   </transmission>
+  
+  <link name="lower_arm_bottom">
+    <visual>
+      <geometry>
+        <box size="${0.25*itom} ${lower_arm_width} ${lower_arm_length - lower_arm_primary_length}"/>
+      </geometry>
+    </visual>
+  </link>
+  <joint name="lower_arm_bottom_joint" type="fixed">
+    <parent link="lower_arm" />
+    <child link="lower_arm_bottom" />
+    <origin xyz="${-0.125*itom} 0 ${(lower_arm_length - lower_arm_primary_length)/2}" />
+  </joint>
+  
+  <link name="lower_arm_slope">
+    <visual>
+      <geometry>
+        <box size="${0.25*itom} ${lower_arm_width} ${(lower_arm_length - lower_arm_primary_length) * sqrt2}"/>
+      </geometry>
+      <origin xyz="${0.125*itom} 0 ${-(lower_arm_length - lower_arm_primary_length) / 2 * sqrt2}" rpy="0 0 0" />
+    </visual>
+  </link>
+  <joint name="lower_arm_slope_joint" type="fixed">
+    <parent link="lower_arm" />
+    <child link="lower_arm_slope" />
+    <origin xyz="${-lower_arm_height} 0 ${(lower_arm_length - lower_arm_primary_length)}" rpy="0 ${-44*dtor} 0"/>
+  </joint>
 
   <link name="upper_arm">
     <visual>
@@ -127,7 +148,7 @@
   <joint name="scoop_joint" type="revolute">
     <parent link="upper_arm" />
     <child link="scoop" />
-    <origin xyz="0 0 ${upper_arm_length}" />
+    <origin xyz="${1.5*itom} 0 ${upper_arm_length - (0.875*itom)}" />
     <axis xyz="0 1 0" />
     <limit effort="1.0" velocity="1.0" lower="${scoop_min}"
           upper="${scoop_max}" />

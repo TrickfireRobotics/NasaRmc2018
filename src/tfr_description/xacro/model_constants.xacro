@@ -17,12 +17,10 @@
   <xacro:property name="drivebase_total_height" value="${6*itom}" />
 
   <!-- Drivetrain parameters -->
-  <xacro:property name="tread_end_height" value="${11*itom}" />
-  <xacro:property name="tread_end_length" value="${11*itom}" />
-  <xacro:property name="tread_end_radius" value="${(5.5+1.25)*itom}" />
-  <xacro:property name="tread_mid_height" value="${(12.89+(1.25*2))*itom}" />
+  <xacro:property name="tread_end_radius" value="${(13.5/2)*itom}" />
+  <xacro:property name="tread_mid_height" value="${17*itom}" />
   <xacro:property name="tread_mid_length" value="${24*itom}" />
-  <xacro:property name="tread_width" value="${5.75*itom}" />
+  <xacro:property name="tread_width" value="${6*itom}" />
   <xacro:property name="tread_spacing" value="${16*itom}" />
   <xacro:property name="intertread_length" value="${39*itom}" />
   <xacro:property name="tread_slope_length" value="${11*itom}" />

@@ -5,9 +5,15 @@ namespace tfr_mining
     // Must be a private node handle ("~")
     DiggingQueue::DiggingQueue(ros::NodeHandle nh) : sets{}
     {
-        DiggingSet set;
-        generateDigAndDump(nh, set, 0.0, 1);
-        sets.push(set);
+        for (int dig_pos = -1; dig_pos <= 1; dig_pos++) {
+            DiggingSet set;
+            // 3 digs, one straight forward and two 30 degrees to either side
+            double angle = -dig_pos * 3.14159265 / 6;
+            for (int dig = 1; dig <= 4; dig++) {
+                generateDigAndDump(nh, set, angle, dig);
+            }
+            sets.push(set);
+        }
     }
 
     bool DiggingQueue::isEmpty()

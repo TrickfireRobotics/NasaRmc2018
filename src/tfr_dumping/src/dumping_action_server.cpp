@@ -137,17 +137,18 @@ class Dumper
             std_msgs::Float64 bin_cmd;
             bin_cmd.data = tfr_utilities::JointAngle::BIN_MAX;
             tfr_msgs::BinStateSrv query;
-            ros::Rate rate(10);
-            while (!server.isPreemptRequested() && ros::ok())
-            {
-                ros::service::call("bin_state", query);
-                using namespace tfr_utilities;
-                if (JointAngle::BIN_MAX - query.response.state < JointAngle::ANGLE_TOLERANCE)
-                    break;
-                bin_publisher.publish(bin_cmd);
-                stopMoving();
-                rate.sleep();
-            }
+            //TODO hook up to bin pots
+/////            ros::Rate rate(10);
+/////            while (!server.isPreemptRequested() && ros::ok())
+/////            {
+/////                ros::service::call("bin_state", query);
+/////                using namespace tfr_utilities;
+/////                if (JointAngle::BIN_MAX - query.response.state < JointAngle::ANGLE_TOLERANCE)
+/////                    break;
+/////                bin_publisher.publish(bin_cmd);
+/////                stopMoving();
+/////                rate.sleep();
+/////            }
             
             server.setSucceeded();
         }

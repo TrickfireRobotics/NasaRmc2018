@@ -15,14 +15,15 @@ namespace tfr_control
      * */
     RobotInterface::RobotInterface(ros::NodeHandle &n, bool fakes, 
             const double *lower_lim, const double *upper_lim) :
-        pwm{},
         arduino_a{n.subscribe("/sensors/arduino_a", 5,
                 &RobotInterface::readArduinoA, this)},
         arduino_b{n.subscribe("/sensors/arduino_b", 5,
                 &RobotInterface::readArduinoB, this)},
+        pwm_publisher{n.advertise<tfr_msgs::PwmCommand>("/motor_output", 15)},
         use_fake_values{fakes}, lower_limits{lower_lim},
         upper_limits{upper_lim}, drivebase_v0{std::make_pair(0,0)},
-        last_update{ros::Time::now()}
+        last_update{ros::Time::now()},
+        enabled{true}
 
     {
         // Note: the string parameters in these constructors must match the
@@ -41,13 +42,8 @@ namespace tfr_control
         registerInterface(&joint_state_interface);
         registerInterface(&joint_effort_interface);
         registerInterface(&joint_position_interface);
-        hardCutoff(true);
     }
 
-    void RobotInterface::hardCutoff(bool state)
-    {
-        pwm.enablePWM(!state);
-    }
 
     /*
      * Reads from our hardware and populates from shared memory.  
@@ -126,6 +122,9 @@ namespace tfr_control
         //Grab the neccessary data
         tfr_msgs::ArduinoAReading reading_a;
         tfr_msgs::ArduinoBReading reading_b;
+
+        //package for outgoing data
+        tfr_msgs::PwmCommand command;
         if (latest_arduino_a != nullptr)
             reading_a = *latest_arduino_a;
 
@@ -149,54 +148,39 @@ namespace tfr_control
             //TURNTABLE
             signal = turntableAngleToPWM(command_values[static_cast<int>(Joint::TURNTABLE)],
                     position_values[static_cast<int>(Joint::TURNTABLE)]);
-            signal = scalePWM(signal, pwm_values[static_cast<int>(Joint::TURNTABLE)]);
-            pwm_values[static_cast<int>(Joint::TURNTABLE)] = signal;
-            pwm.set(PWMInterface::Address::ARM_TURNTABLE, signal);
+            command.arm_turntable = signal;
 
             //LOWER_ARM
             auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::LOWER_ARM)],
                         reading_a.arm_lower_left_pos,
                         reading_a.arm_lower_right_pos);
-            twin_signal.first = scalePWM(twin_signal.first, pwm_values[static_cast<int>(Joint::LOWER_ARM)]);
-            pwm_values[static_cast<int>(Joint::LOWER_ARM)] = twin_signal.first;
-            twin_signal.second = scalePWM(twin_signal.second, pwm_values[static_cast<int>(Joint::LOWER_ARM)]);
-            pwm_values[static_cast<int>(Joint::LOWER_ARM)] = twin_signal.second;
-            pwm.set(PWMInterface::Address::ARM_LOWER_LEFT, twin_signal.first);
-            pwm.set(PWMInterface::Address::ARM_LOWER_RIGHT, twin_signal.second);
+            command.arm_lower_left = twin_signal.first;
+            command.arm_lower_right = twin_signal.second;
 
             //UPPER_ARM
             signal = angleToPWM(command_values[static_cast<int>(Joint::UPPER_ARM)],
                         position_values[static_cast<int>(Joint::UPPER_ARM)]);
-            signal = scalePWM(signal, pwm_values[static_cast<int>(Joint::UPPER_ARM)]);
-            pwm_values[static_cast<int>(Joint::UPPER_ARM)] = signal;
-            pwm.set(PWMInterface::Address::ARM_UPPER, signal);
+            command.arm_upper = signal;
 
             //SCOOP
             signal = angleToPWM(command_values[static_cast<int>(Joint::SCOOP)],
                         position_values[static_cast<int>(Joint::SCOOP)]);
-            signal = scalePWM(signal, pwm_values[static_cast<int>(Joint::SCOOP)]);
-            pwm_values[static_cast<int>(Joint::SCOOP)] = signal;
-            pwm.set(PWMInterface::Address::ARM_SCOOP, signal);
+            command.arm_scoop = signal;
         }
 
         //LEFT_TREAD
         signal = drivebaseVelocityToPWM( -command_values[static_cast<int>(Joint::LEFT_TREAD)],
                     drivebase_v0.first);
-        signal = scalePWM(signal, pwm_values[static_cast<int>(Joint::LEFT_TREAD)]);
-        pwm_values[static_cast<int>(Joint::LEFT_TREAD)] = signal;
-        pwm.set(PWMInterface::Address::TREAD_LEFT, signal);
+        command.tread_left = signal;
         auto left = signal;
 
         //RIGHT_TREAD
         signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
                     drivebase_v0.second);
-        signal = scalePWM(signal, pwm_values[static_cast<int>(Joint::RIGHT_TREAD)]);
-        pwm_values[static_cast<int>(Joint::RIGHT_TREAD)] = signal;
-        pwm.set(PWMInterface::Address::TREAD_RIGHT, signal);
+        command.tread_right = signal;
         auto right = signal;
 
-        ROS_INFO("encoder %f %f ",
-                -velocity_values[static_cast<int>(Joint::LEFT_TREAD)],velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] );
+        ROS_INFO("encoder %f %f ", -velocity_values[static_cast<int>(Joint::LEFT_TREAD)],velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] );
         ROS_INFO("command %f %f ", -command_values[static_cast<int>(Joint::LEFT_TREAD)],command_values[static_cast<int>(Joint::RIGHT_TREAD)] );
         ROS_INFO("pwm %f %f ", left,right);
 
@@ -204,17 +188,21 @@ namespace tfr_control
         auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::BIN)],
                     reading_a.bin_left_pos,
                     reading_a.bin_left_pos);
-            twin_signal.first = scalePWM(twin_signal.first, pwm_values[static_cast<int>(Joint::BIN)]);
-            pwm_values[static_cast<int>(Joint::BIN)] = twin_signal.first;
-            twin_signal.second = scalePWM(twin_signal.second, pwm_values[static_cast<int>(Joint::BIN)]);
-            pwm_values[static_cast<int>(Joint::BIN)] = twin_signal.second;
-        pwm.set(PWMInterface::Address::BIN_LEFT, twin_signal.first);
-        pwm.set(PWMInterface::Address::BIN_RIGHT, twin_signal.second);
+        command.bin_left = twin_signal.first;
+        command.bin_right = twin_signal.second;
+
+        command.enabled = enabled;
+        pwm_publisher.publish(command);
         
         //UPKEEP
         last_update = ros::Time::now();
         drivebase_v0.first = velocity_values[static_cast<int>(Joint::LEFT_TREAD)];
         drivebase_v0.second = velocity_values[static_cast<int>(Joint::RIGHT_TREAD)];
+    }
+
+    void RobotInterface::setEnabled(bool val)
+    {
+        enabled = val;
     }
 
     void RobotInterface::adjustFakeJoint(const Joint &j)
@@ -393,7 +381,7 @@ namespace tfr_control
     double RobotInterface::scalePWM(const double& pwm_1, const double& pwm_0)
     {
         double sign = ((pwm_1 - pwm_0) > 0) ? 1 : -1;
-        double magnitude = std::min(std::abs(pwm_1-pwm_0), 0.025);
+        double magnitude = std::min(std::abs(pwm_1-pwm_0), 0.01);
         return pwm_0 + sign * magnitude;
     }
 

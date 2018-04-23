@@ -36,9 +36,12 @@ class PWMInterface
 
         void set(Address address, double value );
 
-        void enablePWM(bool value);
 
     private:
+
+        //used to avoid brown out and too high of a delta
+        double pwm_values[9]{};
+
         /**
          *  Convenience function for conceptualizing output.
          *  Takes in a number from -1 -> 1 specifying the desired output strength,

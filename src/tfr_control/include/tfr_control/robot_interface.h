@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <tfr_msgs/ArduinoAReading.h>
 #include <tfr_msgs/ArduinoBReading.h>
+#include <tfr_msgs/PwmCommand.h>
 #include <tfr_utilities/control_code.h>
 #include <pwm_interface.h>
 #include <vector>
@@ -89,10 +90,7 @@ namespace tfr_control {
          * */
         void clearCommands();
 
-        /**
-         * A rigourous disabling measure that disables pwm out
-         * */
-        void hardCutoff(bool);
+        void setEnabled(bool val);
 
     private:
         //joint states for Joint state publisher package
@@ -102,11 +100,11 @@ namespace tfr_control {
         //cmd states for velocity driven joints
         hardware_interface::EffortJointInterface joint_effort_interface;
 
-        //the pwm bridge
-        PWMInterface pwm;
         //reads from arduino encoder publisher
         ros::Subscriber arduino_a;
         ros::Subscriber arduino_b;
+        ros::Publisher pwm_publisher;
+        bool enabled;
         tfr_msgs::ArduinoAReadingConstPtr latest_arduino_a;
         tfr_msgs::ArduinoBReadingConstPtr latest_arduino_b;
 
@@ -120,10 +118,6 @@ namespace tfr_control {
         double velocity_values[JOINT_COUNT]{};
         // Populated by us for controller layer to use
         double effort_values[JOINT_COUNT]{};
-
-        //used to avoid brown out and too high of a delta
-        double pwm_values[JOINT_COUNT]{};
-
         //used to limit acceleration pull on the drivebase
         std::pair<double, double> drivebase_v0;
         ros::Time last_update;

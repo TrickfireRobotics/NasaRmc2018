@@ -11,7 +11,7 @@ ros::NodeHandle nh;
 
 //encoder level constants
 const double CPR = 4096; //pulse per revolution
-const double GEARBOX_MPR = 0.88; 
+const double GEARBOX_MPR = 3.33; 
 
 //pin constants
 const int GEARBOX_LEFT_A = 2;
@@ -90,7 +90,7 @@ void setup()
 
 void loop()
 {
-    arduinoReading.tread_left_vel = gearbox_left.getVelocity()*GEARBOX_MPR;
+    arduinoReading.tread_left_vel = gearbox_left.getVelocity()/GEARBOX_MPR;
 
 
     ads1115_a.startADC_SingleEnded(0);

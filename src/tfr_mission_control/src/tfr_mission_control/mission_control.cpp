@@ -224,15 +224,14 @@ namespace tfr_mission_control {
     }
 
     /*
-     * Toggles the control buttons
+     * Toggles the motor buttons
      * */
     void MissionControl::setMotors(bool value)
     {
         ui.motor_enable_button->setEnabled(!value);
         ui.motor_disable_button->setEnabled(value);
     }
-
-
+    
     /*
      * Utility for stopping all motors
      * */
@@ -339,6 +338,7 @@ namespace tfr_mission_control {
     {
         startTimeService();
         toggleControl(true);
+        toggleMotors(true);
         goAutonomousMode();
     }
     
@@ -347,6 +347,7 @@ namespace tfr_mission_control {
     {
         startTimeService();
         toggleControl(true);
+        toggleMotors(true);
         goTeleopMode();
     }
 
@@ -391,7 +392,7 @@ namespace tfr_mission_control {
         setControl(state);
     }
 
-    //toggles the motors for estop (on/off)
+    //toggles control for estop (on/off)
     void MissionControl::toggleMotors(bool state)
     {
         std_srvs::SetBool request;
@@ -399,7 +400,6 @@ namespace tfr_mission_control {
         while(!ros::service::call("toggle_motors", request));
         setMotors(state);
     }
-
 
     //self explanitory
     void MissionControl::renderClock()

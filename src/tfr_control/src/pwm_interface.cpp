@@ -5,7 +5,6 @@ PWMInterface::PWMInterface()
 {
     gpioExport(gpioPin);
     gpioSetDirection(gpioPin, outputPin);
-    enablePWM(false);
     int err = pca9685->openPCA9685();
     if (err < 0)
     {
@@ -30,21 +29,12 @@ void PWMInterface::set(Address address, double value )
         ROS_WARN("Incorrect Motor Value: %f", value);
         return;
     }
-    pca9685->setPWM(static_cast<int>(address),0,map(value));
-}
-
-void PWMInterface::enablePWM(bool value)
-{
-    gpioSetValue(gpioPin, (value)? off : on);
-    set(Address::TREAD_LEFT, 0);
-    set(Address::TREAD_RIGHT, 0);
-    set(Address::ARM_TURNTABLE, 0);
-    set(Address::ARM_LOWER_LEFT, 0);
-    set(Address::ARM_LOWER_RIGHT, 0);
-    set(Address::ARM_UPPER, 0);
-    set(Address::ARM_SCOOP, 0);
-    set(Address::BIN_LEFT, 0);
-    set(Address::BIN_RIGHT, 0);
+    double pwm_1 = value, pwm_0 = pwm_values[static_cast<int>(address)];
+    double sign = ((pwm_1 - pwm_0) > 0) ? 1 : -1;
+    double magnitude = std::min(std::abs(pwm_1-pwm_0), 0.03);
+    pwm_1  = pwm_0 + sign * magnitude;
+    pwm_values[static_cast<int>(address)] = pwm_1; 
+    pca9685->setPWM(static_cast<int>(address),0,map(pwm_1));
 }
 
 

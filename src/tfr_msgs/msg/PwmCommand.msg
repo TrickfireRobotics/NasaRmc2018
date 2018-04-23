@@ -1,0 +1,10 @@
+bool enabled
+float32 tread_left
+float32 tread_right
+float32 arm_turntable
+float32 arm_lower_left
+float32 arm_lower_right
+float32 arm_upper
+float32 arm_scoop
+float32 bin_left
+float32 bin_right

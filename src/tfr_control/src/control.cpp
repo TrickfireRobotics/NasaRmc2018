@@ -90,7 +90,7 @@ class Control
             robot_interface{n, use_fake_values, lower_limits, upper_limits},
             controller_interface{&robot_interface},
             eStopControl{n.advertiseService("toggle_control", &Control::toggleControl,this)},
-            eStopMotors{n.advertiseService("toggle_motors", &Control::toggleMotors,this)},
+            eStopMotors{n.advertiseService("toggle_motors", &Control::toggleControl,this)},
             binService{n.advertiseService("bin_state", &Control::getBinState,this)},
             armService{n.advertiseService("arm_state", &Control::getArmState,this)},
             cycle{1/rate},
@@ -112,6 +112,7 @@ class Control
             robot_interface.write();
             cycle.sleep();
         }
+
     private:
         //the hardware layer
         tfr_control::RobotInterface robot_interface;
@@ -149,7 +150,7 @@ class Control
         bool toggleMotors(std_srvs::SetBool::Request& request,
                 std_srvs::SetBool::Response& response)
         {
-            robot_interface.hardCutoff(!request.data);
+            robot_interface.setEnabled(request.data);
             return true;
         }
 

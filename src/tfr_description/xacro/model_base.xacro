@@ -244,7 +244,7 @@
       <origin xyz="${bin_length} 0 ${-bin_height/2 + bin_height - (9.88 * itom) + (0.5*itom)}" />
     </collision>
   </link>
-  <joint name="bin_back_joint" type="revolute">
+  <joint name="bin_joint" type="revolute">
     <parent link="base_link" />
     <child link="bin_back" />
     <axis xyz="0 -1 0" />

@@ -158,8 +158,8 @@ class DrivebaseOdometryPublisher
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
         double angle; //angle of rotation around the z axis (radians)
-        const double MAX_XY_DELTA = 0.05;
-        const double MAX_THETA_DELTA = 0.1;
+        const double MAX_XY_DELTA = 0.2;
+        const double MAX_THETA_DELTA = 0.2;
         ros::Time t_0;
 
         //callback for publisher

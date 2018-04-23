@@ -131,7 +131,7 @@
     </actuator>
   </transmission>
 
-  <link name="scoop" >
+  <link name="scoop">
     <visual>
       <geometry>
         <box size="${scoop_diameter} ${scoop_width} ${scoop_diameter/2}" />

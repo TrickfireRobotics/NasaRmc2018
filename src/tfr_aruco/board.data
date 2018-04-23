@@ -1,4 +1,4 @@
-150 27.5 300
+150 40 300
 
 # format reminder(everything in cm):
 # S size padding x y
@@ -6,12 +6,21 @@
 
 # remember: camerea height is at 11.5 in. or 29.21 cm
 
-# the big marker on the left and right
+# the huge sized markers on the left and right
 S 27.5 2 0 0
 S 27.5 2 122.5 0
 
-# some small sized markers in the middle (95cm wide and 25cm tall)
-G 14 1 | 6.8 .8 27.5 17
+# the boards center is 95cm wide and 25cm tall
 
-# some medium sized markers on the middle board with the small ones
-G 6 1 | 15.5 1.5 27.5 0
+# some large sized markers on the middle board
+S 15.5 1.5 27.5 1
+S 15.5 1.5 107 1
+
+# some medium sized markers on the middle board
+G 9 2 | 7.1 .5 43 2
+
+# the small sized markers on the middle board
+G 30 2 | 3.1 .25 27.5 17.25
+
+# the small sized markers on the bumber of the board
+G 30 4 | 3.1 .25 27.5 26

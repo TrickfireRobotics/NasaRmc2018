@@ -35,7 +35,7 @@ class TFR_Aruco {
             // set up params
             params = cv::Ptr<cv::aruco::DetectorParameters>(new cv::aruco::DetectorParameters);
             params->cornerRefinementMethod = cv::aruco::CORNER_REFINE_SUBPIX;
-            params->cornerRefinementWinSize = 10;
+            params->cornerRefinementWinSize = 5;
         }
 
         // This is the method that will be called when a client makes use

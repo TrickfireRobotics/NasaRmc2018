@@ -151,7 +151,7 @@ class DrivebaseOdometryPublisher
             transform.transform.translation.y = msg.pose.pose.position.y;
             transform.transform.translation.z = msg.pose.pose.position.z;
             transform.transform.rotation = msg.pose.pose.orientation;
-            tf_broadcaster.sendTransform(transform);
+//            tf_broadcaster.sendTransform(transform);
         }
 
 

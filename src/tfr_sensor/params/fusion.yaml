@@ -9,7 +9,7 @@ frequency: 7
 #stock settings for robots without gps and no big hills
 odom_frame: odom
 base_link_frame: base_footprint
-world_frame: map 
+world_frame: odom 
 two_d_mode: true
 sensor_timeout: 0.5
 transform_timeout: 0.4

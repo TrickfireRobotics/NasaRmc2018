@@ -69,6 +69,11 @@ add_executable(point_broadcaster src/point_broadcaster.cpp)
 target_link_libraries(point_broadcaster ${catkin_LIBRARIES})
 add_dependencies(point_broadcaster ${catkin_EXPORTED_TARGETS})
 
+add_executable(shift_point_broadcaster src/point_broadcaster.cpp)
+target_link_libraries(shift_point_broadcaster ${catkin_LIBRARIES})
+add_dependencies(shift_point_broadcaster ${catkin_EXPORTED_TARGETS})
+
+
 add_executable(obstacle_broadcaster src/obstacle_broadcaster.cpp)
 target_link_libraries(obstacle_broadcaster ${catkin_LIBRARIES})
 add_dependencies(obstacle_broadcaster ${catkin_EXPORTED_TARGETS})

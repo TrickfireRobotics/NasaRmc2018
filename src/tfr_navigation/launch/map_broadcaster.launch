@@ -1,6 +1,6 @@
 <launch>
     <!--spins up a settable broadcaster for the location of the bin-->
-    <node name="map_broadcaster" pkg="tfr_utilities" output="screen" type="point_broadcaster">
+    <node name="shift_map_broadcaster" pkg="tfr_utilities" output="screen" type="point_broadcaster">
         <rosparam>
             parent_frame: map 
             point_frame: odom 

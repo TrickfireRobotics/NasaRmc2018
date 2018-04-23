@@ -35,7 +35,7 @@ imu0_config: [false, false, false,
               false,  false,  true,
               true, true, false,
               false,  false,  true,
-              true,  true,  false]
+              false,  false,  false]
 imu0_differential: true
 imu0_relative: false
 #outputs at ~50 hz whic is >> than fusion hz (10) so we need a big queue

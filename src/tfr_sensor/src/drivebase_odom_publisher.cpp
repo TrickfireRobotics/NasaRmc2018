@@ -26,6 +26,7 @@
 #include <tfr_msgs/SetOdometry.h>
 #include <tfr_msgs/PoseSrv.h>
 #include <nav_msgs/Odometry.h>
+#include <std_srvs/Empty.h>
 #include <tf/transform_datatypes.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
@@ -139,19 +140,6 @@ class DrivebaseOdometryPublisher
                 0,    0,    0, 5e-2,    0,    0,
                 0,    0,    0,    0, 5e-2,    0,
                 0,    0,    0,    0,    0, 5e-2 };
-
-            //finally send it across the network
-            odometry_publisher.publish(msg);
-            //now we broadcast transforms
-            geometry_msgs::TransformStamped transform{};
-            transform.header.stamp = ros::Time::now();
-            transform.header.frame_id = "odom";
-            transform.child_frame_id = "base_footprint";
-            transform.transform.translation.x = msg.pose.pose.position.x;
-            transform.transform.translation.y = msg.pose.pose.position.y;
-            transform.transform.translation.z = msg.pose.pose.position.z;
-            transform.transform.rotation = msg.pose.pose.orientation;
-//            tf_broadcaster.sendTransform(transform);
         }
 
 
@@ -196,35 +184,25 @@ class DrivebaseOdometryPublisher
             auto dx = request.pose.position.x - x;
             if (std::abs(dx) >= MAX_XY_DELTA)
                 dx = (dx >= 0) ? MAX_XY_DELTA : -MAX_XY_DELTA;
-//            x += dx;
+            x += dx;
 
             auto dy = request.pose.position.y - y;
             if (std::abs(dy) > MAX_XY_DELTA)
                 dy = (dy >= 0) ? MAX_XY_DELTA : -MAX_XY_DELTA;
-//            y += dy;
+            y += dy;
             
             auto siny = +2.0 * (request.pose.orientation.w * request.pose.orientation.z + request.pose.orientation.x * request.pose.orientation.y);
             auto cosy = +1.0 - 2.0 * (request.pose.orientation.y * request.pose.orientation.y + request.pose.orientation.z * request.pose.orientation.z );  
             auto new_ang = atan2(siny, cosy);
 
             auto dth = new_ang - angle;
-//            angle += dth;
-
             if (std::abs(dth) > MAX_THETA_DELTA)
                 dth = (dth >= 0) ? MAX_THETA_DELTA : -MAX_THETA_DELTA;
+            angle += dth;
 
-            //if the map moves we need to do
-            tfr_msgs::PoseSrv::Request set_request{};
-            set_request.pose.pose.position.x = x;
-            set_request.pose.pose.position.y = y;
-            double cy = cos(new_ang * 0.5);
-            double sy = sin(new_ang * 0.5);
-            double cr = cos(0 * 0.5);
-            double cp = cos(0 * 0.5);
-            set_request.pose.pose.orientation.w = cy * cr * cp;
-            set_request.pose.pose.orientation.z = sy * cr * cp;
-            tfr_msgs::PoseSrv::Response set_response;
-            ros::service::call("set_map", set_request, set_response);
+            std_srvs::Empty::Request req;
+            std_srvs::Empty::Response res;
+            ros::service::call("/move_base/clear_costmaps", req, res);
             return true;
         }
 
@@ -235,24 +213,11 @@ class DrivebaseOdometryPublisher
                 tfr_msgs::SetOdometry::Response& response)
         {
 
-            //x = request.pose.position.x;
-            //y = request.pose.position.y;
+            x = request.pose.position.x;
+            y = request.pose.position.y;
             auto siny = +2.0 * (request.pose.orientation.w * request.pose.orientation.z + request.pose.orientation.x * request.pose.orientation.y);
             auto cosy = +1.0 - 2.0 * (request.pose.orientation.y * request.pose.orientation.y + request.pose.orientation.z * request.pose.orientation.z );  
-            auto new_angle = atan2(siny, cosy);
-
-            //if the map moves we must as well
-            tfr_msgs::PoseSrv::Request set_request{};
-            set_request.pose.pose.position.x = x;
-            set_request.pose.pose.position.y = y;
-            double cy = cos(new_angle * 0.5);
-            double sy = sin(new_angle * 0.5);
-            double cr = cos(0 * 0.5);
-            double cp = cos(0 * 0.5);
-            set_request.pose.pose.orientation.w = cy * cr * cp;
-            set_request.pose.pose.orientation.z = sy * cr * cp;
-            tfr_msgs::PoseSrv::Response set_response;
-            ros::service::call("set_map", set_request, set_response);
+            auto angle = atan2(siny, cosy);
             return true;
         }
 };

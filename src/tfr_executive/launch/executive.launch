@@ -7,7 +7,6 @@
             navigation_to: true 
             hole: false 
             digging: false 
-            post_localization:  false
             navigation_from: true 
             dumping: false 
         </rosparam>

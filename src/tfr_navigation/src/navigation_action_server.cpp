@@ -42,7 +42,7 @@ class Navigator
                 const double& height_adj,
                 const std::string &bin_f):
             node{n}, 
-            rate{2},
+            rate{10},
             height_adjustment{height_adj},
             constraints{c},
             server{n, "navigate", boost::bind(&Navigator::navigate, this, _1) ,false}, 

@@ -45,6 +45,12 @@
       </geometry>
       <origin xyz="${-lower_arm_height/2} 0 ${14*itom}" />
     </visual>
+    <collision>
+      <geometry>
+        <box size="${lower_arm_height} ${lower_arm_width} ${lower_arm_primary_length}"/>
+      </geometry>
+      <origin xyz="${-lower_arm_height/2} 0 ${14*itom}" />
+    </collision>
   </link>
   <joint name="lower_arm_joint" type="revolute">
     <parent link="turntable" />
@@ -74,6 +80,11 @@
         <box size="${0.25*itom} ${lower_arm_width} ${lower_arm_length - lower_arm_primary_length}"/>
       </geometry>
     </visual>
+    <collision>
+      <geometry>
+        <box size="${0.25*itom} ${lower_arm_width} ${lower_arm_length - lower_arm_primary_length}"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="lower_arm_bottom_joint" type="fixed">
     <parent link="lower_arm" />
@@ -88,6 +99,12 @@
       </geometry>
       <origin xyz="${0.125*itom} 0 ${-(lower_arm_length - lower_arm_primary_length) / 2 * sqrt2}" rpy="0 0 0" />
     </visual>
+    <collision>
+      <geometry>
+        <box size="${0.25*itom} ${lower_arm_width} ${(lower_arm_length - lower_arm_primary_length) * sqrt2}"/>
+      </geometry>
+      <origin xyz="${0.125*itom} 0 ${-(lower_arm_length - lower_arm_primary_length) / 2 * sqrt2}" rpy="0 0 0" />
+    </collision>
   </link>
   <joint name="lower_arm_slope_joint" type="fixed">
     <parent link="lower_arm" />

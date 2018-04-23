@@ -71,9 +71,14 @@
         <box size="${tread_mid_length} ${tread_width} ${tread_mid_height}"/>
       </geometry>
     </visual>
+    <collision>
+      <geometry>
+        <box size="${tread_mid_length} ${tread_width} ${tread_mid_height}"/>
+      </geometry>
+    </collision>
   </link>
 
-  <joint name="tread_left_joint" type="fixed">
+  <joint name="left_tread_joint" type="fixed">
     <parent link="base_link" />
     <child link="tread_left_link" />
     <origin xyz="0 ${tread_spacing / 2 + tread_width / 2} 0" />
@@ -85,9 +90,14 @@
         <box size="${tread_mid_length} ${tread_width} ${tread_mid_height}"/>
       </geometry>
     </visual>
+    <collision>
+      <geometry>
+        <box size="${tread_mid_length} ${tread_width} ${tread_mid_height}"/>
+      </geometry>
+    </collision>
   </link>
 
-  <joint name="tread_right_joint" type="fixed">
+  <joint name="right_tread_joint" type="fixed">
     <parent link="base_link" />
     <child link="tread_right_link" />
     <origin xyz="0 ${-tread_spacing / 2 - tread_width / 2} 0" />
@@ -100,6 +110,12 @@
       </geometry>
       <origin rpy="${pi/2} 0.0 0.0" />
     </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${tread_end_radius}" length="${tread_width}" />
+      </geometry>
+      <origin rpy="${pi/2} 0.0 0.0" />
+    </collision>
   </link>
 
   <joint name="tread_left_front_joint" type="fixed">
@@ -115,6 +131,12 @@
       </geometry>
       <origin rpy="${pi/2} 0.0 0.0" />
     </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${tread_end_radius}" length="${tread_width}" />
+      </geometry>
+      <origin rpy="${pi/2} 0.0 0.0" />
+    </collision>
   </link>
 
   <joint name="tread_left_rear_joint" type="fixed">
@@ -130,6 +152,12 @@
       </geometry>
       <origin rpy="${pi/2} 0.0 0.0" />
     </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${tread_end_radius}" length="${tread_width}" />
+      </geometry>
+      <origin rpy="${pi/2} 0.0 0.0" />
+    </collision>
   </link>
 
   <joint name="tread_right_front_joint" type="fixed">
@@ -145,6 +173,12 @@
       </geometry>
       <origin rpy="${pi/2} 0.0 0.0" />
     </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${tread_end_radius}" length="${tread_width}" />
+      </geometry>
+      <origin rpy="${pi/2} 0.0 0.0" />
+    </collision>
   </link>
 
   <joint name="tread_right_rear_joint" type="fixed">
@@ -160,6 +194,12 @@
       </geometry>
       <origin xyz="${tread_slope_length/2} 0.0 ${-1.25/2*itom}" />
     </visual>
+    <collision>
+      <geometry>
+        <box size="${tread_slope_length} ${tread_width} ${1.25*itom}"/>
+      </geometry>
+      <origin xyz="${tread_slope_length/2} 0.0 ${-1.25/2*itom}" />
+    </collision>
   </link>
 
   <joint name="front_right_slope_joint" type="fixed">
@@ -175,6 +215,12 @@
       </geometry>
       <origin xyz="${tread_slope_length/2} 0.0 ${-1.25/2*itom}" />
     </visual>
+    <collision>
+      <geometry>
+        <box size="${tread_slope_length} ${tread_width} ${1.25*itom}"/>
+      </geometry>
+      <origin xyz="${tread_slope_length/2} 0.0 ${-1.25/2*itom}" />
+    </collision>
   </link>
 
   <joint name="front_left_slope_joint" type="fixed">
@@ -191,8 +237,14 @@
       </geometry>
       <origin xyz="${bin_length} 0 ${-bin_height/2 + bin_height - (9.88 * itom) + (0.5*itom)}" />
     </visual>
+    <collision>
+      <geometry>
+        <box size="${0.125*itom} ${bin_width} ${bin_height}" />
+      </geometry>
+      <origin xyz="${bin_length} 0 ${-bin_height/2 + bin_height - (9.88 * itom) + (0.5*itom)}" />
+    </collision>
   </link>
-  <joint name="bin_back_joint" type="revolute">
+  <joint name="bin_joint" type="revolute">
     <parent link="base_link" />
     <child link="bin_back" />
     <axis xyz="0 -1 0" />
@@ -206,6 +258,11 @@
         <box size="${bin_length} ${0.125*itom} ${bin_height}"/>
       </geometry>
     </visual>
+    <collision>
+      <geometry>
+        <box size="${bin_length} ${0.125*itom} ${bin_height}"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="bin_right_joint" type="fixed">
     <parent link="bin_back" />
@@ -219,6 +276,11 @@
         <box size="${bin_length} ${0.125*itom} ${bin_height}"/>
       </geometry>
     </visual>
+    <collision>
+      <geometry>
+        <box size="${bin_length} ${0.125*itom} ${bin_height}"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="bin_left_joint" type="fixed">
     <parent link="bin_back" />
@@ -232,6 +294,11 @@
         <box size="${13.84*itom} ${bin_width} ${0.125*itom}"/>
       </geometry>
     </visual>
+    <collision>
+      <geometry>
+        <box size="${13.84*itom} ${bin_width} ${0.125*itom}"/>
+      </geometry>
+    </collision>
   </link>
   <joint name="bin_bottom_joint" type="fixed">
     <parent link="bin_back" />
@@ -246,6 +313,12 @@
       </geometry>
       <origin xyz="0 0 ${-bin_height*sqrt2*0.5}"/>
     </visual>
+    <collision>
+      <geometry>
+        <box size="${0.125*itom} ${bin_width} ${bin_height*sqrt2}" />
+      </geometry>
+      <origin xyz="0 0 ${-bin_height*sqrt2*0.5}"/>
+    </collision>
   </link>
   <joint name="bin_slope_joint" type="fixed">
     <parent link="bin_back" />

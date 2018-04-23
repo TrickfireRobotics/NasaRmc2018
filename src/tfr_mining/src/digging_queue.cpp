@@ -6,7 +6,7 @@ namespace tfr_mining
     DiggingQueue::DiggingQueue(ros::NodeHandle nh) : sets{}
     {
         DiggingSet set;
-        generateDigAndDump(nh, set, 0.7, 1);
+        generateDigAndDump(nh, set, 0.0, 1);
         sets.push(set);
     }
 

@@ -50,8 +50,8 @@ arm_controller:
         - upper_arm_joint
     gains:
         turntable_joint: {p: 0.3, i: 0.0, d: 0.00}
-        lower_arm_joint: {p: 0.3, i: 0.0, d: 0.0}
-        upper_arm_joint: {p: 0.3, i: 0.0, d: 0.00}
+        lower_arm_joint: {p: 1.6, i: 0.8, d: 0.02}
+        upper_arm_joint: {p: 0.8, i: 0.2, d: 0.03}
     constraints:
         goal_time: 10.0
 

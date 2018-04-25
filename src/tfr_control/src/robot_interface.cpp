@@ -82,27 +82,37 @@ namespace tfr_control
             //velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0;
             //effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
 
-            ////LOWER_ARM TODO
-            //position_values[static_cast<int>(Joint::LOWER_ARM)] = reading_a.arm_lower_pos
-            //velocity_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
-            //effort_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
+            //LOWER_ARM
+            position_values[static_cast<int>(Joint::LOWER_ARM)] = reading_a.arm_lower_pos;
+            velocity_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
+            effort_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
 
-            ////UPPER_ARM TODO
+            //UPPER_ARM
+            position_values[static_cast<int>(Joint::UPPER_ARM)] = reading_a.arm_upper_pos;
+            velocity_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
+            effort_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
+
+            //SCOOP
+            position_values[static_cast<int>(Joint::SCOOP)] = reading_a.arm_scoop_pos;
+            velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
+            effort_values[static_cast<int>(Joint::SCOOP)] = 0;
+        }
+        else
+        {
+            //LOWER_ARM
+            position_values[static_cast<int>(Joint::LOWER_ARM)] = reading_a.arm_lower_pos;
+            velocity_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
+            effort_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
+
+            ////UPPER_ARM
             //position_values[static_cast<int>(Joint::UPPER_ARM)] = reading_a.arm_upper_pos;
             //velocity_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
             //effort_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
 
             //SCOOP
-           position_values[static_cast<int>(Joint::SCOOP)] = reading_a.arm_scoop_pos;
-           velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
-           effort_values[static_cast<int>(Joint::SCOOP)] = 0;
-        }
-        else
-        {
-            //SCOOP
-            position_values[static_cast<int>(Joint::SCOOP)] = reading_a.arm_scoop_pos;
-            velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
-            effort_values[static_cast<int>(Joint::SCOOP)] = 0;
+            //position_values[static_cast<int>(Joint::SCOOP)] = reading_a.arm_scoop_pos;
+            //velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
+            //effort_values[static_cast<int>(Joint::SCOOP)] = 0;
         }
 
  
@@ -143,18 +153,27 @@ namespace tfr_control
             adjustFakeJoint(Joint::TURNTABLE);
 
             //LOWER_ARM
-            adjustFakeJoint(Joint::LOWER_ARM);
+            //NOTE we reverse these because actuator is mounted backwards
+            signal = -angleToPWM(command_values[static_cast<int>(Joint::LOWER_ARM)],
+                        position_values[static_cast<int>(Joint::LOWER_ARM)]);
+            test = signal;
+            command.arm_lower = signal;
+
 
             //UPPER_ARM
             adjustFakeJoint(Joint::UPPER_ARM);
-            //adjustFakeJoint(Joint::SCOOP);
+            //signal = angleToPWM(command_values[static_cast<int>(Joint::UPPER_ARM)],
+            //            position_values[static_cast<int>(Joint::UPPER_ARM)]);
+            //test = signal;
+            //command.arm_upper = signal;
+
 
             //SCOOP
-            signal = angleToPWM(command_values[static_cast<int>(Joint::SCOOP)],
-                        position_values[static_cast<int>(Joint::SCOOP)]);
-            test = signal;
-            command.arm_scoop = signal;
-            ROS_INFO("here1");
+            adjustFakeJoint(Joint::SCOOP);
+           // signal = angleToPWM(command_values[static_cast<int>(Joint::SCOOP)],
+           //             position_values[static_cast<int>(Joint::SCOOP)]);
+           // test = signal;
+           // command.arm_scoop = signal;
 
         }
         else  // we are working with the real arm
@@ -167,14 +186,17 @@ namespace tfr_control
 
             //UPPER_ARM TODO
             adjustFakeJoint(Joint::UPPER_ARM);
+            signal = angleToPWM(command_values[static_cast<int>(Joint::UPPER_ARM)],
+                        position_values[static_cast<int>(Joint::UPPER_ARM)]);
+            command.arm_upper = signal;
+
+
 
             //SCOOP
             signal = angleToPWM(command_values[static_cast<int>(Joint::SCOOP)],
                         position_values[static_cast<int>(Joint::SCOOP)]);
-            test = signal;
             command.arm_scoop = signal;
 
-            ROS_INFO("here2");
          }
 
         //LEFT_TREAD

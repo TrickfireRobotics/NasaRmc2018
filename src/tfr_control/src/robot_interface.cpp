@@ -323,8 +323,8 @@ namespace tfr_control
         if (std::abs(difference) > min_delta)
         {
             int sign = (difference < 0) ? -1 : 1;
-            double magnitude = std::min(std::abs(desired)/max_delta, 0.5);           
-            ROS_INFO("scaling this %f to that %f with this sign %d, and this magnitude %f",desired, std::abs(desired)/max_delta, sign, magnitude );
+            double magnitude = std::min(std::abs(difference)/max_delta, 0.92);           
+            ROS_INFO("scaling this %f to that %f with this sign %d, and this magnitude %f",difference, std::abs(difference)/max_delta, sign, magnitude );
             return sign*magnitude;
         }
         return 0;

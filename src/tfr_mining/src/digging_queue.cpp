@@ -35,20 +35,6 @@ namespace tfr_mining
         DiggingSet set;
         loadTestingDig(nh, set, "test_ready");
         loadTestingDig(nh, set, "test_dig1");
-        loadTestingDig(nh, set, "test_ready");
-        loadTestingDig(nh, set, "test_dig1");
-        loadTestingDig(nh, set, "test_ready");
-        loadTestingDig(nh, set, "test_dig1");
-        loadTestingDig(nh, set, "test_ready");
-        loadTestingDig(nh, set, "test_dig1");
-        loadTestingDig(nh, set, "test_ready");
-        loadTestingDig(nh, set, "test_dig1");
-        loadTestingDig(nh, set, "test_ready");
-        loadTestingDig(nh, set, "test_dig1");
-        loadTestingDig(nh, set, "test_ready");
-        loadTestingDig(nh, set, "test_dig1");
-        loadTestingDig(nh, set, "test_ready");
-        loadTestingDig(nh, set, "test_dig1");
         sets.push(set);
     }
 

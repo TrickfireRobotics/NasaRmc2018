@@ -63,6 +63,6 @@ arm_end_controller:
     joints:
         - scoop_joint
     gains:
-        scoop_joint: {p: 1, i: 0.3, d: 0.001}
+        scoop_joint: {p: 0.75, i: 0.3, d: 0.17}
     constraints:
         goal_time: 10.0

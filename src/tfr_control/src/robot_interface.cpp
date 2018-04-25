@@ -77,21 +77,20 @@ namespace tfr_control
 
         if (!use_fake_values)
         {
-            //TURNTABLE
-            position_values[static_cast<int>(Joint::TURNTABLE)] = reading_b.arm_turntable_pos;
-            velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0;
-            effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
+            ////TURNTABLE TODO
+            //position_values[static_cast<int>(Joint::TURNTABLE)] = reading_b.arm_turntable_pos;
+            //velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0;
+            //effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
 
-            //LOWER_ARM
-            position_values[static_cast<int>(Joint::LOWER_ARM)] = 
-                (reading_a.arm_lower_left_pos+ reading_a.arm_lower_right_pos)/2;
-            velocity_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
-            effort_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
+            ////LOWER_ARM TODO
+            //position_values[static_cast<int>(Joint::LOWER_ARM)] = reading_a.arm_lower_pos
+            //velocity_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
+            //effort_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
 
-            //UPPER_ARM
-            position_values[static_cast<int>(Joint::UPPER_ARM)] = reading_a.arm_upper_pos;
-            velocity_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
-            effort_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
+            ////UPPER_ARM TODO
+            //position_values[static_cast<int>(Joint::UPPER_ARM)] = reading_a.arm_upper_pos;
+            //velocity_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
+            //effort_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
 
             //SCOOP
             position_values[static_cast<int>(Joint::SCOOP)] = reading_a.arm_scoop_pos;
@@ -129,6 +128,7 @@ namespace tfr_control
             reading_a = *latest_arduino_a;
 
         double signal;
+        double test;
         if (use_fake_values) //test code  for working with rviz simulator
         {
             //TURNTABLE
@@ -145,44 +145,34 @@ namespace tfr_control
         }
         else  // we are working with the real arm
         {
-            //TURNTABLE
-            signal = turntableAngleToPWM(command_values[static_cast<int>(Joint::TURNTABLE)],
-                    position_values[static_cast<int>(Joint::TURNTABLE)]);
-            command.arm_turntable = signal;
+            //TURNTABLE TODO 
+            adjustFakeJoint(Joint::TURNTABLE);
+            
+            //LOWER_ARM TODO
+            adjustFakeJoint(Joint::LOWER_ARM);
 
-            //LOWER_ARM
-            auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::LOWER_ARM)],
-                        reading_a.arm_lower_left_pos,
-                        reading_a.arm_lower_right_pos);
-            command.arm_lower_left = twin_signal.first;
-            command.arm_lower_right = twin_signal.second;
-
-            //UPPER_ARM
-            signal = angleToPWM(command_values[static_cast<int>(Joint::UPPER_ARM)],
-                        position_values[static_cast<int>(Joint::UPPER_ARM)]);
-            command.arm_upper = signal;
+            //UPPER_ARM TODO
+            adjustFakeJoint(Joint::UPPER_ARM);
 
             //SCOOP
             signal = angleToPWM(command_values[static_cast<int>(Joint::SCOOP)],
                         position_values[static_cast<int>(Joint::SCOOP)]);
+            test = signal;
             command.arm_scoop = signal;
         }
 
         //LEFT_TREAD
-        signal = drivebaseVelocityToPWM( -command_values[static_cast<int>(Joint::LEFT_TREAD)],
-                    drivebase_v0.first);
+        signal = drivebaseVelocityToPWM(-command_values[static_cast<int>(Joint::LEFT_TREAD)], drivebase_v0.first);
         command.tread_left = signal;
-        auto left = signal;
 
         //RIGHT_TREAD
         signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
                     drivebase_v0.second);
         command.tread_right = signal;
-        auto right = signal;
 
-//        ROS_INFO("encoder %f %f ", -velocity_values[static_cast<int>(Joint::LEFT_TREAD)],velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] );
-//        ROS_INFO("command %f %f ", -command_values[static_cast<int>(Joint::LEFT_TREAD)],command_values[static_cast<int>(Joint::RIGHT_TREAD)] );
-//        ROS_INFO("pwm %f %f ", left,right);
+        ROS_INFO("scoop %f", position_values[static_cast<int>(Joint::LOWER_ARM)]);
+        ROS_INFO("command %f", command_values[static_cast<int>(Joint::LOWER_ARM)]);
+        ROS_INFO("pwm %f", test);
 
         //BIN
         auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::BIN)],
@@ -217,7 +207,6 @@ namespace tfr_control
                             upper_limits[i]), lower_limits[i]);
         }
     }
-
 
     /*
      * Resets the commands to a safe neutral state
@@ -308,10 +297,14 @@ namespace tfr_control
     double RobotInterface::angleToPWM(const double &desired, const double &actual)
     {
         //we don't anticipate this changing very much keep at method level
-        double angle_tolerance = 0.01;
+        double max_delta = 0.139626;
         double difference = desired - actual;
-        if (abs(difference) > angle_tolerance)
-            return (difference < 0) ? -1 : 1;
+        if (abs(difference) > tfr_utilities::JointAngle::ANGLE_TOLERANCE)
+        {
+            int sign = (desired < 0) ? -1 : 1;
+            double magnitude = std::min(std::abs(desired)/max_delta, 0.92);           
+            return sign*magnitude;
+        }
         return 0;
     }
 
@@ -370,13 +363,13 @@ namespace tfr_control
         //limit for max velocity
         //we don't anticipate this changing very much keep at method level
         double max_vel = 0.4;
-        int sign = (v_1 < 0) ? -1 : 1;
-        double magnitude = std::min(std::abs(v_1)/max_vel, 0.92);
-        if (magnitude > 0.05 || magnitude < -0.05)
-            return sign * 0.8;
-        else
-            return 0;
-        //return sign * magnitude;
+        if (v_1 > 0.05 || v_1 < -0.05)
+        {
+            int sign = (v_1 < 0) ? -1 : 1;
+            double magnitude = std::min(std::abs(v_1)/max_vel, 0.92);
+            return sign * magnitude;
+        }
+        return 0;
     }
 
     /*
@@ -404,6 +397,4 @@ namespace tfr_control
     {
         latest_arduino_b = msg;
     }
-
-
 }

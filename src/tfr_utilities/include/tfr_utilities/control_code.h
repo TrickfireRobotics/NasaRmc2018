@@ -14,12 +14,12 @@ namespace tfr_utilities
         //NOTES must match up with constants in model
         static const float ARM_TURNTABLE_MAX = 6.28319;
         static const float ARM_TURNTABLE_MIN = 0.0;
-        static const float ARM_LOWER_MAX = 1.69297;
-        static const float ARM_LOWER_MIN = 0.20944;
-        static const float ARM_UPPER_MAX = 1.8675;
-        static const float ARM_UPPER_MIN = 0.0;
-        static const float ARM_SCOOP_MAX = 1.3446;
-        static const float ARM_SCOOP_MIN = -0.872665;
+        static const float ARM_LOWER_MAX = 1.65806;
+        static const float ARM_LOWER_MIN = 0.10472;
+        static const float ARM_UPPER_MAX = 2.30383;
+        static const float ARM_UPPER_MIN = 1.06465;
+        static const float ARM_SCOOP_MAX = 1.44862;
+        static const float ARM_SCOOP_MIN = -1.46608;
         static const float BIN_MAX = 0.785398;
         static const float BIN_MIN = 0.0;
     }

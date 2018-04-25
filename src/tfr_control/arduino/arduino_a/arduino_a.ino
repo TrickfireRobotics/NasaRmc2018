@@ -32,7 +32,7 @@ struct Potentiometer
         // more noise we have. The higher the coefficient, the more polluted our 
         // result becomes with erroneous noise data. 4 seems to be a good middle
         // ground.
-        estimate += (m*val + b - estimate)/4;
+        estimate += (0.0174533*(m*val + b) - estimate)/4;
         return estimate;
     }
 };

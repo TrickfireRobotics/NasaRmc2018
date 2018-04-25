@@ -1,6 +1,12 @@
 # Holds all of the positions for the test client to travel to (order doesn't
 # matter in this file, but this is the correct order for a dig cycle)
 positions:
+  # For running the single-dig example, it will use these positions in this order:
+  #  - Ready
+  #  - Dig1 (or Dig[n] if you change the dig number parameter)
+  #  - Scoop1 (or Scoop[n] if you change the dig number parameter)
+  #  - Out
+  #  - Safe
   ready: [1.21, 0.84, -1.06]
   dig1: [1.25, 1.05, -0.2]
   scoop1: [1.25, 1.05, -0.2]

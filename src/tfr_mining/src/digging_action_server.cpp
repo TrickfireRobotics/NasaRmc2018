@@ -99,7 +99,8 @@ private:
             }
         }
 
-        ROS_INFO("Moving arm to safe driving/dumping position");
+        // Disabled for initial arm testing: this should be reenabled for actual digging
+        /*ROS_INFO("Moving arm to safe driving/dumping position");
 
         tfr_msgs::ArmMoveGoal final_goal;
         final_goal.pose.resize(4);
@@ -119,12 +120,10 @@ private:
             final_goal.pose[2] = final_angles[2];
             final_goal.pose[3] = final_angles[3];
         }
-        ROS_INFO("calculated goal");
 
         client.sendGoal(final_goal);
         ros::Rate rate(10.0);
 
-        ROS_INFO("sent goal");
         while (client.getState().isDone() && ros::ok())
         {
             if (server.isPreemptRequested())
@@ -138,16 +137,14 @@ private:
 
             rate.sleep();
         }
-        ROS_INFO("finished goal");
         if (client.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
         {
             ROS_WARN("Error moving arm to final position, exiting.");
             tfr_msgs::DiggingResult result;
             server.setAborted(result);
             return;
-        }
+        }*/
 
-        ROS_INFO("set succeeedd");
         tfr_msgs::DiggingResult result;
         server.setSucceeded(result);
     }

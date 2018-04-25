@@ -26,8 +26,15 @@ namespace tfr_mining
         // Do a single surface-level dig
         //  - To change the digging depth, change the last parameter to anything from 1-4.
         //    Do note that this uses different positions from digging_queue_templates.yaml
-        DiggingSet set;
+        /*DiggingSet set;
         generateSingleDig(nh, set, 0.0, 1);
+        sets.push(set);*/
+
+        // Testing digging code:
+        //  This loads from testing_queue_templates.yaml.
+        DiggingSet set;
+        loadTestingDig(nh, set, "test_ready");
+        loadTestingDig(nh, set, "test_thingy");
         sets.push(set);
     }
 
@@ -43,7 +50,8 @@ namespace tfr_mining
         return set;
     }
 
-    void DiggingQueue::generateSingleDig(ros::NodeHandle &nh, DiggingSet &set, double rotation, int dig_number) {
+    void DiggingQueue::generateSingleDig(ros::NodeHandle &nh, DiggingSet &set, double rotation, int dig_number)
+    {
         // Ready (constant no matter what)
         std::vector<double> ready_pos;
         double ready_time;
@@ -214,5 +222,20 @@ namespace tfr_mining
             release_pos.insert(it, rotation + (3.14159265 / 4));
             set.insertState(release_pos, release_time);
         }
+    }
+
+    void DiggingQueue::loadTestingDig(ros::NodeHandle &nh, DiggingSet &set, std::string pos_name)
+    {
+        // Ready (constant no matter what)
+        std::vector<double> pos;
+        std::stringbuf buf;
+        buf.sputn("test_positions/", 15);
+        buf.sputn(pos_name.c_str(), pos_name.length());
+        if (!nh.getParam(buf.str(), pos))
+        {
+            ROS_WARN("Error loading state");
+            return;
+        }
+        set.insertState(pos, 0);
     }
 }

@@ -53,6 +53,8 @@ namespace tfr_mining
          * This is used to determine whether we should dump to the side or into the bin.
          **/
         void generateDigAndDump(ros::NodeHandle &nh, DiggingSet &set, double rotation, int dig_number);
+
+        void loadTestingDig(ros::NodeHandle &nh, DiggingSet &set, std::string pos_name);
     };
 }
 

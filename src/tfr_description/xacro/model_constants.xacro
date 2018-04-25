@@ -54,8 +54,8 @@
   <xacro:property name="upper_arm_max" value="2.21" />
 
   <!-- Scoop parameters -->
-  <xacro:property name="scoop_width" value="${10*itom}" />
-  <xacro:property name="scoop_diameter" value="${10.5*itom}" />
-  <xacro:property name="scoop_min" value="-1.607" />
-  <xacro:property name="scoop_max" value="1.15" />
+  <xacro:property name="scoop_width" value="${10.25*itom}" />
+  <xacro:property name="scoop_diameter" value="${11.5*itom}" />
+  <xacro:property name="scoop_min" value="-1.633" />
+  <xacro:property name="scoop_max" value="1.115" />
 </robot>

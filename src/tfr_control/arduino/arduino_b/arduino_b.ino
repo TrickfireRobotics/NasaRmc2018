@@ -13,6 +13,8 @@ ros::NodeHandle nh;
 //encoder level constants
 const double CPR = 4096; //pulse per revolution
 const double GEARBOX_MPR = 3.33; 
+
+//TODO note this rev/rev is acually 0.208, but I had to step it up to make testing work
 const double TURNTABLE_RPR = 60;
 
 //pin constants
@@ -39,6 +41,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 //encoders
 VelocityQuadrature gearbox_right(CPR, GEARBOX_RIGHT_A, GEARBOX_RIGHT_B);
+
 //TODO Quadrature turntable(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 tfr_msgs::ArduinoBReading arduino_reading;
 ros::Publisher arduino("arduino_b", &arduino_reading);
@@ -131,11 +134,8 @@ void setAddress(const Address &addr, float val)
         rounded = static_cast<int16_t>(magnitude + 0.5);
     else
         rounded = static_cast<int16_t>(magnitude - 0.5);
-    
-    
+
     uint16_t pwm_signal = NEUTRAL + rounded;
-
-
 
     //scale the value to control change
     int16_t delta = pwm_signal-pwm_values[address];

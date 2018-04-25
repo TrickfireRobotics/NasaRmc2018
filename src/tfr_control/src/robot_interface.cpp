@@ -93,11 +93,19 @@ namespace tfr_control
             //effort_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
 
             //SCOOP
+           position_values[static_cast<int>(Joint::SCOOP)] = reading_a.arm_scoop_pos;
+           velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
+           effort_values[static_cast<int>(Joint::SCOOP)] = 0;
+        }
+        else
+        {
+            //SCOOP
             position_values[static_cast<int>(Joint::SCOOP)] = reading_a.arm_scoop_pos;
             velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
             effort_values[static_cast<int>(Joint::SCOOP)] = 0;
         }
 
+ 
         //BIN
         position_values[static_cast<int>(Joint::BIN)] = 
             (reading_a.bin_left_pos + reading_a.bin_right_pos)/2;
@@ -139,9 +147,15 @@ namespace tfr_control
 
             //UPPER_ARM
             adjustFakeJoint(Joint::UPPER_ARM);
+            //adjustFakeJoint(Joint::SCOOP);
 
             //SCOOP
-            adjustFakeJoint(Joint::SCOOP);
+            signal = angleToPWM(command_values[static_cast<int>(Joint::SCOOP)],
+                        position_values[static_cast<int>(Joint::SCOOP)]);
+            test = signal;
+            command.arm_scoop = signal;
+            ROS_INFO("here1");
+
         }
         else  // we are working with the real arm
         {
@@ -159,7 +173,9 @@ namespace tfr_control
                         position_values[static_cast<int>(Joint::SCOOP)]);
             test = signal;
             command.arm_scoop = signal;
-        }
+
+            ROS_INFO("here2");
+         }
 
         //LEFT_TREAD
         signal = drivebaseVelocityToPWM(-command_values[static_cast<int>(Joint::LEFT_TREAD)], drivebase_v0.first);
@@ -170,8 +186,10 @@ namespace tfr_control
                     drivebase_v0.second);
         command.tread_right = signal;
 
-        ROS_INFO("scoop %f", position_values[static_cast<int>(Joint::LOWER_ARM)]);
-        ROS_INFO("command %f", command_values[static_cast<int>(Joint::LOWER_ARM)]);
+        ROS_INFO("scoop %f", position_values[static_cast<int>(Joint::SCOOP)]);
+        ROS_INFO("upper %f", position_values[static_cast<int>(Joint::UPPER_ARM)]);
+        ROS_INFO("lower %f", position_values[static_cast<int>(Joint::LOWER_ARM)]);
+        ROS_INFO("command %f", command_values[static_cast<int>(Joint::SCOOP)]);
         ROS_INFO("pwm %f", test);
 
         //BIN
@@ -200,7 +218,7 @@ namespace tfr_control
         int i = static_cast<int>(j);
         position_values[i] = command_values[i];
         // If this joint has limits, clamp the range down
-        if (abs(lower_limits[i]) >= 1E-3 || abs(upper_limits[i]) >= 1E-3) 
+        if (std::abs(lower_limits[i]) >= 1E-3 || std::abs(upper_limits[i]) >= 1E-3) 
         {
             position_values[i] =
                 std::max(std::min(position_values[i],
@@ -297,12 +315,16 @@ namespace tfr_control
     double RobotInterface::angleToPWM(const double &desired, const double &actual)
     {
         //we don't anticipate this changing very much keep at method level
-        double max_delta = 0.139626;
+        double min_delta = 0.01;
+        double max_delta = 0.13;
+
         double difference = desired - actual;
-        if (abs(difference) > tfr_utilities::JointAngle::ANGLE_TOLERANCE)
+        ROS_INFO("delta: %f", difference);
+        if (std::abs(difference) > min_delta)
         {
-            int sign = (desired < 0) ? -1 : 1;
-            double magnitude = std::min(std::abs(desired)/max_delta, 0.92);           
+            int sign = (difference < 0) ? -1 : 1;
+            double magnitude = std::min(std::abs(desired)/max_delta, 0.5);           
+            ROS_INFO("scaling this %f to that %f with this sign %d, and this magnitude %f",desired, std::abs(desired)/max_delta, sign, magnitude );
             return sign*magnitude;
         }
         return 0;
@@ -321,12 +343,12 @@ namespace tfr_control
                 individual_angle_tolerance = 0.01,
                 scaling_factor = .9, 
                 difference = desired - (actual_left + actual_right)/2;
-        if (abs(difference) > total_angle_tolerance)
+        if (std::abs(difference) > total_angle_tolerance)
         {
             int direction = (difference < 0) ? -1 : 1;
             double delta = actual_left - actual_right;
             double cmd_left = direction, cmd_right = direction;
-            if (abs(delta) > individual_angle_tolerance)
+            if (std::abs(delta) > individual_angle_tolerance)
             {
                 if (actual_left > actual_right)
                     cmd_left *= scaling_factor;
@@ -346,7 +368,7 @@ namespace tfr_control
         //we don't anticipate this changing very much keep at method level
         double angle_tolerance = 0.01;
         double difference = desired - actual;
-        if (abs(difference) > angle_tolerance)
+        if (std::abs(difference) > angle_tolerance)
             return (difference < 0) ? -0.8 : 0.8;
         return 0;
     }

@@ -55,6 +55,7 @@ private:
             tfr_mining::DiggingSet set = queue.popDiggingSet();
             ros::Time now = ros::Time::now();
 
+            ROS_INFO("starting set");
             // If we don't have enough time, bail on the action and exit
             if ((endTime - now).toSec() < set.getTimeEstimate())
             {
@@ -72,6 +73,7 @@ private:
                 goal.pose[1] = state[1];
                 goal.pose[2] = state[2];
                 goal.pose[3] = state[3];
+                ROS_INFO("goal %f %f %f %f", goal.pose[0], goal.pose[1], goal.pose[2], goal.pose[3]);
 
                 client.sendGoal(goal);
                 ros::Rate rate(10.0);

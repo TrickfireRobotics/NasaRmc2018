@@ -34,7 +34,21 @@ namespace tfr_mining
         //  This loads from testing_queue_templates.yaml.
         DiggingSet set;
         loadTestingDig(nh, set, "test_ready");
-        loadTestingDig(nh, set, "test_thingy");
+        loadTestingDig(nh, set, "test_dig1");
+        loadTestingDig(nh, set, "test_ready");
+        loadTestingDig(nh, set, "test_dig1");
+        loadTestingDig(nh, set, "test_ready");
+        loadTestingDig(nh, set, "test_dig1");
+        loadTestingDig(nh, set, "test_ready");
+        loadTestingDig(nh, set, "test_dig1");
+        loadTestingDig(nh, set, "test_ready");
+        loadTestingDig(nh, set, "test_dig1");
+        loadTestingDig(nh, set, "test_ready");
+        loadTestingDig(nh, set, "test_dig1");
+        loadTestingDig(nh, set, "test_ready");
+        loadTestingDig(nh, set, "test_dig1");
+        loadTestingDig(nh, set, "test_ready");
+        loadTestingDig(nh, set, "test_dig1");
         sets.push(set);
     }
 
@@ -236,6 +250,8 @@ namespace tfr_mining
             ROS_WARN("Error loading state");
             return;
         }
+        auto it =pos.begin();
+        pos.insert(it, 0);
         set.insertState(pos, 0);
     }
 }

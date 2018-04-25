@@ -162,7 +162,7 @@ namespace tfr_control {
 
         // THESE DATA MEMBERS ARE FOR SIMULATION ONLY
         // Holds the lower and upper limits of the URDF model joint
-        bool use_fake_values = true;
+        bool use_fake_values = false;
         const double *lower_limits, *upper_limits;
 
     };

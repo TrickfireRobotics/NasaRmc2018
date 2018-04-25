@@ -8,8 +8,8 @@ positions:
   #  - Out
   #  - Safe
   ready: [1.21, 0.84, -1.06]
-  dig1: [1.25, 1.05, -0.2]
-  scoop1: [1.25, 1.05, -0.2]
+  dig1: [1.15, 1.05, -0.4]
+  scoop1: [1.15, 1.05, -0.4]
   dig2: [1.4, 0.84, -0.2]
   scoop2: [1.4, 0.84, -0.2]
   dig3: [1.4, 1.25, -0.2]
@@ -21,7 +21,8 @@ positions:
   bindump: [3.14159265, 0.55, 0.84, 1.4]
   excessrelease: [0.75, 1.25, -1.0]
   binrelease: [3.14159265, 0.55, 0.84, -1.0]
-  safe: [0.0, 0.21, 0.0, 0.0]
+  # safe: [0.0, 0.21, 0.0, 0.0]  # Old safe value, commented out to be replaced with the value of "out" for testing
+  safe: [0.0, 1.0, 1.05, 1.15]
 
   ready_time: 3.5
   dig1_time: 3.5

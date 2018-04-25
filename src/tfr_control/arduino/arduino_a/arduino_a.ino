@@ -32,7 +32,8 @@ struct Potentiometer
         // more noise we have. The higher the coefficient, the more polluted our 
         // result becomes with erroneous noise data. 4 seems to be a good middle
         // ground.
-        estimate += (0.0174533*(m*val + b) - estimate)/4;
+        float new_estimate = 0.0174533*(m*val + b);
+        estimate += (new_estimate - estimate)/4;
         return estimate;
     }
 };
@@ -40,9 +41,9 @@ struct Potentiometer
 enum Potentiometers
 {
     //used for array indexes
-    ARM_SCOOP,
-    ARM_UPPER,
     ARM_LOWER,
+    ARM_UPPER,
+    ARM_SCOOP,
     BIN_LEFT,
     BIN_RIGHT
 };
@@ -51,7 +52,7 @@ Potentiometer pots []
 {
   Potentiometer{0.0075, -26.482},    //ARM_LOWER
   Potentiometer{0.0144, -173.77},    //ARM_UPPER
-  Potentiometer{0.0214, -239.97},    //ARM_SCOOP
+  Potentiometer{0.0214, -172.97},    //ARM_SCOOP
   Potentiometer{0.0, 0.0},            //BIN_LEFT TODO
   Potentiometer{0.0, 0.0}             //BIN_RIGHT TODO
 };

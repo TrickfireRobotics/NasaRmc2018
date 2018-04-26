@@ -97,24 +97,6 @@ namespace tfr_control
             velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
             effort_values[static_cast<int>(Joint::SCOOP)] = 0;
         }
-        else
-        {
-            //LOWER_ARM
-            position_values[static_cast<int>(Joint::LOWER_ARM)] = reading_a.arm_lower_pos;
-            velocity_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
-            effort_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
-
-            ////UPPER_ARM
-            //position_values[static_cast<int>(Joint::UPPER_ARM)] = reading_a.arm_upper_pos;
-            //velocity_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
-            //effort_values[static_cast<int>(Joint::UPPER_ARM)] = 0;
-
-            //SCOOP
-            //position_values[static_cast<int>(Joint::SCOOP)] = reading_a.arm_scoop_pos;
-            //velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
-            //effort_values[static_cast<int>(Joint::SCOOP)] = 0;
-        }
-
  
         //BIN
         position_values[static_cast<int>(Joint::BIN)] = 
@@ -146,8 +128,15 @@ namespace tfr_control
             reading_a = *latest_arduino_a;
 
         double signal;
-        double test;
         if (use_fake_values) //test code  for working with rviz simulator
+        {
+            adjustFakeJoint(Joint::TURNTABLE);
+            adjustFakeJoint(Joint::LOWER_ARM);
+            adjustFakeJoint(Joint::UPPER_ARM);
+            adjustFakeJoint(Joint::SCOOP);
+
+        }
+        else  // we are working with the real arm
         {
             //TURNTABLE
             adjustFakeJoint(Joint::TURNTABLE);
@@ -156,40 +145,13 @@ namespace tfr_control
             //NOTE we reverse these because actuator is mounted backwards
             signal = -angleToPWM(command_values[static_cast<int>(Joint::LOWER_ARM)],
                         position_values[static_cast<int>(Joint::LOWER_ARM)]);
-            test = signal;
             command.arm_lower = signal;
 
 
             //UPPER_ARM
-            adjustFakeJoint(Joint::UPPER_ARM);
-            //signal = angleToPWM(command_values[static_cast<int>(Joint::UPPER_ARM)],
-            //            position_values[static_cast<int>(Joint::UPPER_ARM)]);
-            //test = signal;
-            //command.arm_upper = signal;
-
-
-            //SCOOP
-            adjustFakeJoint(Joint::SCOOP);
-           // signal = angleToPWM(command_values[static_cast<int>(Joint::SCOOP)],
-           //             position_values[static_cast<int>(Joint::SCOOP)]);
-           // test = signal;
-           // command.arm_scoop = signal;
-
-        }
-        else  // we are working with the real arm
-        {
-            //TURNTABLE TODO 
-            adjustFakeJoint(Joint::TURNTABLE);
-            
-            //LOWER_ARM TODO
-            adjustFakeJoint(Joint::LOWER_ARM);
-
-            //UPPER_ARM TODO
-            adjustFakeJoint(Joint::UPPER_ARM);
             signal = angleToPWM(command_values[static_cast<int>(Joint::UPPER_ARM)],
                         position_values[static_cast<int>(Joint::UPPER_ARM)]);
             command.arm_upper = signal;
-
 
 
             //SCOOP
@@ -208,11 +170,6 @@ namespace tfr_control
                     drivebase_v0.second);
         command.tread_right = signal;
 
-        ROS_INFO("scoop %f", position_values[static_cast<int>(Joint::SCOOP)]);
-        ROS_INFO("upper %f", position_values[static_cast<int>(Joint::UPPER_ARM)]);
-        ROS_INFO("lower %f", position_values[static_cast<int>(Joint::LOWER_ARM)]);
-        ROS_INFO("command %f", command_values[static_cast<int>(Joint::SCOOP)]);
-        ROS_INFO("pwm %f", test);
 
         //BIN
         auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::BIN)],
@@ -254,7 +211,6 @@ namespace tfr_control
      * */
     void RobotInterface::clearCommands()
     {
-        //ROS_INFO("clearing");
         //LEFT_TREAD
         command_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
 
@@ -338,15 +294,14 @@ namespace tfr_control
     {
         //we don't anticipate this changing very much keep at method level
         double min_delta = 0.01;
-        double max_delta = 0.13;
+        double max_delta = 0.20;
 
         double difference = desired - actual;
-        ROS_INFO("delta: %f", difference);
         if (std::abs(difference) > min_delta)
         {
+
             int sign = (difference < 0) ? -1 : 1;
-            double magnitude = std::min(std::abs(difference)/max_delta, 0.92);           
-            ROS_INFO("scaling this %f to that %f with this sign %d, and this magnitude %f",difference, std::abs(difference)/max_delta, sign, magnitude );
+            double magnitude = std::min(std::abs(difference)/max_delta, 0.8);           
             return sign*magnitude;
         }
         return 0;

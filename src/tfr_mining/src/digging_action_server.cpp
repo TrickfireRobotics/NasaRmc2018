@@ -97,12 +97,12 @@ private:
                     ROS_WARN("Error executing arm action server to state, exiting.");
                     tfr_msgs::DiggingResult result;
                     server.setAborted(result);
+
                 }
             }
         }
 
-        // Disabled for initial arm testing: this should be reenabled for actual digging
-        /*ROS_INFO("Moving arm to safe driving/dumping position");
+        ROS_INFO("Moving arm to safe driving/dumping position");
 
         tfr_msgs::ArmMoveGoal final_goal;
         final_goal.pose.resize(4);
@@ -145,7 +145,7 @@ private:
             tfr_msgs::DiggingResult result;
             server.setAborted(result);
             return;
-        }*/
+        }
 
         tfr_msgs::DiggingResult result;
         server.setSucceeded(result);

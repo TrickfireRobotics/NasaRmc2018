@@ -33,7 +33,7 @@ namespace control_test
     // ADAM'S TEST CODE
     // TODO adam delete this test code when ready
     // Whether we're running on hardware or using fake values
-    const bool use_fake_values = true;
+    const bool use_fake_values = false;
     // If we're faking the inputs, we need to know the model constraints on
     // the arm: load them here.
     // If not, just use zeroes, the limits don't matter. TEST code

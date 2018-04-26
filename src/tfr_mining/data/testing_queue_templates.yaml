@@ -1,4 +1,6 @@
 test_positions:
   test_ready: [0.5, 1.5, -1.06]
   test_dig1: [0.9, 1.05, -0.4]
+  test_dig2: [1.2, 1.9, 0.5]
+
  

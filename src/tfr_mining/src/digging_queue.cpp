@@ -26,16 +26,17 @@ namespace tfr_mining
         // Do a single surface-level dig
         //  - To change the digging depth, change the last parameter to anything from 1-4.
         //    Do note that this uses different positions from digging_queue_templates.yaml
-        /*DiggingSet set;
+        DiggingSet set;
         generateSingleDig(nh, set, 0.0, 1);
-        sets.push(set);*/
+        sets.push(set);
 
         // Testing digging code:
         //  This loads from testing_queue_templates.yaml.
-        DiggingSet set;
+        /*DiggingSet set;
         loadTestingDig(nh, set, "test_ready");
         loadTestingDig(nh, set, "test_dig1");
-        sets.push(set);
+        loadTestingDig(nh, set, "test_dig2");
+        sets.push(set);*/
     }
 
     bool DiggingQueue::isEmpty()

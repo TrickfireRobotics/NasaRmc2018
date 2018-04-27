@@ -67,7 +67,7 @@ void setup()
 
 void loop()
 {
-    arduino_reading.tread_right_vel = gearbox_right.getVelocity()/GEARBOX_MPR;
+    arduino_reading.tread_right_vel = -gearbox_right.getVelocity()/GEARBOX_MPR;
     delay(8);
     nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
     delay(8);

@@ -1,5 +1,6 @@
 <launch>
     <node name="digging_actino_server" type="digging_action_server" pkg="tfr_mining" output="screen" >
         <rosparam file="$(find tfr_mining)/data/digging_queue_templates.yaml" command="load" />
+        <rosparam file="$(find tfr_mining)/data/testing_queue_templates.yaml" command="load" />
     </node>
 </launch>

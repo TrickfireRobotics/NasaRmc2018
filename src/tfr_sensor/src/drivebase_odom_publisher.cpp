@@ -87,7 +87,7 @@ class DrivebaseOdometryPublisher
             //message gives us velocity in meters/second from each individual
             //tread
             double v_l = -reading_a.tread_left_vel;
-            double v_r = reading_b.tread_right_vel;
+            double v_r = -reading_b.tread_right_vel;
 
 
 
@@ -140,6 +140,7 @@ class DrivebaseOdometryPublisher
                 0,    0,    0, 5e-2,    0,    0,
                 0,    0,    0,    0, 5e-2,    0,
                 0,    0,    0,    0,    0, 5e-2 };
+            odometry_publisher.publish(msg);
         }
 
 
@@ -158,8 +159,8 @@ class DrivebaseOdometryPublisher
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
         double angle; //angle of rotation around the z axis (radians)
-        const double MAX_XY_DELTA = 0.2;
-        const double MAX_THETA_DELTA = 0.2;
+        const double MAX_XY_DELTA = 0.15;
+        const double MAX_THETA_DELTA = 0.13;
         ros::Time t_0;
 
         //callback for publisher
@@ -230,7 +231,7 @@ int main(int argc, char **argv)
     double wheel_span, r;
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
     ros::param::param<std::string>("~child_frame", child_frame, "base_footprint");
-    ros::param::param<double>("~wheel_span", wheel_span, 0.58);
+    ros::param::param<double>("~wheel_span", wheel_span, 0.645);
     ros::param::param<double>("~rate", r, 10.0);
     DrivebaseOdometryPublisher publisher{n, parent_frame, child_frame, wheel_span};
     ros::Rate rate(r);

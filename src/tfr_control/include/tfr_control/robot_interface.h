@@ -92,6 +92,8 @@ namespace tfr_control {
 
         void setEnabled(bool val);
 
+        void zeroTurntable();
+
     private:
         //joint states for Joint state publisher package
         hardware_interface::JointStateInterface joint_state_interface;
@@ -107,6 +109,8 @@ namespace tfr_control {
         bool enabled;
         tfr_msgs::ArduinoAReadingConstPtr latest_arduino_a;
         tfr_msgs::ArduinoBReadingConstPtr latest_arduino_b;
+
+        double turntable_offset;
 
 
         // Populated by controller layer for us to use

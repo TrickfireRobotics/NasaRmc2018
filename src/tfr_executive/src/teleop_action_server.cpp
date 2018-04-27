@@ -238,7 +238,8 @@ class TeleopExecutive
                         {
                             ros::service::call("bin_state", query);
                             using namespace tfr_utilities;
-                            if (JointAngle::BIN_MAX -  query.response.state < JointAngle::ANGLE_TOLERANCE)
+                            if (JointAngle::BIN_MAX -  query.response.state <
+                                    0.01)
                                 break;
                             bin_publisher.publish(bin_cmd);
                             frequency.sleep();
@@ -265,7 +266,8 @@ class TeleopExecutive
                         {
                             ros::service::call("bin_state", query);
                             using namespace tfr_utilities;
-                            if (query.response.state - JointAngle::BIN_MIN < JointAngle::ANGLE_TOLERANCE)
+                            if (query.response.state - JointAngle::BIN_MIN <
+                                    0.01)
                                 break;
                             bin_publisher.publish(bin_cmd);
                             frequency.sleep();

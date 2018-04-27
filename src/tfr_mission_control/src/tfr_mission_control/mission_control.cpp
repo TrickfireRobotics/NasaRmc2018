@@ -186,7 +186,21 @@ namespace tfr_mission_control {
     /* ========================================================================== */
     /* Methods                                                                    */
     /* ========================================================================== */
-    
+ 
+    /*
+     * Startup utility to reset the turntable
+     * */
+    void MissionControl::resetTurntable()
+    {
+        ROS_INFO("Mission Control: Resetting turntable");
+        std_srvs::Empty::Request req;
+        std_srvs::Empty::Response res;
+        while(!ros::service::call("/zero_turntable", req, res))
+            ros::Duration{0.1}.sleep();
+        ROS_INFO("Mission Control: Turntable reset");
+
+    }
+   
     /* greys/ungreys all teleop buttons, and tell's system whether to process teleop or
      * not
      * */
@@ -327,7 +341,7 @@ namespace tfr_mission_control {
     //self explanitory, starts the time service in executive
     void MissionControl::startTimeService()
     {
-        tfr_msgs::EmptySrv start;
+        std_srvs::Empty start;
         ros::service::call("start_mission", start);
         //start updating the gui mission clock
         countdownClock->start(500);
@@ -359,6 +373,7 @@ namespace tfr_mission_control {
         setAutonomy(true);
         tfr_msgs::EmptyGoal goal{};
         while (!teleop.getState().isDone()) teleop.cancelAllGoals();
+        resetTurntable();
         autonomy.sendGoal(goal);
         setTeleop(false);
         widget->setFocus();
@@ -370,6 +385,7 @@ namespace tfr_mission_control {
     {
         setAutonomy(false);
         while (!autonomy.getState().isDone()) autonomy.cancelAllGoals();
+        resetTurntable();
         setTeleop(true);
         softwareStop();
         widget->setFocus();

@@ -18,7 +18,7 @@
  * */
 #include <ros/ros.h>
 #include <cmath>
-#include <tfr_msgs/EmptySrv.h>
+#include <std_srvs/Empty.h>
 #include <tfr_msgs/DurationSrv.h>
 
 class ClockService
@@ -47,8 +47,8 @@ class ClockService
         /*
          * Starts the mission clock, takes in the empty service request.
          * */
-        bool startMission(tfr_msgs::EmptySrv::Request &req,
-                tfr_msgs::EmptySrv::Response &res)
+        bool startMission(std_srvs::Empty::Request &req,
+                std_srvs::Empty::Response &res)
         {
             ROS_INFO("mission started");
             mission_start = ros::Time::now();

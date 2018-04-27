@@ -200,7 +200,7 @@ class XSensDriver(object):
                                 #COLLIN changed sign of z
 				imu_msg.linear_acceleration.z = -acc_data['accZ']						
                                 #NOTE COLLIN added covariences
-                                imu_msg.linear_acceleration_covariance=[5e-1,0,0,0,5e-1,0,0,0,5e-1]
+                                imu_msg.linear_acceleration_covariance=[5e-2,0,0,0,5e-2,0,0,0,5e-2]
 			else:
 				raise MTException("Unsupported message in XDI_AccelerationGroup.")	
 					
@@ -217,7 +217,7 @@ class XSensDriver(object):
 				imu_msg.angular_velocity.y = gyr_data['gyrY']
 				imu_msg.angular_velocity.z = gyr_data['gyrZ']
                                 #NOTE COLLIN added covariences
-                                imu_msg.angular_velocity_covariance=[5e-1,0,0,0,5e-1,0,0,0,5e-1]
+                                imu_msg.angular_velocity_covariance=[5e-2,0,0,0,5e-2,0,0,0,5e-2]
 			else:
 				raise MTException("Unsupported message in XDI_AngularVelocityGroup.")
 		
@@ -261,7 +261,7 @@ class XSensDriver(object):
 				imu_msg.orientation.x = orient_data['Q1']
 				imu_msg.orientation.y = orient_data['Q2']
 				imu_msg.orientation.z = orient_data['Q3']
-                                imu_msg.orientation_covariance=[1e-2,0,0,0,1e-2,0,0,0,1e-2]
+                                imu_msg.orientation_covariance=[5e-2,0,0,0,5e-2,0,0,0,5e-2]
 			elif 'Roll' in orient_data:
 				pub_ori = True
 				ori_msg.roll = orient_data['Roll']

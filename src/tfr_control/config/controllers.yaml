@@ -21,18 +21,18 @@ left_tread_velocity_controller:
     type: effort_controllers/JointVelocityController
     joint: left_tread_joint
     pid: { 
-        p: 1.1, 
-        i: 0.8, 
-        d: 0.1
+        p: 0.8, 
+        i: 0.6, 
+        d: 0.05
     }
 
 right_tread_velocity_controller:
     type: effort_controllers/JointVelocityController
     joint: right_tread_joint
     pid: { 
-        p: 1.1, 
-        i: 0.8, 
-        d: 0.1
+        p: 0.8, 
+        i: 0.6, 
+        d: 0.05
     }
 
 
@@ -49,9 +49,9 @@ arm_controller:
         - lower_arm_joint
         - upper_arm_joint
     gains:
-        turntable_joint: {p: 0.75, i: 0.5, d: 0.01}
-        lower_arm_joint: {p: 0.75, i: 0.5, d: 0.01}
-        upper_arm_joint: {p: 0.75, i: 0.5, d: 0.01}
+        turntable_joint: {p: 0.3, i: 0.0, d: 0.00}
+        lower_arm_joint: {p: 1.4, i: 0.8, d: 0.02}
+        upper_arm_joint: {p: 0.8, i: 0.4, d: 0.03}
     constraints:
         goal_time: 10.0
 
@@ -63,6 +63,6 @@ arm_end_controller:
     joints:
         - scoop_joint
     gains:
-        scoop_joint: {p: 0.75, i: 0.5, d: 0.01}
+        scoop_joint: {p: 0.45, i: 0.2, d: 0.1}
     constraints:
         goal_time: 10.0

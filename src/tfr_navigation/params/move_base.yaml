@@ -1,6 +1,6 @@
 controller_frequency: 5 
 shutdown_costmaps: true
-planner_frequency: 1
 
 controller_patience: 3
 planner_patience: 3
+planner_frequency: 1

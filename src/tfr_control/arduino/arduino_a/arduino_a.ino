@@ -1,10 +1,8 @@
-
 #include <Encoder.h>
 #include <Wire.h>
 #include <Adafruit_ADS1015.h>
 #include <ros.h>
 #include <tfr_msgs/ArduinoAReading.h>
-#include <tfr_utilities/control_code.h>
 #include <quadrature.h>
 
 ros::NodeHandle nh;
@@ -12,33 +10,41 @@ ros::NodeHandle nh;
 //encoder level constants
 const double CPR = 4096; //pulse per revolution
 const double GEARBOX_MPR = 3.33; 
+const double TURNTABLE_RPR = 0.208; 
 
 //pin constants
 const int GEARBOX_LEFT_A = 2;
 const int GEARBOX_LEFT_B = 3;
+const int TURNTABLE_A = 18;
+const int TURNTABLE_B = 19;
 
-
-
-
-
-
+/*Linear potentiometer, values gained from empirical measurement*/
 struct Potentiometer
 {
-   const static float ADC_RANGE=0.0001875;
-   float max_voltage; //the max voltage for the potentiometer
-   float min_angle;
-   float max_angle;
-   float getPosition(int16_t val)
-   {
-       return min_angle + (max_angle - min_angle) * val* ADC_RANGE/max_voltage; 
-   }
+    Potentiometer(float slope, float intercept) :
+      m{slope}, b{intercept}, estimate{0.0} {}
+
+    float m{}; //the slope of the linear graph
+    float b{}; //the y intercept of the linear
+    float estimate{}; //uses exponential smoothing 
+
+    float getPosition(uint16_t val)
+    {
+        // 4 is the coefficient that represents how much we trust the estimate
+        // vs how much we trust the newest reading. The lower this coefficient, the
+        // more noise we have. The higher the coefficient, the more polluted our 
+        // result becomes with erroneous noise data. 4 seems to be a good middle
+        // ground.
+        float new_estimate = 0.0174533*(m*val + b);
+        estimate += (new_estimate - estimate)/4;
+        return estimate;
+    }
 };
 
 enum Potentiometers
 {
     //used for array indexes
-    ARM_LOWER_LEFT,
-    ARM_LOWER_RIGHT,
+    ARM_LOWER,
     ARM_UPPER,
     ARM_SCOOP,
     BIN_LEFT,
@@ -47,15 +53,14 @@ enum Potentiometers
 
 Potentiometer pots []
 {
-  {4.88, tfr_utilities::JointAngle::ARM_LOWER_MIN, tfr_utilities::JointAngle::ARM_LOWER_MAX},      //ARM_LOWER_LEFT
-  {4.88, tfr_utilities::JointAngle::ARM_LOWER_MIN, tfr_utilities::JointAngle::ARM_LOWER_MAX},      //ARM_LOWER_RIGHT
-  {4.88, tfr_utilities::JointAngle::ARM_UPPER_MIN, tfr_utilities::JointAngle::ARM_UPPER_MAX},      //ARM_UPPER
-  {4.88, tfr_utilities::JointAngle::ARM_SCOOP_MIN, tfr_utilities::JointAngle::ARM_SCOOP_MAX},      //ARM_SCOOP
-  {4.88, tfr_utilities::JointAngle::BIN_MIN, tfr_utilities::JointAngle::BIN_MAX},      //BIN_LEFT
-  {4.88, tfr_utilities::JointAngle::BIN_MIN, tfr_utilities::JointAngle::BIN_MAX}       //BIN_RIGHT
+  Potentiometer{0.0075, -26.482},    //ARM_LOWER
+  Potentiometer{0.0144, -173.77},    //ARM_UPPER
+  Potentiometer{0.0214, -172.97},    //ARM_SCOOP
+  Potentiometer{0.0, 0.0},            //BIN_LEFT TODO
+  Potentiometer{0.0, 0.0}             //BIN_RIGHT TODO
 };
 
-
+PositionQuadrature turntable(CPR, TURNTABLE_A, TURNTABLE_B); 
 //encoders
 VelocityQuadrature gearbox_left(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 tfr_msgs::ArduinoAReading arduinoReading;
@@ -66,59 +71,45 @@ ros::Publisher arduino("arduino_a", &arduinoReading);
 ADC Adressing 
 
 ads1115_a => 
-  channel 0 : ARM_LOWER_LEFT
-  channel 1 : ARM_LOWER_RIGHT
-  channel 2 : ARM_UPPER
+  channel 0 : ARM_UPPER
+  channel 1 : ARM_SCOOP
+  channel 2 : ARM_LOWER
   channel 3 : UNUSED
 ads1115_b => 
-  channel 0 : ARM_SCOOP
-  channel 1 : BIN_LEFT
-  channel 2 : BIN_RIGHT
+  channel 0 : BIN_LEFT
+  channel 1 : BIN_RIGHT
+  channel 1 : UNUSED
   channel 3 : UNUSED
 */
 
 Adafruit_ADS1115 ads1115_a;
-//TODO Adafruit_ADS1115 ads1115_b;
 
 void setup()
 {
     nh.initNode();
     nh.advertise(arduino);
     ads1115_a.begin();
-//TODO    ads1115_b.begin();
 }
 
 void loop()
 {
-    arduinoReading.tread_left_vel = -gearbox_left.getVelocity()/GEARBOX_MPR;
-
+    arduinoReading.tread_left_vel = gearbox_left.getVelocity()/GEARBOX_MPR;
+    arduinoReading.arm_turntable_pos = turntable.getPosition()/TURNTABLE_RPR;
 
     ads1115_a.startADC_SingleEnded(0);
-//TODO    ads1115_b.startADC_SingleEnded(0);
     delay(8);
-    //TODO Get real values here
-    arduinoReading.arm_lower_right_pos = arduinoReading.arm_lower_left_pos = pots[ARM_LOWER_LEFT].min_angle;
-    arduinoReading.arm_upper_pos = pots[ARM_UPPER].min_angle;
-    arduinoReading.arm_scoop_pos = pots[ARM_SCOOP].min_angle;
-    arduinoReading.bin_right_pos = arduinoReading.bin_left_pos = pots[BIN_LEFT].getPosition(ads1115_a.collectADC_SingleEnded());
-    nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
-//TODO    arduinoReading.arm_scoop_pos = pots[ARM_SCOOP].getPosition(ads1115_b.collectADC_SingleEnded());
+    arduinoReading.arm_upper_pos = pots[ARM_UPPER].getPosition(ads1115_a.collectADC_SingleEnded());
+    nh.spinOnce(); 
 
+    ads1115_a.startADC_SingleEnded(1);
+    delay(8);
+    arduinoReading.arm_scoop_pos = pots[ARM_SCOOP].getPosition(ads1115_a.collectADC_SingleEnded());
+    nh.spinOnce();
 
+    ads1115_a.startADC_SingleEnded(2);
+    delay(8);
+    arduinoReading.arm_lower_pos = pots[ARM_LOWER].getPosition(ads1115_a.collectADC_SingleEnded());
+    nh.spinOnce();
 
-//TODO    ads1115_a.startADC_SingleEnded(1);
-//TODO    ads1115_b.startADC_SingleEnded(1);
-          delay(8);
-          nh.spinOnce();
-//TODO    arduinoReading.arm_lower_right = pots[ARM_LOWER_RIGHT].getPosition(ads1115_a.collectADC_SingleEnded());
-//TODO    arduinoReading.bin_left_pos = pots[BIN_LEFT].getPosition(ads1115_b.collectADC_SingleEnded());
-
-//TODO    ads1115_a.startADC_SingleEnded(2);
-//TODO    ads1115_b.startADC_SingleEnded(2);
-          delay(8);
-//TODO    arduinoReading.arm_upper = pots[ARM_UPPER].getPosition(ads1115_a.collectADC_SingleEnded());
-//TODO    arduinoReading.bin_right = pots[BIN_RIGHT].getPosition(ads1115_b.collectADC_SingleEnded());
-
-    nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
     arduino.publish(&arduinoReading);
 }

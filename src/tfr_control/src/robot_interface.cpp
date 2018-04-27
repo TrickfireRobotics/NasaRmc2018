@@ -72,19 +72,18 @@ namespace tfr_control
 
         //RIGHT_TREAD
         position_values[static_cast<int>(Joint::RIGHT_TREAD)] = 0;
-        velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] = reading_b.tread_right_vel;
+        velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] = -reading_b.tread_right_vel;
         effort_values[static_cast<int>(Joint::RIGHT_TREAD)] = 0;
 
         if (!use_fake_values)
         {
             //TURNTABLE
-            position_values[static_cast<int>(Joint::TURNTABLE)] = reading_b.arm_turntable_pos;
+            position_values[static_cast<int>(Joint::TURNTABLE)] = reading_a.arm_turntable_pos - turntable_offset;
             velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0;
             effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
 
             //LOWER_ARM
-            position_values[static_cast<int>(Joint::LOWER_ARM)] = 
-                (reading_a.arm_lower_left_pos+ reading_a.arm_lower_right_pos)/2;
+            position_values[static_cast<int>(Joint::LOWER_ARM)] = reading_a.arm_lower_pos;
             velocity_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
             effort_values[static_cast<int>(Joint::LOWER_ARM)] = 0;
 
@@ -98,7 +97,7 @@ namespace tfr_control
             velocity_values[static_cast<int>(Joint::SCOOP)] = 0;
             effort_values[static_cast<int>(Joint::SCOOP)] = 0;
         }
-
+ 
         //BIN
         position_values[static_cast<int>(Joint::BIN)] = 
             (reading_a.bin_left_pos + reading_a.bin_right_pos)/2;
@@ -131,58 +130,50 @@ namespace tfr_control
         double signal;
         if (use_fake_values) //test code  for working with rviz simulator
         {
-            //TURNTABLE
             adjustFakeJoint(Joint::TURNTABLE);
-
-            //LOWER_ARM
             adjustFakeJoint(Joint::LOWER_ARM);
-
-            //UPPER_ARM
             adjustFakeJoint(Joint::UPPER_ARM);
-
-            //SCOOP
             adjustFakeJoint(Joint::SCOOP);
+
         }
         else  // we are working with the real arm
         {
             //TURNTABLE
+            //NOTE we reverse these because actuator is mounted backwards
             signal = turntableAngleToPWM(command_values[static_cast<int>(Joint::TURNTABLE)],
-                    position_values[static_cast<int>(Joint::TURNTABLE)]);
+                        position_values[static_cast<int>(Joint::TURNTABLE)]);
             command.arm_turntable = signal;
 
+
             //LOWER_ARM
-            auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::LOWER_ARM)],
-                        reading_a.arm_lower_left_pos,
-                        reading_a.arm_lower_right_pos);
-            command.arm_lower_left = twin_signal.first;
-            command.arm_lower_right = twin_signal.second;
+            //NOTE we reverse these because actuator is mounted backwards
+            signal = -angleToPWM(command_values[static_cast<int>(Joint::LOWER_ARM)],
+                        position_values[static_cast<int>(Joint::LOWER_ARM)]);
+            command.arm_lower = signal;
+
 
             //UPPER_ARM
             signal = angleToPWM(command_values[static_cast<int>(Joint::UPPER_ARM)],
                         position_values[static_cast<int>(Joint::UPPER_ARM)]);
             command.arm_upper = signal;
 
+
             //SCOOP
             signal = angleToPWM(command_values[static_cast<int>(Joint::SCOOP)],
                         position_values[static_cast<int>(Joint::SCOOP)]);
             command.arm_scoop = signal;
-        }
+
+         }
 
         //LEFT_TREAD
-        signal = drivebaseVelocityToPWM( -command_values[static_cast<int>(Joint::LEFT_TREAD)],
-                    drivebase_v0.first);
+        signal = -drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::LEFT_TREAD)], drivebase_v0.first);
         command.tread_left = signal;
-        auto left = signal;
 
         //RIGHT_TREAD
-        signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
+        signal = -drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
                     drivebase_v0.second);
         command.tread_right = signal;
-        auto right = signal;
 
-//        ROS_INFO("encoder %f %f ", -velocity_values[static_cast<int>(Joint::LEFT_TREAD)],velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] );
-//        ROS_INFO("command %f %f ", -command_values[static_cast<int>(Joint::LEFT_TREAD)],command_values[static_cast<int>(Joint::RIGHT_TREAD)] );
-//        ROS_INFO("pwm %f %f ", left,right);
 
         //BIN
         auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::BIN)],
@@ -210,7 +201,7 @@ namespace tfr_control
         int i = static_cast<int>(j);
         position_values[i] = command_values[i];
         // If this joint has limits, clamp the range down
-        if (abs(lower_limits[i]) >= 1E-3 || abs(upper_limits[i]) >= 1E-3) 
+        if (std::abs(lower_limits[i]) >= 1E-3 || std::abs(upper_limits[i]) >= 1E-3) 
         {
             position_values[i] =
                 std::max(std::min(position_values[i],
@@ -218,14 +209,12 @@ namespace tfr_control
         }
     }
 
-
     /*
      * Resets the commands to a safe neutral state
      * Tells the treads to stop moving, and the arm to hold position
      * */
     void RobotInterface::clearCommands()
     {
-        //ROS_INFO("clearing");
         //LEFT_TREAD
         command_values[static_cast<int>(Joint::LEFT_TREAD)] = 0;
 
@@ -308,10 +297,17 @@ namespace tfr_control
     double RobotInterface::angleToPWM(const double &desired, const double &actual)
     {
         //we don't anticipate this changing very much keep at method level
-        double angle_tolerance = 0.01;
+        double min_delta = 0.01;
+        double max_delta = 0.20;
+
         double difference = desired - actual;
-        if (abs(difference) > angle_tolerance)
-            return (difference < 0) ? -1 : 1;
+        if (std::abs(difference) > min_delta)
+        {
+
+            int sign = (difference < 0) ? -1 : 1;
+            double magnitude = std::min(std::abs(difference)/max_delta, 0.8);           
+            return sign*magnitude;
+        }
         return 0;
     }
 
@@ -328,12 +324,12 @@ namespace tfr_control
                 individual_angle_tolerance = 0.01,
                 scaling_factor = .9, 
                 difference = desired - (actual_left + actual_right)/2;
-        if (abs(difference) > total_angle_tolerance)
+        if (std::abs(difference) > total_angle_tolerance)
         {
             int direction = (difference < 0) ? -1 : 1;
             double delta = actual_left - actual_right;
             double cmd_left = direction, cmd_right = direction;
-            if (abs(delta) > individual_angle_tolerance)
+            if (std::abs(delta) > individual_angle_tolerance)
             {
                 if (actual_left > actual_right)
                     cmd_left *= scaling_factor;
@@ -351,10 +347,17 @@ namespace tfr_control
     double RobotInterface::turntableAngleToPWM(const double &desired, const double &actual)
     {
         //we don't anticipate this changing very much keep at method level
-        double angle_tolerance = 0.01;
+        double min_delta = 0.01;
+        double max_delta = 0.13;
+
         double difference = desired - actual;
-        if (abs(difference) > angle_tolerance)
-            return (difference < 0) ? -0.8 : 0.8;
+        if (std::abs(difference) > min_delta)
+        {
+
+            int sign = (difference < 0) ? -1 : 1;
+            double magnitude = std::min(std::abs(difference)/max_delta, 0.92);           
+            return sign*magnitude;
+        }
         return 0;
     }
 
@@ -370,13 +373,13 @@ namespace tfr_control
         //limit for max velocity
         //we don't anticipate this changing very much keep at method level
         double max_vel = 0.4;
-        int sign = (v_1 < 0) ? -1 : 1;
-        double magnitude = std::min(std::abs(v_1)/max_vel, 0.92);
-        if (magnitude > 0.05 || magnitude < -0.05)
-            return sign * 0.8;
-        else
-            return 0;
-        //return sign * magnitude;
+        if (v_1 > 0.05 || v_1 < -0.05)
+        {
+            int sign = (v_1 < 0) ? -1 : 1;
+            double magnitude = std::min(std::abs(v_1)/max_vel, 0.92);
+            return sign * magnitude;
+        }
+        return 0;
     }
 
     /*
@@ -405,5 +408,9 @@ namespace tfr_control
         latest_arduino_b = msg;
     }
 
+    void RobotInterface::zeroTurntable()
+    {
+        turntable_offset = position_values[static_cast<int>(Joint::TURNTABLE)];
+    }
 
 }

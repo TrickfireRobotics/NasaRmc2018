@@ -4,7 +4,8 @@
             camera_frame: rear_cam_link
             footprint_frame: base_footprint
             bin_frame: bin_footprint
-            odom_frame: odom
+            odom_frame: map 
+            rate: 6
         </rosparam>
 
         <remap from="image" to="/sensors/rear_cam/image_raw"/>

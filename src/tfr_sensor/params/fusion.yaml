@@ -4,13 +4,15 @@
 #We also have not delved into covariances at all, and this is still //TODO
 
 #outputting at pretty low frequency
-frequency: 10 
+frequency: 7
 
 #stock settings for robots without gps and no big hills
 odom_frame: odom
 base_link_frame: base_footprint
-world_frame: odom
+world_frame: odom 
 two_d_mode: true
+sensor_timeout: 0.5
+transform_timeout: 0.4
 
 #this is the most reliable position we want to use so we want this to publish
 #tf, and no one else for the odom->base_footprint transform
@@ -27,39 +29,60 @@ print_diagnostics: true
 #NOTE: I also don't do any outlier removal or thresholding, it doesn't play
 #well with fiducial odometry
     
-    ##basic 2d settings for xsens
-    #imu0: /sensors/mti/sensor/imu
-    #imu0_config: [false, false, false,
-    #              false,  false,  true,
-    #              false, false, false,
-    #              false,  false,  true,
-    #              true,  true,  false]
-    #imu0_differential: true
-    #imu0_relative: false
-    ##outputs at ~50 hz whic is >> than fusion hz (10) so we need a big queue
-    #imu0_queue_size: 40  
-    #imu0_remove_gravitational_acceleration: true
+#basic 2d settings for xsens
+imu0: /sensors/mti/sensor/imu
+imu0_config: [false, false, false,
+              false,  false,  true,
+              true, true, false,
+              false,  false,  true,
+              false,  false,  false]
+imu0_differential: true
+imu0_relative: false
+#outputs at ~50 hz whic is >> than fusion hz (10) so we need a big queue
+imu0_queue_size: 80  
+imu0_remove_gravitational_acceleration: true
 
 #basic 2d configuration for the fiducial odom publisher we don't use it's
 #velocity, because it is very unreliable, and we get good velocity 
 #data from the imu's.
 odom0: /fiducial_odom
-odom0_config: [true, true,  true,
+odom0_config: [true,  true, false,
                false, false,  true,
                false, false, false,
                false,  false,  false,
                false,  false,  false]
-odom0_differential: true 
+odom0_differential:  false
 odom0_relative: false
 odom0_queue_size: 10
 
 odom1: /drivebase_odom
-odom1_config: [true, true,  true,
+odom1_config: [true, true,  false,
                false, false,  true,
-               false, false, false,
-               false,  false,  false,
+               true, true, false,
+               false,  false,  true,
                false,  false,  false]
 odom1_differential: false 
 odom1_relative: false
 odom1_queue_size: 10
 
+
+# Whether or not we use the control input during predicition. Defaults to false.
+use_control: true
+# Whether the input (assumed to be cmd_vel) is a geometry_msgs/Twist or geometry_msgs/TwistStamped message. Defaults to
+# false.
+stamped_control: false
+# The last issued control command will be used in prediction for this period. Defaults to 0.2.
+control_timeout: 0.5
+# Which velocities are being controlled. Order is vx, vy, vz, vroll, vpitch, vyaw.
+control_config: [true, false, false, false, false, true]
+# Places limits on how large the acceleration term will be. Should match your robot's kinematics.
+acceleration_limits: [1.3, 0.0, 0.0, 0.0, 0.0, 1.3]
+# Acceleration and deceleration limits are not always the same for robots.
+deceleration_limits: [1.3, 0.0, 0.0, 0.0, 0.0, 1.3]
+
+#if your robot cannot instantaneously reach its acceleration limit, the permitted change can be controlled with these
+# gains
+acceleration_gains: [1.0, 0.0, 0.0, 0.0, 0.0,1.0 ]
+# If your robot cannot instantaneously reach its deceleration limit, the permitted change can be controlled with these
+# gains
+deceleration_gains: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0]

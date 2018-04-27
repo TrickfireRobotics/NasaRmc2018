@@ -50,8 +50,8 @@ void ObstacleBroadcaster::broadcast()
 /*
  * Gives the point a new origin
  * */
-bool ObstacleBroadcaster::localizePoint(tfr_msgs::LocalizePoint::Request &request,
-        tfr_msgs::LocalizePoint::Response &resonse)
+bool ObstacleBroadcaster::localizePoint(tfr_msgs::PoseSrv::Request &request,
+        tfr_msgs::PoseSrv::Response &resonse)
 {
     transform.transform.translation.x = request.pose.pose.position.x;
     transform.transform.translation.y = request.pose.pose.position.y;

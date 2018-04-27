@@ -31,8 +31,8 @@ PointBroadcaster::PointBroadcaster(
     service_name{service}, 
     height{h}
 {
-    server = node.advertiseService(service_name,
-            &PointBroadcaster::localize_point, this);
+    server = node.advertiseService(service_name, &PointBroadcaster::localizePoint, this);
+
     transform.header.frame_id = parent_frame;
     transform.child_frame_id = point_frame;
     transform.transform.rotation.w = 1;
@@ -50,8 +50,8 @@ void PointBroadcaster::broadcast()
 /*
  * Gives the point a new origin
  * */
-bool PointBroadcaster::localize_point(tfr_msgs::LocalizePoint::Request &request,
-        tfr_msgs::LocalizePoint::Response &resonse)
+bool PointBroadcaster::localizePoint(tfr_msgs::PoseSrv::Request &request,
+        tfr_msgs::PoseSrv::Response &resonse)
 {
     transform.transform.translation.x = request.pose.pose.position.x;
     transform.transform.translation.y = request.pose.pose.position.y;

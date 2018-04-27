@@ -1,0 +1,3 @@
+test_positions:
+  test_ready: [0.25, 1.21, 0.84, -1.06]
+  test_thingy: [0.0, 1.0, 0.84, -1.06]

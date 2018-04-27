@@ -39,6 +39,11 @@ namespace tfr_mining
         std::queue<DiggingSet> sets;
 
         /**
+         * Helper method to generate a single dig, without any side dumping.
+         **/
+        void generateSingleDig(ros::NodeHandle &nh, DiggingSet &set, double rotation, int dig_number);
+
+        /**
          * Helper method which generates a set of digging positions. Generates ready pos -> dig pos (penetrating dirt)
          * -> scoop pos (moving scoop upwards to remove dirt) -> out pos (scoop horizontal out of dirt) -> either bin
          * dump (if dig_number > 2) or dump to side (if dig_number <= 2)
@@ -48,6 +53,8 @@ namespace tfr_mining
          * This is used to determine whether we should dump to the side or into the bin.
          **/
         void generateDigAndDump(ros::NodeHandle &nh, DiggingSet &set, double rotation, int dig_number);
+
+        void loadTestingDig(ros::NodeHandle &nh, DiggingSet &set, std::string pos_name);
     };
 }
 

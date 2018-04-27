@@ -70,7 +70,7 @@ void setup()
 
 void loop()
 {
-    arduino_reading.tread_right_vel = gearbox_right.getVelocity()*GEARBOX_MPR;
+    arduino_reading.tread_right_vel = gearbox_right.getVelocity()/GEARBOX_MPR;
     //TODO    arduinoReading.arm_turntable_pos = turntable.getVelocity()/TURNTABLE_RPR;
     delay(8);
     nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call

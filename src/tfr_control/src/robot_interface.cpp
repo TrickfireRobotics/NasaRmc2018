@@ -347,10 +347,17 @@ namespace tfr_control
     double RobotInterface::turntableAngleToPWM(const double &desired, const double &actual)
     {
         //we don't anticipate this changing very much keep at method level
-        double angle_tolerance = 0.01;
+        double min_delta = 0.01;
+        double max_delta = 0.13;
+
         double difference = desired - actual;
-        if (std::abs(difference) > angle_tolerance)
-            return (difference < 0) ? -0.8 : 0.8;
+        if (std::abs(difference) > min_delta)
+        {
+
+            int sign = (difference < 0) ? -1 : 1;
+            double magnitude = std::min(std::abs(difference)/max_delta, 0.92);           
+            return sign*magnitude;
+        }
         return 0;
     }
 

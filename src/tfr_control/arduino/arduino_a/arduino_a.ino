@@ -10,10 +10,13 @@ ros::NodeHandle nh;
 //encoder level constants
 const double CPR = 4096; //pulse per revolution
 const double GEARBOX_MPR = 3.33; 
+const double TURNTABLE_RPR = 0.208; 
 
 //pin constants
 const int GEARBOX_LEFT_A = 2;
 const int GEARBOX_LEFT_B = 3;
+const int TURNTABLE_A = 18;
+const int TURNTABLE_B = 19;
 
 /*Linear potentiometer, values gained from empirical measurement*/
 struct Potentiometer
@@ -57,7 +60,7 @@ Potentiometer pots []
   Potentiometer{0.0, 0.0}             //BIN_RIGHT TODO
 };
 
-
+PositionQuadrature turntable(CPR, TURNTABLE_A, TURNTABLE_B); 
 //encoders
 VelocityQuadrature gearbox_left(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 tfr_msgs::ArduinoAReading arduinoReading;
@@ -91,6 +94,7 @@ void setup()
 void loop()
 {
     arduinoReading.tread_left_vel = -gearbox_left.getVelocity()/GEARBOX_MPR;
+    arduinoReading.arm_turntable_pos = turntable.getPosition()/TURNTABLE_RPR;
 
     ads1115_a.startADC_SingleEnded(0);
     delay(8);

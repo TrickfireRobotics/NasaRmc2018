@@ -77,10 +77,10 @@ namespace tfr_control
 
         if (!use_fake_values)
         {
-            ////TURNTABLE TODO
-            //position_values[static_cast<int>(Joint::TURNTABLE)] = reading_b.arm_turntable_pos;
-            //velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0;
-            //effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
+            //TURNTABLE
+            position_values[static_cast<int>(Joint::TURNTABLE)] = reading_a.arm_turntable_pos - turntable_offset;
+            velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0;
+            effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
 
             //LOWER_ARM
             position_values[static_cast<int>(Joint::LOWER_ARM)] = reading_a.arm_lower_pos;
@@ -139,7 +139,11 @@ namespace tfr_control
         else  // we are working with the real arm
         {
             //TURNTABLE
-            adjustFakeJoint(Joint::TURNTABLE);
+            //NOTE we reverse these because actuator is mounted backwards
+            signal = turntableAngleToPWM(command_values[static_cast<int>(Joint::TURNTABLE)],
+                        position_values[static_cast<int>(Joint::TURNTABLE)]);
+            command.arm_turntable = signal;
+
 
             //LOWER_ARM
             //NOTE we reverse these because actuator is mounted backwards
@@ -396,4 +400,10 @@ namespace tfr_control
     {
         latest_arduino_b = msg;
     }
+
+    void RobotInterface::zeroTurntable()
+    {
+        turntable_offset = position_values[static_cast<int>(Joint::TURNTABLE)];
+    }
+
 }

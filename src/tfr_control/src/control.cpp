@@ -14,9 +14,11 @@
  *  /toggle_motors - uses the empty service, needs to be explicitly turned on to work
  *  /bin_state - gives the position of the bin
  *  /arm_state - gives the 4d position of the arm
+ *  /zero_turntable - zeros the position of the turntable
  */
 #include <ros/ros.h>
 #include <std_srvs/SetBool.h>
+#include <std_srvs/Empty.h>
 #include <tfr_msgs/QuerySrv.h>
 #include <tfr_msgs/BinStateSrv.h>
 #include <tfr_msgs/ArmStateSrv.h>
@@ -93,6 +95,7 @@ class Control
             eStopMotors{n.advertiseService("toggle_motors", &Control::toggleControl,this)},
             binService{n.advertiseService("bin_state", &Control::getBinState,this)},
             armService{n.advertiseService("arm_state", &Control::getArmState,this)},
+            zeroService{n.advertiseService("zero_turntable", &Control::zeroTurntable,this)},
             cycle{1/rate},
             enabled{false}
         {}
@@ -127,6 +130,9 @@ class Control
         //state services
         ros::ServiceServer binService;
         ros::ServiceServer armService;
+
+        //reset service
+        ros::ServiceServer zeroService;
 
         //how fast to spin
         ros::Duration cycle;
@@ -174,6 +180,16 @@ class Control
             std::vector<double> states{};
             robot_interface.getArmState(states);
             response.states = states;
+            return true;
+        }
+
+        /*
+         * Toggles the emergency stop on and off
+         * */
+        bool zeroTurntable(std_srvs::Empty::Request& request,
+                std_srvs::Empty::Response& response)
+        {
+            robot_interface.zeroTurntable();
             return true;
         }
 

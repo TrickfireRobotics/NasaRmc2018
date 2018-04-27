@@ -8,8 +8,8 @@
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
 #include <std_srvs/SetBool.h>
+#include <std_srvs/Empty.h>
 
-#include <tfr_msgs/EmptySrv.h>
 #include <tfr_msgs/SystemStatus.h>
 #include <tfr_msgs/DurationSrv.h>
 #include <tfr_msgs/EmptyAction.h>
@@ -121,6 +121,8 @@ namespace tfr_mission_control {
 
             //sets control system to output commands
             void setMotors(bool value);
+
+            void resetTurntable();
 
             /* ======================================================================== */
             /* Events                                                                   */

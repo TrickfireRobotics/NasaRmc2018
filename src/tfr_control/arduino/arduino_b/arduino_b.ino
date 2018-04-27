@@ -13,9 +13,6 @@ ros::NodeHandle nh;
 const double CPR = 4096; //pulse per revolution
 const double GEARBOX_MPR = 3.33; 
 
-//TODO note this rev/rev is acually 0.208, but I had to step it up to make testing work
-const double TURNTABLE_RPR = 60;
-
 //pin constants
 const int GEARBOX_RIGHT_A = 2;
 const int GEARBOX_RIGHT_B = 3;
@@ -71,7 +68,6 @@ void setup()
 void loop()
 {
     arduino_reading.tread_right_vel = gearbox_right.getVelocity()/GEARBOX_MPR;
-    //TODO    arduinoReading.arm_turntable_pos = turntable.getVelocity()/TURNTABLE_RPR;
     delay(8);
     nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
     delay(8);

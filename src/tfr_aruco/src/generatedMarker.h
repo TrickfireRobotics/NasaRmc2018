@@ -24,202 +24,2002 @@ void setBoardData(std::vector<std::vector<cv::Point3f> > &boardCorners, std::vec
 
 	markerPoints = 
 	{
-	cv::Point3f(-0.467, 0.178, 0),
-	cv::Point3f(-0.415, 0.178, 0),
-	cv::Point3f(-0.415, 0.23, 0),
-	cv::Point3f(-0.467, 0.23, 0)
+	cv::Point3f(-0.46, 0.025, 0),
+	cv::Point3f(-0.335, 0.025, 0),
+	cv::Point3f(-0.335, 0.15, 0),
+	cv::Point3f(-0.46, 0.15, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(3);
 
 	markerPoints = 
 	{
-	cv::Point3f(-0.399, 0.178, 0),
-	cv::Point3f(-0.347, 0.178, 0),
-	cv::Point3f(-0.347, 0.23, 0),
-	cv::Point3f(-0.399, 0.23, 0)
+	cv::Point3f(0.335, 0.025, 0),
+	cv::Point3f(0.46, 0.025, 0),
+	cv::Point3f(0.46, 0.15, 0),
+	cv::Point3f(0.335, 0.15, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(4);
 
 	markerPoints = 
 	{
-	cv::Point3f(-0.331, 0.178, 0),
-	cv::Point3f(-0.279, 0.178, 0),
-	cv::Point3f(-0.279, 0.23, 0),
-	cv::Point3f(-0.331, 0.23, 0)
+	cv::Point3f(-0.315, 0.025, 0),
+	cv::Point3f(-0.254, 0.025, 0),
+	cv::Point3f(-0.254, 0.086, 0),
+	cv::Point3f(-0.315, 0.086, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(5);
 
 	markerPoints = 
 	{
-	cv::Point3f(-0.263, 0.178, 0),
-	cv::Point3f(-0.211, 0.178, 0),
-	cv::Point3f(-0.211, 0.23, 0),
-	cv::Point3f(-0.263, 0.23, 0)
+	cv::Point3f(-0.315, 0.096, 0),
+	cv::Point3f(-0.254, 0.096, 0),
+	cv::Point3f(-0.254, 0.157, 0),
+	cv::Point3f(-0.315, 0.157, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(6);
 
 	markerPoints = 
 	{
-	cv::Point3f(-0.195, 0.178, 0),
-	cv::Point3f(-0.143, 0.178, 0),
-	cv::Point3f(-0.143, 0.23, 0),
-	cv::Point3f(-0.195, 0.23, 0)
+	cv::Point3f(-0.244, 0.025, 0),
+	cv::Point3f(-0.183, 0.025, 0),
+	cv::Point3f(-0.183, 0.086, 0),
+	cv::Point3f(-0.244, 0.086, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(7);
 
 	markerPoints = 
 	{
-	cv::Point3f(-0.127, 0.178, 0),
-	cv::Point3f(-0.075, 0.178, 0),
-	cv::Point3f(-0.075, 0.23, 0),
-	cv::Point3f(-0.127, 0.23, 0)
+	cv::Point3f(-0.244, 0.096, 0),
+	cv::Point3f(-0.183, 0.096, 0),
+	cv::Point3f(-0.183, 0.157, 0),
+	cv::Point3f(-0.244, 0.157, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(8);
 
 	markerPoints = 
 	{
-	cv::Point3f(-0.059, 0.178, 0),
-	cv::Point3f(-0.007, 0.178, 0),
-	cv::Point3f(-0.007, 0.23, 0),
-	cv::Point3f(-0.059, 0.23, 0)
+	cv::Point3f(-0.173, 0.025, 0),
+	cv::Point3f(-0.112, 0.025, 0),
+	cv::Point3f(-0.112, 0.086, 0),
+	cv::Point3f(-0.173, 0.086, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(9);
 
 	markerPoints = 
 	{
-	cv::Point3f(0.009, 0.178, 0),
-	cv::Point3f(0.061, 0.178, 0),
-	cv::Point3f(0.061, 0.23, 0),
-	cv::Point3f(0.009, 0.23, 0)
+	cv::Point3f(-0.173, 0.096, 0),
+	cv::Point3f(-0.112, 0.096, 0),
+	cv::Point3f(-0.112, 0.157, 0),
+	cv::Point3f(-0.173, 0.157, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(10);
 
 	markerPoints = 
 	{
-	cv::Point3f(0.077, 0.178, 0),
-	cv::Point3f(0.129, 0.178, 0),
-	cv::Point3f(0.129, 0.23, 0),
-	cv::Point3f(0.077, 0.23, 0)
+	cv::Point3f(-0.102, 0.025, 0),
+	cv::Point3f(-0.041, 0.025, 0),
+	cv::Point3f(-0.041, 0.086, 0),
+	cv::Point3f(-0.102, 0.086, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(11);
 
 	markerPoints = 
 	{
-	cv::Point3f(0.145, 0.178, 0),
-	cv::Point3f(0.197, 0.178, 0),
-	cv::Point3f(0.197, 0.23, 0),
-	cv::Point3f(0.145, 0.23, 0)
+	cv::Point3f(-0.102, 0.096, 0),
+	cv::Point3f(-0.041, 0.096, 0),
+	cv::Point3f(-0.041, 0.157, 0),
+	cv::Point3f(-0.102, 0.157, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(12);
 
 	markerPoints = 
 	{
-	cv::Point3f(0.213, 0.178, 0),
-	cv::Point3f(0.265, 0.178, 0),
-	cv::Point3f(0.265, 0.23, 0),
-	cv::Point3f(0.213, 0.23, 0)
+	cv::Point3f(-0.031, 0.025, 0),
+	cv::Point3f(0.03, 0.025, 0),
+	cv::Point3f(0.03, 0.086, 0),
+	cv::Point3f(-0.031, 0.086, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(13);
 
 	markerPoints = 
 	{
-	cv::Point3f(0.281, 0.178, 0),
-	cv::Point3f(0.333, 0.178, 0),
-	cv::Point3f(0.333, 0.23, 0),
-	cv::Point3f(0.281, 0.23, 0)
+	cv::Point3f(-0.031, 0.096, 0),
+	cv::Point3f(0.03, 0.096, 0),
+	cv::Point3f(0.03, 0.157, 0),
+	cv::Point3f(-0.031, 0.157, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(14);
 
 	markerPoints = 
 	{
-	cv::Point3f(0.349, 0.178, 0),
-	cv::Point3f(0.401, 0.178, 0),
-	cv::Point3f(0.401, 0.23, 0),
-	cv::Point3f(0.349, 0.23, 0)
+	cv::Point3f(0.04, 0.025, 0),
+	cv::Point3f(0.101, 0.025, 0),
+	cv::Point3f(0.101, 0.086, 0),
+	cv::Point3f(0.04, 0.086, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(15);
 
 	markerPoints = 
 	{
-	cv::Point3f(0.417, 0.178, 0),
-	cv::Point3f(0.469, 0.178, 0),
-	cv::Point3f(0.469, 0.23, 0),
-	cv::Point3f(0.417, 0.23, 0)
+	cv::Point3f(0.04, 0.096, 0),
+	cv::Point3f(0.101, 0.096, 0),
+	cv::Point3f(0.101, 0.157, 0),
+	cv::Point3f(0.04, 0.157, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(16);
 
 	markerPoints = 
 	{
-	cv::Point3f(-0.46, 0.015, 0),
-	cv::Point3f(-0.335, 0.015, 0),
-	cv::Point3f(-0.335, 0.14, 0),
-	cv::Point3f(-0.46, 0.14, 0)
+	cv::Point3f(0.111, 0.025, 0),
+	cv::Point3f(0.172, 0.025, 0),
+	cv::Point3f(0.172, 0.086, 0),
+	cv::Point3f(0.111, 0.086, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(17);
 
 	markerPoints = 
 	{
-	cv::Point3f(-0.305, 0.015, 0),
-	cv::Point3f(-0.18, 0.015, 0),
-	cv::Point3f(-0.18, 0.14, 0),
-	cv::Point3f(-0.305, 0.14, 0)
+	cv::Point3f(0.111, 0.096, 0),
+	cv::Point3f(0.172, 0.096, 0),
+	cv::Point3f(0.172, 0.157, 0),
+	cv::Point3f(0.111, 0.157, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(18);
 
 	markerPoints = 
 	{
-	cv::Point3f(-0.15, 0.015, 0),
-	cv::Point3f(-0.025, 0.015, 0),
-	cv::Point3f(-0.025, 0.14, 0),
-	cv::Point3f(-0.15, 0.14, 0)
+	cv::Point3f(0.182, 0.025, 0),
+	cv::Point3f(0.243, 0.025, 0),
+	cv::Point3f(0.243, 0.086, 0),
+	cv::Point3f(0.182, 0.086, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(19);
 
 	markerPoints = 
 	{
-	cv::Point3f(0.005, 0.015, 0),
-	cv::Point3f(0.13, 0.015, 0),
-	cv::Point3f(0.13, 0.14, 0),
-	cv::Point3f(0.005, 0.14, 0)
+	cv::Point3f(0.182, 0.096, 0),
+	cv::Point3f(0.243, 0.096, 0),
+	cv::Point3f(0.243, 0.157, 0),
+	cv::Point3f(0.182, 0.157, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(20);
 
 	markerPoints = 
 	{
-	cv::Point3f(0.16, 0.015, 0),
-	cv::Point3f(0.285, 0.015, 0),
-	cv::Point3f(0.285, 0.14, 0),
-	cv::Point3f(0.16, 0.14, 0)
+	cv::Point3f(0.253, 0.025, 0),
+	cv::Point3f(0.314, 0.025, 0),
+	cv::Point3f(0.314, 0.086, 0),
+	cv::Point3f(0.253, 0.086, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(21);
 
 	markerPoints = 
 	{
-	cv::Point3f(0.315, 0.015, 0),
-	cv::Point3f(0.44, 0.015, 0),
-	cv::Point3f(0.44, 0.14, 0),
-	cv::Point3f(0.315, 0.14, 0)
+	cv::Point3f(0.253, 0.096, 0),
+	cv::Point3f(0.314, 0.096, 0),
+	cv::Point3f(0.314, 0.157, 0),
+	cv::Point3f(0.253, 0.157, 0)
 	};
 	boardCorners.push_back(markerPoints);
 	boardIds.push_back(22);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4725, 0.175, 0),
+	cv::Point3f(-0.4465, 0.175, 0),
+	cv::Point3f(-0.4465, 0.201, 0),
+	cv::Point3f(-0.4725, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(23);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4725, 0.206, 0),
+	cv::Point3f(-0.4465, 0.206, 0),
+	cv::Point3f(-0.4465, 0.232, 0),
+	cv::Point3f(-0.4725, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(24);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4415, 0.175, 0),
+	cv::Point3f(-0.4155, 0.175, 0),
+	cv::Point3f(-0.4155, 0.201, 0),
+	cv::Point3f(-0.4415, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(25);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4415, 0.206, 0),
+	cv::Point3f(-0.4155, 0.206, 0),
+	cv::Point3f(-0.4155, 0.232, 0),
+	cv::Point3f(-0.4415, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(26);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4105, 0.175, 0),
+	cv::Point3f(-0.3845, 0.175, 0),
+	cv::Point3f(-0.3845, 0.201, 0),
+	cv::Point3f(-0.4105, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(27);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4105, 0.206, 0),
+	cv::Point3f(-0.3845, 0.206, 0),
+	cv::Point3f(-0.3845, 0.232, 0),
+	cv::Point3f(-0.4105, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(28);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3795, 0.175, 0),
+	cv::Point3f(-0.3535, 0.175, 0),
+	cv::Point3f(-0.3535, 0.201, 0),
+	cv::Point3f(-0.3795, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(29);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3795, 0.206, 0),
+	cv::Point3f(-0.3535, 0.206, 0),
+	cv::Point3f(-0.3535, 0.232, 0),
+	cv::Point3f(-0.3795, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(30);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3485, 0.175, 0),
+	cv::Point3f(-0.3225, 0.175, 0),
+	cv::Point3f(-0.3225, 0.201, 0),
+	cv::Point3f(-0.3485, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(31);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3485, 0.206, 0),
+	cv::Point3f(-0.3225, 0.206, 0),
+	cv::Point3f(-0.3225, 0.232, 0),
+	cv::Point3f(-0.3485, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(32);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3175, 0.175, 0),
+	cv::Point3f(-0.2915, 0.175, 0),
+	cv::Point3f(-0.2915, 0.201, 0),
+	cv::Point3f(-0.3175, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(33);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3175, 0.206, 0),
+	cv::Point3f(-0.2915, 0.206, 0),
+	cv::Point3f(-0.2915, 0.232, 0),
+	cv::Point3f(-0.3175, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(34);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2865, 0.175, 0),
+	cv::Point3f(-0.2605, 0.175, 0),
+	cv::Point3f(-0.2605, 0.201, 0),
+	cv::Point3f(-0.2865, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(35);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2865, 0.206, 0),
+	cv::Point3f(-0.2605, 0.206, 0),
+	cv::Point3f(-0.2605, 0.232, 0),
+	cv::Point3f(-0.2865, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(36);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2555, 0.175, 0),
+	cv::Point3f(-0.2295, 0.175, 0),
+	cv::Point3f(-0.2295, 0.201, 0),
+	cv::Point3f(-0.2555, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(37);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2555, 0.206, 0),
+	cv::Point3f(-0.2295, 0.206, 0),
+	cv::Point3f(-0.2295, 0.232, 0),
+	cv::Point3f(-0.2555, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(38);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2245, 0.175, 0),
+	cv::Point3f(-0.1985, 0.175, 0),
+	cv::Point3f(-0.1985, 0.201, 0),
+	cv::Point3f(-0.2245, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(39);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2245, 0.206, 0),
+	cv::Point3f(-0.1985, 0.206, 0),
+	cv::Point3f(-0.1985, 0.232, 0),
+	cv::Point3f(-0.2245, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(40);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1935, 0.175, 0),
+	cv::Point3f(-0.1675, 0.175, 0),
+	cv::Point3f(-0.1675, 0.201, 0),
+	cv::Point3f(-0.1935, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(41);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1935, 0.206, 0),
+	cv::Point3f(-0.1675, 0.206, 0),
+	cv::Point3f(-0.1675, 0.232, 0),
+	cv::Point3f(-0.1935, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(42);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1625, 0.175, 0),
+	cv::Point3f(-0.1365, 0.175, 0),
+	cv::Point3f(-0.1365, 0.201, 0),
+	cv::Point3f(-0.1625, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(43);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1625, 0.206, 0),
+	cv::Point3f(-0.1365, 0.206, 0),
+	cv::Point3f(-0.1365, 0.232, 0),
+	cv::Point3f(-0.1625, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(44);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1315, 0.175, 0),
+	cv::Point3f(-0.1055, 0.175, 0),
+	cv::Point3f(-0.1055, 0.201, 0),
+	cv::Point3f(-0.1315, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(45);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1315, 0.206, 0),
+	cv::Point3f(-0.1055, 0.206, 0),
+	cv::Point3f(-0.1055, 0.232, 0),
+	cv::Point3f(-0.1315, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(46);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1005, 0.175, 0),
+	cv::Point3f(-0.0745, 0.175, 0),
+	cv::Point3f(-0.0745, 0.201, 0),
+	cv::Point3f(-0.1005, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(47);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1005, 0.206, 0),
+	cv::Point3f(-0.0745, 0.206, 0),
+	cv::Point3f(-0.0745, 0.232, 0),
+	cv::Point3f(-0.1005, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(48);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0695, 0.175, 0),
+	cv::Point3f(-0.0435, 0.175, 0),
+	cv::Point3f(-0.0435, 0.201, 0),
+	cv::Point3f(-0.0695, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(49);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0695, 0.206, 0),
+	cv::Point3f(-0.0435, 0.206, 0),
+	cv::Point3f(-0.0435, 0.232, 0),
+	cv::Point3f(-0.0695, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(50);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0385, 0.175, 0),
+	cv::Point3f(-0.0125, 0.175, 0),
+	cv::Point3f(-0.0125, 0.201, 0),
+	cv::Point3f(-0.0385, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(51);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0385, 0.206, 0),
+	cv::Point3f(-0.0125, 0.206, 0),
+	cv::Point3f(-0.0125, 0.232, 0),
+	cv::Point3f(-0.0385, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(52);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0075, 0.175, 0),
+	cv::Point3f(0.0185, 0.175, 0),
+	cv::Point3f(0.0185, 0.201, 0),
+	cv::Point3f(-0.0075, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(53);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0075, 0.206, 0),
+	cv::Point3f(0.0185, 0.206, 0),
+	cv::Point3f(0.0185, 0.232, 0),
+	cv::Point3f(-0.0075, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(54);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0235, 0.175, 0),
+	cv::Point3f(0.0495, 0.175, 0),
+	cv::Point3f(0.0495, 0.201, 0),
+	cv::Point3f(0.0235, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(55);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0235, 0.206, 0),
+	cv::Point3f(0.0495, 0.206, 0),
+	cv::Point3f(0.0495, 0.232, 0),
+	cv::Point3f(0.0235, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(56);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0545, 0.175, 0),
+	cv::Point3f(0.0805, 0.175, 0),
+	cv::Point3f(0.0805, 0.201, 0),
+	cv::Point3f(0.0545, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(57);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0545, 0.206, 0),
+	cv::Point3f(0.0805, 0.206, 0),
+	cv::Point3f(0.0805, 0.232, 0),
+	cv::Point3f(0.0545, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(58);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0855, 0.175, 0),
+	cv::Point3f(0.1115, 0.175, 0),
+	cv::Point3f(0.1115, 0.201, 0),
+	cv::Point3f(0.0855, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(59);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0855, 0.206, 0),
+	cv::Point3f(0.1115, 0.206, 0),
+	cv::Point3f(0.1115, 0.232, 0),
+	cv::Point3f(0.0855, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(60);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1165, 0.175, 0),
+	cv::Point3f(0.1425, 0.175, 0),
+	cv::Point3f(0.1425, 0.201, 0),
+	cv::Point3f(0.1165, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(61);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1165, 0.206, 0),
+	cv::Point3f(0.1425, 0.206, 0),
+	cv::Point3f(0.1425, 0.232, 0),
+	cv::Point3f(0.1165, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(62);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1475, 0.175, 0),
+	cv::Point3f(0.1735, 0.175, 0),
+	cv::Point3f(0.1735, 0.201, 0),
+	cv::Point3f(0.1475, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(63);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1475, 0.206, 0),
+	cv::Point3f(0.1735, 0.206, 0),
+	cv::Point3f(0.1735, 0.232, 0),
+	cv::Point3f(0.1475, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(64);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1785, 0.175, 0),
+	cv::Point3f(0.2045, 0.175, 0),
+	cv::Point3f(0.2045, 0.201, 0),
+	cv::Point3f(0.1785, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(65);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1785, 0.206, 0),
+	cv::Point3f(0.2045, 0.206, 0),
+	cv::Point3f(0.2045, 0.232, 0),
+	cv::Point3f(0.1785, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(66);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2095, 0.175, 0),
+	cv::Point3f(0.2355, 0.175, 0),
+	cv::Point3f(0.2355, 0.201, 0),
+	cv::Point3f(0.2095, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(67);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2095, 0.206, 0),
+	cv::Point3f(0.2355, 0.206, 0),
+	cv::Point3f(0.2355, 0.232, 0),
+	cv::Point3f(0.2095, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(68);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2405, 0.175, 0),
+	cv::Point3f(0.2665, 0.175, 0),
+	cv::Point3f(0.2665, 0.201, 0),
+	cv::Point3f(0.2405, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(69);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2405, 0.206, 0),
+	cv::Point3f(0.2665, 0.206, 0),
+	cv::Point3f(0.2665, 0.232, 0),
+	cv::Point3f(0.2405, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(70);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2715, 0.175, 0),
+	cv::Point3f(0.2975, 0.175, 0),
+	cv::Point3f(0.2975, 0.201, 0),
+	cv::Point3f(0.2715, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(71);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2715, 0.206, 0),
+	cv::Point3f(0.2975, 0.206, 0),
+	cv::Point3f(0.2975, 0.232, 0),
+	cv::Point3f(0.2715, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(72);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3025, 0.175, 0),
+	cv::Point3f(0.3285, 0.175, 0),
+	cv::Point3f(0.3285, 0.201, 0),
+	cv::Point3f(0.3025, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(73);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3025, 0.206, 0),
+	cv::Point3f(0.3285, 0.206, 0),
+	cv::Point3f(0.3285, 0.232, 0),
+	cv::Point3f(0.3025, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(74);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3335, 0.175, 0),
+	cv::Point3f(0.3595, 0.175, 0),
+	cv::Point3f(0.3595, 0.201, 0),
+	cv::Point3f(0.3335, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(75);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3335, 0.206, 0),
+	cv::Point3f(0.3595, 0.206, 0),
+	cv::Point3f(0.3595, 0.232, 0),
+	cv::Point3f(0.3335, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(76);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3645, 0.175, 0),
+	cv::Point3f(0.3905, 0.175, 0),
+	cv::Point3f(0.3905, 0.201, 0),
+	cv::Point3f(0.3645, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(77);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3645, 0.206, 0),
+	cv::Point3f(0.3905, 0.206, 0),
+	cv::Point3f(0.3905, 0.232, 0),
+	cv::Point3f(0.3645, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(78);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3955, 0.175, 0),
+	cv::Point3f(0.4215, 0.175, 0),
+	cv::Point3f(0.4215, 0.201, 0),
+	cv::Point3f(0.3955, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(79);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3955, 0.206, 0),
+	cv::Point3f(0.4215, 0.206, 0),
+	cv::Point3f(0.4215, 0.232, 0),
+	cv::Point3f(0.3955, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(80);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.4265, 0.175, 0),
+	cv::Point3f(0.4525, 0.175, 0),
+	cv::Point3f(0.4525, 0.201, 0),
+	cv::Point3f(0.4265, 0.201, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(81);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.4265, 0.206, 0),
+	cv::Point3f(0.4525, 0.206, 0),
+	cv::Point3f(0.4525, 0.232, 0),
+	cv::Point3f(0.4265, 0.232, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(82);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4725, 0.2625, 0),
+	cv::Point3f(-0.4465, 0.2625, 0),
+	cv::Point3f(-0.4465, 0.2885, 0),
+	cv::Point3f(-0.4725, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(83);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4725, 0.2935, 0),
+	cv::Point3f(-0.4465, 0.2935, 0),
+	cv::Point3f(-0.4465, 0.3195, 0),
+	cv::Point3f(-0.4725, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(84);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4725, 0.3245, 0),
+	cv::Point3f(-0.4465, 0.3245, 0),
+	cv::Point3f(-0.4465, 0.3505, 0),
+	cv::Point3f(-0.4725, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(85);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4725, 0.3555, 0),
+	cv::Point3f(-0.4465, 0.3555, 0),
+	cv::Point3f(-0.4465, 0.3815, 0),
+	cv::Point3f(-0.4725, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(86);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4415, 0.2625, 0),
+	cv::Point3f(-0.4155, 0.2625, 0),
+	cv::Point3f(-0.4155, 0.2885, 0),
+	cv::Point3f(-0.4415, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(87);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4415, 0.2935, 0),
+	cv::Point3f(-0.4155, 0.2935, 0),
+	cv::Point3f(-0.4155, 0.3195, 0),
+	cv::Point3f(-0.4415, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(88);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4415, 0.3245, 0),
+	cv::Point3f(-0.4155, 0.3245, 0),
+	cv::Point3f(-0.4155, 0.3505, 0),
+	cv::Point3f(-0.4415, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(89);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4415, 0.3555, 0),
+	cv::Point3f(-0.4155, 0.3555, 0),
+	cv::Point3f(-0.4155, 0.3815, 0),
+	cv::Point3f(-0.4415, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(90);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4105, 0.2625, 0),
+	cv::Point3f(-0.3845, 0.2625, 0),
+	cv::Point3f(-0.3845, 0.2885, 0),
+	cv::Point3f(-0.4105, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(91);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4105, 0.2935, 0),
+	cv::Point3f(-0.3845, 0.2935, 0),
+	cv::Point3f(-0.3845, 0.3195, 0),
+	cv::Point3f(-0.4105, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(92);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4105, 0.3245, 0),
+	cv::Point3f(-0.3845, 0.3245, 0),
+	cv::Point3f(-0.3845, 0.3505, 0),
+	cv::Point3f(-0.4105, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(93);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.4105, 0.3555, 0),
+	cv::Point3f(-0.3845, 0.3555, 0),
+	cv::Point3f(-0.3845, 0.3815, 0),
+	cv::Point3f(-0.4105, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(94);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3795, 0.2625, 0),
+	cv::Point3f(-0.3535, 0.2625, 0),
+	cv::Point3f(-0.3535, 0.2885, 0),
+	cv::Point3f(-0.3795, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(95);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3795, 0.2935, 0),
+	cv::Point3f(-0.3535, 0.2935, 0),
+	cv::Point3f(-0.3535, 0.3195, 0),
+	cv::Point3f(-0.3795, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(96);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3795, 0.3245, 0),
+	cv::Point3f(-0.3535, 0.3245, 0),
+	cv::Point3f(-0.3535, 0.3505, 0),
+	cv::Point3f(-0.3795, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(97);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3795, 0.3555, 0),
+	cv::Point3f(-0.3535, 0.3555, 0),
+	cv::Point3f(-0.3535, 0.3815, 0),
+	cv::Point3f(-0.3795, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(98);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3485, 0.2625, 0),
+	cv::Point3f(-0.3225, 0.2625, 0),
+	cv::Point3f(-0.3225, 0.2885, 0),
+	cv::Point3f(-0.3485, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(99);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3485, 0.2935, 0),
+	cv::Point3f(-0.3225, 0.2935, 0),
+	cv::Point3f(-0.3225, 0.3195, 0),
+	cv::Point3f(-0.3485, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(100);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3485, 0.3245, 0),
+	cv::Point3f(-0.3225, 0.3245, 0),
+	cv::Point3f(-0.3225, 0.3505, 0),
+	cv::Point3f(-0.3485, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(101);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3485, 0.3555, 0),
+	cv::Point3f(-0.3225, 0.3555, 0),
+	cv::Point3f(-0.3225, 0.3815, 0),
+	cv::Point3f(-0.3485, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(102);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3175, 0.2625, 0),
+	cv::Point3f(-0.2915, 0.2625, 0),
+	cv::Point3f(-0.2915, 0.2885, 0),
+	cv::Point3f(-0.3175, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(103);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3175, 0.2935, 0),
+	cv::Point3f(-0.2915, 0.2935, 0),
+	cv::Point3f(-0.2915, 0.3195, 0),
+	cv::Point3f(-0.3175, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(104);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3175, 0.3245, 0),
+	cv::Point3f(-0.2915, 0.3245, 0),
+	cv::Point3f(-0.2915, 0.3505, 0),
+	cv::Point3f(-0.3175, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(105);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.3175, 0.3555, 0),
+	cv::Point3f(-0.2915, 0.3555, 0),
+	cv::Point3f(-0.2915, 0.3815, 0),
+	cv::Point3f(-0.3175, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(106);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2865, 0.2625, 0),
+	cv::Point3f(-0.2605, 0.2625, 0),
+	cv::Point3f(-0.2605, 0.2885, 0),
+	cv::Point3f(-0.2865, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(107);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2865, 0.2935, 0),
+	cv::Point3f(-0.2605, 0.2935, 0),
+	cv::Point3f(-0.2605, 0.3195, 0),
+	cv::Point3f(-0.2865, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(108);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2865, 0.3245, 0),
+	cv::Point3f(-0.2605, 0.3245, 0),
+	cv::Point3f(-0.2605, 0.3505, 0),
+	cv::Point3f(-0.2865, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(109);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2865, 0.3555, 0),
+	cv::Point3f(-0.2605, 0.3555, 0),
+	cv::Point3f(-0.2605, 0.3815, 0),
+	cv::Point3f(-0.2865, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(110);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2555, 0.2625, 0),
+	cv::Point3f(-0.2295, 0.2625, 0),
+	cv::Point3f(-0.2295, 0.2885, 0),
+	cv::Point3f(-0.2555, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(111);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2555, 0.2935, 0),
+	cv::Point3f(-0.2295, 0.2935, 0),
+	cv::Point3f(-0.2295, 0.3195, 0),
+	cv::Point3f(-0.2555, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(112);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2555, 0.3245, 0),
+	cv::Point3f(-0.2295, 0.3245, 0),
+	cv::Point3f(-0.2295, 0.3505, 0),
+	cv::Point3f(-0.2555, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(113);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2555, 0.3555, 0),
+	cv::Point3f(-0.2295, 0.3555, 0),
+	cv::Point3f(-0.2295, 0.3815, 0),
+	cv::Point3f(-0.2555, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(114);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2245, 0.2625, 0),
+	cv::Point3f(-0.1985, 0.2625, 0),
+	cv::Point3f(-0.1985, 0.2885, 0),
+	cv::Point3f(-0.2245, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(115);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2245, 0.2935, 0),
+	cv::Point3f(-0.1985, 0.2935, 0),
+	cv::Point3f(-0.1985, 0.3195, 0),
+	cv::Point3f(-0.2245, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(116);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2245, 0.3245, 0),
+	cv::Point3f(-0.1985, 0.3245, 0),
+	cv::Point3f(-0.1985, 0.3505, 0),
+	cv::Point3f(-0.2245, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(117);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.2245, 0.3555, 0),
+	cv::Point3f(-0.1985, 0.3555, 0),
+	cv::Point3f(-0.1985, 0.3815, 0),
+	cv::Point3f(-0.2245, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(118);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1935, 0.2625, 0),
+	cv::Point3f(-0.1675, 0.2625, 0),
+	cv::Point3f(-0.1675, 0.2885, 0),
+	cv::Point3f(-0.1935, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(119);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1935, 0.2935, 0),
+	cv::Point3f(-0.1675, 0.2935, 0),
+	cv::Point3f(-0.1675, 0.3195, 0),
+	cv::Point3f(-0.1935, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(120);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1935, 0.3245, 0),
+	cv::Point3f(-0.1675, 0.3245, 0),
+	cv::Point3f(-0.1675, 0.3505, 0),
+	cv::Point3f(-0.1935, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(121);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1935, 0.3555, 0),
+	cv::Point3f(-0.1675, 0.3555, 0),
+	cv::Point3f(-0.1675, 0.3815, 0),
+	cv::Point3f(-0.1935, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(122);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1625, 0.2625, 0),
+	cv::Point3f(-0.1365, 0.2625, 0),
+	cv::Point3f(-0.1365, 0.2885, 0),
+	cv::Point3f(-0.1625, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(123);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1625, 0.2935, 0),
+	cv::Point3f(-0.1365, 0.2935, 0),
+	cv::Point3f(-0.1365, 0.3195, 0),
+	cv::Point3f(-0.1625, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(124);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1625, 0.3245, 0),
+	cv::Point3f(-0.1365, 0.3245, 0),
+	cv::Point3f(-0.1365, 0.3505, 0),
+	cv::Point3f(-0.1625, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(125);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1625, 0.3555, 0),
+	cv::Point3f(-0.1365, 0.3555, 0),
+	cv::Point3f(-0.1365, 0.3815, 0),
+	cv::Point3f(-0.1625, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(126);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1315, 0.2625, 0),
+	cv::Point3f(-0.1055, 0.2625, 0),
+	cv::Point3f(-0.1055, 0.2885, 0),
+	cv::Point3f(-0.1315, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(127);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1315, 0.2935, 0),
+	cv::Point3f(-0.1055, 0.2935, 0),
+	cv::Point3f(-0.1055, 0.3195, 0),
+	cv::Point3f(-0.1315, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(128);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1315, 0.3245, 0),
+	cv::Point3f(-0.1055, 0.3245, 0),
+	cv::Point3f(-0.1055, 0.3505, 0),
+	cv::Point3f(-0.1315, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(129);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1315, 0.3555, 0),
+	cv::Point3f(-0.1055, 0.3555, 0),
+	cv::Point3f(-0.1055, 0.3815, 0),
+	cv::Point3f(-0.1315, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(130);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1005, 0.2625, 0),
+	cv::Point3f(-0.0745, 0.2625, 0),
+	cv::Point3f(-0.0745, 0.2885, 0),
+	cv::Point3f(-0.1005, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(131);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1005, 0.2935, 0),
+	cv::Point3f(-0.0745, 0.2935, 0),
+	cv::Point3f(-0.0745, 0.3195, 0),
+	cv::Point3f(-0.1005, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(132);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1005, 0.3245, 0),
+	cv::Point3f(-0.0745, 0.3245, 0),
+	cv::Point3f(-0.0745, 0.3505, 0),
+	cv::Point3f(-0.1005, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(133);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.1005, 0.3555, 0),
+	cv::Point3f(-0.0745, 0.3555, 0),
+	cv::Point3f(-0.0745, 0.3815, 0),
+	cv::Point3f(-0.1005, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(134);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0695, 0.2625, 0),
+	cv::Point3f(-0.0435, 0.2625, 0),
+	cv::Point3f(-0.0435, 0.2885, 0),
+	cv::Point3f(-0.0695, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(135);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0695, 0.2935, 0),
+	cv::Point3f(-0.0435, 0.2935, 0),
+	cv::Point3f(-0.0435, 0.3195, 0),
+	cv::Point3f(-0.0695, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(136);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0695, 0.3245, 0),
+	cv::Point3f(-0.0435, 0.3245, 0),
+	cv::Point3f(-0.0435, 0.3505, 0),
+	cv::Point3f(-0.0695, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(137);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0695, 0.3555, 0),
+	cv::Point3f(-0.0435, 0.3555, 0),
+	cv::Point3f(-0.0435, 0.3815, 0),
+	cv::Point3f(-0.0695, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(138);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0385, 0.2625, 0),
+	cv::Point3f(-0.0125, 0.2625, 0),
+	cv::Point3f(-0.0125, 0.2885, 0),
+	cv::Point3f(-0.0385, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(139);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0385, 0.2935, 0),
+	cv::Point3f(-0.0125, 0.2935, 0),
+	cv::Point3f(-0.0125, 0.3195, 0),
+	cv::Point3f(-0.0385, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(140);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0385, 0.3245, 0),
+	cv::Point3f(-0.0125, 0.3245, 0),
+	cv::Point3f(-0.0125, 0.3505, 0),
+	cv::Point3f(-0.0385, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(141);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0385, 0.3555, 0),
+	cv::Point3f(-0.0125, 0.3555, 0),
+	cv::Point3f(-0.0125, 0.3815, 0),
+	cv::Point3f(-0.0385, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(142);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0075, 0.2625, 0),
+	cv::Point3f(0.0185, 0.2625, 0),
+	cv::Point3f(0.0185, 0.2885, 0),
+	cv::Point3f(-0.0075, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(143);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0075, 0.2935, 0),
+	cv::Point3f(0.0185, 0.2935, 0),
+	cv::Point3f(0.0185, 0.3195, 0),
+	cv::Point3f(-0.0075, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(144);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0075, 0.3245, 0),
+	cv::Point3f(0.0185, 0.3245, 0),
+	cv::Point3f(0.0185, 0.3505, 0),
+	cv::Point3f(-0.0075, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(145);
+
+	markerPoints = 
+	{
+	cv::Point3f(-0.0075, 0.3555, 0),
+	cv::Point3f(0.0185, 0.3555, 0),
+	cv::Point3f(0.0185, 0.3815, 0),
+	cv::Point3f(-0.0075, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(146);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0235, 0.2625, 0),
+	cv::Point3f(0.0495, 0.2625, 0),
+	cv::Point3f(0.0495, 0.2885, 0),
+	cv::Point3f(0.0235, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(147);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0235, 0.2935, 0),
+	cv::Point3f(0.0495, 0.2935, 0),
+	cv::Point3f(0.0495, 0.3195, 0),
+	cv::Point3f(0.0235, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(148);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0235, 0.3245, 0),
+	cv::Point3f(0.0495, 0.3245, 0),
+	cv::Point3f(0.0495, 0.3505, 0),
+	cv::Point3f(0.0235, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(149);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0235, 0.3555, 0),
+	cv::Point3f(0.0495, 0.3555, 0),
+	cv::Point3f(0.0495, 0.3815, 0),
+	cv::Point3f(0.0235, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(150);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0545, 0.2625, 0),
+	cv::Point3f(0.0805, 0.2625, 0),
+	cv::Point3f(0.0805, 0.2885, 0),
+	cv::Point3f(0.0545, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(151);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0545, 0.2935, 0),
+	cv::Point3f(0.0805, 0.2935, 0),
+	cv::Point3f(0.0805, 0.3195, 0),
+	cv::Point3f(0.0545, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(152);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0545, 0.3245, 0),
+	cv::Point3f(0.0805, 0.3245, 0),
+	cv::Point3f(0.0805, 0.3505, 0),
+	cv::Point3f(0.0545, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(153);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0545, 0.3555, 0),
+	cv::Point3f(0.0805, 0.3555, 0),
+	cv::Point3f(0.0805, 0.3815, 0),
+	cv::Point3f(0.0545, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(154);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0855, 0.2625, 0),
+	cv::Point3f(0.1115, 0.2625, 0),
+	cv::Point3f(0.1115, 0.2885, 0),
+	cv::Point3f(0.0855, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(155);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0855, 0.2935, 0),
+	cv::Point3f(0.1115, 0.2935, 0),
+	cv::Point3f(0.1115, 0.3195, 0),
+	cv::Point3f(0.0855, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(156);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0855, 0.3245, 0),
+	cv::Point3f(0.1115, 0.3245, 0),
+	cv::Point3f(0.1115, 0.3505, 0),
+	cv::Point3f(0.0855, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(157);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.0855, 0.3555, 0),
+	cv::Point3f(0.1115, 0.3555, 0),
+	cv::Point3f(0.1115, 0.3815, 0),
+	cv::Point3f(0.0855, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(158);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1165, 0.2625, 0),
+	cv::Point3f(0.1425, 0.2625, 0),
+	cv::Point3f(0.1425, 0.2885, 0),
+	cv::Point3f(0.1165, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(159);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1165, 0.2935, 0),
+	cv::Point3f(0.1425, 0.2935, 0),
+	cv::Point3f(0.1425, 0.3195, 0),
+	cv::Point3f(0.1165, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(160);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1165, 0.3245, 0),
+	cv::Point3f(0.1425, 0.3245, 0),
+	cv::Point3f(0.1425, 0.3505, 0),
+	cv::Point3f(0.1165, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(161);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1165, 0.3555, 0),
+	cv::Point3f(0.1425, 0.3555, 0),
+	cv::Point3f(0.1425, 0.3815, 0),
+	cv::Point3f(0.1165, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(162);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1475, 0.2625, 0),
+	cv::Point3f(0.1735, 0.2625, 0),
+	cv::Point3f(0.1735, 0.2885, 0),
+	cv::Point3f(0.1475, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(163);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1475, 0.2935, 0),
+	cv::Point3f(0.1735, 0.2935, 0),
+	cv::Point3f(0.1735, 0.3195, 0),
+	cv::Point3f(0.1475, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(164);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1475, 0.3245, 0),
+	cv::Point3f(0.1735, 0.3245, 0),
+	cv::Point3f(0.1735, 0.3505, 0),
+	cv::Point3f(0.1475, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(165);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1475, 0.3555, 0),
+	cv::Point3f(0.1735, 0.3555, 0),
+	cv::Point3f(0.1735, 0.3815, 0),
+	cv::Point3f(0.1475, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(166);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1785, 0.2625, 0),
+	cv::Point3f(0.2045, 0.2625, 0),
+	cv::Point3f(0.2045, 0.2885, 0),
+	cv::Point3f(0.1785, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(167);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1785, 0.2935, 0),
+	cv::Point3f(0.2045, 0.2935, 0),
+	cv::Point3f(0.2045, 0.3195, 0),
+	cv::Point3f(0.1785, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(168);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1785, 0.3245, 0),
+	cv::Point3f(0.2045, 0.3245, 0),
+	cv::Point3f(0.2045, 0.3505, 0),
+	cv::Point3f(0.1785, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(169);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.1785, 0.3555, 0),
+	cv::Point3f(0.2045, 0.3555, 0),
+	cv::Point3f(0.2045, 0.3815, 0),
+	cv::Point3f(0.1785, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(170);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2095, 0.2625, 0),
+	cv::Point3f(0.2355, 0.2625, 0),
+	cv::Point3f(0.2355, 0.2885, 0),
+	cv::Point3f(0.2095, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(171);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2095, 0.2935, 0),
+	cv::Point3f(0.2355, 0.2935, 0),
+	cv::Point3f(0.2355, 0.3195, 0),
+	cv::Point3f(0.2095, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(172);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2095, 0.3245, 0),
+	cv::Point3f(0.2355, 0.3245, 0),
+	cv::Point3f(0.2355, 0.3505, 0),
+	cv::Point3f(0.2095, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(173);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2095, 0.3555, 0),
+	cv::Point3f(0.2355, 0.3555, 0),
+	cv::Point3f(0.2355, 0.3815, 0),
+	cv::Point3f(0.2095, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(174);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2405, 0.2625, 0),
+	cv::Point3f(0.2665, 0.2625, 0),
+	cv::Point3f(0.2665, 0.2885, 0),
+	cv::Point3f(0.2405, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(175);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2405, 0.2935, 0),
+	cv::Point3f(0.2665, 0.2935, 0),
+	cv::Point3f(0.2665, 0.3195, 0),
+	cv::Point3f(0.2405, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(176);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2405, 0.3245, 0),
+	cv::Point3f(0.2665, 0.3245, 0),
+	cv::Point3f(0.2665, 0.3505, 0),
+	cv::Point3f(0.2405, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(177);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2405, 0.3555, 0),
+	cv::Point3f(0.2665, 0.3555, 0),
+	cv::Point3f(0.2665, 0.3815, 0),
+	cv::Point3f(0.2405, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(178);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2715, 0.2625, 0),
+	cv::Point3f(0.2975, 0.2625, 0),
+	cv::Point3f(0.2975, 0.2885, 0),
+	cv::Point3f(0.2715, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(179);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2715, 0.2935, 0),
+	cv::Point3f(0.2975, 0.2935, 0),
+	cv::Point3f(0.2975, 0.3195, 0),
+	cv::Point3f(0.2715, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(180);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2715, 0.3245, 0),
+	cv::Point3f(0.2975, 0.3245, 0),
+	cv::Point3f(0.2975, 0.3505, 0),
+	cv::Point3f(0.2715, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(181);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.2715, 0.3555, 0),
+	cv::Point3f(0.2975, 0.3555, 0),
+	cv::Point3f(0.2975, 0.3815, 0),
+	cv::Point3f(0.2715, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(182);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3025, 0.2625, 0),
+	cv::Point3f(0.3285, 0.2625, 0),
+	cv::Point3f(0.3285, 0.2885, 0),
+	cv::Point3f(0.3025, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(183);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3025, 0.2935, 0),
+	cv::Point3f(0.3285, 0.2935, 0),
+	cv::Point3f(0.3285, 0.3195, 0),
+	cv::Point3f(0.3025, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(184);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3025, 0.3245, 0),
+	cv::Point3f(0.3285, 0.3245, 0),
+	cv::Point3f(0.3285, 0.3505, 0),
+	cv::Point3f(0.3025, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(185);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3025, 0.3555, 0),
+	cv::Point3f(0.3285, 0.3555, 0),
+	cv::Point3f(0.3285, 0.3815, 0),
+	cv::Point3f(0.3025, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(186);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3335, 0.2625, 0),
+	cv::Point3f(0.3595, 0.2625, 0),
+	cv::Point3f(0.3595, 0.2885, 0),
+	cv::Point3f(0.3335, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(187);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3335, 0.2935, 0),
+	cv::Point3f(0.3595, 0.2935, 0),
+	cv::Point3f(0.3595, 0.3195, 0),
+	cv::Point3f(0.3335, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(188);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3335, 0.3245, 0),
+	cv::Point3f(0.3595, 0.3245, 0),
+	cv::Point3f(0.3595, 0.3505, 0),
+	cv::Point3f(0.3335, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(189);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3335, 0.3555, 0),
+	cv::Point3f(0.3595, 0.3555, 0),
+	cv::Point3f(0.3595, 0.3815, 0),
+	cv::Point3f(0.3335, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(190);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3645, 0.2625, 0),
+	cv::Point3f(0.3905, 0.2625, 0),
+	cv::Point3f(0.3905, 0.2885, 0),
+	cv::Point3f(0.3645, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(191);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3645, 0.2935, 0),
+	cv::Point3f(0.3905, 0.2935, 0),
+	cv::Point3f(0.3905, 0.3195, 0),
+	cv::Point3f(0.3645, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(192);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3645, 0.3245, 0),
+	cv::Point3f(0.3905, 0.3245, 0),
+	cv::Point3f(0.3905, 0.3505, 0),
+	cv::Point3f(0.3645, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(193);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3645, 0.3555, 0),
+	cv::Point3f(0.3905, 0.3555, 0),
+	cv::Point3f(0.3905, 0.3815, 0),
+	cv::Point3f(0.3645, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(194);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3955, 0.2625, 0),
+	cv::Point3f(0.4215, 0.2625, 0),
+	cv::Point3f(0.4215, 0.2885, 0),
+	cv::Point3f(0.3955, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(195);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3955, 0.2935, 0),
+	cv::Point3f(0.4215, 0.2935, 0),
+	cv::Point3f(0.4215, 0.3195, 0),
+	cv::Point3f(0.3955, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(196);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3955, 0.3245, 0),
+	cv::Point3f(0.4215, 0.3245, 0),
+	cv::Point3f(0.4215, 0.3505, 0),
+	cv::Point3f(0.3955, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(197);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.3955, 0.3555, 0),
+	cv::Point3f(0.4215, 0.3555, 0),
+	cv::Point3f(0.4215, 0.3815, 0),
+	cv::Point3f(0.3955, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(198);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.4265, 0.2625, 0),
+	cv::Point3f(0.4525, 0.2625, 0),
+	cv::Point3f(0.4525, 0.2885, 0),
+	cv::Point3f(0.4265, 0.2885, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(199);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.4265, 0.2935, 0),
+	cv::Point3f(0.4525, 0.2935, 0),
+	cv::Point3f(0.4525, 0.3195, 0),
+	cv::Point3f(0.4265, 0.3195, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(200);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.4265, 0.3245, 0),
+	cv::Point3f(0.4525, 0.3245, 0),
+	cv::Point3f(0.4525, 0.3505, 0),
+	cv::Point3f(0.4265, 0.3505, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(201);
+
+	markerPoints = 
+	{
+	cv::Point3f(0.4265, 0.3555, 0),
+	cv::Point3f(0.4525, 0.3555, 0),
+	cv::Point3f(0.4525, 0.3815, 0),
+	cv::Point3f(0.4265, 0.3815, 0)
+	};
+	boardCorners.push_back(markerPoints);
+	boardIds.push_back(202);
 
 }

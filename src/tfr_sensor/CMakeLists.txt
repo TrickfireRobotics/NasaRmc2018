@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
     actionlib
     geometry_msgs
     sensor_msgs
+    std_srvs
     nav_msgs
     tfr_msgs
     tfr_utilities

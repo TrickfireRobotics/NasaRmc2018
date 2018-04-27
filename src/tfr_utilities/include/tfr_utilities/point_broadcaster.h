@@ -5,7 +5,7 @@
 #include <ros/console.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
-#include <tfr_msgs/LocalizePoint.h>
+#include <tfr_msgs/PoseSrv.h>
 
 /**
  *  Utility node
@@ -16,6 +16,8 @@
  *  takes in a tfr_msgs/LocalizePoint.srv
  *
  *  It will report (0 0 0) (0 0 0 0) until it is given a proper location
+ *
+ *  It also provides utilities for shifting a point by a set amount
  *
  *  parameters:
  *      parent_frame: the parent frame of this point (type = string default = "")
@@ -47,7 +49,8 @@ class PointBroadcaster
         const std::string &service_name;
         const double& height;
 
-        bool localize_point(tfr_msgs::LocalizePoint::Request &request,
-                tfr_msgs::LocalizePoint::Response &response);
+        bool localizePoint(tfr_msgs::PoseSrv::Request &request,
+                tfr_msgs::PoseSrv::Response &response);
+
 };
 #endif

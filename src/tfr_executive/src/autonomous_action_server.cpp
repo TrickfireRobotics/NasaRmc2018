@@ -41,9 +41,11 @@
 #include <ros/console.h>
 #include <tfr_msgs/EmptyAction.h>
 #include <tfr_msgs/DurationSrv.h>
+#include <tfr_msgs/LocalizationAction.h>
 #include <tfr_msgs/NavigationAction.h>
 #include <tfr_msgs/DiggingAction.h>
 #include <tfr_msgs/SetOdometry.h>
+#include <std_srvs/Empty.h>
 #include <tfr_utilities/location_codes.h>
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
@@ -62,7 +64,7 @@ class AutonomousExecutive
             frequency{f}
         {
             ros::param::param<bool>("~localization", LOCALIZATION, true);
-            if (LOCALIZATION)
+            if (LOCALIZATION || POST_LOCALIZATION)
             {
                 ROS_INFO("Autonomous Action Server: Connecting to localization server");
                 localizationClient.waitForServer();
@@ -139,7 +141,8 @@ class AutonomousExecutive
             if (LOCALIZATION)
             {
                 ROS_INFO("Autonomous Action Server: commencing localization");
-                tfr_msgs::EmptyGoal goal{};
+                tfr_msgs::LocalizationGoal goal{};
+                goal.set_odometry = true;
                 localizationClient.sendGoal(goal);
                 //handle preemption
                 while (!localizationClient.getState().isDone())
@@ -161,12 +164,11 @@ class AutonomousExecutive
                 }
 
                 ROS_INFO("Autonomous Action Server: stabilizing odometry");
-                tfr_msgs::SetOdometry::Request req;
-                req.pose.orientation.w = 1;
-                tfr_msgs::SetOdometry::Response res;
+                tfr_msgs::SetOdometry::Request odom_req;
+                odom_req.pose.orientation.w = 1;
+                tfr_msgs::SetOdometry::Response odom_res;
+                while (!ros::service::call("reset_drivebase_odometry", odom_req, odom_res));
 
-            
-                while (!ros::service::call("set_drivebase_odometry", req, res));
                 ros::Duration(5.0).sleep();
                 ROS_INFO("Autonomous Action Server: odometry stabilized");
                 ROS_INFO("Autonomous Action Server: localization finished");
@@ -235,7 +237,7 @@ class AutonomousExecutive
                 }
                 ROS_INFO("Autonomous Action Server: digging finished");
             }
-
+            
             if (NAVIGATION_FROM)
             {
                 ROS_INFO("Autonomous Action Server: Connecting to navigation server");
@@ -307,7 +309,7 @@ class AutonomousExecutive
         }
 
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
-        actionlib::SimpleActionClient<tfr_msgs::EmptyAction> localizationClient;
+        actionlib::SimpleActionClient<tfr_msgs::LocalizationAction> localizationClient;
         actionlib::SimpleActionClient<tfr_msgs::NavigationAction> navigationClient;
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> diggingClient;
         actionlib::SimpleActionClient<tfr_msgs::EmptyAction> dumpingClient;
@@ -316,6 +318,7 @@ class AutonomousExecutive
         bool NAVIGATION_TO;
         bool DIGGING;
         bool HOLE;
+        bool POST_LOCALIZATION;
         bool NAVIGATION_FROM;
         bool DUMPING;
         //how often to check for preemption

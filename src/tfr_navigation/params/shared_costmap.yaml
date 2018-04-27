@@ -7,7 +7,7 @@ observation_sources: point_cloud_sensor hole_obstacle
 point_cloud_sensor: {
     sensor_frame: /kinect_link,
     data_type: PointCloud2 ,
-    min_obstacle_height: 0.1,
+    min_obstacle_height: 0.15,
     topic: /sensors/kinect/depth/points, 
     marking: true,
     clearing: true
@@ -24,12 +24,12 @@ hole_obstacle: {
 
 
 
-update_frequency: 1.5
-publish_frequency: 1.5
+update_frequency: 2 
+publish_frequency: 1.5 
 global_frame: /odom
 robot_base_frame: /base_footprint
 static_map: false
 rolling_window: true  
 
-resolution: 0.15
-transform_tolerance: 0.2
+resolution: 0.2
+transform_tolerance: 0.4

@@ -4,7 +4,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <tfr_msgs/NavigationAction.h>
-#include <tfr_msgs/LocalizePoint.h>
+#include <tfr_msgs/PoseSrv.h>
 #include <tfr_utilities/location_codes.h>
 #include <boost/bind.hpp>
 #include <cstdint>
@@ -42,7 +42,7 @@ class Navigator
                 const double& height_adj,
                 const std::string &bin_f):
             node{n}, 
-            rate{2},
+            rate{10},
             height_adjustment{height_adj},
             constraints{c},
             server{n, "navigate", boost::bind(&Navigator::navigate, this, _1) ,false}, 
@@ -121,11 +121,11 @@ class Navigator
                 if (code == tfr_utilities::LocationCode::MINING)
                 {
                     //drop the location of the hole for the return trip
-                    tfr_msgs::LocalizePoint::Request request;
+                    tfr_msgs::PoseSrv::Request request;
                     request.pose.pose.position.x=
                         nav_goal.target_pose.pose.position.x + 2.2;
                     request.pose.pose.orientation.z=1;
-                    tfr_msgs::LocalizePoint::Response response;
+                    tfr_msgs::PoseSrv::Response response;
                     while (!ros::service::call("localize_hole", request, response) 
                             && !server.isPreemptRequested() && ros::ok() )
                     {

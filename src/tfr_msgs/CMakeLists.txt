@@ -31,7 +31,7 @@ add_message_files(
    ArmStateSrv.srv
    BinStateSrv.srv
    DurationSrv.srv
-   LocalizePoint.srv
+   PoseSrv.srv
    WrappedImage.srv
    SetOdometry.srv
  )
@@ -42,6 +42,7 @@ add_action_files(
   Teleop.action
   Example.action
   Navigation.action
+  Localization.action
   Bin.action
   Aruco.action
   ArmMove.action

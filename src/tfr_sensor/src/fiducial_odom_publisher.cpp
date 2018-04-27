@@ -20,6 +20,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <tfr_msgs/ArucoAction.h>
 #include <tfr_msgs/WrappedImage.h>
+#include <tfr_msgs/SetOdometry.h>
 #include <tfr_utilities/tf_manipulator.h>
 #include <actionlib/client/simple_action_client.h>
 #include <tf2/convert.h>
@@ -44,7 +45,7 @@ class FiducialOdom
             odometry_frame{o_frame}
         {
             rear_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/rear_cam/image_raw");
-            kinect_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/kinect/image_raw");
+            front_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/front_cam/image_raw");
             publisher = n.advertise<nav_msgs::Odometry>("fiducial_odom", 10 );
             ROS_INFO("Fiducial Odom Publisher Connecting to Server");
             aruco.waitForServer();
@@ -56,7 +57,7 @@ class FiducialOdom
             ros::Duration busy_wait{0.1};
             while(!rear_cam_client.call(request))
                 busy_wait.sleep();
-            while(!kinect_client.call(request))
+            while(!front_cam_client.call(request))
                 busy_wait.sleep();
             ROS_INFO("Fiducial Od)om Publisher: Connected Image Clients");
         }
@@ -76,16 +77,12 @@ class FiducialOdom
             if (rear_cam_client.call(image_wrapper))
                 result = sendAruco(image_wrapper);
 
-            if ((result == nullptr || result->number_found == 0) && kinect_client.call(image_wrapper))
+            if ((result == nullptr || result->number_found == 0) && front_cam_client.call(image_wrapper))
                 result = sendAruco(image_wrapper);
 
             if (result != nullptr && result->number_found !=0)
             {
                 geometry_msgs::PoseStamped unprocessed_pose = result->relative_pose;
-
-                //The kinect driver assigns it a weird frame, use ours instead
-                if (unprocessed_pose.header.frame_id == "kinect_rgb_optical_frame")
-                    unprocessed_pose.header.frame_id = "kinect_link";
 
                 //transform from camera to footprint perspective
                 geometry_msgs::PoseStamped processed_pose;
@@ -138,13 +135,20 @@ class FiducialOdom
                     0,   0,   0,   0,   0,1e-1};
                 //fire it off! and cleanup
                 publisher.publish(odom);
+
+                //control error propagation in the drivebase odometry publisher
+                tfr_msgs::SetOdometryRequest odom_req{};
+                odom_req.pose = odom.pose.pose;
+                tfr_msgs::SetOdometryResponse odom_res{};
+                ros::service::call("/set_drivebase_odometry", odom_req, odom_res);
+
             }
         }
 
     private:
         ros::Publisher publisher;
         ros::ServiceClient rear_cam_client;
-        ros::ServiceClient kinect_client;
+        ros::ServiceClient front_cam_client;
         actionlib::SimpleActionClient<tfr_msgs::ArucoAction> aruco;
         tf2_ros::TransformBroadcaster broadcaster;
         TfManipulator tf_manipulator;

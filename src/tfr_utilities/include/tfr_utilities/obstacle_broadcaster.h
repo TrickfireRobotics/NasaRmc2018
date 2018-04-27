@@ -5,7 +5,7 @@
 #include <ros/console.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
-#include <tfr_msgs/LocalizePoint.h>
+#include <tfr_msgs/PoseSrv.h>
 #include <pcl_ros/point_cloud.h>
 #include <pcl/point_types.h>
 #include <math.h>
@@ -61,8 +61,8 @@ class ObstacleBroadcaster
         const double &height;
         bool point_set;
 
-        bool localizePoint(tfr_msgs::LocalizePoint::Request &request,
-                tfr_msgs::LocalizePoint::Response &response);
+        bool localizePoint(tfr_msgs::PoseSrv::Request &request,
+                tfr_msgs::PoseSrv::Response &response);
         void generateCloud(pcl::PointCloud<pcl::PointXYZ> &cloud);
 };
 #endif

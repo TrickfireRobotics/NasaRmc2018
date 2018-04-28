@@ -8,9 +8,10 @@
 ros::NodeHandle nh;
 
 //encoder level constants
-const double CPR = 4096; //pulse per revolution
+const double GEARBOX_CPR = 4096;
+const double TURNTABLE_CPR = 28; 
 const double GEARBOX_MPR = 3.33; 
-const double TURNTABLE_RPR = 0.208; 
+const double TURNTABLE_RPR = (1/188.0)*(15.0/72.0)*2.0*3.15159; 
 
 //pin constants
 const int GEARBOX_LEFT_A = 2;
@@ -60,9 +61,9 @@ Potentiometer pots []
   Potentiometer{0.0, 0.0}             //BIN_RIGHT TODO
 };
 
-PositionQuadrature turntable(CPR, TURNTABLE_A, TURNTABLE_B); 
+PositionQuadrature turntable(TURNTABLE_CPR, TURNTABLE_A, TURNTABLE_B); 
 //encoders
-VelocityQuadrature gearbox_left(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
+VelocityQuadrature gearbox_left(GEARBOX_CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 tfr_msgs::ArduinoAReading arduinoReading;
 ros::Publisher arduino("arduino_a", &arduinoReading);
 
@@ -94,21 +95,22 @@ void setup()
 void loop()
 {
     arduinoReading.tread_left_vel = gearbox_left.getVelocity()/GEARBOX_MPR;
-    arduinoReading.arm_turntable_pos = turntable.getPosition()/TURNTABLE_RPR;
+    arduinoReading.arm_turntable_pos = turntable.getPosition()  *TURNTABLE_RPR;
 
     ads1115_a.startADC_SingleEnded(0);
     delay(8);
-    arduinoReading.arm_upper_pos = pots[ARM_UPPER].getPosition(ads1115_a.collectADC_SingleEnded());
+    arduinoReading.arm_upper_pos = ads1115_a.collectADC_SingleEnded();
     nh.spinOnce(); 
 
     ads1115_a.startADC_SingleEnded(1);
     delay(8);
-    arduinoReading.arm_scoop_pos = pots[ARM_SCOOP].getPosition(ads1115_a.collectADC_SingleEnded());
+    arduinoReading.arm_scoop_pos = ads1115_a.collectADC_SingleEnded();
     nh.spinOnce();
 
     ads1115_a.startADC_SingleEnded(2);
     delay(8);
-    arduinoReading.arm_lower_pos = pots[ARM_LOWER].getPosition(ads1115_a.collectADC_SingleEnded());
+    //arduinoReading.arm_lower_pos = pots[ARM_LOWER].getPosition(ads1115_a.collectADC_SingleEnded());
+    arduinoReading.arm_lower_pos = ads1115_a.collectADC_SingleEnded();
     nh.spinOnce();
 
     arduino.publish(&arduinoReading);

@@ -85,6 +85,8 @@ ads1115_b =>
 
 Adafruit_ADS1115 ads1115_a;
 
+Adafruit_ADS1115 ads1115_b(0x49);
+
 void setup()
 {
     nh.initNode();
@@ -97,17 +99,21 @@ void loop()
     arduinoReading.tread_left_vel = gearbox_left.getVelocity()/GEARBOX_MPR;
     arduinoReading.arm_turntable_pos = turntable.getPosition()  *TURNTABLE_RPR;
 
-    ads1115_a.startADC_SingleEnded(0);
+    ads1115_a.startADC_SingleEnded(2);
+    ads1115_b.startADC_SingleEnded(0);
     delay(8);
     arduinoReading.arm_upper_pos = ads1115_a.collectADC_SingleEnded();
+    arduinoReading.bin_left_pos = ads1115_b.collectADC_SingleEnded();
     nh.spinOnce(); 
 
     ads1115_a.startADC_SingleEnded(1);
+    ads1115_b.startADC_SingleEnded(1);
     delay(8);
     arduinoReading.arm_scoop_pos = ads1115_a.collectADC_SingleEnded();
+    arduinoReading.bin_right_pos = ads1115_b.collectADC_SingleEnded();
     nh.spinOnce();
 
-    ads1115_a.startADC_SingleEnded(2);
+    ads1115_a.startADC_SingleEnded(3);
     delay(8);
     //arduinoReading.arm_lower_pos = pots[ARM_LOWER].getPosition(ads1115_a.collectADC_SingleEnded());
     arduinoReading.arm_lower_pos = ads1115_a.collectADC_SingleEnded();

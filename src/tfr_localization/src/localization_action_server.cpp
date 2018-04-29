@@ -28,12 +28,14 @@
 class Localizer
 {
     public:
-        Localizer(ros::NodeHandle &n, const double& velocity, const double& duration) : 
+        Localizer(ros::NodeHandle &n, const double& velocity, const double&
+                duration, const double& thresh) : 
             aruco{n, "aruco_action_server"},
             server{n, "localize", boost::bind(&Localizer::localize, this, _1) ,false},
             cmd_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
             turn_velocity{velocity},
-            turn_duration{duration}
+            turn_duration{duration},
+            threshold{thresh}
 
         {
             ROS_INFO("Localization Action Server: Connecting Aruco");
@@ -68,6 +70,7 @@ class Localizer
         TfManipulator tf_manipulator;
         const double& turn_velocity;
         const double& turn_duration;
+        const double& threshold;
 
         void localize( const tfr_msgs::LocalizationGoalConstPtr &goal)
         {
@@ -96,11 +99,9 @@ class Localizer
                 if (result != nullptr && result->number_found == 0 && front_cam_client.call(image_wrapper))
                     result = sendAruco(image_wrapper);
 
-                if (result != nullptr && result->number_found > 4)
+                if (result != nullptr && result->number_found > 0)
                 {
                     //we found something
-                    cmd.angular.z = 0;
-                    cmd_publisher.publish(cmd);
                     geometry_msgs::PoseStamped unprocessed_pose = result->relative_pose;
 
                     //transform from camera to footprint perspective
@@ -124,32 +125,42 @@ class Localizer
                         if(ros::service::call("localize_bin", request, response))
                         {
                             server.setSucceeded();
-                            cmd.angular.z = 0;
-                            cmd_publisher.publish(cmd);
-                            break;
                         }
                         else
                         {
-                            cmd.angular.z = 0;
-                            cmd_publisher.publish(cmd);
                             ROS_INFO("Localization Action Server: retrying to localize movable point");
                         }
                     }
-                }
-                else
-                {
-                    ROS_INFO("Localization Action Server: No markers detected, turning");
-                    geometry_msgs::Twist cmd;
-                    cmd.angular.z = turn_velocity;
-                    cmd_publisher.publish(cmd);
-                    ros::Duration(turn_duration).sleep();
-                    cmd.angular.z = 0;
-                    cmd_publisher.publish(cmd);
-                    ros::Duration(turn_duration).sleep();
-                    continue;
-                }
 
+
+                    auto siny = +2.0 * 
+                        (processed_pose.pose.orientation.w * processed_pose.pose.orientation.z + 
+                         processed_pose.pose.orientation.x * processed_pose.pose.orientation.y);
+                    auto cosy = +1.0 - 2.0 * 
+                        (processed_pose.pose.orientation.y * processed_pose.pose.orientation.y + 
+                         processed_pose.pose.orientation.z * processed_pose.pose.orientation.z );  
+                    auto angle = atan2(siny, cosy);
+
+                    auto difference = std::abs(goal->target_yaw - angle);
+                    if (difference < threshold)
+                        break;
+
+                }
+                ROS_INFO("Localization Action Server: turning");
+
+
+                geometry_msgs::Twist cmd;
+                cmd.angular.z = turn_velocity;
+                cmd_publisher.publish(cmd);
+                ros::Duration(turn_duration).sleep();
+
+                cmd.angular.z = 0;
+                cmd_publisher.publish(cmd);
+                ros::Duration(turn_duration).sleep();
+
+                
             }
+ 
             cmd.angular.z = 0;
             cmd_publisher.publish(cmd);
             //teardown
@@ -167,18 +178,20 @@ class Localizer
             return aruco.getResult();
         }
 
+
 };
 
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "localization_action_server");
     ros::NodeHandle n{};
-    double turn_velocity, turn_duration;
+    double turn_velocity, turn_duration, threshold;
     ros::param::param<double>("~turn_velocity", turn_velocity, 0.0);
     ros::param::param<double>("~turn_duration", turn_duration, 0.0);
+    ros::param::param<double>("~yaw_threshold", threshold, 0.0);
     if (turn_velocity == 0.0 || turn_duration == 0.0)
         ROS_WARN("Localization Action Server: Uninitialized Parameters");
-    Localizer localizer(n, turn_velocity, turn_duration);
+    Localizer localizer(n, turn_velocity, turn_duration, threshold);
     ros::spin();
     return 0;
 }

@@ -5,7 +5,7 @@ namespace tfr_mining
     // Must be a private node handle ("~")
     DiggingQueue::DiggingQueue(ros::NodeHandle nh) : sets{}
     {
-        // Uncomment this for the full digging operation (all 3 holes)
+        /*// Uncomment this for the full digging operation (all 3 holes)
         for (int dig = 1; dig <= 4; dig++) 
         {
             DiggingSet set;
@@ -16,7 +16,7 @@ namespace tfr_mining
                 generateDigAndDump(nh, set, angle, dig);
             }
             sets.push(set);
-        }
+        }*/
 
         // Uncomment this for a single full digging operation (1 hole, 4 digs, with )
         /*DiggingSet set;
@@ -34,11 +34,11 @@ namespace tfr_mining
 
         // Testing digging code:
         //  This loads from testing_queue_templates.yaml.
-        /*DiggingSet set;
+        DiggingSet set;
           loadTestingDig(nh, set, "test_ready");
           loadTestingDig(nh, set, "test_dig1");
           loadTestingDig(nh, set, "test_dig2");
-          sets.push(set);*/
+          sets.push(set);
     }
 
     bool DiggingQueue::isEmpty()
@@ -239,8 +239,6 @@ namespace tfr_mining
             ROS_WARN("Error loading state");
             return;
         }
-        auto it =pos.begin();
-        pos.insert(it, 0);
         set.insertState(pos, 0);
     }
 }

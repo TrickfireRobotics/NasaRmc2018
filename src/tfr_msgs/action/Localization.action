@@ -1,3 +1,4 @@
 bool set_odometry
+float64 target_yaw
 ---
 ---

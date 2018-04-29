@@ -143,6 +143,7 @@ class AutonomousExecutive
                 ROS_INFO("Autonomous Action Server: commencing localization");
                 tfr_msgs::LocalizationGoal goal{};
                 goal.set_odometry = true;
+                goal.target_yaw = 0;
                 localizationClient.sendGoal(goal);
                 //handle preemption
                 while (!localizationClient.getState().isDone())

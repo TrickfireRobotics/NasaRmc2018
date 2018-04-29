@@ -6,37 +6,39 @@ namespace tfr_mining
     DiggingQueue::DiggingQueue(ros::NodeHandle nh) : sets{}
     {
         // Uncomment this for the full digging operation (all 3 holes)
-        /*for (int dig_pos = -1; dig_pos <= 1; dig_pos++) {
+        for (int dig = 1; dig <= 4; dig++) 
+        {
             DiggingSet set;
             // 3 digs, one straight forward and two 30 degrees to either side
-            double angle = -dig_pos * 3.14159265 / 6;
-            for (int dig = 1; dig <= 4; dig++) {
+            for (int dig_pos = -1; dig_pos <= 1; dig_pos++) 
+            {
+                double angle = -dig_pos * 3.14159265 / 6;
                 generateDigAndDump(nh, set, angle, dig);
             }
             sets.push(set);
-        }*/
+        }
 
         // Uncomment this for a single full digging operation (1 hole, 4 digs, with )
         /*DiggingSet set;
-        for (int dig = 1; dig <= 4; dig++) {
-            generateDigAndDump(nh, set, 0.0, dig);
-        }
-        sets.push(set);*/
+          for (int dig = 1; dig <= 4; dig++) {
+          generateDigAndDump(nh, set, 0.0, dig);
+          }
+          sets.push(set);*/
 
         // Do a single surface-level dig
         //  - To change the digging depth, change the last parameter to anything from 1-4.
         //    Do note that this uses different positions from digging_queue_templates.yaml
-        DiggingSet set;
-        generateSingleDig(nh, set, 0.0, 1);
-        sets.push(set);
+        /*DiggingSet set;
+          generateSingleDig(nh, set, 0.0, 1);
+          sets.push(set);*/
 
         // Testing digging code:
         //  This loads from testing_queue_templates.yaml.
         /*DiggingSet set;
-        loadTestingDig(nh, set, "test_ready");
-        loadTestingDig(nh, set, "test_dig1");
-        loadTestingDig(nh, set, "test_dig2");
-        sets.push(set);*/
+          loadTestingDig(nh, set, "test_ready");
+          loadTestingDig(nh, set, "test_dig1");
+          loadTestingDig(nh, set, "test_dig2");
+          sets.push(set);*/
     }
 
     bool DiggingQueue::isEmpty()

@@ -348,12 +348,11 @@ namespace tfr_control
     {
         //we don't anticipate this changing very much keep at method level
         double min_delta = 0.01;
-        double max_delta = 0.13;
-
+        double max_delta = 0.10;
+        ROS_INFO("%f %f, %f, %f", desired, actual, desired - actual, std::min(std::abs(desired-actual)/max_delta, .92));
         double difference = desired - actual;
         if (std::abs(difference) > min_delta)
         {
-
             int sign = (difference < 0) ? -1 : 1;
             double magnitude = std::min(std::abs(difference)/max_delta, 0.92);           
             return sign*magnitude;

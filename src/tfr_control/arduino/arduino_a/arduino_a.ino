@@ -54,11 +54,11 @@ enum Potentiometers
 
 Potentiometer pots []
 {
-  Potentiometer{-0.0278, +518.58},    //ARM_LOWER
+  Potentiometer{0.0077, -57.402},    //ARM_LOWER
   Potentiometer{0.0137, -157.04},    //ARM_UPPER
   Potentiometer{0.0216, -162.96},    //ARM_SCOOP
-  Potentiometer{0.0, 0.0},            //BIN_LEFT TODO
-  Potentiometer{0.0, 0.0}             //BIN_RIGHT TODO
+  Potentiometer{0.0034854, -23.74951592},            //BIN_LEFT TODO
+  Potentiometer{-0.0034725, 68.891}             //BIN_RIGHT TODO
 };
 
 PositionQuadrature turntable(TURNTABLE_CPR, TURNTABLE_A, TURNTABLE_B); 
@@ -102,21 +102,20 @@ void loop()
     ads1115_a.startADC_SingleEnded(2);
     ads1115_b.startADC_SingleEnded(0);
     delay(8);
-    arduinoReading.arm_upper_pos = ads1115_a.collectADC_SingleEnded();
-    arduinoReading.bin_left_pos = ads1115_b.collectADC_SingleEnded();
+    arduinoReading.arm_upper_pos = pots[ARM_UPPER].getPosition(ads1115_a.collectADC_SingleEnded());
+    arduinoReading.bin_left_pos = pots[BIN_LEFT].getPosition(ads1115_b.collectADC_SingleEnded());
     nh.spinOnce(); 
 
     ads1115_a.startADC_SingleEnded(1);
     ads1115_b.startADC_SingleEnded(1);
     delay(8);
-    arduinoReading.arm_scoop_pos = ads1115_a.collectADC_SingleEnded();
-    arduinoReading.bin_right_pos = ads1115_b.collectADC_SingleEnded();
+    arduinoReading.arm_scoop_pos = pots[ARM_SCOOP].getPosition(ads1115_a.collectADC_SingleEnded());
+    arduinoReading.bin_right_pos = pots[BIN_RIGHT].getPosition(ads1115_b.collectADC_SingleEnded());
     nh.spinOnce();
 
     ads1115_a.startADC_SingleEnded(3);
     delay(8);
-    //arduinoReading.arm_lower_pos = pots[ARM_LOWER].getPosition(ads1115_a.collectADC_SingleEnded());
-    arduinoReading.arm_lower_pos = ads1115_a.collectADC_SingleEnded();
+    arduinoReading.arm_lower_pos = pots[ARM_LOWER].getPosition(ads1115_a.collectADC_SingleEnded());
     nh.spinOnce();
 
     arduino.publish(&arduinoReading);

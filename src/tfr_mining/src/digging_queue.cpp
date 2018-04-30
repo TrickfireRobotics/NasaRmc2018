@@ -19,11 +19,11 @@ namespace tfr_mining
         }*/
 
         // Uncomment this for a single full digging operation (1 hole, 4 digs, with )
-        /*DiggingSet set;
+        DiggingSet set;
           for (int dig = 1; dig <= 4; dig++) {
           generateDigAndDump(nh, set, 0.0, dig);
           }
-          sets.push(set);*/
+          sets.push(set);
 
         // Do a single surface-level dig
         //  - To change the digging depth, change the last parameter to anything from 1-4.
@@ -34,11 +34,11 @@ namespace tfr_mining
 
         // Testing digging code:
         //  This loads from testing_queue_templates.yaml.
-        DiggingSet set;
+/*        DiggingSet set;
           loadTestingDig(nh, set, "test_ready");
           loadTestingDig(nh, set, "test_dig1");
           loadTestingDig(nh, set, "test_dig2");
-          sets.push(set);
+          sets.push(set);*/
     }
 
     bool DiggingQueue::isEmpty()
@@ -159,6 +159,7 @@ namespace tfr_mining
             ROS_WARN_STREAM("Error loading " << scoop_str.str());
             return;
         }
+
         // Prepends the turntable position to the position vector, if necessary (this code repeats throughout
         // much of the following code, but not all of it)
         //  - This is so that, for some of the positions which are "relative" (like the digs), we specify

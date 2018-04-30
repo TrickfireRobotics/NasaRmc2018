@@ -337,7 +337,7 @@ namespace tfr_control
             const double &actual_left, const double &actual_right)
     {
         //we don't anticipate these changing very much keep at method level
-        double  total_angle_tolerance = 0.01,
+        double  total_angle_tolerance = 0.005,
                 individual_angle_tolerance = 0.01,
                 scaling_factor = .9, 
                 difference = desired - (actual_left + actual_right)/2;

@@ -98,6 +98,8 @@ private:
                     tfr_msgs::DiggingResult result;
                     server.setAborted(result);
                 }
+
+                ros::Duration(0.25).sleep(); // Setting this to 2 seconds works
             }
         }
 

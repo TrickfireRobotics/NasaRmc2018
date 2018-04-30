@@ -32,8 +32,10 @@ public:
     ArmActionServer(ros::NodeHandle &n) : move_group{"arm_end"}, joint_model_group(*move_group.getCurrentState()->getJointModelGroup("arm_end")),
         server{n, "move_arm", boost::bind(&ArmActionServer::execute, this, _1), false}
     {
+        ROS_INFO("Arm Action Server: Starting");
         server.start();
         result_sub = n.subscribe("arm_controller/follow_joint_trajectory/result", 1, &ArmActionServer::resultCallback, this);
+        ROS_INFO("Arm Action Server: Started");
     }
 
 private:
@@ -55,6 +57,7 @@ private:
     // of this server. The provided goal is the "input"
     void execute(const tfr_msgs::ArmMoveGoalConstPtr& goal)
     {
+        ROS_INFO("Arm Action Server: Goal Recieved");
         // Set up the joint space goal vector to travel to based on the input goal
         // from the action server
         std::vector<double> joint_group_positions(4);
@@ -70,6 +73,7 @@ private:
         // Try to plan to the given target
         bool success = (move_group.plan(my_plan) == MoveItErrorCode::SUCCESS);
 
+        ROS_INFO("Arm Action Server: plan finished");
         // Reset the done flag, just in case
         digging_mutex.lock();
         dig_status = -1;

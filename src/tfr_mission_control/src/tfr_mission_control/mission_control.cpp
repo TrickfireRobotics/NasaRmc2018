@@ -204,6 +204,8 @@ namespace tfr_mission_control {
         tfr_msgs::ArmStateSrv query;
         ros::service::call("arm_state", query);
         tfr_msgs::ArmMoveGoal goal;
+
+        toggleControl(true);
         //first we lift the arm up
         goal.pose.resize(4);
         goal.pose[0] = query.response.states[0];
@@ -213,7 +215,6 @@ namespace tfr_mission_control {
 
         arm_client.sendGoal(goal);
 
-        toggleControl(true);
         toggleMotors(true);
 
 

@@ -171,7 +171,7 @@ class TeleopExecutive
                         trajectory.points[0].positions[1] = query.response.states[1];
                         trajectory.points[0].positions[2] = query.response.states[2];
                         trajectory.points[0].time_from_start = ros::Duration(0.04);
-                        trajectory.points[0].positions[0] -= 0.015;
+                        trajectory.points[0].positions[0] -= 0.02;
                         trajectory_publisher.publish(trajectory);
                         break;
                     }
@@ -193,7 +193,7 @@ class TeleopExecutive
                         trajectory.points[0].positions[1] = query.response.states[1];
                         trajectory.points[0].positions[2] = query.response.states[2];
                         trajectory.points[0].time_from_start = ros::Duration(0.04);
-                        trajectory.points[0].positions[0] += 0.015;
+                        trajectory.points[0].positions[0] += 0.02;
                         trajectory_publisher.publish(trajectory);
                         break;
                     }

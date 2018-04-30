@@ -97,7 +97,6 @@ private:
                     ROS_WARN("Error executing arm action server to state, exiting.");
                     tfr_msgs::DiggingResult result;
                     server.setAborted(result);
-
                 }
             }
         }

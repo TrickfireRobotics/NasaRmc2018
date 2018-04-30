@@ -20,10 +20,11 @@ namespace tfr_mining
 
         // Uncomment this for a single full digging operation (1 hole, 4 digs, with )
         DiggingSet set;
-          for (int dig = 1; dig <= 4; dig++) {
-          generateDigAndDump(nh, set, 0.0, dig);
-          }
-          sets.push(set);
+        for (int dig = 3; dig <= 3; dig++) 
+        {
+            generateDigAndDump(nh, set, 0.0, dig);
+        }
+        sets.push(set);
 
         // Do a single surface-level dig
         //  - To change the digging depth, change the last parameter to anything from 1-4.
@@ -34,10 +35,8 @@ namespace tfr_mining
 
         // Testing digging code:
         //  This loads from testing_queue_templates.yaml.
-/*        DiggingSet set;
-          loadTestingDig(nh, set, "test_ready");
-          loadTestingDig(nh, set, "test_dig1");
-          loadTestingDig(nh, set, "test_dig2");
+        /*DiggingSet set;
+          loadTestingDig(nh, set, "dump");
           sets.push(set);*/
     }
 

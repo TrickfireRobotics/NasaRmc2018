@@ -78,7 +78,7 @@ private:
         if (success)
         {
             // Planning was successful, actually execute the movement
-            ROS_DEBUG("Executing movement");
+            ROS_INFO("Executing movement");
             move_group.asyncExecute(my_plan);
 
             ros::Rate rate(10);

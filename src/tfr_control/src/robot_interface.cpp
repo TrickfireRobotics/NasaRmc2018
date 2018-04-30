@@ -80,7 +80,6 @@ namespace tfr_control
             //TURNTABLE
             position_values[static_cast<int>(Joint::TURNTABLE)] = -reading_a.arm_turntable_pos - turntable_offset;
             velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0; 
-            ROS_INFO("reading %f offset %f", reading_a.arm_turntable_pos, turntable_offset);
             effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
 
             //LOWER_ARM
@@ -143,7 +142,6 @@ namespace tfr_control
             signal = turntableAngleToPWM(command_values[static_cast<int>(Joint::TURNTABLE)],
                         position_values[static_cast<int>(Joint::TURNTABLE)]);
             command.arm_turntable = signal;
-            ROS_INFO("arm command %f", signal);
 
 
 
@@ -317,7 +315,7 @@ namespace tfr_control
     {
         //we don't anticipate this changing very much keep at method level
         double min_delta = 0.01;
-        double max_delta = 0.20;
+        double max_delta = 0.25;
 
         double difference = desired - actual;
         if (std::abs(difference) > min_delta)
@@ -367,14 +365,12 @@ namespace tfr_control
     {
         //we don't anticipate this changing very much keep at method level
         double min_delta = 0.01;
-        double max_delta = 0.10;
+        double max_delta = 0.15;
         double difference = desired - actual;
-        ROS_INFO("desired %f actual %f difference %f", desired, actual, difference);
         if (std::abs(difference) > min_delta)
         {
             int sign = (difference < 0) ? 1 : -1;
             double magnitude = std::min(std::abs(difference)/max_delta, 0.92);           
-            ROS_INFO("magnitude %f", magnitude);
             return sign*magnitude;
         }
         return 0;

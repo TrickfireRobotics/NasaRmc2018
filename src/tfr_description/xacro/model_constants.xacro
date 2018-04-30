@@ -29,33 +29,33 @@
   <!-- Length of top of bin, length of bottom is 13.86 -->
   <!-- Using the bigger size as a box instead of making complex angled shape -->
   <xacro:property name="bin_length" value="${25.78*itom}" />
-  <xacro:property name="bin_width" value="${11*itom}" />
-  <xacro:property name="bin_height" value="${11.5*itom}" />
+  <xacro:property name="bin_width" value="${10.5*itom}" />
+  <xacro:property name="bin_height" value="${13*itom}" />
 
   <!-- Turntable parameters -->
   <xacro:property name="turntable_radius" value="${4.92*itom}" />
   <!-- 1" in model plus undefined height for mounting and extra components -->
   <!-- Rounded to 2" for now -->
-  <xacro:property name="turntable_height" value="${1.2*itom}" />
+  <xacro:property name="turntable_height" value="${2.25*itom}" />
 
   <!-- Lower arm parameters -->
   <xacro:property name="lower_arm_length" value="${22*itom}" />
   <xacro:property name="lower_arm_primary_length" value="${16*itom}" />
   <xacro:property name="lower_arm_width" value="${4*itom}" />
   <xacro:property name="lower_arm_height" value="${6*itom}" />
-  <xacro:property name="lower_arm_min" value="0.034" />
-  <xacro:property name="lower_arm_max" value="1.5" />   
+  <xacro:property name="lower_arm_min" value="0.1048" />
+  <xacro:property name="lower_arm_max" value="1.63" />   
 
   <!-- Upper arm parameters -->
   <xacro:property name="upper_arm_length" value="${20*itom}" />
   <xacro:property name="upper_arm_width" value="${3.625*itom}" />
   <xacro:property name="upper_arm_height" value="${5*itom}" />
-  <xacro:property name="upper_arm_min" value="0.92" />
-  <xacro:property name="upper_arm_max" value="2.16" />
+  <xacro:property name="upper_arm_min" value="1.06465"/>
+  <xacro:property name="upper_arm_max" value="2.295108" />
 
   <!-- Scoop parameters -->
-  <xacro:property name="scoop_width" value="${10.25*itom}" />
+  <xacro:property name="scoop_width" value="${10.2*itom}" />
   <xacro:property name="scoop_diameter" value="${11.5*itom}" />
-  <xacro:property name="scoop_min" value="-1.67" />
-  <xacro:property name="scoop_max" value="1.07" />
+  <xacro:property name="scoop_min" value="-1.41372" />
+  <xacro:property name="scoop_max" value="1.48353" />
 </robot>

@@ -17,6 +17,7 @@ namespace tfr_mission_control {
         widget(nullptr),
         autonomy{"autonomous_action_server",true},
         teleop{"teleop_action_server",true},
+        arm_client{"move_arm", true},
         com{nh.subscribe("com", 5, &MissionControl::updateStatus, this)},
         teleopEnabled{false}
     {
@@ -193,11 +194,28 @@ namespace tfr_mission_control {
     void MissionControl::resetTurntable()
     {
         ROS_INFO("Mission Control: Resetting turntable");
+        toggleControl(false);
+        toggleMotors(false);
         std_srvs::Empty::Request req;
         std_srvs::Empty::Response res;
         while(!ros::service::call("/zero_turntable", req, res))
             ros::Duration{0.1}.sleep();
         ROS_INFO("Mission Control: Turntable reset");
+        tfr_msgs::ArmStateSrv query;
+        ros::service::call("arm_state", query);
+        tfr_msgs::ArmMoveGoal goal;
+        //first we lift the arm up
+        goal.pose.resize(4);
+        goal.pose[0] = query.response.states[0];
+        goal.pose[1] = query.response.states[1];
+        goal.pose[2] = query.response.states[2];
+        goal.pose[3] = query.response.states[3];
+
+        arm_client.sendGoal(goal);
+
+        toggleControl(true);
+        toggleMotors(true);
+
 
     }
    
@@ -351,29 +369,28 @@ namespace tfr_mission_control {
     void MissionControl::startMission()
     {
         startTimeService();
+        goAutonomousMode();
         toggleControl(true);
         toggleMotors(true);
-        goAutonomousMode();
     }
     
     //starts mission is teleop mode
     void MissionControl::startManual()
     {
         startTimeService();
+        goTeleopMode();
         toggleControl(true);
         toggleMotors(true);
-        goTeleopMode();
     }
 
     //triggers state change into autonomous mode from teleop
     void MissionControl::goAutonomousMode()
     {
+        resetTurntable();
         softwareStop();
-        ROS_INFO("goAutonomous");
         setAutonomy(true);
         tfr_msgs::EmptyGoal goal{};
         while (!teleop.getState().isDone()) teleop.cancelAllGoals();
-        resetTurntable();
         autonomy.sendGoal(goal);
         setTeleop(false);
         widget->setFocus();

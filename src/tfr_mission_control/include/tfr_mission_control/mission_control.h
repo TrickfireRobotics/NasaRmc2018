@@ -14,6 +14,8 @@
 #include <tfr_msgs/DurationSrv.h>
 #include <tfr_msgs/EmptyAction.h>
 #include <tfr_msgs/TeleopAction.h>
+#include <tfr_msgs/ArmMoveAction.h>
+#include <tfr_msgs/ArmStateSrv.h>
 
 #include <tfr_utilities/teleop_code.h>
 #include <tfr_utilities/status_code.h>
@@ -99,7 +101,8 @@ namespace tfr_mission_control {
             //The action servers
             actionlib::SimpleActionClient<tfr_msgs::EmptyAction> autonomy;
             actionlib::SimpleActionClient<tfr_msgs::TeleopAction> teleop;
-
+            actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
+ 
             //our message subscriber
             ros::Subscriber com;
 

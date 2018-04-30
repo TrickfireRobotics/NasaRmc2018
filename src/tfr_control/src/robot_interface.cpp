@@ -33,7 +33,7 @@ namespace tfr_control
         // layer
         registerJoint("left_tread_joint", Joint::LEFT_TREAD);
         registerJoint("right_tread_joint", Joint::RIGHT_TREAD);
-        registerJoint("bin_joint", Joint::BIN); 
+        registerBinJoint("bin_joint", Joint::BIN); 
         registerArmJoint("turntable_joint", Joint::TURNTABLE);
         registerArmJoint("lower_arm_joint", Joint::LOWER_ARM);
         registerArmJoint("upper_arm_joint", Joint::UPPER_ARM);
@@ -178,7 +178,7 @@ namespace tfr_control
         //BIN
         auto twin_signal = twinAngleToPWM(command_values[static_cast<int>(Joint::BIN)],
                     reading_a.bin_left_pos,
-                    reading_a.bin_left_pos);
+                    reading_a.bin_right_pos);
         command.bin_left = twin_signal.first;
         command.bin_right = twin_signal.second;
 
@@ -278,6 +278,23 @@ namespace tfr_control
     /*
      * Register this joint with each neccessary hardware interface
      * */
+    void RobotInterface::registerBinJoint(std::string name, Joint joint) 
+    {
+        auto idx = static_cast<int>(joint);
+        //give the joint a state
+        JointStateHandle state_handle(name, &position_values[idx],
+            &velocity_values[idx], &effort_values[idx]);
+        joint_state_interface.registerHandle(state_handle);
+
+        //allow the joint to be commanded
+        JointHandle handle(state_handle, &command_values[idx]);
+        joint_position_interface.registerHandle(handle);
+    }
+
+
+    /*
+     * Register this joint with each neccessary hardware interface
+     * */
     void RobotInterface::registerArmJoint(std::string name, Joint joint) 
     {
         auto idx = static_cast<int>(joint);
@@ -326,7 +343,7 @@ namespace tfr_control
                 difference = desired - (actual_left + actual_right)/2;
         if (std::abs(difference) > total_angle_tolerance)
         {
-            int direction = (difference < 0) ? -1 : 1;
+            int direction = (difference < 0) ? 1 : -1;
             double delta = actual_left - actual_right;
             double cmd_left = direction, cmd_right = direction;
             if (std::abs(delta) > individual_angle_tolerance)
@@ -349,12 +366,13 @@ namespace tfr_control
         //we don't anticipate this changing very much keep at method level
         double min_delta = 0.01;
         double max_delta = 0.10;
-        ROS_INFO("%f %f, %f, %f", desired, actual, desired - actual, std::min(std::abs(desired-actual)/max_delta, .92));
         double difference = desired - actual;
+        ROS_INFO("desired %f actual %f difference %f", desired, actual, difference);
         if (std::abs(difference) > min_delta)
         {
             int sign = (difference < 0) ? -1 : 1;
             double magnitude = std::min(std::abs(difference)/max_delta, 0.92);           
+            ROS_INFO("magnitude %f", magnitude);
             return sign*magnitude;
         }
         return 0;

@@ -78,8 +78,9 @@ namespace tfr_control
         if (!use_fake_values)
         {
             //TURNTABLE
-            position_values[static_cast<int>(Joint::TURNTABLE)] = reading_a.arm_turntable_pos - turntable_offset;
-            velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0;
+            position_values[static_cast<int>(Joint::TURNTABLE)] = -reading_a.arm_turntable_pos - turntable_offset;
+            velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0; 
+            ROS_INFO("reading %f offset %f", reading_a.arm_turntable_pos, turntable_offset);
             effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
 
             //LOWER_ARM
@@ -139,10 +140,11 @@ namespace tfr_control
         else  // we are working with the real arm
         {
             //TURNTABLE
-            //NOTE we reverse these because actuator is mounted backwards
             signal = turntableAngleToPWM(command_values[static_cast<int>(Joint::TURNTABLE)],
                         position_values[static_cast<int>(Joint::TURNTABLE)]);
             command.arm_turntable = signal;
+            ROS_INFO("arm command %f", signal);
+
 
 
             //LOWER_ARM
@@ -370,7 +372,7 @@ namespace tfr_control
         ROS_INFO("desired %f actual %f difference %f", desired, actual, difference);
         if (std::abs(difference) > min_delta)
         {
-            int sign = (difference < 0) ? -1 : 1;
+            int sign = (difference < 0) ? 1 : -1;
             double magnitude = std::min(std::abs(difference)/max_delta, 0.92);           
             ROS_INFO("magnitude %f", magnitude);
             return sign*magnitude;
@@ -427,7 +429,14 @@ namespace tfr_control
 
     void RobotInterface::zeroTurntable()
     {
-        turntable_offset = position_values[static_cast<int>(Joint::TURNTABLE)];
+        //Grab the neccessary data
+        tfr_msgs::ArduinoAReading reading_a;
+        if (latest_arduino_a != nullptr)
+            reading_a = *latest_arduino_a;
+        else 
+            return;
+
+        turntable_offset = -reading_a.arm_turntable_pos; 
     }
 
 }

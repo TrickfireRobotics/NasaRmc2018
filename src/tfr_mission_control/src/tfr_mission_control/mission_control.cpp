@@ -208,7 +208,7 @@ namespace tfr_mission_control {
         toggleControl(true);
         //first we lift the arm up
         goal.pose.resize(4);
-        goal.pose[0] = query.response.states[0];
+        goal.pose[0] = 0;
         goal.pose[1] = query.response.states[1];
         goal.pose[2] = query.response.states[2];
         goal.pose[3] = query.response.states[3];

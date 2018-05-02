@@ -54,14 +54,20 @@ enum Potentiometers
 
 Potentiometer pots []
 {
-  Potentiometer{0.0077, -57.402},    //ARM_LOWER
-  Potentiometer{0.0137, -157.04},    //ARM_UPPER
-  Potentiometer{0.0216, -162.96},    //ARM_SCOOP
+  Potentiometer{0.0071, -0.0577},    //ARM_LOWER
+  Potentiometer{0.0148, 23.478},    //ARM_UPPER
+  Potentiometer{0.0207, -272.57},    //ARM_SCOOP
   Potentiometer{0.0034854, -23.74951592},            //BIN_LEFT TODO
   Potentiometer{-0.0034725, 68.891}             //BIN_RIGHT TODO
 };
 
+<<<<<<< HEAD
 PositionQuadrature turntable(TURNTABLE_CPR, TURNTABLE_A, TURNTABLE_B); 
+=======
+
+PositionQuadrature turntable(TURNTABLE_CPR, TURNTABLE_A, TURNTABLE_B); 
+
+>>>>>>> dcb6c54... added new potentiometers
 //encoders
 VelocityQuadrature gearbox_left(GEARBOX_CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 tfr_msgs::ArduinoAReading arduinoReading;
@@ -85,8 +91,12 @@ ads1115_b =>
 
 Adafruit_ADS1115 ads1115_a;
 
+<<<<<<< HEAD
 Adafruit_ADS1115 ads1115_b(0x49);
+=======
+>>>>>>> dcb6c54... added new potentiometers
 
+Adafruit_ADS1115 ads1115_b(0x49);
 void setup()
 {
     nh.initNode();
@@ -96,8 +106,8 @@ void setup()
 
 void loop()
 {
-    arduinoReading.tread_left_vel = gearbox_left.getVelocity()/GEARBOX_MPR;
-    arduinoReading.arm_turntable_pos = turntable.getPosition()  *TURNTABLE_RPR;
+    arduinoReading.tread_left_vel = gearbox_left.getVelocity() / GEARBOX_MPR;
+    arduinoReading.arm_turntable_pos = turntable.getPosition()  * TURNTABLE_RPR;
 
     ads1115_a.startADC_SingleEnded(2);
     ads1115_b.startADC_SingleEnded(0);

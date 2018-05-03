@@ -3,7 +3,7 @@
         args="0.635 0.17 0.12 0 0 0 1 base_link front_cam_link"/>
     <node name="front_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
-            device_id: 0
+            device_id: 1
             frame_id: front_cam_link
             camera_info_url: file:///home/nvidia/trickfire/NasaRmc2018/src/tfr_sensor/calib/front.yaml
             rate: 30 
@@ -19,7 +19,7 @@
         args="-0.635 -0.08 0.18 0 0 1 0 base_link rear_cam_link"/>
     <node name="rear_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
-            device_id: 1
+            device_id: 0
             frame_id: rear_cam_link
             camera_info_url: file:///home/nvidia/trickfire/NasaRmc2018/src/tfr_sensor/calib/rear.yaml
             rate: 30 

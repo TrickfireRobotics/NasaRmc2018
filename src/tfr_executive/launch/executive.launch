@@ -3,11 +3,12 @@
 
     <node name="autnonomous_action_server" pkg="tfr_executive" type="autonomous_action_server" output="screen">
         <rosparam>
-            localization: false 
-            navigation_to: false 
-            hole: false 
-            digging: true 
-            navigation_from: false 
+            localization: true 
+            navigation_to: true 
+            digging: false 
+            localization_from: true 
+            navigation_from: true 
+            localization_finish: true 
             dumping: false 
         </rosparam>
     </node>

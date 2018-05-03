@@ -76,6 +76,7 @@ class Localizer
         {
             ROS_INFO("Localization Action Server: Localize Starting");
             //setup
+            bool odometry = goal->set_odometry, success = true, set = false;
 
             geometry_msgs::Twist cmd;
             cmd.angular.z = turn_velocity;
@@ -83,10 +84,13 @@ class Localizer
             //loop
             while (true)
             {
+
+                ROS_INFO("Localization Action Server: iterating");
                 if (server.isPreemptRequested() || !ros::ok())
                 {
                     ROS_INFO("Localization Action Server: preempt requested");
                     server.setPreempted();
+                    success = false;
                     break;
                 }
 
@@ -108,7 +112,10 @@ class Localizer
                     geometry_msgs::PoseStamped processed_pose;
                     if (!tf_manipulator.transform_pose(unprocessed_pose, processed_pose, "base_footprint"))
                     {
-                        return;
+                        tfr_msgs::LocalizationResult result;
+                        server.setAborted(result);
+                        success = false;
+                        break;
                     }
                     
 
@@ -119,12 +126,16 @@ class Localizer
                     tfr_msgs::PoseSrv::Request request{};
                     request.pose = processed_pose;
                     tfr_msgs::PoseSrv::Response response;
-                    if (goal->set_odometry)
+                    if (odometry)
                     {
 
-                        if(ros::service::call("localize_bin", request, response))
+                        if(!ros::service::call("localize_bin", request, response))
                         {
-                            server.setSucceeded();
+                            tfr_msgs::LocalizationResult result;
+                            result.pose = processed_pose.pose;
+                            server.setSucceeded(result);
+                            odometry = false;
+                            set = true;
                         }
                         else
                         {
@@ -141,25 +152,33 @@ class Localizer
                          processed_pose.pose.orientation.z * processed_pose.pose.orientation.z );  
                     auto angle = atan2(siny, cosy);
 
-                    auto difference = std::abs(goal->target_yaw - angle);
-                    if (difference < threshold)
+                    auto difference = goal->target_yaw - angle;
+                    if (std::abs(difference) < threshold)
+                    {
+                        if (!set)
+                        {
+                            tfr_msgs::LocalizationResult result;
+                            result.pose = processed_pose.pose;
+                            server.setSucceeded(result);
+                        }
                         break;
-
+                    }
                 }
                 ROS_INFO("Localization Action Server: turning");
-
 
                 geometry_msgs::Twist cmd;
                 cmd.angular.z = turn_velocity;
                 cmd_publisher.publish(cmd);
                 ros::Duration(turn_duration).sleep();
+                ROS_INFO("Localization Action Server: stopping");
 
                 cmd.angular.z = 0;
                 cmd_publisher.publish(cmd);
                 ros::Duration(turn_duration).sleep();
-
-                
             }
+
+            if (success)
+                server.setSucceeded();
  
             cmd.angular.z = 0;
             cmd_publisher.publish(cmd);

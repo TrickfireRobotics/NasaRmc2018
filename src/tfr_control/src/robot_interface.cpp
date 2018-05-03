@@ -365,7 +365,7 @@ namespace tfr_control
     {
         //we don't anticipate this changing very much keep at method level
         double min_delta = 0.01;
-        double max_delta = 0.15;
+        double max_delta = 0.1;
         double difference = desired - actual;
         if (std::abs(difference) > min_delta)
         {
@@ -391,7 +391,7 @@ namespace tfr_control
         if (v_1 > 0.05 || v_1 < -0.05)
         {
             int sign = (v_1 < 0) ? -1 : 1;
-            double magnitude = std::min(std::abs(v_1)/max_vel, 0.92);
+            double magnitude = std::min(std::abs(v_1)/max_vel, 0.7);
             return sign * magnitude;
         }
         return 0;

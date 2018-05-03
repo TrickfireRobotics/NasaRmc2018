@@ -213,6 +213,7 @@ class DrivebaseOdometryPublisher
         bool resetOdometry(tfr_msgs::SetOdometry::Request& request,
                 tfr_msgs::SetOdometry::Response& response)
         {
+            ROS_INFO("Drivebase Odometry Publisher: resetting drivebase odometry");
 
             x = request.pose.position.x;
             y = request.pose.position.y;

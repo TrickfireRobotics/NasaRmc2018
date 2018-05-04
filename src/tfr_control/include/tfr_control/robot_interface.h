@@ -129,6 +129,7 @@ namespace tfr_control {
         
         void registerJoint(std::string name, Joint joint);
         void registerArmJoint(std::string name, Joint joint);
+        void registerBinJoint(std::string name, Joint joint);
 
 
         //callback for publisher

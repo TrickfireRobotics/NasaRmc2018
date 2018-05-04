@@ -22,7 +22,7 @@
     <child link="turntable" />
     <origin xyz="${base_length/2-turntable_radius} 0 ${drivebase_front_beam_height/2}" />
     <axis xyz="0 0 1" />
-    <limit effort="1.0" velocity="1.0" lower="${-pi}" upper="${pi}" />
+    <limit effort="1.0" velocity="1.0" lower="${-1.1*pi}" upper="${1.1*pi}" />
   </joint>
   <transmission name="turntable_tran">
     <type>transmission_interface/SimpleTransmission</type>

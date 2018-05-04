@@ -23,12 +23,12 @@ enum class Address : int16_t
 {
     TREAD_LEFT = 0,
     TREAD_RIGHT = 1,
-    ARM_LOWER = 2,
-    ARM_UPPER = 3,
-    ARM_SCOOP = 4,
-    ARM_TURNTABLE = 5,
-    BIN_LEFT = 6,
-    BIN_RIGHT = 7
+    ARM_LOWER = 4,
+    ARM_UPPER = 5,
+    ARM_SCOOP = 6,
+    ARM_TURNTABLE = 7,
+    BIN_LEFT = 2,
+    BIN_RIGHT = 3
 };
 
 
@@ -60,6 +60,7 @@ void setup()
     setAddress(Address::ARM_UPPER, 0);
     setAddress(Address::ARM_SCOOP, 0);
     setAddress(Address::BIN_LEFT, 0);
+    setAddress(Address::BIN_RIGHT, 0);
     pinMode(OUTPUT_ENABLE, OUTPUT);
     for (auto& val : pwm_values)
         val = NEUTRAL;
@@ -87,7 +88,8 @@ void motorOutput(const tfr_msgs::PwmCommand& command)
         setAddress(Address::ARM_LOWER, command.arm_lower);
         setAddress(Address::ARM_UPPER, command.arm_upper);
         setAddress(Address::ARM_SCOOP, command.arm_scoop);
-        setAddress(Address::BIN_LEFT, command.bin_right);
+        setAddress(Address::BIN_LEFT, command.bin_left);
+        setAddress(Address::BIN_RIGHT, command.bin_right);
     }
     else
     {
@@ -99,6 +101,7 @@ void motorOutput(const tfr_msgs::PwmCommand& command)
         setAddress(Address::ARM_UPPER, 0);
         setAddress(Address::ARM_SCOOP, 0);
         setAddress(Address::BIN_LEFT, 0);
+        setAddress(Address::BIN_RIGHT, 0);
     }
 }
 

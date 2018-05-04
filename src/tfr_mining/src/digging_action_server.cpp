@@ -111,20 +111,11 @@ private:
         final_goal.pose.resize(4);
 
         std::vector<double> final_angles;
-        /*if (!priv_nh.getParam("positions/safe", final_angles))
-        {*/
-            // Couldn't load parameter, go to predetermined final position
-            final_goal.pose[0] = 0.0;
-            final_goal.pose[1] = 0.21;
-            final_goal.pose[2] = 0.0;
-            final_goal.pose[3] = 0.0;
-        /*} else
-        {
-            final_goal.pose[0] = final_angles[0];
-            final_goal.pose[1] = final_angles[1];
-            final_goal.pose[2] = final_angles[2];
-            final_goal.pose[3] = final_angles[3];
-        }*/
+        // Couldn't load parameter, go to predetermined final position
+        final_goal.pose[0] = 0.00;
+        final_goal.pose[1] = 0.21;
+        final_goal.pose[2] = 1.07;
+        final_goal.pose[3] = 0.0;
 
         client.sendGoal(final_goal);
         ros::Rate rate(10.0);

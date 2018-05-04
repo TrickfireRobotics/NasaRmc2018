@@ -72,7 +72,7 @@ namespace tfr_control
 
         //RIGHT_TREAD
         position_values[static_cast<int>(Joint::RIGHT_TREAD)] = 0;
-        velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] = -reading_b.tread_right_vel;
+        velocity_values[static_cast<int>(Joint::RIGHT_TREAD)] = reading_b.tread_right_vel;
         effort_values[static_cast<int>(Joint::RIGHT_TREAD)] = 0;
 
         if (!use_fake_values)
@@ -170,7 +170,7 @@ namespace tfr_control
         command.tread_left = signal;
 
         //RIGHT_TREAD
-        signal = -drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
+        signal = drivebaseVelocityToPWM(command_values[static_cast<int>(Joint::RIGHT_TREAD)],
                     drivebase_v0.second);
         command.tread_right = signal;
 

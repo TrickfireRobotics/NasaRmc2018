@@ -87,7 +87,7 @@ class DrivebaseOdometryPublisher
             //message gives us velocity in meters/second from each individual
             //tread
             double v_l = -reading_a.tread_left_vel;
-            double v_r = -reading_b.tread_right_vel;
+            double v_r = reading_b.tread_right_vel;
 
 
 
@@ -213,6 +213,7 @@ class DrivebaseOdometryPublisher
         bool resetOdometry(tfr_msgs::SetOdometry::Request& request,
                 tfr_msgs::SetOdometry::Response& response)
         {
+            ROS_INFO("Drivebase Odometry Publisher: resetting drivebase odometry");
 
             x = request.pose.position.x;
             y = request.pose.position.y;

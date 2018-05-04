@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
     trajectory_msgs
     geometry_msgs
     actionlib
+    robot_localization
 )
 
 find_package(GTest REQUIRED)

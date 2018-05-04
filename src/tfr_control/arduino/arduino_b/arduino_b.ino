@@ -11,7 +11,7 @@ ros::NodeHandle nh;
 
 //encoder level constants
 const double CPR = 4096; //pulse per revolution
-const double GEARBOX_MPR = 3.33; 
+const double GEARBOX_MPR = 2*3.1415*0.15; 
 
 //pin constants
 const int GEARBOX_RIGHT_A = 2;
@@ -23,12 +23,12 @@ enum class Address : int16_t
 {
     TREAD_LEFT = 0,
     TREAD_RIGHT = 1,
-    ARM_LOWER = 2,
-    ARM_UPPER = 3,
-    ARM_SCOOP = 4,
-    ARM_TURNTABLE = 5,
-    BIN_LEFT = 6,
-    BIN_RIGHT = 7
+    ARM_LOWER = 4,
+    ARM_UPPER = 5,
+    ARM_SCOOP = 6,
+    ARM_TURNTABLE = 7,
+    BIN_LEFT = 2,
+    BIN_RIGHT = 3
 };
 
 
@@ -48,6 +48,11 @@ uint16_t pwm_values[9] {};
 
 void setup()
 {
+    pinMode(OUTPUT_ENABLE, OUTPUT);
+    digitalWrite(OUTPUT_ENABLE, HIGH);
+    for (auto& val : pwm_values)
+      val = NEUTRAL;
+
     nh.initNode();
     nh.advertise(arduino);
     nh.subscribe(motor_subscriber);
@@ -60,14 +65,12 @@ void setup()
     setAddress(Address::ARM_UPPER, 0);
     setAddress(Address::ARM_SCOOP, 0);
     setAddress(Address::BIN_LEFT, 0);
-    pinMode(OUTPUT_ENABLE, OUTPUT);
-    for (auto& val : pwm_values)
-        val = NEUTRAL;
+    setAddress(Address::BIN_RIGHT, 0);
 }
 
 void loop()
 {
-    arduino_reading.tread_right_vel = -gearbox_right.getVelocity()/GEARBOX_MPR;
+    arduino_reading.tread_right_vel = gearbox_right.getVelocity()/GEARBOX_MPR;
     delay(8);
     nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
     delay(8);
@@ -87,7 +90,8 @@ void motorOutput(const tfr_msgs::PwmCommand& command)
         setAddress(Address::ARM_LOWER, command.arm_lower);
         setAddress(Address::ARM_UPPER, command.arm_upper);
         setAddress(Address::ARM_SCOOP, command.arm_scoop);
-        setAddress(Address::BIN_LEFT, command.bin_right);
+        setAddress(Address::BIN_LEFT, command.bin_left);
+        setAddress(Address::BIN_RIGHT, command.bin_right);
     }
     else
     {
@@ -99,6 +103,7 @@ void motorOutput(const tfr_msgs::PwmCommand& command)
         setAddress(Address::ARM_UPPER, 0);
         setAddress(Address::ARM_SCOOP, 0);
         setAddress(Address::BIN_LEFT, 0);
+        setAddress(Address::BIN_RIGHT, 0);
     }
 }
 

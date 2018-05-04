@@ -18,6 +18,7 @@
   <depend>tfr_utilities</depend>
   <depend>geometry_msgs</depend>
   <depend>trajectory_msgs</depend>
+  <depend>robot_localization</depend>
   <depend>actionlib</depend>
 
 </package>

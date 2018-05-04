@@ -11,7 +11,7 @@ ros::NodeHandle nh;
 
 //encoder level constants
 const double CPR = 4096; //pulse per revolution
-const double GEARBOX_MPR = 3.33; 
+const double GEARBOX_MPR = 2*3.1415*0.15; 
 
 //pin constants
 const int GEARBOX_RIGHT_A = 2;
@@ -48,6 +48,11 @@ uint16_t pwm_values[9] {};
 
 void setup()
 {
+    pinMode(OUTPUT_ENABLE, OUTPUT);
+    digitalWrite(OUTPUT_ENABLE, HIGH);
+    for (auto& val : pwm_values)
+      val = NEUTRAL;
+
     nh.initNode();
     nh.advertise(arduino);
     nh.subscribe(motor_subscriber);
@@ -61,14 +66,11 @@ void setup()
     setAddress(Address::ARM_SCOOP, 0);
     setAddress(Address::BIN_LEFT, 0);
     setAddress(Address::BIN_RIGHT, 0);
-    pinMode(OUTPUT_ENABLE, OUTPUT);
-    for (auto& val : pwm_values)
-        val = NEUTRAL;
 }
 
 void loop()
 {
-    arduino_reading.tread_right_vel = -gearbox_right.getVelocity()/GEARBOX_MPR;
+    arduino_reading.tread_right_vel = gearbox_right.getVelocity()/GEARBOX_MPR;
     delay(8);
     nh.spinOnce(); //I know we don't have any callbacks, but the libary needs this call
     delay(8);

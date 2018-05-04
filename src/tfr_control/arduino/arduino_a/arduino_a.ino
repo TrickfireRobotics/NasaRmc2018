@@ -10,7 +10,7 @@ ros::NodeHandle nh;
 //encoder level constants
 const double GEARBOX_CPR = 4096;
 const double TURNTABLE_CPR = 28; 
-const double GEARBOX_MPR = 3.33; 
+const double GEARBOX_MPR = 2*3.14*0.15; 
 const double TURNTABLE_RPR = (1/188.0)*(15.0/72.0)*2.0*3.15159; 
 
 //pin constants

@@ -81,6 +81,11 @@ class Localizer
             geometry_msgs::Twist cmd;
             cmd.angular.z = turn_velocity;
             cmd_publisher.publish(cmd);
+
+            ROS_INFO("Localization Action Server: odometry %d, target yaw %f",
+                    odometry, goal->target_yaw);
+
+            tfr_msgs::LocalizationResult output;
             //loop
             while (true)
             {
@@ -89,7 +94,7 @@ class Localizer
                 if (server.isPreemptRequested() || !ros::ok())
                 {
                     ROS_INFO("Localization Action Server: preempt requested");
-                    server.setPreempted();
+                    server.setPreempted(output);
                     success = false;
                     break;
                 }
@@ -99,10 +104,12 @@ class Localizer
                 tfr_msgs::WrappedImage image_wrapper{};
                 if (rear_cam_client.call(image_wrapper))
                     result = sendAruco(image_wrapper);
+                ROS_INFO("Localization Action Server: rearcam %d", result->number_found);
 
                 if (result != nullptr && result->number_found == 0 && front_cam_client.call(image_wrapper))
                     result = sendAruco(image_wrapper);
 
+                ROS_INFO("Localization Action Server: frontcam %d", result->number_found);
                 if (result != nullptr && result->number_found > 0)
                 {
                     //we found something
@@ -112,11 +119,12 @@ class Localizer
                     geometry_msgs::PoseStamped processed_pose;
                     if (!tf_manipulator.transform_pose(unprocessed_pose, processed_pose, "base_footprint"))
                     {
-                        tfr_msgs::LocalizationResult result;
-                        server.setAborted(result);
+                        server.setAborted(output);
                         success = false;
                         break;
                     }
+
+                    ROS_INFO("transformed");
                     
 
                     processed_pose.pose.position.z = 0;
@@ -126,14 +134,15 @@ class Localizer
                     tfr_msgs::PoseSrv::Request request{};
                     request.pose = processed_pose;
                     tfr_msgs::PoseSrv::Response response;
+                    output.pose = processed_pose.pose;
                     if (odometry)
                     {
 
                         if(!ros::service::call("localize_bin", request, response))
                         {
+                            ROS_INFO("localized");
                             tfr_msgs::LocalizationResult result;
-                            result.pose = processed_pose.pose;
-                            server.setSucceeded(result);
+                            server.setSucceeded(output);
                             odometry = false;
                             set = true;
                         }
@@ -157,9 +166,7 @@ class Localizer
                     {
                         if (!set)
                         {
-                            tfr_msgs::LocalizationResult result;
-                            result.pose = processed_pose.pose;
-                            server.setSucceeded(result);
+                            server.setSucceeded(output);
                         }
                         break;
                     }
@@ -178,7 +185,7 @@ class Localizer
             }
 
             if (success)
-                server.setSucceeded();
+                server.setSucceeded(output);
  
             cmd.angular.z = 0;
             cmd_publisher.publish(cmd);

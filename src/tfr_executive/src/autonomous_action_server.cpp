@@ -143,7 +143,7 @@ class AutonomousExecutive
 
             if (LOCALIZATION_TO)
             {
-                localize(0.0,true);
+                localize(true, 0.0);
             }
 
             if (NAVIGATION_TO)
@@ -210,7 +210,7 @@ class AutonomousExecutive
             }
             if (LOCALIZATION_FROM)
             {
-                localize(3.14, false);
+                localize(false, 3.14);
                             
             }
             if (NAVIGATION_FROM)
@@ -249,7 +249,7 @@ class AutonomousExecutive
             }
             if (LOCALIZATION_FINISH)
             {
-                localize(0.0, false);
+                localize(false, 0.0);
             }
              if (DUMPING)
             {
@@ -322,15 +322,22 @@ class AutonomousExecutive
                 auto result = localizationClient.getResult();
                 if (result != nullptr)
                 {
-                    tfr_msgs::SetOdometry::Request odom_req;
-                    odom_req.pose = result->pose;
-                    tfr_msgs::SetOdometry::Response odom_res;
-                    while (!ros::service::call("/reset_drivebase_odometry", odom_req, odom_res));
-                    robot_localization::SetPose::Request fusion_req;
-                    robot_localization::SetPose::Response fusion_res;
-                    while (!ros::service::call("/sensors/set_pose", odom_req, odom_res));
-                    ros::Duration(5.0).sleep();
-
+                    tfr_msgs::SetOdometry odom_req;
+                    odom_req.request.pose = result->pose;
+                    robot_localization::SetPose set_pose;
+                    set_pose.request.pose.pose.pose = result->pose;
+                    set_pose.request.pose.header.frame_id = "bin_footprint";
+                    set_pose.request.pose.header.stamp = ros::Time::now();
+                    for (size_t ind = 0; ind < 36; ind+=7)
+                    {
+                        set_pose.request.pose.pose.covariance[ind] = 1e-6;
+                    }
+                    for (int i = 0; i < 5.0; i+=0.1)
+                    {
+                        ros::service::call("/reset_drivebase_odometry", odom_req);
+                        ros::service::call("/set_pose", set_pose);
+                        ros::Duration(0.1).sleep();
+                    }
                     ROS_INFO("Autonomous Action Server: odometry stabilized");
                 }
             }

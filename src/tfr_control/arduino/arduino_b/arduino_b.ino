@@ -17,6 +17,7 @@ const double GEARBOX_MPR = 2*3.1415*0.15;
 const int GEARBOX_RIGHT_A = 2;
 const int GEARBOX_RIGHT_B = 3;
 const int OUTPUT_ENABLE = 4;
+const int JETSON_ENABLE = 8;
 const int NEUTRAL = 470;
 
 enum class Address : int16_t
@@ -48,6 +49,10 @@ uint16_t pwm_values[9] {};
 
 void setup()
 {
+    pinMode(JETSON_ENABLE, OUTPUT);
+    digitalWrite(JETSON_ENABLE, LOW);
+    delay(500);
+    digitalWrite(JETSON_ENABLE, HIGH);
     pinMode(OUTPUT_ENABLE, OUTPUT);
     digitalWrite(OUTPUT_ENABLE, HIGH);
     for (auto& val : pwm_values)

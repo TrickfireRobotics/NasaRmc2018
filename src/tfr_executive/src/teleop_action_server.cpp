@@ -157,6 +157,7 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::CLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
+                        //TODO refector to use moveArm method
                         tfr_msgs::ArmStateSrv query;
                         ros::service::call("arm_state", query);
                         trajectory_msgs::JointTrajectory trajectory;
@@ -179,6 +180,7 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
+                        //TODO refactor to use moveArm
                         tfr_msgs::ArmStateSrv query;
                         ros::service::call("arm_state", query);
                         trajectory_msgs::JointTrajectory trajectory;
@@ -292,44 +294,10 @@ class TeleopExecutive
                         //first grab the current state of the arm
                         tfr_msgs::ArmStateSrv query;
                         ros::service::call("arm_state", query);
-                        tfr_msgs::ArmMoveGoal goal;
-                        //first we lift the arm up
-                        goal.pose.resize(4);
-                        goal.pose[0] = query.response.states[0];
-                        goal.pose[1] = tfr_utilities::JointAngle::ARM_LOWER_MIN;
-                        goal.pose[2] = tfr_utilities::JointAngle::ARM_UPPER_MIN;
-                        goal.pose[3] = tfr_utilities::JointAngle::ARM_SCOOP_MIN;
-
-                        arm_client.sendGoal(goal);
-
-                        //handle preemption
-                        while (!arm_client.getState().isDone())
-                        {
-                            if (server.isPreemptRequested() || ! ros::ok())
-                            {
-                                arm_client.cancelAllGoals();
-                                server.setPreempted();
-                                ROS_INFO("Teleop Action Server: arm reset preempted");
-                                return;
-                            }
-                            frequency.sleep();
-                        }
-                        
-                        goal.pose[0] = tfr_utilities::JointAngle::ARM_TURNTABLE_MIN;
-                        arm_client.sendGoal(goal);
-                        //handle preemption
-                        while (!arm_client.getState().isDone())
-                        {
-                            if (server.isPreemptRequested() || ! ros::ok())
-                            {
-                                arm_client.cancelAllGoals();
-                                server.setPreempted();
-                                ROS_INFO("Teleop Action Server: arm reset preempted");
-                                return;
-                            }
-                            frequency.sleep();
-                        }
-
+                        moveArm(0,
+                                query.response.states[1],
+                                query.response.states[2],
+                                query.response.states[3]);
                         ROS_INFO("Teleop Action Server: arm reset finished");
 
                         break;
@@ -357,6 +325,33 @@ class TeleopExecutive
         DriveVelocity &drive_stats;
         //how often to check for preemption
         ros::Duration frequency;
+
+        void moveArm(double turntable, double lower_arm, double upper_arm, double scoop)
+        {
+            tfr_msgs::ArmMoveGoal goal;
+            //first we lift the arm up
+            goal.pose.resize(4);
+            goal.pose[0] = turntable; 
+            goal.pose[1] = lower_arm;
+            goal.pose[2] = upper_arm;
+            goal.pose[3] = scoop;
+
+            arm_client.sendGoal(goal);
+
+            //handle preemption
+            while (!arm_client.getState().isDone())
+            {
+                if (server.isPreemptRequested() || ! ros::ok())
+                {
+                    arm_client.cancelAllGoals();
+                    server.setPreempted();
+                    ROS_INFO("Teleop Action Server: arm movement preempted");
+                    return;
+                }
+                ros::Duration{0.1}.sleep();
+            }
+
+        }
 };
 
 

@@ -151,15 +151,15 @@
   <link name="scoop">
     <visual>
       <geometry>
-        <box size="${scoop_diameter} ${scoop_width} ${scoop_diameter/2}" />
+        <box size="${scoop_length} ${scoop_width} ${scoop_diameter/2}" />
       </geometry>
-      <origin xyz="${scoop_diameter/2} 0 ${scoop_diameter/4}" />
+      <origin xyz="${scoop_length/2} 0 ${scoop_diameter/4}" />
     </visual>
     <collision>
       <geometry>
-        <box size="${scoop_diameter} ${scoop_width} ${scoop_diameter/2}" />
+        <box size="${scoop_length} ${scoop_width} ${scoop_diameter/2}" />
       </geometry>
-      <origin xyz="${scoop_diameter/2} 0 ${scoop_diameter/4}" />
+      <origin xyz="${scoop_length/2} 0 ${scoop_diameter/4}" />
     </collision>
   </link>
   <joint name="scoop_joint" type="revolute">

@@ -387,7 +387,7 @@ namespace tfr_control
     {
         //limit for max velocity
         //we don't anticipate this changing very much keep at method level
-        double max_vel = 0.4;
+        double max_vel = 0.5;
         if (v_1 > 0.05 || v_1 < -0.05)
         {
             int sign = (v_1 < 0) ? -1 : 1;

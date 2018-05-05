@@ -325,4 +325,24 @@
     <child link="bin_slope" />
     <origin xyz="0 0 ${(12-9.88) * itom}" rpy="0 ${-pi/4} 0"/>
   </joint>
+  <link name="bin_slope_2" >
+    <visual>
+      <geometry>
+        <box size="${0.125*itom} ${bin_width} ${bin_height*sqrt2}" />
+      </geometry>
+      <origin xyz="0.22 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${0.125*itom} ${bin_width} ${bin_height*sqrt2}" />
+      </geometry>
+      <origin xyz=" 0.22  0 0"/>
+    </collision>
+  </link>
+  <joint name="bin_slope_2_joint" type="fixed">
+    <parent link="bin_back" />
+    <child link="bin_slope_2" />
+    <origin xyz="0  0 ${(12-9.88) * itom}" rpy="0 -0.105 0"/>
+  </joint>
 </robot>
+

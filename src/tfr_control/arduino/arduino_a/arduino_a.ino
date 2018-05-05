@@ -97,7 +97,7 @@ void setup()
 
 void loop()
 {
-    arduinoReading.tread_left_vel = gearbox_left.getVelocity() / GEARBOX_MPR;
+    arduinoReading.tread_left_vel = gearbox_left.getVelocity() * GEARBOX_MPR;
     arduinoReading.arm_turntable_pos = turntable.getPosition()  * TURNTABLE_RPR;
 
     ads1115_a.startADC_SingleEnded(2);

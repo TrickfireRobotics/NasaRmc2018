@@ -1,7 +1,6 @@
 # Holds all of the positions for the test client to travel to, in order
 positions: [
-  [3.14, 0.7, 1.07, -1.0],
-  #  [3.14, 1.15, 1.07, -1.4],
+    [3.14, 1.15, 1.07, -1.4],
   #  [3.14, 1.15, 1.07, -0.4],
   #  [3.14, 0.75, 1.25, 1.06],
   #  [2.7, 0.75, 1.25, 1.06], # Excess ready to dump

@@ -233,7 +233,7 @@
   <link name="bin_back" >
     <visual>
       <geometry>
-        <box size="${0.125*itom} ${bin_width} ${bin_height}" />
+        <box size="${0.125*itom} ${bin_width} ${bin_back_height}" />
       </geometry>
       <origin xyz="${bin_length} 0 ${-bin_height/2 + bin_height - (9.88 * itom) + (0.5*itom)}" />
     </visual>
@@ -330,13 +330,13 @@
       <geometry>
         <box size="${0.125*itom} ${bin_width} ${bin_height*sqrt2}" />
       </geometry>
-      <origin xyz="0.22 0 0"/>
+      <origin xyz="0.17 0 0"/>
     </visual>
     <collision>
       <geometry>
         <box size="${0.125*itom} ${bin_width} ${bin_height*sqrt2}" />
       </geometry>
-      <origin xyz=" 0.22  0 0"/>
+      <origin xyz=" 0.17  0 0"/>
     </collision>
   </link>
   <joint name="bin_slope_2_joint" type="fixed">

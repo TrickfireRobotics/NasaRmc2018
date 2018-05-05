@@ -330,13 +330,13 @@
       <geometry>
         <box size="${0.125*itom} ${bin_width} ${bin_height*sqrt2}" />
       </geometry>
-      <origin xyz="0.17 0 0"/>
+      <origin xyz="0.1 0 0"/>
     </visual>
     <collision>
       <geometry>
         <box size="${0.125*itom} ${bin_width} ${bin_height*sqrt2}" />
       </geometry>
-      <origin xyz=" 0.17  0 0"/>
+      <origin xyz=" 0.1  0 0"/>
     </collision>
   </link>
   <joint name="bin_slope_2_joint" type="fixed">

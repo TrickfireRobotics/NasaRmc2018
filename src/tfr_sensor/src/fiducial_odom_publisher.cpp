@@ -23,6 +23,7 @@
 #include <tfr_msgs/SetOdometry.h>
 #include <tfr_utilities/tf_manipulator.h>
 #include <actionlib/client/simple_action_client.h>
+#include <robot_localization/SetPose.h>
 #include <tf2/convert.h>
 #include <std_srvs/Empty.h>
 #include <tf2/LinearMath/Quaternion.h>
@@ -70,10 +71,12 @@ class FiducialOdom
         FiducialOdom(FiducialOdom&&) = delete;
         FiducialOdom& operator=(FiducialOdom&&) = delete;
 
-        void resetFusion(std_srvs::Empty::Request& request,
+        bool resetFusion(std_srvs::Empty::Request& request,
                 std_srvs::Empty::Response& response)
         {
-            processOdometry(false);
+            ROS_INFO("RESETTING SENSORS");
+            processOdometry(true);
+            return true;
         }
 
         void processOdometry(bool reset)
@@ -145,12 +148,11 @@ class FiducialOdom
                 publisher.publish(odom);
 
                 //control error propagation in the drivebase odometry publisher
-                tfr_msgs::SetOdometryRequest odom_req{};
-                odom_req.pose = odom.pose.pose;
-                tfr_msgs::SetOdometryResponse odom_res{};
+                tfr_msgs::SetOdometry odom_req{};
+                odom_req.request.pose = odom.pose.pose;
                 if (!reset)
                 {
-                    ros::service::call("/set_drivebase_odometry", odom_req, odom_res);
+                    ros::service::call("/set_drivebase_odometry", odom_req);
                 }
                 else
                 {
@@ -162,8 +164,12 @@ class FiducialOdom
                     {
                         set_pose.request.pose.pose.covariance[ind] = 1e-6;
                     }
-                    ros::service::call("/reset_drivebase_odometry", odom_req);
-                    //ros::service::call("/set_pose", set_pose);
+                    for (double i =0.0; i < 1.5; i += 0.05)
+                    {
+                        ros::service::call("/set_drivebase_odometry", odom_req);
+                        ROS_INFO("setting pose");
+                        ros::Duration(0.05).sleep();
+                    }
                 }
 
             }
@@ -213,7 +219,7 @@ int main(int argc, char** argv)
     ros::Rate r(rate);
     while(ros::ok())
     {
-        fiducial_odom.processOdometry(true);
+        fiducial_odom.processOdometry(false);
         ros::spinOnce();
         r.sleep();
     }

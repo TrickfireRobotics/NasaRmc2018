@@ -23,6 +23,7 @@ find_package(catkin REQUIRED COMPONENTS
     nav_msgs
     tfr_msgs
     tfr_utilities
+    robot_localization
     image_transport
 )
 

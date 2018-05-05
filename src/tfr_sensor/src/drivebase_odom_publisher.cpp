@@ -25,11 +25,15 @@
 #include <tfr_msgs/ArduinoBReading.h>
 #include <tfr_msgs/SetOdometry.h>
 #include <tfr_msgs/PoseSrv.h>
+#include <geometry_msgs/Quaternion.h>
 #include <nav_msgs/Odometry.h>
 #include <std_srvs/Empty.h>
 #include <tf/transform_datatypes.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
+#include <tf2/convert.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Scalar.h>
 
 class DrivebaseOdometryPublisher
 {
@@ -51,6 +55,10 @@ class DrivebaseOdometryPublisher
             odometry_publisher = n.advertise<nav_msgs::Odometry>("/drivebase_odom", 15);
             set_odometry = n.advertiseService("set_drivebase_odometry", &DrivebaseOdometryPublisher::setOdometry, this);
             reset_odometry = n.advertiseService("reset_drivebase_odometry", &DrivebaseOdometryPublisher::resetOdometry, this);
+            angle.x = 0;
+            angle.y = 0;
+            angle.z = 0;
+            angle.w = 1;
         }
 
         ~DrivebaseOdometryPublisher() = default;
@@ -68,8 +76,6 @@ class DrivebaseOdometryPublisher
             //Grab the neccessary data
             tfr_msgs::ArduinoAReading reading_a;
             tfr_msgs::ArduinoBReading reading_b;
-            if (latest_arduino_a != nullptr)
-                reading_a = *latest_arduino_a;
             if (latest_arduino_b != nullptr)
                 reading_b = *latest_arduino_b;
 
@@ -94,13 +100,23 @@ class DrivebaseOdometryPublisher
             //basic differential kinematics to get combined velocities
             double v_ang = (v_r-v_l)/wheel_span;
             double v_lin = (v_r+v_l)/2;
-
+            
             //break into xy components and increment
             double d_angle = v_ang * d_t;
-            angle += d_angle;
 
-            double v_x = v_lin*cos(angle);
-            double v_y = v_lin*sin(angle);
+            tf2::Quaternion q_0{angle.x, angle.y, angle.z, angle.w};
+            tf2::Quaternion q_1{};
+            q_1.setRPY(0, 0, d_angle);
+            q_0 *= q_1;
+            angle.x = q_0.getX();
+            angle.y = q_0.getY();
+            angle.z = q_0.getZ();
+            angle.w = q_0.getW();
+
+
+            auto yaw = q_0.getAngleShortestPath();
+            double v_x = v_lin*cos(yaw);
+            double v_y = v_lin*sin(yaw);
 
 
             double d_x = v_x * d_t;
@@ -120,7 +136,7 @@ class DrivebaseOdometryPublisher
             msg.pose.pose.position.x = x;
             msg.pose.pose.position.y = y;
             msg.pose.pose.position.z = 0;
-            msg.pose.pose.orientation = tf::createQuaternionMsgFromYaw(angle);
+            msg.pose.pose.orientation = angle;
             msg.pose.covariance = { 1e-1,    0,    0,    0,    0,    0,
                 0, 1e-1,    0,    0,    0,    0,
                 0,    0, 1e-1,    0,    0,    0,
@@ -158,7 +174,7 @@ class DrivebaseOdometryPublisher
         const double& wheel_span;
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
-        double angle; //angle of rotation around the z axis (radians)
+        geometry_msgs::Quaternion angle; 
         const double MAX_XY_DELTA = 0.15;
         const double MAX_THETA_DELTA = 0.13;
         ros::Time t_0;
@@ -192,14 +208,8 @@ class DrivebaseOdometryPublisher
                 dy = (dy >= 0) ? MAX_XY_DELTA : -MAX_XY_DELTA;
             y += dy;
             
-            auto siny = +2.0 * (request.pose.orientation.w * request.pose.orientation.z + request.pose.orientation.x * request.pose.orientation.y);
-            auto cosy = +1.0 - 2.0 * (request.pose.orientation.y * request.pose.orientation.y + request.pose.orientation.z * request.pose.orientation.z );  
-            auto new_ang = atan2(siny, cosy);
-
-            auto dth = new_ang - angle;
-            if (std::abs(dth) > MAX_THETA_DELTA)
-                dth = (dth >= 0) ? MAX_THETA_DELTA : -MAX_THETA_DELTA;
-            angle += dth;
+             //footprint_odom transform
+            angle = request.pose.orientation;
 
             std_srvs::Empty::Request req;
             std_srvs::Empty::Response res;
@@ -217,9 +227,7 @@ class DrivebaseOdometryPublisher
 
             x = request.pose.position.x;
             y = request.pose.position.y;
-            auto siny = +2.0 * (request.pose.orientation.w * request.pose.orientation.z + request.pose.orientation.x * request.pose.orientation.y);
-            auto cosy = +1.0 - 2.0 * (request.pose.orientation.y * request.pose.orientation.y + request.pose.orientation.z * request.pose.orientation.z );  
-            auto angle = atan2(siny, cosy);
+            angle = request.pose.orientation;
             return true;
         }
 };

@@ -108,8 +108,9 @@ private:
                 if (std::abs(goal.pose[0]) < 3.14159265/2) { // If the turntable is going to around the bin (the problem area)
                     ros::Duration(1.5).sleep(); // Setting this to 2 seconds works for sure
                 }
-
-                if (std::abs(state[4]) > 0.05)
+                
+                
+                if (std::abs(state[4]) > 1.05 )
                 {
                     geometry_msgs::Twist pulse;
                     pulse.linear.x = -0.2;
@@ -117,6 +118,10 @@ private:
                     ros::Duration(1.25).sleep(); 
                     pulse.linear.x = 0;
                     drivebase_publisher.publish(pulse);
+                }
+                else if (std::abs(state[4]) > 0.05)
+                {
+                    ros::Duration(1.0).sleep(); 
                 }
             }
         }

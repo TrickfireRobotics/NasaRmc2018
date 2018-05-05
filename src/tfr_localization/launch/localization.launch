@@ -3,7 +3,7 @@
     <node name="localization_action_server" pkg="tfr_localization" output="screen" type="localization_action_server">
         <rosparam>
             turn_velocity: 0.9
-            turn_duration: 0.8585
+            turn_duration: 1.05 
             yaw_threshold: 0.55
         </rosparam>
     </node>

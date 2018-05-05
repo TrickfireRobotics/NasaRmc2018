@@ -80,8 +80,6 @@ namespace tfr_control
             //TURNTABLE
             position_values[static_cast<int>(Joint::TURNTABLE)] =
                 reading_a.arm_turntable_pos + turntable_offset;
-            ROS_INFO("turntable pos %f offset %f", reading_a.arm_turntable_pos,
-                    turntable_offset);
             velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0; 
             effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
 
@@ -374,8 +372,6 @@ namespace tfr_control
         {
             int sign = (difference < 0) ? 1 : -1;
             double magnitude = std::min(std::abs(difference)/max_delta, 0.92);           
-            ROS_INFO("CONTROL desired %f magnitude %f actual %f", desired,
-                    magnitude, actual);
             return sign*magnitude;
         }
         return 0;
@@ -396,7 +392,7 @@ namespace tfr_control
         if (v_1 > 0.05 || v_1 < -0.05)
         {
             int sign = (v_1 < 0) ? -1 : 1;
-            double magnitude = std::min(std::abs(v_1)/max_vel, 0.7);
+            double magnitude = std::min(std::abs(v_1)/max_vel, 0.8);
             return sign * magnitude;
         }
         return 0;

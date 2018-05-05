@@ -45,7 +45,6 @@
 #include <tfr_msgs/NavigationAction.h>
 #include <tfr_msgs/DiggingAction.h>
 #include <tfr_msgs/SetOdometry.h>
-#include <robot_localization/SetPose.h>
 #include <std_srvs/Empty.h>
 #include <tfr_utilities/location_codes.h>
 #include <actionlib/server/simple_action_server.h>
@@ -211,7 +210,7 @@ class AutonomousExecutive
             }
             if (LOCALIZATION_FROM)
             {
-                localize(false, 3.14);
+                localize(true, 3.14);
                             
             }
             if (NAVIGATION_FROM)
@@ -319,11 +318,9 @@ class AutonomousExecutive
             else
             {
 
-                ROS_INFO("Autonomous Action Server: stabilizing odometry");
-                auto result = localizationClient.getResult();
-                if (result != nullptr)
-                {
-                }
+                ROS_INFO("Autonomous Action Server: stabilized odometry");
+                std_srvs::Empty empty;
+                ros::service::call("/reset_fusion", empty);
             }
             ROS_INFO("Autonomous Action Server: localization finished");
         }

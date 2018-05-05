@@ -135,22 +135,22 @@ class Localizer
                     request.pose = processed_pose;
                     tfr_msgs::PoseSrv::Response response;
                     output.pose = processed_pose.pose;
-                    if (odometry)
-                    {
 
-                        if(!ros::service::call("localize_bin", request, response))
+                        while(odometry)
                         {
-                            ROS_INFO("localized");
-                            tfr_msgs::LocalizationResult result;
-                            server.setSucceeded(output);
-                            odometry = false;
-                            set = true;
+                            if(ros::service::call("/localize_bin", request, response))
+                            {
+                                ROS_INFO("localized");
+                                tfr_msgs::LocalizationResult result;
+                                server.setSucceeded(output);
+                                odometry = false;
+                                set = true;
+                            }
+                            else
+                            {
+                                ROS_INFO("Localization Action Server: retrying to localize movable point");
+                            }
                         }
-                        else
-                        {
-                            ROS_INFO("Localization Action Server: retrying to localize movable point");
-                        }
-                    }
 
 
                     auto siny = +2.0 * 
@@ -161,7 +161,8 @@ class Localizer
                          processed_pose.pose.orientation.z * processed_pose.pose.orientation.z );  
                     auto angle = atan2(siny, cosy);
 
-                    auto difference = goal->target_yaw - angle;
+                    auto difference = std::abs(goal->target_yaw) - std::abs(angle);
+                    ROS_INFO("Angle %f Difference %f", angle, difference);
                     if (std::abs(difference) < threshold)
                     {
                         if (!set)

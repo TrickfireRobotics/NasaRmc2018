@@ -35,14 +35,15 @@
 #include <tfr_utilities/control_code.h>
 #include <tfr_msgs/TeleopAction.h>
 #include <tfr_msgs/DiggingAction.h>
-#include <tfr_msgs/ArmMoveAction.h>
 #include <tfr_msgs/EmptySrv.h>
 #include <tfr_msgs/BinStateSrv.h>
 #include <tfr_msgs/ArmStateSrv.h>
 #include <tfr_msgs/DurationSrv.h>
+#include <tfr_utilities/arm_manipulator.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Float64.h>
+#include <tfr_msgs/ArmMoveAction.h>
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
 
@@ -69,8 +70,7 @@ class TeleopExecutive
                 boost::bind(&TeleopExecutive::processCommand, this, _1),
                 false},
             drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
-            trajectory_publisher{n.advertise<trajectory_msgs::JointTrajectory>("/arm_controller/command", 5)},
-            scoop_trajectory_publisher{n.advertise<trajectory_msgs::JointTrajectory>("/arm_end_controller/command", 5)},
+            arm_manipulator{n},
             bin_publisher{n.advertise<std_msgs::Float64>("/bin_position_controller/command", 5)},
             digging_client{n, "dig"},
             arm_client{n, "move_arm"},
@@ -160,7 +160,7 @@ class TeleopExecutive
                         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
                         tfr_msgs::ArmStateSrv query;
                         ros::service::call("arm_state", query);
-                        moveArm( query.response.states[0] - 0.02,
+                        arm_manipulator.moveArm( query.response.states[0] - 0.03,
                                   query.response.states[1],
                                   query.response.states[2],
                                   query.response.states[3]);
@@ -172,7 +172,7 @@ class TeleopExecutive
                         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
                         tfr_msgs::ArmStateSrv query;
                         ros::service::call("arm_state", query);
-                        moveArm( query.response.states[0] + 0.02,
+                        arm_manipulator.moveArm( query.response.states[0] + 0.03,
                                   query.response.states[1],
                                   query.response.states[2],
                                   query.response.states[3]);
@@ -272,17 +272,17 @@ class TeleopExecutive
                         //first grab the current state of the arm
                         tfr_msgs::ArmStateSrv query;
                         ros::service::call("arm_state", query);
-                        moveArm(query.response.states[0], 0.10, 1.0, 1.6);
+                        arm_manipulator.moveArm(query.response.states[0], 0.20, 1.0, 1.6);
                         ros::Duration(5.0).sleep();
-                        moveArm(0, 0.10, 1.0, 1.6);
+                        arm_manipulator.moveArm(0, 0.20, 1.0, 1.6);
                         ros::Duration(5.0).sleep();
-                        moveArm(0, 0.40, 1.0, 1.6);
+                        arm_manipulator.moveArm(0, 0.40, 1.0, 1.6);
                         ros::Duration(3.0).sleep();
-                        moveArm(0, 0.60, 1.0, 1.6);
+                        arm_manipulator.moveArm(0, 0.60, 1.0, 1.6);
                         ros::Duration(3.0).sleep();
-                        moveArm(0, 0.80, 1.0, 1.6);
+                        arm_manipulator.moveArm(0, 0.91, 1.0, 1.6);
                         ros::Duration(3.0).sleep();
-                        moveArm(0, 0.87, 1.0, 1.6);
+                        arm_manipulator.moveArm(0, 0.98, 1.0, 1.6);
                         ros::Duration(3.0).sleep();
 
 
@@ -297,7 +297,7 @@ class TeleopExecutive
                         //all zeros by default
                         drivebase_publisher.publish(move_cmd);
                         //first grab the current state of the arm
-                        moveArm(0, 0.10, 1.0, 1.6);
+                        arm_manipulator.moveArm(0, 0.60, 1.0, 1.6);
                         ros::Duration(5.0).sleep();
                         ROS_INFO("Teleop Action Server: arm raise finished");
                         break;
@@ -321,40 +321,12 @@ class TeleopExecutive
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> digging_client;
         actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
         ros::Publisher drivebase_publisher;
-        ros::Publisher trajectory_publisher;
-        ros::Publisher scoop_trajectory_publisher;
+        ArmManipulator arm_manipulator;
         ros::Publisher bin_publisher;
         DriveVelocity &drive_stats;
         //how often to check for preemption
         ros::Duration frequency;
 
-        void moveArm(double turntable, double lower_arm, double upper_arm, double scoop)
-        {
-
-             trajectory_msgs::JointTrajectory trajectory;
-             trajectory.header.stamp = ros::Time::now();
-             trajectory.joint_names.resize(3);
-             trajectory.points.resize(1);
-             trajectory.points[0].positions.resize(3);
-             trajectory.joint_names[0]="turntable_joint";
-             trajectory.joint_names[1]="lower_arm_joint";
-             trajectory.joint_names[2]="upper_arm_joint";
-             trajectory.points[0].positions[0] = turntable;
-             trajectory.points[0].positions[1] = lower_arm;
-             trajectory.points[0].positions[2] = upper_arm;
-             trajectory.points[0].time_from_start = ros::Duration(0.06);
-             trajectory_publisher.publish(trajectory);
-
-             trajectory_msgs::JointTrajectory scoop_trajectory;
-             scoop_trajectory.header.stamp = ros::Time::now();
-             scoop_trajectory.joint_names.resize(1);
-             scoop_trajectory.points.resize(1);
-             scoop_trajectory.points[0].positions.resize(1);
-             scoop_trajectory.joint_names[0]="scoop_joint";
-             scoop_trajectory.points[0].positions[0] = scoop;
-             scoop_trajectory.points[0].time_from_start = ros::Duration(0.06);
-             scoop_trajectory_publisher.publish(scoop_trajectory);
-}
 };
 
 

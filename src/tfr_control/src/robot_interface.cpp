@@ -78,7 +78,10 @@ namespace tfr_control
         if (!use_fake_values)
         {
             //TURNTABLE
-            position_values[static_cast<int>(Joint::TURNTABLE)] = -reading_a.arm_turntable_pos - turntable_offset;
+            position_values[static_cast<int>(Joint::TURNTABLE)] =
+                reading_a.arm_turntable_pos + turntable_offset;
+            ROS_INFO("turntable pos %f offset %f", reading_a.arm_turntable_pos,
+                    turntable_offset);
             velocity_values[static_cast<int>(Joint::TURNTABLE)] = 0; 
             effort_values[static_cast<int>(Joint::TURNTABLE)] = 0;
 
@@ -223,7 +226,7 @@ namespace tfr_control
 
         //TURNTABLE
         command_values[static_cast<int>(Joint::TURNTABLE)] = 
-            position_values[static_cast<int>(Joint::TURNTABLE)];
+            -position_values[static_cast<int>(Joint::TURNTABLE)];
 
         //LOWER_ARM
         command_values[static_cast<int>(Joint::LOWER_ARM)] =
@@ -315,7 +318,7 @@ namespace tfr_control
     {
         //we don't anticipate this changing very much keep at method level
         double min_delta = 0.01;
-        double max_delta = 0.25;
+        double max_delta = 0.35;
 
         double difference = desired - actual;
         if (std::abs(difference) > min_delta)
@@ -365,12 +368,14 @@ namespace tfr_control
     {
         //we don't anticipate this changing very much keep at method level
         double min_delta = 0.01;
-        double max_delta = 0.1;
+        double max_delta = 0.2;
         double difference = desired - actual;
         if (std::abs(difference) > min_delta)
         {
             int sign = (difference < 0) ? 1 : -1;
             double magnitude = std::min(std::abs(difference)/max_delta, 0.92);           
+            ROS_INFO("CONTROL desired %f magnitude %f actual %f", desired,
+                    magnitude, actual);
             return sign*magnitude;
         }
         return 0;
@@ -391,7 +396,7 @@ namespace tfr_control
         if (v_1 > 0.05 || v_1 < -0.05)
         {
             int sign = (v_1 < 0) ? -1 : 1;
-            double magnitude = std::min(std::abs(v_1)/max_vel, 1.0);
+            double magnitude = std::min(std::abs(v_1)/max_vel, 0.7);
             return sign * magnitude;
         }
         return 0;

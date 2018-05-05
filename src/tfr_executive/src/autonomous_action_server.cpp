@@ -145,6 +145,7 @@ class AutonomousExecutive
             {
                 localize(true, 0.0);
             }
+            ROS_INFO("here, %d",NAVIGATION_TO );
 
             if (NAVIGATION_TO)
             {
@@ -322,23 +323,6 @@ class AutonomousExecutive
                 auto result = localizationClient.getResult();
                 if (result != nullptr)
                 {
-                    tfr_msgs::SetOdometry odom_req;
-                    odom_req.request.pose = result->pose;
-                    robot_localization::SetPose set_pose;
-                    set_pose.request.pose.pose.pose = result->pose;
-                    set_pose.request.pose.header.frame_id = "bin_footprint";
-                    set_pose.request.pose.header.stamp = ros::Time::now();
-                    for (size_t ind = 0; ind < 36; ind+=7)
-                    {
-                        set_pose.request.pose.pose.covariance[ind] = 1e-6;
-                    }
-                    for (int i = 0; i < 5.0; i+=0.1)
-                    {
-                        ros::service::call("/reset_drivebase_odometry", odom_req);
-                        ros::service::call("/set_pose", set_pose);
-                        ros::Duration(0.1).sleep();
-                    }
-                    ROS_INFO("Autonomous Action Server: odometry stabilized");
                 }
             }
             ROS_INFO("Autonomous Action Server: localization finished");

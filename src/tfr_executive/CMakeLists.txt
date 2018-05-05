@@ -33,6 +33,6 @@ target_link_libraries(autonomous_action_server ${catkin_LIBRARIES})
 
 add_executable(teleop_action_server src/teleop_action_server.cpp)
 add_dependencies(teleop_action_server ${catkin_EXPORTED_TARGETS})
-target_link_libraries(teleop_action_server ${catkin_LIBRARIES})
+target_link_libraries(teleop_action_server arm_manipulator ${catkin_LIBRARIES})
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")

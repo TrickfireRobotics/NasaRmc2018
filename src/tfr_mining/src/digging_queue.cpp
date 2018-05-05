@@ -15,7 +15,7 @@ namespace tfr_mining
         for (int i = 0; i < positions.size(); i++) {
             DiggingSet toAdd;
             std::vector<double> state;
-            for (int angle = 0; angle < 4; angle++) {
+            for (int angle = 0; angle < 5; angle++) {
                 state.push_back(positions[i][angle]);
             }
             toAdd.insertState(state, 5.0); // Just use a constant time for simplicity.

@@ -179,9 +179,11 @@ class Dumper
                  *
                  * This conforms to rep 103
                  * */
-                int sign = (estimate.relative_pose.pose.position.y < 0) ? -1 : 1;
+                int sign = (3.14159 - std::abs(angle) < 0) ? -1 : 1;
                 cmd.angular.z = sign*constraints.getMaxAngVel();
+                ROS_INFO("Command: %f", angle);
             }
+            
             else
             {
                 cmd.linear.x = -1 * constraints.getMaxLinVel();

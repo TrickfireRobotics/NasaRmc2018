@@ -282,11 +282,6 @@ class TeleopExecutive
                         ros::Duration(3.0).sleep();
                         arm_manipulator.moveArm(0, 0.91, 1.0, 1.6);
                         ros::Duration(3.0).sleep();
-                        arm_manipulator.moveArm(0, 0.98, 1.0, 1.6);
-                        ros::Duration(3.0).sleep();
-
-
-
 
                         ROS_INFO("Teleop Action Server: arm reset finished");
                         break;

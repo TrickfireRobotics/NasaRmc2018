@@ -30,7 +30,7 @@
   <!-- Using the bigger size as a box instead of making complex angled shape -->
   <xacro:property name="bin_length" value="${29.5*itom}" />
   <xacro:property name="bin_width" value="${13.5*itom}" />
-  <xacro:property name="bin_height" value="${11.5*itom}" />
+  <xacro:property name="bin_height" value="${12.5*itom}" />
   <xacro:property name="bin_back_height" value="${10*itom}" />
 
 

@@ -112,9 +112,10 @@ class DrivebaseOdometryPublisher
             angle.y = q_0.getY();
             angle.z = q_0.getZ();
             angle.w = q_0.getW();
-
-
-            auto yaw = q_0.getAngleShortestPath();
+            // yaw (z-axis rotation)
+            double siny = +2.0 * (q.getW() * q.getZ() + q.getX() * q.getY());
+            double cosy = +1.0 - 2.0 * (q.getY() * q.getY() + q.getZ() * q.getZ());  
+            auto yaw = atan2(siny, cosy)
             double v_x = v_lin*cos(yaw);
             double v_y = v_lin*sin(yaw);
 

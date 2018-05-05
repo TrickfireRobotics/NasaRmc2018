@@ -115,13 +115,13 @@ private:
                     geometry_msgs::Twist pulse;
                     pulse.linear.x = -0.2;
                     drivebase_publisher.publish(pulse);
-                    ros::Duration(1.25).sleep(); 
+                    ros::Duration(0.75).sleep(); 
                     pulse.linear.x = 0;
                     drivebase_publisher.publish(pulse);
                 }
                 else if (std::abs(state[4]) > 0.05)
                 {
-                    ros::Duration(1.0).sleep(); 
+                    ros::Duration(1.25).sleep(); 
                 }
             }
         }

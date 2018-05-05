@@ -13,7 +13,7 @@ def talker():
     
     val = -1.0
     while not rospy.is_shutdown() and val < 1.001:
-        msg.arm_upper = val
+        msg.arm_lower = val
         rospy.loginfo("val {}".format(val))
         val += 0.001
         pub.publish(msg)

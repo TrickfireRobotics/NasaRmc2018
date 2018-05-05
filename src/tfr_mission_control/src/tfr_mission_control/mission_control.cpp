@@ -200,21 +200,8 @@ namespace tfr_mission_control {
         std_srvs::Empty::Response res;
         while(!ros::service::call("/zero_turntable", req, res))
             ros::Duration{0.1}.sleep();
-        ROS_INFO("Mission Control: Turntable reset");
-        tfr_msgs::ArmStateSrv query;
-        ros::service::call("arm_state", query);
-        tfr_msgs::ArmMoveGoal goal;
 
-        toggleControl(true);
-        //first we lift the arm up
-        goal.pose.resize(4);
-        goal.pose[0] = 0;
-        goal.pose[1] = query.response.states[1];
-        goal.pose[2] = query.response.states[2];
-        goal.pose[3] = query.response.states[3];
-
-        arm_client.sendGoal(goal);
-
+	performTeleop(tfr_utilities::TeleopCode::RAISE_ARM);
         toggleMotors(true);
 
 

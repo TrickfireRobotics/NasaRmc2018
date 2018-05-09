@@ -54,9 +54,9 @@ enum Potentiometers
 
 Potentiometer pots []
 {
-  Potentiometer{0.0071, -8.871},    //ARM_LOWER
+  Potentiometer{0.0071, -21.69},    //ARM_LOWER
   Potentiometer{0.0149, 22.319},    //ARM_UPPER
-  Potentiometer{0.0207, -256.745},    //ARM_SCOOP
+  Potentiometer{0.0207, -265.196},    //ARM_SCOOP
   Potentiometer{0.00346, -23.672},            //BIN_LEFT TODO
   Potentiometer{0.00348, -23.882}             //BIN_RIGHT TODO
 };

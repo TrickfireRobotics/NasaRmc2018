@@ -12,7 +12,7 @@ ros::NodeHandle nh;
 //encoder level constants
 const double CPR = 4096; //pulse per revolution
 const double GEARBOX_MPR = 2*3.1415*0.15; 
-const float MAX_DRIVEBASE_DELTA = 5.0;
+const float MAX_DRIVEBASE_DELTA = 8.0;
 const float MAX_ARM_DELTA = 15.0;
 
 const float FULL_DELTA = 100.0;

@@ -63,8 +63,10 @@ class AutonomousExecutive
             dumpingClient{n, "dump"},
             frequency{f}
         {
-            ros::param::param<bool>("~localization", LOCALIZATION, true);
-            if (LOCALIZATION || POST_LOCALIZATION)
+            ros::param::param<bool>("~localization_to", LOCALIZATION_TO, true);
+            ros::param::param<bool>("~localization_from", LOCALIZATION_FROM, true);
+            ros::param::param<bool>("~localization_finish", LOCALIZATION_FINISH, true);
+            if (LOCALIZATION_TO || LOCALIZATION_FROM || LOCALIZATION_FINISH)
             {
                 ROS_INFO("Autonomous Action Server: Connecting to localization server");
                 localizationClient.waitForServer();
@@ -138,42 +140,11 @@ class AutonomousExecutive
                 return;
             }
 
-            if (LOCALIZATION)
+            if (LOCALIZATION_TO)
             {
-                ROS_INFO("Autonomous Action Server: commencing localization");
-                tfr_msgs::LocalizationGoal goal{};
-                goal.set_odometry = true;
-                localizationClient.sendGoal(goal);
-                //handle preemption
-                while (!localizationClient.getState().isDone())
-                {
-                    if (server.isPreemptRequested() || ! ros::ok())
-                    {
-                        localizationClient.cancelAllGoals();
-                        server.setPreempted();
-                        ROS_INFO("Autonomous Action Server: localization preempted");
-                        return;
-                    }
-                    frequency.sleep();
-                }
-                if (localizationClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
-                {
-                    ROS_INFO("Autonomous Action Server: localization failed");
-                    server.setAborted();
-                    return;
-                }
-
-                ROS_INFO("Autonomous Action Server: stabilizing odometry");
-                tfr_msgs::SetOdometry::Request odom_req;
-                odom_req.pose.orientation.w = 1;
-                tfr_msgs::SetOdometry::Response odom_res;
-                while (!ros::service::call("reset_drivebase_odometry", odom_req, odom_res));
-
-                ros::Duration(5.0).sleep();
-                ROS_INFO("Autonomous Action Server: odometry stabilized");
-                ROS_INFO("Autonomous Action Server: localization finished");
-
+                localize(true, 0.0);
             }
+            ROS_INFO("here, %d",NAVIGATION_TO );
 
             if (NAVIGATION_TO)
             {
@@ -237,7 +208,11 @@ class AutonomousExecutive
                 }
                 ROS_INFO("Autonomous Action Server: digging finished");
             }
-            
+            if (LOCALIZATION_FROM)
+            {
+                localize(true, 3.14);
+                            
+            }
             if (NAVIGATION_FROM)
             {
                 ROS_INFO("Autonomous Action Server: Connecting to navigation server");
@@ -272,7 +247,11 @@ class AutonomousExecutive
                 }
                 ROS_INFO("Autonomous Action Server: navigation finished");
             }
-            if (DUMPING)
+            if (LOCALIZATION_FINISH)
+            {
+                localize(false, 0.0);
+            }
+             if (DUMPING)
             {
                 ROS_INFO("Autonomous Action Server: Connecting to dumping server");
                 navigationClient.waitForServer();
@@ -307,6 +286,44 @@ class AutonomousExecutive
             ROS_INFO("Autonomous Action Server: AUTONOMOUS MISSION SUCCESS");
             server.setSucceeded();
         }
+        
+        void localize(bool set_odometry, double yaw)
+        {
+            ROS_INFO("Autonomous Action Server: commencing localization");
+            ROS_INFO("Autonomous Action Server: yaw %f", yaw);
+            ROS_INFO("Autonomous Action Server: odometryi %d", set_odometry);
+            
+            tfr_msgs::LocalizationGoal goal{};
+            goal.set_odometry = set_odometry;
+            goal.target_yaw = yaw;
+            localizationClient.sendGoal(goal);
+            //handle preemption
+            while (!localizationClient.getState().isDone())
+            {
+                if (server.isPreemptRequested() || ! ros::ok())
+                {
+                    localizationClient.cancelAllGoals();
+                    server.setPreempted();
+                    ROS_INFO("Autonomous Action Server: localization preempted");
+                    return;
+                }
+                frequency.sleep();
+            }
+            if (localizationClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+            {
+                ROS_INFO("Autonomous Action Server: localization failed");
+                server.setAborted();
+                return;
+            }
+            else
+            {
+
+                ROS_INFO("Autonomous Action Server: stabilized odometry");
+                std_srvs::Empty empty;
+                ros::service::call("/reset_fusion", empty);
+            }
+            ROS_INFO("Autonomous Action Server: localization finished");
+        }
 
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
         actionlib::SimpleActionClient<tfr_msgs::LocalizationAction> localizationClient;
@@ -314,12 +331,12 @@ class AutonomousExecutive
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> diggingClient;
         actionlib::SimpleActionClient<tfr_msgs::EmptyAction> dumpingClient;
 
-        bool LOCALIZATION;
+        bool LOCALIZATION_TO;
+        bool LOCALIZATION_FROM;
+        bool LOCALIZATION_FINISH;
         bool NAVIGATION_TO;
-        bool DIGGING;
-        bool HOLE;
-        bool POST_LOCALIZATION;
         bool NAVIGATION_FROM;
+        bool DIGGING;
         bool DUMPING;
         //how often to check for preemption
         ros::Duration frequency;

@@ -92,6 +92,8 @@ Visualization Manager:
           Value: true
         bin_slope:
           Value: true
+        bin_slope_2:
+          Value: true
         front_cam_link:
           Value: true
         front_left_slope_link:
@@ -158,6 +160,8 @@ Visualization Manager:
                   {}
                 bin_slope:
                   {}
+                bin_slope_2:
+                  {}
               front_cam_link:
                 {}
               kinect_link:
@@ -215,7 +219,7 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 25; 255; 0
-      Enabled: false
+      Enabled: true
       Head Diameter: 0.300000012
       Head Length: 0.200000003
       Length: 0.300000012
@@ -233,13 +237,13 @@ Visualization Manager:
       Shaft Length: 0.100000001
       Topic: /move_base/NavfnROS/plan
       Unreliable: false
-      Value: false
+      Value: true
     - Alpha: 1
       Axes Length: 1
       Axes Radius: 0.100000001
       Class: rviz/Pose
       Color: 255; 25; 0
-      Enabled: false
+      Enabled: true
       Head Length: 0.300000012
       Head Radius: 0.100000001
       Name: Pose
@@ -248,7 +252,7 @@ Visualization Manager:
       Shape: Arrow
       Topic: /move_base/current_goal
       Unreliable: false
-      Value: false
+      Value: true
     - Alpha: 0.699999988
       Class: rviz/Map
       Color Scheme: map
@@ -384,6 +388,11 @@ Visualization Manager:
           Show Trail: false
           Value: true
         bin_slope:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        bin_slope_2:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -555,7 +564,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: odom
+    Fixed Frame: base_footprint
     Frame Rate: 30
   Name: root
   Tools:
@@ -576,7 +585,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.74883008
+      Distance: 16.480238
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -591,10 +600,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.379796743
+      Pitch: 0.144796759
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.52082431
+      Yaw: 3.03082323
     Saved: ~
 Window Geometry:
   Displays:

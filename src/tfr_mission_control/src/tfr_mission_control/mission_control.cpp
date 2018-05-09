@@ -194,7 +194,6 @@ namespace tfr_mission_control {
     void MissionControl::resetTurntable()
     {
         ROS_INFO("Mission Control: Resetting turntable");
-        toggleControl(false);
         toggleMotors(false);
         std_srvs::Empty::Request req;
         std_srvs::Empty::Response res;
@@ -203,7 +202,6 @@ namespace tfr_mission_control {
 
 	performTeleop(tfr_utilities::TeleopCode::RAISE_ARM);
         toggleMotors(true);
-
 
     }
    

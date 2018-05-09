@@ -76,6 +76,9 @@ class DrivebaseOdometryPublisher
             //Grab the neccessary data
             tfr_msgs::ArduinoAReading reading_a;
             tfr_msgs::ArduinoBReading reading_b;
+            if (latest_arduino_a != nullptr)
+                reading_a = *latest_arduino_a;
+
             if (latest_arduino_b != nullptr)
                 reading_b = *latest_arduino_b;
 
@@ -97,6 +100,7 @@ class DrivebaseOdometryPublisher
 
 
 
+
             //basic differential kinematics to get combined velocities
             double v_ang = (v_r-v_l)/wheel_span;
             double v_lin = (v_r+v_l)/2;
@@ -113,9 +117,10 @@ class DrivebaseOdometryPublisher
             angle.z = q_0.getZ();
             angle.w = q_0.getW();
             // yaw (z-axis rotation)
-            double siny = +2.0 * (q.getW() * q.getZ() + q.getX() * q.getY());
-            double cosy = +1.0 - 2.0 * (q.getY() * q.getY() + q.getZ() * q.getZ());  
-            auto yaw = atan2(siny, cosy)
+            double siny = +2.0 * (q_0.getW() * q_0.getZ() + q_0.getX() * q_0.getY());
+            double cosy = +1.0 - 2.0 * (q_0.getY() * q_0.getY() + q_0.getZ() * q_0.getZ());  
+            auto yaw = atan2(siny, cosy);
+            //auto yaw = q_1.getAngleShortestPath();
             double v_x = v_lin*cos(yaw);
             double v_y = v_lin*sin(yaw);
 

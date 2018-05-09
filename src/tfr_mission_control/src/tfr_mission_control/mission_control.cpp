@@ -17,6 +17,7 @@ namespace tfr_mission_control {
         widget(nullptr),
         autonomy{"autonomous_action_server",true},
         teleop{"teleop_action_server",true},
+        arm_client{"move_arm", true},
         com{nh.subscribe("com", 5, &MissionControl::updateStatus, this)},
         teleopEnabled{false}
     {
@@ -193,11 +194,14 @@ namespace tfr_mission_control {
     void MissionControl::resetTurntable()
     {
         ROS_INFO("Mission Control: Resetting turntable");
+        toggleMotors(false);
         std_srvs::Empty::Request req;
         std_srvs::Empty::Response res;
         while(!ros::service::call("/zero_turntable", req, res))
             ros::Duration{0.1}.sleep();
-        ROS_INFO("Mission Control: Turntable reset");
+
+	performTeleop(tfr_utilities::TeleopCode::RAISE_ARM);
+        toggleMotors(true);
 
     }
    
@@ -351,29 +355,28 @@ namespace tfr_mission_control {
     void MissionControl::startMission()
     {
         startTimeService();
+        goAutonomousMode();
         toggleControl(true);
         toggleMotors(true);
-        goAutonomousMode();
     }
     
     //starts mission is teleop mode
     void MissionControl::startManual()
     {
         startTimeService();
+        goTeleopMode();
         toggleControl(true);
         toggleMotors(true);
-        goTeleopMode();
     }
 
     //triggers state change into autonomous mode from teleop
     void MissionControl::goAutonomousMode()
     {
+        resetTurntable();
         softwareStop();
-        ROS_INFO("goAutonomous");
         setAutonomy(true);
         tfr_msgs::EmptyGoal goal{};
         while (!teleop.getState().isDone()) teleop.cancelAllGoals();
-        resetTurntable();
         autonomy.sendGoal(goal);
         setTeleop(false);
         widget->setFocus();

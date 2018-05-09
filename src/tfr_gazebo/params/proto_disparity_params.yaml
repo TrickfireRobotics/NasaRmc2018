@@ -1,4 +1,0 @@
-min_disparity: -1 
-disparity_range: 128 
-speckle_size: 200
-correlation_window_size: 13

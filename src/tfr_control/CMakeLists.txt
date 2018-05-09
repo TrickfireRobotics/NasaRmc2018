@@ -20,7 +20,6 @@ find_package(catkin REQUIRED COMPONENTS
   effort_controllers
   joint_trajectory_controller
   moveit_ros_planning_interface
-  jetson_tx2
 )
 
 find_package(GTest REQUIRED)
@@ -44,17 +43,13 @@ include_directories(
 
 add_library(pwm_driver src/JHPWMPCA9685.cpp)
 
-add_library(pwm_interface src/pwm_interface.cpp)
-add_dependencies(pwm_interface gpio pwm_driver ${catkin_EXPORTED_TARGETS})
-target_link_libraries(pwm_interface pwm_driver gpio ${catkin_LIBRARIES})
-
 # controller_launcher
 add_executable(control
   src/control.cpp
   src/robot_interface.cpp
 )
-add_dependencies(control pwm_interface tfr_msgs_gencpp)
-target_link_libraries(control pwm_interface
+add_dependencies(control  tfr_msgs_gencpp)
+target_link_libraries(control 
   ${catkin_LIBRARIES}
 )
 

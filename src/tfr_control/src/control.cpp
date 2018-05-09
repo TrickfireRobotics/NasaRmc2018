@@ -34,7 +34,7 @@ namespace control_test
 {
     // ADAM'S TEST CODE
     // Whether we're running on hardware or using fake values
-    const bool use_fake_values = true;
+    const bool use_fake_values = false;
     // If we're faking the inputs, we need to know the model constraints on
     // the arm: load them here.
     // If not, just use zeroes, the limits don't matter. TEST code
@@ -86,7 +86,6 @@ void initializeTestCode(ros::NodeHandle& n)
 class Control
 {
     public:
-
         Control(ros::NodeHandle &n, const double& rate):
             robot_interface{n, use_fake_values, lower_limits, upper_limits},
             controller_interface{&robot_interface},
@@ -146,6 +145,7 @@ class Control
                 std_srvs::SetBool::Response& response)
         {
             enabled = request.data;
+            robot_interface.setEnabled(request.data);
             return true;
         }
 
@@ -155,6 +155,7 @@ class Control
         bool toggleMotors(std_srvs::SetBool::Request& request,
                 std_srvs::SetBool::Response& response)
         {
+            enabled = request.data;
             robot_interface.setEnabled(request.data);
             return true;
         }

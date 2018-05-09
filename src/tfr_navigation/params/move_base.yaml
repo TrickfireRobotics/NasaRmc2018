@@ -3,4 +3,4 @@ shutdown_costmaps: true
 
 controller_patience: 3
 planner_patience: 3
-planner_frequency: 1
+#planner_frequency: 1

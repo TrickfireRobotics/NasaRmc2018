@@ -170,10 +170,12 @@ class Navigator
                 case(tfr_utilities::LocationCode::MINING):
                     nav_goal.target_pose.pose.position.x = constraints.get_safe_mining_distance();
                     nav_goal.target_pose.pose.position.z = height_adjustment;
+                    nav_goal.target_pose.pose.orientation.w = 1;
                     break;
                 case(tfr_utilities::LocationCode::DUMPING):
                     nav_goal.target_pose.pose.position.x = constraints.get_finish_line();
                     nav_goal.target_pose.pose.position.z = height_adjustment;
+                    nav_goal.target_pose.pose.orientation.z = 1;
                     break;
                 case(tfr_utilities::LocationCode::UNSET):
                     //leave it alone
@@ -182,11 +184,6 @@ class Navigator
                     ROS_WARN("location_code %u not recognized",
                             static_cast<uint8_t>(goal));
             }
-            //set relative rotation (none)
-            nav_goal.target_pose.pose.orientation.x = 0;
-            nav_goal.target_pose.pose.orientation.y = 0;
-            nav_goal.target_pose.pose.orientation.z = 0;
-            nav_goal.target_pose.pose.orientation.w = 1;
         }
 };
 

@@ -5,38 +5,22 @@ namespace tfr_mining
     // Must be a private node handle ("~")
     DiggingQueue::DiggingQueue(ros::NodeHandle nh) : sets{}
     {
-        // Uncomment this for the full digging operation (all 3 holes)
-        /*for (int dig_pos = -1; dig_pos <= 1; dig_pos++) {
-            DiggingSet set;
-            // 3 digs, one straight forward and two 30 degrees to either side
-            double angle = -dig_pos * 3.14159265 / 6;
-            for (int dig = 1; dig <= 4; dig++) {
-                generateDigAndDump(nh, set, angle, dig);
-            }
-            sets.push(set);
-        }*/
+        XmlRpc::XmlRpcValue positions;
 
-        // Uncomment this for a single full digging operation (1 hole, 4 digs, with )
-        /*DiggingSet set;
-        for (int dig = 1; dig <= 4; dig++) {
-            generateDigAndDump(nh, set, 0.0, dig);
+        if (!nh.getParam("positions", positions)) {
+            ROS_ERROR("Error loading positions, exiting");
+            return;
         }
-        sets.push(set);*/
 
-        // Do a single surface-level dig
-        //  - To change the digging depth, change the last parameter to anything from 1-4.
-        //    Do note that this uses different positions from digging_queue_templates.yaml
-        DiggingSet set;
-        generateSingleDig(nh, set, 0.0, 1);
-        sets.push(set);
-
-        // Testing digging code:
-        //  This loads from testing_queue_templates.yaml.
-        /*DiggingSet set;
-        loadTestingDig(nh, set, "test_ready");
-        loadTestingDig(nh, set, "test_dig1");
-        loadTestingDig(nh, set, "test_dig2");
-        sets.push(set);*/
+        for (int i = 0; i < positions.size(); i++) {
+            DiggingSet toAdd;
+            std::vector<double> state;
+            for (int angle = 0; angle < 5; angle++) {
+                state.push_back(positions[i][angle]);
+            }
+            toAdd.insertState(state, 5.0); // Just use a constant time for simplicity.
+            sets.push(toAdd);
+        }
     }
 
     bool DiggingQueue::isEmpty()
@@ -157,6 +141,7 @@ namespace tfr_mining
             ROS_WARN_STREAM("Error loading " << scoop_str.str());
             return;
         }
+
         // Prepends the turntable position to the position vector, if necessary (this code repeats throughout
         // much of the following code, but not all of it)
         //  - This is so that, for some of the positions which are "relative" (like the digs), we specify
@@ -237,8 +222,6 @@ namespace tfr_mining
             ROS_WARN("Error loading state");
             return;
         }
-        auto it =pos.begin();
-        pos.insert(it, 0);
         set.insertState(pos, 0);
     }
 }

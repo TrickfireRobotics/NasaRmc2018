@@ -95,12 +95,22 @@ private:
                         client.cancelAllGoals();
                         tfr_msgs::DiggingResult result;
                         server.setPreempted(result);
+                        setStarting();
                         return;
                     }
+                     if (!server.isActive() || !ros::ok())
+                    {
+                        ROS_INFO("Preempting digging action server");
+                        client.cancelAllGoals();
+                        tfr_msgs::DiggingResult result;
+                        server.setAborted(result);
+                        setStarting();
+                        return;
+                    }
+                    
 
                     rate.sleep();
                 }
-
                 
                 if (client.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
                 {
@@ -112,7 +122,6 @@ private:
                 if (std::abs(goal.pose[0]) < 3.14159265/2) { // If the turntable is going to around the bin (the problem area)
                     ros::Duration(1.5).sleep(); // Setting this to 2 seconds works for sure
                 }
-                
                 
                 if (std::abs(state[4]) > 1.05 )
                 {
@@ -129,26 +138,21 @@ private:
                 }
             }
         }
+
+        setStarting(); 
+        tfr_msgs::DiggingResult result;
+        server.setSucceeded(result);
+    }
+
+    void setStarting()
+    {
         ROS_WARN("Moving arm to final position, exiting.");
         arm_manipulator.moveArm(0.0, 0.1, 1.07, -1.0);
-        ros::Duration(3.0).sleep();
+        ros::Duration(8.0).sleep();
         arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.6);
         ros::Duration(3.0).sleep();
         arm_manipulator.moveArm(0, 0.50, 1.07, 1.6);
         ros::Duration(3.0).sleep();
- 
-
-        if (client.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
-        {
-            ROS_WARN("Error moving arm to final position, exiting.");
-            tfr_msgs::DiggingResult result;
-            server.setAborted(result);
-            return;
-        }
-
-
-        tfr_msgs::DiggingResult result;
-        server.setSucceeded(result);
     }
 
     ros::NodeHandle &priv_nh;

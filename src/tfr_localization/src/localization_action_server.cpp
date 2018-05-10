@@ -91,14 +91,20 @@ class Localizer
             {
 
                 ROS_INFO("Localization Action Server: iterating");
-                if (server.isPreemptRequested() || !ros::ok())
+                if (server.isPreemptRequested())
                 {
                     ROS_INFO("Localization Action Server: preempt requested");
                     server.setPreempted(output);
                     success = false;
                     break;
                 }
-
+                else if (!server.isActive() || !ros::ok())
+                {
+                    ROS_INFO("Localization Action Server: abort requested");
+                    server.setAborted(output);
+                    success = false;
+                    break;
+                }
 
                 tfr_msgs::ArucoResultConstPtr result = nullptr;
                 tfr_msgs::WrappedImage image_wrapper{};
@@ -119,6 +125,7 @@ class Localizer
                     geometry_msgs::PoseStamped processed_pose;
                     if (!tf_manipulator.transform_pose(unprocessed_pose, processed_pose, "base_footprint"))
                     {
+                        ROS_WARN("Localization Action Server: Transform Failed");
                         server.setAborted(output);
                         success = false;
                         break;
@@ -126,7 +133,6 @@ class Localizer
 
                     ROS_INFO("transformed");
                     
-
                     processed_pose.pose.position.z = 0;
                     processed_pose.header.stamp = ros::Time::now();
 

@@ -102,12 +102,18 @@ class Navigator
             while (!nav_stack.getState().isDone())
             {
                 //Deal with preemption or error
-                if (server.isPreemptRequested() || !ros::ok()) 
+                if (server.isPreemptRequested()) 
                 {
                     ROS_INFO("%s: preempted", ros::this_node::getName().c_str());
                     nav_stack.cancelAllGoals();
                     server.setPreempted();
                     return;
+                }
+                else if (!server.isActive() || !ros::ok())
+                {
+                    ROS_INFO("%s: aborted", ros::this_node::getName().c_str());
+                    nav_stack.cancelAllGoals();
+                    server.setAborted();
                 }
                 else
                 {
@@ -134,11 +140,6 @@ class Navigator
                     }
                 }
                 server.setSucceeded();
-            }
-            else 
-            {
-                nav_stack.cancelAllGoals();
-                server.setAborted();
             }
             ROS_INFO("Navigation server finished");
         }        ros::NodeHandle& node;

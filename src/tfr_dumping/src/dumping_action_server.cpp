@@ -140,9 +140,9 @@ class Dumper
             //we detected the light, stop moving immediately
             stopMoving();
             ROS_INFO("dumping action server detected light raising bin");
-            arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.0);
+            arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.5);
             ros::Duration(3.0).sleep();
-            arm_manipulator.moveArm(0.87, 0.1, 1.07, 1.0);
+            arm_manipulator.moveArm(0.87, 0.1, 1.07, 1.5);
             ros::Duration(3.0).sleep();
             std_msgs::Float64 bin_cmd;
             bin_cmd.data = tfr_utilities::JointAngle::BIN_MAX;

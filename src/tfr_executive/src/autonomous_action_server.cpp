@@ -46,6 +46,7 @@
 #include <tfr_msgs/DiggingAction.h>
 #include <tfr_msgs/SetOdometry.h>
 #include <std_srvs/Empty.h>
+#include <geometry_msgs/Twist.h>
 #include <tfr_utilities/location_codes.h>
 #include <tfr_utilities/status_code.h>
 #include <tfr_utilities/status_publisher.h>
@@ -64,7 +65,8 @@ class AutonomousExecutive
             diggingClient{n, "dig"},
             dumpingClient{n, "dump"},
             frequency{f},
-            status_publisher{n}
+            status_publisher{n},
+            drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)}
         {
             ros::param::param<bool>("~localization_to", LOCALIZATION_TO, true);
             ros::param::param<bool>("~localization_from", LOCALIZATION_FROM, true);
@@ -207,12 +209,18 @@ class AutonomousExecutive
                     server.setAborted();
                     return;
                 }
+                ROS_INFO("Autonomous Action Server: backing up");
+                geometry_msgs::Twist vel;
+                vel.linear.x = -.25;
+                drivebase_publisher.publish(vel);
+                ros::Duration(1.5).sleep();
+                vel.linear.x = 0;
+                drivebase_publisher.publish(vel);
                 ROS_INFO("Autonomous Action Server: digging finished");
             }
             if (LOCALIZATION_FROM)
             {
                 localize(true, 3.14);
-                            
             }
             if (NAVIGATION_FROM)
             {
@@ -342,6 +350,7 @@ class AutonomousExecutive
         bool DUMPING;
         //how often to check for preemption
         ros::Duration frequency;
+        ros::Publisher drivebase_publisher;
 };
 
 int main(int argc, char **argv)

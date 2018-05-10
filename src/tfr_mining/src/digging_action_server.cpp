@@ -20,6 +20,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <tfr_msgs/DiggingAction.h>  // Note: "Action" is appended
 #include <tfr_msgs/ArmMoveAction.h>  // Note: "Action" is appended
+#include <tfr_utilities/arm_manipulator.h>
 #include <geometry_msgs/Twist.h>
 #include <tfr_utilities/teleop_code.h>
 #include <actionlib/client/simple_action_client.h>
@@ -33,7 +34,10 @@ public:
     DiggingActionServer(ros::NodeHandle &nh, ros::NodeHandle &p_nh) :
         priv_nh{p_nh}, queue{priv_nh}, 
         drivebase_publisher{nh.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
-        server{nh, "dig", boost::bind(&DiggingActionServer::execute, this, _1), false}
+        server{nh, "dig", boost::bind(&DiggingActionServer::execute, this, _1),
+            false},
+        arm_manipulator{nh}
+
     {
         server.start();
     }
@@ -121,41 +125,19 @@ private:
                 }
                 else if (std::abs(state[4]) > 0.05)
                 {
-                    ros::Duration(1.25).sleep(); 
+                    ros::Duration(1.0).sleep(); 
                 }
             }
         }
+        ROS_WARN("Moving arm to final position, exiting.");
+        arm_manipulator.moveArm(0.0, 0.1, 1.07, -1.0);
+        ros::Duration(3.0).sleep();
+        arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.6);
+        ros::Duration(3.0).sleep();
+        arm_manipulator.moveArm(0, 0.50, 1.07, 1.6);
+        ros::Duration(3.0).sleep();
+ 
 
-        ROS_INFO("Moving arm to safe driving/dumping position");
-
-        tfr_msgs::ArmMoveGoal final_goal;
-        final_goal.pose.resize(5);
-
-        std::vector<double> final_angles;
-        // Couldn't load parameter, go to predetermined final position
-        final_goal.pose[0] = 0.00;
-        final_goal.pose[1] = 0.21;
-        final_goal.pose[2] = 1.07;
-        final_goal.pose[3] = 0.0;
-        final_goal.pose[4] = 0.0;
-
-
-        client.sendGoal(final_goal);
-        ros::Rate rate(10.0);
-
-        while (client.getState().isDone() && ros::ok())
-        {
-            if (server.isPreemptRequested())
-            {
-                ROS_INFO("Preempting digging action server");
-                client.cancelAllGoals();
-                tfr_msgs::DiggingResult result;
-                server.setPreempted(result);
-                return;
-            }
-
-            rate.sleep();
-        }
         if (client.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
         {
             ROS_WARN("Error moving arm to final position, exiting.");
@@ -172,6 +154,7 @@ private:
     ros::NodeHandle &priv_nh;
     ros::Publisher drivebase_publisher;
  
+    ArmManipulator arm_manipulator;
     tfr_mining::DiggingQueue queue;
     Server server;
 };

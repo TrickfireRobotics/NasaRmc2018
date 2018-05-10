@@ -28,10 +28,11 @@
   <!-- Bin parameters -->
   <!-- Length of top of bin, length of bottom is 13.86 -->
   <!-- Using the bigger size as a box instead of making complex angled shape -->
-  <xacro:property name="bin_length" value="${29.5*itom}" />
+  <xacro:property name="bin_length" value="${33*itom}" />
   <xacro:property name="bin_width" value="${13.5*itom}" />
-  <xacro:property name="bin_height" value="${12.5*itom}" />
-  <xacro:property name="bin_back_height" value="${10*itom}" />
+  <xacro:property name="bin_height" value="${13*itom}" />
+  <xacro:property name="bin_back_height" value="${8*itom}" />
+  <xacro:property name="bin_back_offset" value="${6.5*itom}" />
 
 
   <!-- Turntable parameters -->
@@ -57,8 +58,8 @@
 
   <!-- Scoop parameters -->
   <xacro:property name="scoop_width" value="${8.5*itom}" />
-  <xacro:property name="scoop_length" value="${12.5*itom}" />
-  <xacro:property name="scoop_diameter" value="${10*itom}" />
+  <xacro:property name="scoop_length" value="${13.5*itom}" />
+  <xacro:property name="scoop_diameter" value="${11.5*itom}" />
   <xacro:property name="scoop_min" value="-1.16614" />
   <xacro:property name="scoop_max" value="1.62" />
 </robot>

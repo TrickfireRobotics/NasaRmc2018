@@ -1,5 +1,13 @@
 <launch>
-    <node name="clock_service" pkg="tfr_executive" type="clock_service" output="screen"/>
+    <node name="clock_service" pkg="tfr_executive" type="clock_service" output="screen">
+        <rosparam>
+            mission_time: 600
+            driving_time: 35
+            dumping_time: 45
+            localization_time: 45
+                
+        </rosparam>
+    </node>
 
     <node name="autnonomous_action_server" pkg="tfr_executive" type="autonomous_action_server" output="screen">
         <rosparam>

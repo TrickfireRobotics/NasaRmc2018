@@ -14,5 +14,4 @@
         <rosparam file="$(find tfr_navigation)/params/global_costmap.yaml" command="load" />
         <rosparam file="$(find tfr_navigation)/params/planner.yaml" command="load" />
     </node>
-    <include file="$(find tfr_navigation)/launch/hole_broadcaster.launch"/>
 </launch>

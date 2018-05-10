@@ -160,7 +160,7 @@ class AutonomousExecutive
                 //handle preemption
                 while ( !navigationClient.getState().isDone() && ros::ok())
                 {
-                    if (server.isPreemptRequested() || ! ros::ok())
+                    if (server.isPreemptRequested() || !server.isActive() || ! ros::ok())
                     {
                         navigationClient.cancelAllGoals();
                         server.setPreempted();
@@ -194,7 +194,7 @@ class AutonomousExecutive
                 //handle preemption
                 while (!diggingClient.getState().isDone())
                 {
-                    if (server.isPreemptRequested() || ! ros::ok())
+                    if (server.isPreemptRequested()  || !server.isActive() || ! ros::ok())
                     {
                         diggingClient.cancelAllGoals();
                         server.setPreempted();
@@ -220,7 +220,7 @@ class AutonomousExecutive
             }
             if (LOCALIZATION_FROM)
             {
-                localize(true, 3.14);
+                localize(false, 3.14);
             }
             if (NAVIGATION_FROM)
             {
@@ -238,7 +238,7 @@ class AutonomousExecutive
                 //handle preemption
                 while ( !navigationClient.getState().isDone() && ros::ok())
                 {
-                    if (server.isPreemptRequested() || ! ros::ok())
+                    if (server.isPreemptRequested() || !server.isActive() || ! ros::ok())
                     {
                         navigationClient.cancelAllGoals();
                         server.setPreempted();
@@ -273,7 +273,7 @@ class AutonomousExecutive
                 //handle preemption
                 while ( !dumpingClient.getState().isDone() && ros::ok())
                 {
-                    if (server.isPreemptRequested() || ! ros::ok())
+                    if (server.isPreemptRequested() || !server.isActive() || ! ros::ok())
                     {
                         dumpingClient.cancelAllGoals();
                         server.setPreempted();
@@ -309,7 +309,7 @@ class AutonomousExecutive
             //handle preemption
             while (!localizationClient.getState().isDone())
             {
-                if (server.isPreemptRequested() || ! ros::ok())
+                if (server.isPreemptRequested() || !server.isActive() || ! ros::ok())
                 {
                     localizationClient.cancelAllGoals();
                     server.setPreempted();

@@ -115,12 +115,19 @@ class Dumper
             while (detector.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
             {
                 //handle preemption
-                if (server.isPreemptRequested() || !ros::ok())
+                if (server.isPreemptRequested())
                 {
                     stopMoving();
                     server.setPreempted();
                     return;
                 }
+                else if (!server.isActive() || !ros::ok())
+                {
+                    stopMoving();
+                    server.setAborted();
+                    return;
+                }
+
 
                 //get the most recent aruco reading
                 tfr_msgs::ArucoResult estimate{};
@@ -163,7 +170,13 @@ class Dumper
                 server.setPreempted();
                 return;
             }
-            server.setSucceeded();
+            else if (!server.isActive() || !ros::ok())
+            {
+                ROS_INFO("Teleop Action Server: DUMP preempted");
+                server.setAborted();
+                return;
+            }
+             server.setSucceeded();
         }
 
         /*

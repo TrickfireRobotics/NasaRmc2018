@@ -4,7 +4,7 @@
             parent_frame: odom
 
             child_frame: base_footprint
-            wheel_span: 0.80
+            wheel_span: 3 
         </rosparam>
     </node>
 </launch>

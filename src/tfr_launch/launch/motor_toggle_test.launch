@@ -1,4 +1,0 @@
-<launch>
-    <node name="motor_toggle_test" pkg="tfr_control" type="motor_toggle_test" output="screen"/>
-    <include file="$(find tfr_executive)/launch/executive.launch"/>
-</launch>

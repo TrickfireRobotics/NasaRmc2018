@@ -41,8 +41,6 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-add_library(pwm_driver src/JHPWMPCA9685.cpp)
-
 # controller_launcher
 add_executable(control
   src/control.cpp

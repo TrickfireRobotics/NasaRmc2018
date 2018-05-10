@@ -16,7 +16,7 @@
         </rosparam>
     </node>
     <node name="rear_cam_tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher"
-        args="-0.635 -0.08 0.18 0 0 1 0 base_link rear_cam_link"/>
+        args="-0.635 0.0 0.18 0 0 1 0 base_link rear_cam_link"/>
     <node name="rear_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
             device_id: 0

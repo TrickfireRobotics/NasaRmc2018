@@ -24,7 +24,9 @@ namespace tfr_utilities
         DUMP = 8,
         RESET_DUMPING = 9,
         RESET_STARTING = 10, 
-        RAISE_ARM = 11
+        DRIVING_POSITION= 11,
+        RAISE_ARM = 12,
+
     };
 }
 #endif

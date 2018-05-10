@@ -140,6 +140,8 @@ class Dumper
             //we detected the light, stop moving immediately
             stopMoving();
             ROS_INFO("dumping action server detected light raising bin");
+            arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.0);
+            ros::Duration(3.0).sleep();
             arm_manipulator.moveArm(0.87, 0.1, 1.07, 1.0);
             ros::Duration(3.0).sleep();
             std_msgs::Float64 bin_cmd;
@@ -188,9 +190,9 @@ class Dumper
                  *
                  * This conforms to rep 103
                  * */
-                int sign = (3.14159 - std::abs(angle) < 0) ? -1 : 1;
+                int sign = (angle < 0) ? 1 : -1;
+                cmd.linear.x = 0;
                 cmd.angular.z = sign*constraints.getMaxAngVel();
-                ROS_INFO("Command: %f", angle);
             }
             
             else

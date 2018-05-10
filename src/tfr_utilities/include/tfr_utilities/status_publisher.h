@@ -15,12 +15,15 @@
 class StatusPublisher
 {
     public:
-        StatusPublisher();
+        StatusPublisher(ros::NodeHandle &n);
         ~StatusPublisher() = default;
         StatusPublisher(const StatusPublisher&) = delete;
         StatusPublisher& operator=(const StatusPublisher&) = delete;
         StatusPublisher(StatusPublisher&&) = delete;
         StatusPublisher& operator=(StatusPublisher&&) = delete;
+
+        //publishes just to the executive system
+        void status (const StatusCode& code,const float &data) const;
 
         //publishes at standard ros visibility levels
         void info (const StatusCode& code,const float &data) const;
@@ -35,7 +38,6 @@ class StatusPublisher
         void shutdown();
 
     private:
-        ros::NodeHandle n;
         ros::Publisher com;
 };
 #endif

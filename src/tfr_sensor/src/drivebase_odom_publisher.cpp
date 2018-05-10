@@ -98,29 +98,16 @@ class DrivebaseOdometryPublisher
             double v_l = -reading_a.tread_left_vel;
             double v_r = reading_b.tread_right_vel;
 
-
-
-
             //basic differential kinematics to get combined velocities
             double v_ang = (v_r-v_l)/wheel_span;
             double v_lin = (v_r+v_l)/2;
             
             //break into xy components and increment
             double d_angle = v_ang * d_t;
+            rotateQuaternionByYaw(angle, d_angle);
 
-            tf2::Quaternion q_0{angle.x, angle.y, angle.z, angle.w};
-            tf2::Quaternion q_1{};
-            q_1.setRPY(0, 0, d_angle);
-            q_0 *= q_1;
-            angle.x = q_0.getX();
-            angle.y = q_0.getY();
-            angle.z = q_0.getZ();
-            angle.w = q_0.getW();
             // yaw (z-axis rotation)
-            double siny = +2.0 * (q_0.getW() * q_0.getZ() + q_0.getX() * q_0.getY());
-            double cosy = +1.0 - 2.0 * (q_0.getY() * q_0.getY() + q_0.getZ() * q_0.getZ());  
-            auto yaw = atan2(siny, cosy);
-            //auto yaw = q_1.getAngleShortestPath();
+            auto yaw = quaternionToYaw(angle);
             double v_x = v_lin*cos(yaw);
             double v_y = v_lin*sin(yaw);
 
@@ -213,13 +200,13 @@ class DrivebaseOdometryPublisher
             if (std::abs(dy) > MAX_XY_DELTA)
                 dy = (dy >= 0) ? MAX_XY_DELTA : -MAX_XY_DELTA;
             y += dy;
-            
-             //footprint_odom transform
-            angle = request.pose.orientation;
 
-            std_srvs::Empty::Request req;
-            std_srvs::Empty::Response res;
-            ros::service::call("/move_base/clear_costmaps", req, res);
+            auto new_yaw = quaternionToYaw(request.pose.orientation);
+            auto old_yaw = quaternionToYaw(angle);
+            if (std::abs(new_yaw - old_yaw) > MAX_THETA_DELTA)
+                rotateQuaternionByYaw(angle, ((new_yaw - old_yaw)>=0)?MAX_THETA_DELTA : -MAX_THETA_DELTA);
+            else
+                angle = request.pose.orientation;
             return true;
         }
 
@@ -235,6 +222,29 @@ class DrivebaseOdometryPublisher
             y = request.pose.position.y;
             angle = request.pose.orientation;
             return true;
+        }
+
+        /*
+         * Quaternion to yaw
+         */
+        double quaternionToYaw(geometry_msgs::Quaternion& q)
+        {
+            // yaw (z-axis rotation)
+            double siny = +2.0 * (q.w * q.z + q.x * q.y);
+            double cosy = +1.0 - 2.0 * (q.y*q.y + q.z*q.z);  
+            return atan2(siny, cosy);
+        }
+
+        void rotateQuaternionByYaw(geometry_msgs::Quaternion& q, double yaw)
+        {
+            tf2::Quaternion q_0{q.x, q.y, q.z, q.w};
+            tf2::Quaternion q_1{};
+            q_1.setRPY(0, 0, yaw);
+            q_0 *= q_1;
+            q.x = q_0.getX();
+            q.y = q_0.getY();
+            q.z = q_0.getZ();
+            q.w = q_0.getW();
         }
 };
 

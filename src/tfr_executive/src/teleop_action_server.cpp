@@ -276,14 +276,31 @@ class TeleopExecutive
                         ros::Duration(5.0).sleep();
                         arm_manipulator.moveArm(0, 0.20, 1.0, 1.6);
                         ros::Duration(8.0).sleep();
-                        arm_manipulator.moveArm(0, 0.40, 1.0, 1.6);
-                        ros::Duration(3.0).sleep();
+                        arm_manipulator.moveArm(0, 0.50, 1.0, 1.6);
+                        ros::Duration(2.0).sleep();
                         arm_manipulator.moveArm(0, 0.60, 1.0, 1.6);
-                        ros::Duration(3.0).sleep();
-                        arm_manipulator.moveArm(0, 0.91, 1.0, 1.6);
-                        ros::Duration(3.0).sleep();
+                        ros::Duration(2.0).sleep();
+                        arm_manipulator.moveArm(0, 0.70, 1.0, 1.6);
+                        ros::Duration(2.0).sleep();
+                        arm_manipulator.moveArm(0, 0.80, 1.0, 1.6);
+                        ros::Duration(2.0).sleep();
+                        arm_manipulator.moveArm(0, 0.85, 1.0, 1.6);
+                        ros::Duration(2.0).sleep();
+                        arm_manipulator.moveArm(0, 0.90, 1.0, 1.6);
+                        ros::Duration(2.0).sleep();
 
                         ROS_INFO("Teleop Action Server: arm reset finished");
+                        break;
+                    }
+                case (tfr_utilities::TeleopCode::DRIVING_POSITION):
+                    {
+                        ROS_INFO("Teleop Action Server: Command Recieved, DRIVING_POSITION");
+                        //all zeros by default
+                        drivebase_publisher.publish(move_cmd);
+                        //first grab the current state of the arm
+                        arm_manipulator.moveArm(0, 0.50, 1.07, 1.6);
+                        ros::Duration(5.0).sleep();
+                        ROS_INFO("Teleop Action Server: arm raise finished");
                         break;
                     }
                 case (tfr_utilities::TeleopCode::RAISE_ARM):

@@ -47,6 +47,8 @@
 #include <tfr_msgs/SetOdometry.h>
 #include <std_srvs/Empty.h>
 #include <tfr_utilities/location_codes.h>
+#include <tfr_utilities/status_code.h>
+#include <tfr_utilities/status_publisher.h>
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
 
@@ -61,24 +63,23 @@ class AutonomousExecutive
             navigationClient{n, "navigate"},
             diggingClient{n, "dig"},
             dumpingClient{n, "dump"},
-            frequency{f}
+            frequency{f},
+            status_publisher{n}
         {
             ros::param::param<bool>("~localization_to", LOCALIZATION_TO, true);
             ros::param::param<bool>("~localization_from", LOCALIZATION_FROM, true);
             ros::param::param<bool>("~localization_finish", LOCALIZATION_FINISH, true);
             if (LOCALIZATION_TO || LOCALIZATION_FROM || LOCALIZATION_FINISH)
             {
-                ROS_INFO("Autonomous Action Server: Connecting to localization server");
                 localizationClient.waitForServer();
-                ROS_INFO("Autonomous Action Server: Connected to localization server");
+                status_publisher.info(StatusCode::EXC_CONNECT_LOCALIZATION, 1.0);
             }
             ros::param::param<bool>("~navigation_to", NAVIGATION_TO, true);
             ros::param::param<bool>("~navigation_from", NAVIGATION_FROM, true);
             if (NAVIGATION_TO || NAVIGATION_FROM)
             {
-                ROS_INFO("Autonomous Action Server: Connecting to navigation server");
                 navigationClient.waitForServer();
-                ROS_INFO("Autonomous Action Server: Connected to navigation server");
+                status_publisher.info(StatusCode::EXC_CONNECT_NAVIGATION, 1.0);
             }
             ros::param::param<bool>("~digging", DIGGING, true);
             if (DIGGING)
@@ -330,6 +331,7 @@ class AutonomousExecutive
         actionlib::SimpleActionClient<tfr_msgs::NavigationAction> navigationClient;
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> diggingClient;
         actionlib::SimpleActionClient<tfr_msgs::EmptyAction> dumpingClient;
+        StatusPublisher status_publisher;
 
         bool LOCALIZATION_TO;
         bool LOCALIZATION_FROM;

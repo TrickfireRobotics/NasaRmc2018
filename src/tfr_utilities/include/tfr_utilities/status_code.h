@@ -44,6 +44,8 @@ enum class StatusCode : uint16_t
 
     //Executive Status Codes
     EXC_OK = 0b0000000100000000,
+    EXC_CONNECT_LOCALIZATION = 0b0000001000000000,
+    EXC_CONNECT_NAVIGATION = 0b0000001100000000,
 
     //Localization Status Codes
     LOC_OK = 0b0000001000000000,

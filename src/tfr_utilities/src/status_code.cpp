@@ -83,6 +83,15 @@ std::string parseExecCode(StatusCode code, float data)
         {
             return "Executive System OK";
         }
+
+        case StatusCode::EXC_CONNECT_LOCALIZATION:
+        {
+            return "Autonomous Action Server:Connected Localization";
+        }
+        case StatusCode::EXC_CONNECT_NAVIGATION:
+        {
+            return "Autonomous Action Server:Connected Navigation";
+        }
         default:
         {
             return "Warning: Unknown status code for Executive received.";

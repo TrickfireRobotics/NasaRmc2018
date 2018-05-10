@@ -113,7 +113,7 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>2</pointsize>
+           <pointsize>8</pointsize>
           </font>
          </property>
          <property name="text">
@@ -140,7 +140,7 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>6</pointsize>
+           <pointsize>8</pointsize>
           </font>
          </property>
          <property name="text">
@@ -161,11 +161,32 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>6</pointsize>
+           <pointsize>8</pointsize>
           </font>
          </property>
          <property name="text">
           <string>Set Dumping</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="raise_arm_button">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Raise Arm</string>
          </property>
         </widget>
        </item>
@@ -226,7 +247,7 @@
      <item row="1" column="6">
       <widget class="QPushButton" name="cw_button">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="minimumSize">
         <size>
@@ -267,7 +288,7 @@
      <item row="0" column="6">
       <widget class="QPushButton" name="ccw_button">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="minimumSize">
         <size>

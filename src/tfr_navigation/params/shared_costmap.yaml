@@ -2,26 +2,16 @@
 obstacle_range: 2.5 
 raytrace_range: 3
 footprint: [[-0.66, -0.368],  [0.66, -0.368], [0.66, 0.368], [-0.66, 0.368]]
-observation_sources: point_cloud_sensor hole_obstacle
+observation_sources: point_cloud_sensor 
 
 point_cloud_sensor: {
     sensor_frame: /kinect_link,
     data_type: PointCloud2 ,
-    min_obstacle_height: 0.15,
+    min_obstacle_height: 0.1,
     topic: /sensors/kinect/depth/points_tilted, 
     marking: true,
     clearing: true
 }
-
-hole_obstacle: {
-    sensor_frame: /hole, 
-    data_type: PointCloud2, 
-    min_obstacle_height: -0.5,
-    max_obstacle_height: 0.2,
-    topic: /obstacle_cloud, 
-    marking: true
-}
-
 
 
 update_frequency: 1.1

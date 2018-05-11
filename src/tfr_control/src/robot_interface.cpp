@@ -392,7 +392,7 @@ namespace tfr_control
         if (v_1 > 0.05 || v_1 < -0.05)
         {
             int sign = (v_1 < 0) ? -1 : 1;
-            double magnitude = std::min(std::abs(v_1)/max_vel, 0.8);
+            double magnitude = std::min(std::abs(v_1)/max_vel, 0.9);
             return sign * magnitude;
         }
         return 0;

@@ -156,19 +156,9 @@ class FiducialOdom
                 }
                 else
                 {
-                    robot_localization::SetPose set_pose;
-                    set_pose.request.pose.pose.pose = odom.pose.pose;
-                    set_pose.request.pose.header.frame_id = "base_footprint";
-                    set_pose.request.pose.header.stamp = ros::Time::now();
-                    for (size_t ind = 0; ind < 36; ind+=7)
-                    {
-                        set_pose.request.pose.pose.covariance[ind] = 1e-6;
-                    }
-                    for (double i =0.0; i < 1.5; i += 0.05)
+                    for (double i = 1; i < 100; i += 1)
                     {
                         ros::service::call("/set_drivebase_odometry", odom_req);
-                        ROS_INFO("setting pose");
-                        ros::Duration(0.05).sleep();
                     }
                 }
 

@@ -168,8 +168,8 @@ class DrivebaseOdometryPublisher
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
         geometry_msgs::Quaternion angle; 
-        const double MAX_XY_DELTA = 0.15;
-        const double MAX_THETA_DELTA = 0.13;
+        const double MAX_XY_DELTA = 0.25;
+        const double MAX_THETA_DELTA = 0.065;
         ros::Time t_0;
 
         //callback for publisher
@@ -201,10 +201,16 @@ class DrivebaseOdometryPublisher
                 dy = (dy >= 0) ? MAX_XY_DELTA : -MAX_XY_DELTA;
             y += dy;
 
-            auto new_yaw = quaternionToYaw(request.pose.orientation);
-            auto old_yaw = quaternionToYaw(angle);
-            if (std::abs(new_yaw - old_yaw) > MAX_THETA_DELTA)
-                rotateQuaternionByYaw(angle, ((new_yaw - old_yaw)>=0)?MAX_THETA_DELTA : -MAX_THETA_DELTA);
+            auto new_q = getTfQuaternion(request.pose.orientation);
+            auto old_q = getTfQuaternion(angle);
+            auto delta = new_q * old_q.inverse();
+            if (std::abs(delta.getZ()) > MAX_THETA_DELTA)
+            {
+                auto sign = ( delta.getZ() * delta.getW() >= 0)? 1 : -1;
+                tf2::Quaternion rotation{0.0, 0.0, 0.065 * sign, 0.998};
+                auto new_value = old_q * rotation;
+                angle = getStdQuaternion(new_value);
+            }
             else
                 angle = request.pose.orientation;
             return true;
@@ -224,6 +230,22 @@ class DrivebaseOdometryPublisher
             return true;
         }
 
+        tf2::Quaternion getTfQuaternion(geometry_msgs::Quaternion& q)
+        {
+            tf2::Quaternion q_0{q.x, q.y, q.z, q.w};
+            return q_0;
+        }
+
+        geometry_msgs::Quaternion getStdQuaternion(tf2::Quaternion& q_0)
+        {
+            geometry_msgs::Quaternion q;
+            q.x = q_0.getX();
+            q.y = q_0.getY();
+            q.z = q_0.getZ();
+            q.w = q_0.getW();
+            return q;
+        }
+
         /*
          * Quaternion to yaw
          */
@@ -232,7 +254,8 @@ class DrivebaseOdometryPublisher
             // yaw (z-axis rotation)
             double siny = +2.0 * (q.w * q.z + q.x * q.y);
             double cosy = +1.0 - 2.0 * (q.y*q.y + q.z*q.z);  
-            return atan2(siny, cosy);
+            double result = atan2(siny, cosy);
+            return result;
         }
 
         void rotateQuaternionByYaw(geometry_msgs::Quaternion& q, double yaw)

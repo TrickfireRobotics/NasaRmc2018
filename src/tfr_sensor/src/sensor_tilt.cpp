@@ -71,7 +71,6 @@ class PointCloudTilter
         void tiltData(const sensor_msgs::PointCloud2ConstPtr& cloudPtr)
         {
             auto cloud = *cloudPtr;
-            ROS_INFO("%s", cloud.header.frame_id.c_str());
             cloud.header.frame_id = child_frame;
             tilt_publisher.publish(cloud);
         }

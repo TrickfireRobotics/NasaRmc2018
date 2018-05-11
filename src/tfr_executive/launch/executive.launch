@@ -11,8 +11,8 @@
 
     <node name="autnonomous_action_server" pkg="tfr_executive" type="autonomous_action_server" output="screen">
         <rosparam>
-            localization_to: false
-            navigation_to: true 
+            localization_to: true 
+            navigation_to: false 
             digging: false 
             localization_from: false 
             navigation_from: false 

@@ -339,6 +339,8 @@ class AutonomousExecutive
                 std_srvs::Empty empty;
                 ros::service::call("/reset_fusion", empty);
             }
+            std_srvs::Empty req;
+            ros::service::call("/move_base/clear_costmaps", req);
             ROS_INFO("Autonomous Action Server: localization finished");
         }
 

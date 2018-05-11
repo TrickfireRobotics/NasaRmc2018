@@ -16,7 +16,6 @@
         <param name="frame_id" value="xsens_link"/>
         <param name="frame_local" value="ENU"/>
         <param name="frame_local_imu" value="ENU"/>
-        
     </node>-->
 
     

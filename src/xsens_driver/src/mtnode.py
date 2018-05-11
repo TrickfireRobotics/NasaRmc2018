@@ -192,14 +192,11 @@ class XSensDriver(object):
 				ss_msg.internal.imu.dv.y = acc_data['Delta v.y']
 				ss_msg.internal.imu.dv.z = acc_data['Delta v.z']											
 			elif 'accX' in acc_data: # found acceleration
+                                #COLLIN modified 
 				pub_imu = True
-                                #COLLIN changed sign of x
 				imu_msg.linear_acceleration.x = -acc_data['accX']
-                                #COLLIN changes sign of y
 				imu_msg.linear_acceleration.y = -acc_data['accY']
-                                #COLLIN changed sign of z
 				imu_msg.linear_acceleration.z = -acc_data['accZ']						
-                                #NOTE COLLIN added covariences
                                 imu_msg.linear_acceleration_covariance=[5e-2,0,0,0,5e-2,0,0,0,5e-2]
 			else:
 				raise MTException("Unsupported message in XDI_AccelerationGroup.")	
@@ -216,7 +213,7 @@ class XSensDriver(object):
 				imu_msg.angular_velocity.x = gyr_data['gyrX']
 				imu_msg.angular_velocity.y = gyr_data['gyrY']
 				imu_msg.angular_velocity.z = gyr_data['gyrZ']
-                                #NOTE COLLIN added covariences
+                                #COLLIN modified
                                 imu_msg.angular_velocity_covariance=[5e-2,0,0,0,5e-2,0,0,0,5e-2]
 			else:
 				raise MTException("Unsupported message in XDI_AngularVelocityGroup.")
@@ -261,7 +258,6 @@ class XSensDriver(object):
 				imu_msg.orientation.x = orient_data['Q1']
 				imu_msg.orientation.y = orient_data['Q2']
 				imu_msg.orientation.z = orient_data['Q3']
-                                imu_msg.orientation_covariance=[5e-2,0,0,0,5e-2,0,0,0,5e-2]
 			elif 'Roll' in orient_data:
 				pub_ori = True
 				ori_msg.roll = orient_data['Roll']
@@ -314,9 +310,8 @@ class XSensDriver(object):
 			imu_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
-                        #NOTE COLLIN commented out 
-			#imu_msg.header.stamp.secs = secs
-			#imu_msg.header.stamp.nsecs = nsecs	
+			imu_msg.header.stamp.secs = secs
+			imu_msg.header.stamp.nsecs = nsecs	
 			self.imu_pub.publish(imu_msg)
 		#if pub_gps:
 		#	xgps_msg.header = gps_msg.header = h
@@ -331,55 +326,49 @@ class XSensDriver(object):
 			ss_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
-                        #NOTE COLLIN commented out 
-			#ss_msg.header.stamp.secs = secs
-			#ss_msg.header.stamp.nsecs = nsecs	
+			ss_msg.header.stamp.secs = secs
+			ss_msg.header.stamp.nsecs = nsecs	
 			self.ss_pub.publish(ss_msg)
 		if pub_baro:
 			baro_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
-                        #NOTE COLLIN commented out 
-			#baro_msg.header.stamp.secs = secs
-			#baro_msg.header.stamp.nsecs = nsecs	
+			baro_msg.header.stamp.secs = secs
+			baro_msg.header.stamp.nsecs = nsecs	
 			self.baro_pub.publish(baro_msg)
 		if pub_gnssPvt:
 			gnssPvt_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
-                        #NOTE COLLIN commented out 
-			#baro_msg.header.stamp.secs = secs
-			#baro_msg.header.stamp.nsecs = nsecs	
+			baro_msg.header.stamp.secs = secs
+			baro_msg.header.stamp.nsecs = nsecs	
 			self.gnssPvt_pub.publish(gnssPvt_msg)										
 		if pub_ori:
 			ori_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
-                        #NOTE COLLIN commented out 
-			#ori_msg.header.stamp.secs = secs
-			#ori_msg.header.stamp.nsecs = nsecs	
+			ori_msg.header.stamp.secs = secs
+			ori_msg.header.stamp.nsecs = nsecs	
 			self.ori_pub.publish(ori_msg)
 		if pub_vel:
 			vel_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
-                        #NOTE COLLIN commented out 
-			#vel_msg.header.stamp.secs = secs
-			#vel_msg.header.stamp.nsecs = nsecs	
+			vel_msg.header.stamp.secs = secs
+			vel_msg.header.stamp.nsecs = nsecs	
 			self.vel_pub.publish(vel_msg)
 		if pub_pos:
 			pos_msg.header = h
 			#all time assignments (overwriting ROS time)
 			# Comment the two lines below if you need ROS time
-                        #NOTE COLLIN commented out 
-			#pos_msg.header.stamp.secs = secs
-			#pos_msg.header.stamp.nsecs = nsecs	
+			pos_msg.header.stamp.secs = secs
+			pos_msg.header.stamp.nsecs = nsecs	
 			self.pos_pub.publish(pos_msg)		
 			
 
 def main():
 	'''Create a ROS node and instantiate the class.'''
-	rospy.init_node('xsens_driver')
+	rospy.init_node('xsens_driver', anonymous=True, log_level=rospy.WARN)
 	driver = XSensDriver()
 	driver.spin()
 

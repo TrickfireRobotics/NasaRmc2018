@@ -2,9 +2,8 @@
     <node name="drivebase_odom_publisher" pkg="tfr_sensor" type="drivebase_odom_publisher" output="screen">
         <rosparam>
             parent_frame: odom
-
             child_frame: base_footprint
-            wheel_span: 3 
+            wheel_span: 2 
         </rosparam>
     </node>
 </launch>

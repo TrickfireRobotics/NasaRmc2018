@@ -216,7 +216,7 @@ class AutonomousExecutive
                 geometry_msgs::Twist vel;
                 vel.linear.x = -.25;
                 drivebase_publisher.publish(vel);
-                ros::Duration(1.5).sleep();
+                ros::Duration(3.0).sleep();
                 vel.linear.x = 0;
                 drivebase_publisher.publish(vel);
                 ROS_INFO("Autonomous Action Server: digging finished");

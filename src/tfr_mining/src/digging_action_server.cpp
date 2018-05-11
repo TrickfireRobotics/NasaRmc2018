@@ -89,21 +89,12 @@ private:
 
                 while (!client.getState().isDone() && ros::ok())
                 {
-                    if (server.isPreemptRequested())
+                    if (server.isPreemptRequested() || !ros::ok())
                     {
                         ROS_INFO("Preempting digging action server");
                         client.cancelAllGoals();
                         tfr_msgs::DiggingResult result;
                         server.setPreempted(result);
-                        setStarting();
-                        return;
-                    }
-                     if (!server.isActive() || !ros::ok())
-                    {
-                        ROS_INFO("Preempting digging action server");
-                        client.cancelAllGoals();
-                        tfr_msgs::DiggingResult result;
-                        server.setAborted(result);
                         setStarting();
                         return;
                     }

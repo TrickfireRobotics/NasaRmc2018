@@ -105,7 +105,7 @@ class Navigator
                 ROS_INFO("%d %d", server.isPreemptRequested(), server.isActive());
 
                 //Deal with preemption or error
-                if (server.isPreemptRequested() || !server.isActive() || !ros::ok()) 
+                if (server.isPreemptRequested() || !ros::ok()) 
                 {
                     ROS_INFO("%s: preempted", ros::this_node::getName().c_str());
                     nav_stack.cancelAllGoals();

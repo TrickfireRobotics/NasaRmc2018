@@ -306,10 +306,12 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::RAISE_ARM):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, RAISE_ARM");
+                        tfr_msgs::ArmStateSrv query;
+                        ros::service::call("arm_state", query);
                         //all zeros by default
                         drivebase_publisher.publish(move_cmd);
                         //first grab the current state of the arm
-                        arm_manipulator.moveArm(0, 0.10, 1.07, 1.6);
+                        arm_manipulator.moveArm(query.response.states[0], 0.10, 1.07, 1.6);
                         ros::Duration(5.0).sleep();
                         ROS_INFO("Teleop Action Server: arm raise finished");
                         break;

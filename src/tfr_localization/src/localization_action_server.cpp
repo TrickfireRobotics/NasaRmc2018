@@ -98,14 +98,6 @@ class Localizer
                     success = false;
                     break;
                 }
-                else if (!server.isActive() || !ros::ok())
-                {
-                    ROS_INFO("Localization Action Server: abort requested");
-                    server.setAborted(output);
-                    success = false;
-                    break;
-                }
-
                 tfr_msgs::ArucoResultConstPtr result = nullptr;
                 tfr_msgs::WrappedImage image_wrapper{};
                 if (rear_cam_client.call(image_wrapper))

@@ -115,16 +115,10 @@ class Dumper
             while (detector.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
             {
                 //handle preemption
-                if (server.isPreemptRequested())
+                if (server.isPreemptRequested()|| !ros::ok())
                 {
                     stopMoving();
                     server.setPreempted();
-                    return;
-                }
-                else if (!server.isActive() || !ros::ok())
-                {
-                    stopMoving();
-                    server.setAborted();
                     return;
                 }
 

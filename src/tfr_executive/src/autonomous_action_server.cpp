@@ -45,6 +45,7 @@
 #include <tfr_msgs/NavigationAction.h>
 #include <tfr_msgs/DiggingAction.h>
 #include <tfr_msgs/SetOdometry.h>
+#include <move_base_msgs/MoveBaseAction.h>
 #include <std_srvs/Empty.h>
 #include <geometry_msgs/Twist.h>
 #include <tfr_utilities/location_codes.h>
@@ -60,13 +61,15 @@ class AutonomousExecutive
             server{n, "autonomous_action_server", 
                 boost::bind(&AutonomousExecutive::autonomousMission, this, _1),
                 false},
-            localizationClient{n, "localize"},
-            navigationClient{n, "navigate"},
-            diggingClient{n, "dig"},
-            dumpingClient{n, "dump"},
+            localizationClient{n, "localize", true},
+            navigationClient{n, "navigate", true},
+            diggingClient{n, "dig", true},
+            dumpingClient{n, "dump", true},
             frequency{f},
             status_publisher{n},
-            drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)}
+            drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
+            moveClient{n, "move_base", true}
+            
         {
             ros::param::param<bool>("~localization_to", LOCALIZATION_TO, true);
             ros::param::param<bool>("~localization_from", LOCALIZATION_FROM, true);
@@ -147,7 +150,6 @@ class AutonomousExecutive
             {
                 localize(true, 0.0);
             }
-            ROS_INFO("here, %d",NAVIGATION_TO );
 
             if (NAVIGATION_TO)
             {
@@ -163,6 +165,7 @@ class AutonomousExecutive
                     if (server.isPreemptRequested() || !server.isActive() || ! ros::ok())
                     {
                         navigationClient.cancelAllGoals();
+                        moveClient.cancelAllGoals();
                         server.setPreempted();
                         ROS_INFO("Autonomous Action Server: navigation preempted");
                         return;
@@ -241,6 +244,7 @@ class AutonomousExecutive
                     if (server.isPreemptRequested() || !server.isActive() || ! ros::ok())
                     {
                         navigationClient.cancelAllGoals();
+                        moveClient.cancelAllGoals();
                         server.setPreempted();
                         ROS_INFO("Autonomous Action Server: navigation preempted");
                         return;
@@ -311,9 +315,13 @@ class AutonomousExecutive
             {
                 if (server.isPreemptRequested() || !server.isActive() || ! ros::ok())
                 {
+                    
                     localizationClient.cancelAllGoals();
-                    server.setPreempted();
                     ROS_INFO("Autonomous Action Server: localization preempted");
+                    localizationClient.waitForResult();
+                    ROS_INFO("Autonomous Action Server: localization finished");
+                    
+                    server.setPreempted();
                     return;
                 }
                 frequency.sleep();
@@ -339,7 +347,9 @@ class AutonomousExecutive
         actionlib::SimpleActionClient<tfr_msgs::NavigationAction> navigationClient;
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> diggingClient;
         actionlib::SimpleActionClient<tfr_msgs::EmptyAction> dumpingClient;
-        StatusPublisher status_publisher;
+        actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> moveClient;
+
+       StatusPublisher status_publisher;
 
         bool LOCALIZATION_TO;
         bool LOCALIZATION_FROM;

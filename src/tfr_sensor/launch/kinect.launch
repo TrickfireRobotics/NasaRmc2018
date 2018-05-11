@@ -16,4 +16,16 @@
             service_name: /on_demand/kinect/image_raw
         </rosparam>
     </node>
+    <node name="kinect_tilt" pkg="tfr_sensor" type="sensor_tilt">
+        <rosparam>
+            parent_frame: kinect_depth_optical_frame
+            child_frame: tilt_kinect_link
+
+        </rosparam>
+        <remap from="imu" to="/sensors/mti/sensor/imu"/>
+        <remap from="points" to="/sensors/kinect/depth/points"/>
+        <remap from="tilted_points" to="/sensors/kinect/depth/points_tilted"/>
+    </node>
+
+
 </launch>

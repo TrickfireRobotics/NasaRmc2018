@@ -8,7 +8,7 @@ point_cloud_sensor: {
     sensor_frame: /kinect_link,
     data_type: PointCloud2 ,
     min_obstacle_height: 0.15,
-    topic: /sensors/kinect/depth/points, 
+    topic: /sensors/kinect/depth/points_tilted, 
     marking: true,
     clearing: true
 }

@@ -216,7 +216,7 @@ class AutonomousExecutive
                 geometry_msgs::Twist vel;
                 vel.linear.x = -.25;
                 drivebase_publisher.publish(vel);
-                ros::Duration(4.0).sleep();
+                ros::Duration(5.0).sleep();
                 vel.linear.x = 0;
                 drivebase_publisher.publish(vel);
                 ROS_INFO("Autonomous Action Server: digging finished");
@@ -339,6 +339,13 @@ class AutonomousExecutive
                 std_srvs::Empty empty;
                 ros::service::call("/reset_fusion", empty);
             }
+            ROS_INFO("Autonomous Action Server: forward localization");
+            geometry_msgs::Twist vel;
+            vel.linear.x = 0.25;
+            drivebase_publisher.publish(vel);
+            ros::Duration(1.15).sleep();
+            vel.linear.x = 0;
+            drivebase_publisher.publish(vel);
             std_srvs::Empty req;
             ros::service::call("/move_base/clear_costmaps", req);
             ROS_INFO("Autonomous Action Server: localization finished");

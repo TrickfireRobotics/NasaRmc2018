@@ -16,8 +16,8 @@ TrajectoryPlannerROS:
 
     yaw_goal_tolerance: 0.2
     latch_xy_goal_tolerance: true
-    xy_goal_tolerance: 0.35
+    xy_goal_tolerance: 0.25
     meter_scoring: true
-    #heading_scoring: true
-    #heading_timestep: 1.5
-    #heading_lookahead: 1
+    heading_scoring: true
+    heading_timestep: 1.5
+    heading_lookahead: 1

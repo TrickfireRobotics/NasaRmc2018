@@ -95,10 +95,15 @@ private:
                         client.cancelAllGoals();
                         tfr_msgs::DiggingResult result;
                         server.setPreempted(result);
-                        setStarting();
+                        ROS_WARN("Moving arm to final position, exiting.");
+                        arm_manipulator.moveArm(0.0, 0.1, 1.07, -1.0);
+                        ros::Duration(8.0).sleep();
+                        arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.6);
+                        ros::Duration(3.0).sleep();
+                        arm_manipulator.moveArm(0, 0.50, 1.07, 1.6);
                         return;
                     }
-                    
+
 
                     rate.sleep();
                 }
@@ -125,26 +130,21 @@ private:
                 }
                 else if (std::abs(state[4]) > 0.05)
                 {
-                    ros::Duration(1.0).sleep(); 
+                    ros::Duration(0.5).sleep(); 
                 }
             }
         }
+        ROS_WARN("Moving arm to final position, exiting.");
+        arm_manipulator.moveArm(0.0, 0.1, 1.07, -1.0);
+        ros::Duration(3.0).sleep();
+        arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.6);
+        ros::Duration(3.0).sleep();
+        arm_manipulator.moveArm(0, 0.50, 1.07, 1.6);
 
-        setStarting(); 
         tfr_msgs::DiggingResult result;
         server.setSucceeded(result);
     }
 
-    void setStarting()
-    {
-        ROS_WARN("Moving arm to final position, exiting.");
-        arm_manipulator.moveArm(0.0, 0.1, 1.07, -1.0);
-        ros::Duration(8.0).sleep();
-        arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.6);
-        ros::Duration(3.0).sleep();
-        arm_manipulator.moveArm(0, 0.50, 1.07, 1.6);
-        ros::Duration(3.0).sleep();
-    }
 
     ros::NodeHandle &priv_nh;
     ros::Publisher drivebase_publisher;

@@ -152,7 +152,6 @@ class Dumper
             {
                 ros::service::call("bin_state", query);
                 using namespace tfr_utilities;
-                ROS_INFO("state: %f", query.response.state);
                 if (JointAngle::BIN_MAX -  query.response.state < 0.1)
                     break;
                 bin_publisher.publish(bin_cmd);

@@ -340,7 +340,7 @@ namespace tfr_control
         //we don't anticipate these changing very much keep at method level
         double  total_angle_tolerance = 0.005,
                 individual_angle_tolerance = 0.01,
-                scaling_factor = .9, 
+                scaling_factor = .6, 
                 difference = desired - (actual_left + actual_right)/2;
         if (std::abs(difference) > total_angle_tolerance)
         {
@@ -349,10 +349,22 @@ namespace tfr_control
             double cmd_left = direction, cmd_right = direction;
             if (std::abs(delta) > individual_angle_tolerance)
             {
-                if (actual_left > actual_right)
-                    cmd_left *= scaling_factor;
+                if (direction < 0)
+                {
+                    //extending
+                    if (actual_left > actual_right)
+                        cmd_left *= scaling_factor;
+                    else
+                        cmd_right *= scaling_factor;
+                }
                 else
-                    cmd_right *= scaling_factor;
+                {
+                    //retracting
+                    if (actual_left > actual_right)
+                        cmd_right *= scaling_factor;
+                    else
+                        cmd_left *= scaling_factor;
+                }
             }
             return std::make_pair(cmd_left, cmd_right);
         }
@@ -392,7 +404,8 @@ namespace tfr_control
         if (v_1 > 0.05 || v_1 < -0.05)
         {
             int sign = (v_1 < 0) ? -1 : 1;
-            double magnitude = std::min(std::abs(v_1)/max_vel, 0.9);
+            //double magnitude = std::min(std::abs(v_1)/max_vel, 0.9);
+            double magnitude = 1;
             return sign * magnitude;
         }
         return 0;

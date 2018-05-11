@@ -212,6 +212,10 @@ class TeleopExecutive
                         drivebase_publisher.publish(move_cmd);
                         ROS_INFO("Teleop Action Server: Command Recieved, DUMP");
                         //all zeros by default
+                        arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.5);
+                        ros::Duration(3.0).sleep();
+                        arm_manipulator.moveArm(0.87, 0.1, 1.07, 1.5);
+                        ros::Duration(3.0).sleep();
                         std_msgs::Float64 bin_cmd;
                         bin_cmd.data = tfr_utilities::JointAngle::BIN_MAX;
                         tfr_msgs::BinStateSrv query;
@@ -219,7 +223,6 @@ class TeleopExecutive
                         {
                             ros::service::call("bin_state", query);
                             using namespace tfr_utilities;
-                            ROS_INFO("state: %f", query.response.state);
                             if (JointAngle::BIN_MAX -  query.response.state <
                                     0.01)
                                 break;
@@ -299,7 +302,6 @@ class TeleopExecutive
                         drivebase_publisher.publish(move_cmd);
                         //first grab the current state of the arm
                         arm_manipulator.moveArm(0, 0.50, 1.07, 1.6);
-                        ros::Duration(5.0).sleep();
                         ROS_INFO("Teleop Action Server: arm raise finished");
                         break;
                     }

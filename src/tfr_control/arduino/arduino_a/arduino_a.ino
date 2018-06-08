@@ -8,9 +8,10 @@
 ros::NodeHandle nh;
 
 //encoder level constants
-const double CPR = 4096; //pulse per revolution
-const double GEARBOX_MPR = 3.33; 
-const double TURNTABLE_RPR = 0.208; 
+const double GEARBOX_CPR = 4096;
+const double TURNTABLE_CPR = 28; 
+const double GEARBOX_MPR = 2*3.14*0.15; 
+const double TURNTABLE_RPR = (1/188.0)*(15.0/72.0)*2.0*3.15159; 
 
 //pin constants
 const int GEARBOX_LEFT_A = 2;
@@ -53,16 +54,18 @@ enum Potentiometers
 
 Potentiometer pots []
 {
-  Potentiometer{0.0075, -26.482},    //ARM_LOWER
-  Potentiometer{0.0144, -173.77},    //ARM_UPPER
-  Potentiometer{0.0214, -172.97},    //ARM_SCOOP
-  Potentiometer{0.0, 0.0},            //BIN_LEFT TODO
-  Potentiometer{0.0, 0.0}             //BIN_RIGHT TODO
+  Potentiometer{0.0071, -21.69},    //ARM_LOWER
+  Potentiometer{0.0149, 22.319},    //ARM_UPPER
+  Potentiometer{0.0207, -265.196},    //ARM_SCOOP
+  Potentiometer{0.00346, -23.672},            //BIN_LEFT TODO
+  Potentiometer{0.00348, -23.882}             //BIN_RIGHT TODO
 };
 
-PositionQuadrature turntable(CPR, TURNTABLE_A, TURNTABLE_B); 
+
+PositionQuadrature turntable(TURNTABLE_CPR, TURNTABLE_A, TURNTABLE_B); 
+
 //encoders
-VelocityQuadrature gearbox_left(CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
+VelocityQuadrature gearbox_left(GEARBOX_CPR, GEARBOX_LEFT_A, GEARBOX_LEFT_B);
 tfr_msgs::ArduinoAReading arduinoReading;
 ros::Publisher arduino("arduino_a", &arduinoReading);
 
@@ -84,6 +87,7 @@ ads1115_b =>
 
 Adafruit_ADS1115 ads1115_a;
 
+Adafruit_ADS1115 ads1115_b(0x49);
 void setup()
 {
     nh.initNode();
@@ -93,20 +97,24 @@ void setup()
 
 void loop()
 {
-    arduinoReading.tread_left_vel = gearbox_left.getVelocity()/GEARBOX_MPR;
-    arduinoReading.arm_turntable_pos = turntable.getPosition()/TURNTABLE_RPR;
+    arduinoReading.tread_left_vel = gearbox_left.getVelocity() * GEARBOX_MPR;
+    arduinoReading.arm_turntable_pos = turntable.getPosition()  * TURNTABLE_RPR;
 
-    ads1115_a.startADC_SingleEnded(0);
+    ads1115_a.startADC_SingleEnded(2);
+    ads1115_b.startADC_SingleEnded(0);
     delay(8);
     arduinoReading.arm_upper_pos = pots[ARM_UPPER].getPosition(ads1115_a.collectADC_SingleEnded());
+    arduinoReading.bin_left_pos = pots[BIN_LEFT].getPosition(ads1115_b.collectADC_SingleEnded());
     nh.spinOnce(); 
 
     ads1115_a.startADC_SingleEnded(1);
+    ads1115_b.startADC_SingleEnded(1);
     delay(8);
     arduinoReading.arm_scoop_pos = pots[ARM_SCOOP].getPosition(ads1115_a.collectADC_SingleEnded());
+    arduinoReading.bin_right_pos = pots[BIN_RIGHT].getPosition(ads1115_b.collectADC_SingleEnded());
     nh.spinOnce();
 
-    ads1115_a.startADC_SingleEnded(2);
+    ads1115_a.startADC_SingleEnded(3);
     delay(8);
     arduinoReading.arm_lower_pos = pots[ARM_LOWER].getPosition(ads1115_a.collectADC_SingleEnded());
     nh.spinOnce();

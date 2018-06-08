@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   sensor_msgs
   geometry_msgs
+  trajectory_msgs
   tfr_msgs
   actionlib
   tf
@@ -29,7 +30,7 @@ find_package(GTest REQUIRED)
 # Uncomment each if the dependent project requires it
 catkin_package(
     INCLUDE_DIRS include include/${PROJECT_NAME}
-    LIBRARIES status_code tf_manipulator status_publisher
+    LIBRARIES status_code tf_manipulator status_publisher arm_manipulator
     CATKIN_DEPENDS 
         roscpp 
         actionlib 
@@ -37,6 +38,7 @@ catkin_package(
         tf2 
         tf2_ros 
         tf2_geometry_msgs
+        trajectory_msgs
         tfr_msgs 
         message_runtime 
         sensor_msgs 
@@ -60,6 +62,11 @@ add_library(tf_manipulator ./src/tf_manipulator.cpp)
 add_dependencies(tf_manipulator ${catkin_EXPORTED_TARGETS})
 target_link_libraries(tf_manipulator ${catkin_LIBRARIES})
 
+add_library(arm_manipulator ./src/arm_manipulator.cpp)
+add_dependencies(arm_manipulator ${catkin_EXPORTED_TARGETS})
+target_link_libraries(arm_manipulator ${catkin_LIBRARIES})
+
+
 add_library(status_publisher ./src/status_publisher.cpp)
 add_dependencies(status_publisher ${catkin_EXPORTED_TARGETS})
 target_link_libraries(status_publisher status_code ${catkin_LIBRARIES})
@@ -68,15 +75,6 @@ target_link_libraries(status_publisher status_code ${catkin_LIBRARIES})
 add_executable(point_broadcaster src/point_broadcaster.cpp)
 target_link_libraries(point_broadcaster ${catkin_LIBRARIES})
 add_dependencies(point_broadcaster ${catkin_EXPORTED_TARGETS})
-
-add_executable(shift_point_broadcaster src/point_broadcaster.cpp)
-target_link_libraries(shift_point_broadcaster ${catkin_LIBRARIES})
-add_dependencies(shift_point_broadcaster ${catkin_EXPORTED_TARGETS})
-
-
-add_executable(obstacle_broadcaster src/obstacle_broadcaster.cpp)
-target_link_libraries(obstacle_broadcaster ${catkin_LIBRARIES})
-add_dependencies(obstacle_broadcaster ${catkin_EXPORTED_TARGETS})
 
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")

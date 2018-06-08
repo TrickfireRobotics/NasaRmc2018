@@ -7,7 +7,7 @@
 
     <!-- Publishes the state of the robot to TF for Rviz or other usages -->
     <node name="robot_state_publisher" pkg="robot_state_publisher"
-        type="robot_state_publisher" respawn="false" output="screen" />
+        type="robot_state_publisher" respawn="false" />
 
     <node name="drivebase" pkg="tfr_control" type="drivebase" output="screen"/>
 

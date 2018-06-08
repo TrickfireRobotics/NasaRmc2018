@@ -23,6 +23,7 @@ find_package(catkin REQUIRED COMPONENTS
     nav_msgs
     tfr_msgs
     tfr_utilities
+    robot_localization
     image_transport
 )
 
@@ -48,6 +49,11 @@ target_link_libraries(image_topic_wrapper ${catkin_LIBRARIES})
 
 add_executable(light_detection_action_server ./src/light_detection_action_server.cpp)
 target_link_libraries(light_detection_action_server ${catkin_LIBRARIES})
+
+add_executable(sensor_tilt ./src/sensor_tilt.cpp)
+add_dependencies(sensor_tilt ${catkin_EXPORTED_TARGETS})
+target_link_libraries(sensor_tilt ${catkin_LIBRARIES})
+
 
 add_executable(fiducial_odom_publisher src/fiducial_odom_publisher.cpp)
 add_dependencies(fiducial_odom_publisher ${catkin_EXPORTED_TARGETS})

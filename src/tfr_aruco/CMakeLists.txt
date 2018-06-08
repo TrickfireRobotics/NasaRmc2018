@@ -31,10 +31,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(aruco_action_client src/aruco_action_client.cpp)
-target_link_libraries(aruco_action_client ${catkin_LIBRARIES})
-add_dependencies(aruco_action_client ${catkin_EXPORTED_TARGETS})
-
 add_executable(aruco_action_server src/aruco_action_server.cpp)
 target_link_libraries(aruco_action_server ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(aruco_action_server ${catkin_EXPORTED_TARGETS})

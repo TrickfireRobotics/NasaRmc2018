@@ -75,7 +75,7 @@ class PositionQuadrature
   */
   double getPosition()
   {
-    return (encoder.read() % CPR)/(double)CPR * 2 *3.14159;
+    return encoder.read()/CPR;
   }
 
   private:

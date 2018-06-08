@@ -23,7 +23,9 @@
 #include <tfr_msgs/SetOdometry.h>
 #include <tfr_utilities/tf_manipulator.h>
 #include <actionlib/client/simple_action_client.h>
+#include <robot_localization/SetPose.h>
 #include <tf2/convert.h>
+#include <std_srvs/Empty.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Scalar.h>
 #include <tf2/LinearMath/Matrix3x3.h>
@@ -42,7 +44,8 @@ class FiducialOdom
             tf_manipulator{},
             footprint_frame{f_frame},
             bin_frame{b_frame},
-            odometry_frame{o_frame}
+            odometry_frame{o_frame},
+            reset_service{n.advertiseService("/reset_fusion", &FiducialOdom::resetFusion, this)}
         {
             rear_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/rear_cam/image_raw");
             front_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/front_cam/image_raw");
@@ -68,7 +71,15 @@ class FiducialOdom
         FiducialOdom(FiducialOdom&&) = delete;
         FiducialOdom& operator=(FiducialOdom&&) = delete;
 
-        void processOdometry()
+        bool resetFusion(std_srvs::Empty::Request& request,
+                std_srvs::Empty::Response& response)
+        {
+            ROS_INFO("RESETTING SENSORS");
+            processOdometry(true);
+            return true;
+        }
+
+        void processOdometry(bool reset)
         {
             tfr_msgs::ArucoResultConstPtr result = nullptr;
             tfr_msgs::WrappedImage image_wrapper{};
@@ -137,10 +148,19 @@ class FiducialOdom
                 publisher.publish(odom);
 
                 //control error propagation in the drivebase odometry publisher
-                tfr_msgs::SetOdometryRequest odom_req{};
-                odom_req.pose = odom.pose.pose;
-                tfr_msgs::SetOdometryResponse odom_res{};
-                ros::service::call("/set_drivebase_odometry", odom_req, odom_res);
+                tfr_msgs::SetOdometry odom_req{};
+                odom_req.request.pose = odom.pose.pose;
+                if (!reset)
+                {
+                    ros::service::call("/set_drivebase_odometry", odom_req);
+                }
+                else
+                {
+                    for (double i = 1; i < 100; i += 1)
+                    {
+                        ros::service::call("/set_drivebase_odometry", odom_req);
+                    }
+                }
 
             }
         }
@@ -149,6 +169,7 @@ class FiducialOdom
         ros::Publisher publisher;
         ros::ServiceClient rear_cam_client;
         ros::ServiceClient front_cam_client;
+        ros::ServiceServer reset_service;
         actionlib::SimpleActionClient<tfr_msgs::ArucoAction> aruco;
         tf2_ros::TransformBroadcaster broadcaster;
         TfManipulator tf_manipulator;
@@ -188,7 +209,7 @@ int main(int argc, char** argv)
     ros::Rate r(rate);
     while(ros::ok())
     {
-        fiducial_odom.processOdometry();
+        fiducial_odom.processOdometry(false);
         ros::spinOnce();
         r.sleep();
     }

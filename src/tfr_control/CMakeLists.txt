@@ -20,7 +20,6 @@ find_package(catkin REQUIRED COMPONENTS
   effort_controllers
   joint_trajectory_controller
   moveit_ros_planning_interface
-  jetson_tx2
 )
 
 find_package(GTest REQUIRED)
@@ -42,19 +41,13 @@ include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-add_library(pwm_driver src/JHPWMPCA9685.cpp)
-
-add_library(pwm_interface src/pwm_interface.cpp)
-add_dependencies(pwm_interface gpio pwm_driver ${catkin_EXPORTED_TARGETS})
-target_link_libraries(pwm_interface pwm_driver gpio ${catkin_LIBRARIES})
-
 # controller_launcher
 add_executable(control
   src/control.cpp
   src/robot_interface.cpp
 )
-add_dependencies(control pwm_interface tfr_msgs_gencpp)
-target_link_libraries(control pwm_interface
+add_dependencies(control  tfr_msgs_gencpp)
+target_link_libraries(control 
   ${catkin_LIBRARIES}
 )
 
@@ -71,21 +64,6 @@ add_dependencies(arm_action_server tfr_msgs_gencpp)
 target_link_libraries(arm_action_server
   ${catkin_LIBRARIES}
 )
-
-add_executable(test_client src/test_client.cpp)
-add_dependencies(test_client tfr_msgs_gencpp)
-target_link_libraries(test_client ${catkin_LIBRARIES})
-
-add_executable(motor_toggle_test ./src/motor_toggle_test.cpp)
-add_dependencies(motor_toggle_test ${catkin_EXPORTED_TARGETS})
-target_link_libraries(motor_toggle_test status_code status_publisher ${catkin_LIBRARIES})
-
-add_executable(test_cmd src/test_cmd.cpp)
-add_dependencies(test_cmd tfr_msgs_gencpp)
-target_link_libraries(test_cmd ${catkin_LIBRARIES})
-add_executable(test_e_stop src/test_e_stop.cpp)
-add_dependencies(test_e_stop tfr_msgs_gencpp)
-target_link_libraries(test_e_stop ${catkin_LIBRARIES})
 
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")

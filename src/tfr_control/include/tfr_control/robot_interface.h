@@ -25,7 +25,6 @@
 #include <tfr_msgs/ArduinoBReading.h>
 #include <tfr_msgs/PwmCommand.h>
 #include <tfr_utilities/control_code.h>
-#include <pwm_interface.h>
 #include <vector>
 
 namespace tfr_control {
@@ -129,6 +128,7 @@ namespace tfr_control {
         
         void registerJoint(std::string name, Joint joint);
         void registerArmJoint(std::string name, Joint joint);
+        void registerBinJoint(std::string name, Joint joint);
 
 
         //callback for publisher

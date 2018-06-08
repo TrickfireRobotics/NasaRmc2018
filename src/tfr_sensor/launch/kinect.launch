@@ -1,7 +1,7 @@
 <launch>
 
     <node pkg="tf2_ros" type="static_transform_publisher" name="kinect_broadcaster" 
-       args="0.635 0 0.065 0 0 0 1 base_link /kinect_link" />
+       args="0.635 0 0.045 0 -0.06 0 base_link /kinect_link" />
     <include file="$(find openni_launch)/launch/openni.launch">
         <arg name="camera" value="kinect"/>
         <arg name="ir_processing" value="false"/>
@@ -16,4 +16,16 @@
             service_name: /on_demand/kinect/image_raw
         </rosparam>
     </node>
+    <node name="kinect_tilt" pkg="tfr_sensor" type="sensor_tilt">
+        <rosparam>
+            parent_frame: kinect_depth_optical_frame
+            child_frame: tilt_kinect_link
+
+        </rosparam>
+        <remap from="imu" to="/sensors/mti/sensor/imu"/>
+        <remap from="points" to="/sensors/kinect/depth/points"/>
+        <remap from="tilted_points" to="/sensors/kinect/depth/points_tilted"/>
+    </node>
+
+
 </launch>

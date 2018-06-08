@@ -26,5 +26,4 @@
   <depend>effort_controllers</depend>
   <depend>joint_trajectory_controller</depend>
   <depend>moveit_ros_planning_interface</depend>
-  <depend>jetson_tx2</depend>
 </package>

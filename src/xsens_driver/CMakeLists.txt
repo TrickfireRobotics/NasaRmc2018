@@ -80,7 +80,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES test_py
-  CATKIN_DEPENDS rospy std_msgs tf sensor_msgs geometry_msgs gps_common diagnostic_msgs xsens_custom_msgs
+  CATKIN_DEPENDS rospy std_msgs tf sensor_msgs geometry_msgs gps_common diagnostic_msgs custom_msgs
 #  DEPENDS system_lib
 )
 

@@ -17,6 +17,7 @@ namespace tfr_mission_control {
         widget(nullptr),
         autonomy{"autonomous_action_server",true},
         teleop{"teleop_action_server",true},
+        arm_client{"move_arm", true},
         com{nh.subscribe("com", 5, &MissionControl::updateStatus, this)},
         teleopEnabled{false}
     {
@@ -124,6 +125,8 @@ namespace tfr_mission_control {
                 [this] () {performTeleop(tfr_utilities::TeleopCode::CLOCKWISE);});
         connect(ui.ccw_button,&QPushButton::clicked,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::COUNTERCLOCKWISE);});
+        connect(ui.raise_arm_button,&QPushButton::clicked,
+                [this] () {performTeleop(tfr_utilities::TeleopCode::RAISE_ARM);});
         connect(ui.forward_button,&QPushButton::pressed,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::FORWARD);});
         connect(ui.forward_button,&QPushButton::released,
@@ -193,11 +196,14 @@ namespace tfr_mission_control {
     void MissionControl::resetTurntable()
     {
         ROS_INFO("Mission Control: Resetting turntable");
+        toggleMotors(false);
         std_srvs::Empty::Request req;
         std_srvs::Empty::Response res;
         while(!ros::service::call("/zero_turntable", req, res))
             ros::Duration{0.1}.sleep();
-        ROS_INFO("Mission Control: Turntable reset");
+
+	performTeleop(tfr_utilities::TeleopCode::DRIVING_POSITION);
+        toggleMotors(true);
 
     }
    
@@ -210,10 +216,6 @@ namespace tfr_mission_control {
         ui.right_button->setEnabled(value);
         ui.forward_button->setEnabled(value);
         ui.backward_button->setEnabled(value);
-        ui.cw_button->setEnabled(value);
-        ui.ccw_button->setEnabled(value);
-        ui.reset_starting_button->setEnabled(value);
-        ui.reset_dumping_button->setEnabled(value);
         ui.autonomy_button->setEnabled(value);
         ui.dump_button->setEnabled(value);
         ui.dig_button->setEnabled(value);
@@ -351,29 +353,28 @@ namespace tfr_mission_control {
     void MissionControl::startMission()
     {
         startTimeService();
+        goAutonomousMode();
         toggleControl(true);
         toggleMotors(true);
-        goAutonomousMode();
     }
     
     //starts mission is teleop mode
     void MissionControl::startManual()
     {
         startTimeService();
+        goTeleopMode();
         toggleControl(true);
         toggleMotors(true);
-        goTeleopMode();
     }
 
     //triggers state change into autonomous mode from teleop
     void MissionControl::goAutonomousMode()
     {
+        resetTurntable();
         softwareStop();
-        ROS_INFO("goAutonomous");
         setAutonomy(true);
         tfr_msgs::EmptyGoal goal{};
         while (!teleop.getState().isDone()) teleop.cancelAllGoals();
-        resetTurntable();
         autonomy.sendGoal(goal);
         setTeleop(false);
         widget->setFocus();

@@ -6,6 +6,7 @@
 #include <tfr_msgs/WrappedImage.h>
 #include <tfr_msgs/BinStateSrv.h>
 #include <tfr_utilities/control_code.h>
+#include <tfr_utilities/arm_manipulator.h>
 #include <sensor_msgs/Image.h>
 #include <image_transport/image_transport.h>
 #include <actionlib/server/simple_action_server.h>
@@ -61,7 +62,8 @@ class Dumper
             bin_publisher{node.advertise<std_msgs::Float64>("/bin_position_controller/command", 10)},
             detector{"light_detection"},
             aruco{"aruco_action_server",true},
-            constraints{c}
+            constraints{c},
+            arm_manipulator{node}
         {
             ROS_INFO("dumping action server initializing");
             detector.waitForServer();
@@ -84,6 +86,8 @@ class Dumper
         ros::ServiceClient image_client;
         ros::Publisher velocity_publisher;
         ros::Publisher bin_publisher;
+
+        ArmManipulator arm_manipulator;
 
         const DumpingConstraints &constraints; 
 
@@ -111,12 +115,13 @@ class Dumper
             while (detector.getState() != actionlib::SimpleClientGoalState::SUCCEEDED)
             {
                 //handle preemption
-                if (server.isPreemptRequested() || !ros::ok())
+                if (server.isPreemptRequested()|| !ros::ok())
                 {
                     stopMoving();
                     server.setPreempted();
                     return;
                 }
+
 
                 //get the most recent aruco reading
                 tfr_msgs::ArucoResult estimate{};
@@ -136,23 +141,35 @@ class Dumper
             //we detected the light, stop moving immediately
             stopMoving();
             ROS_INFO("dumping action server detected light raising bin");
+            arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.5);
+            ros::Duration(3.0).sleep();
+            arm_manipulator.moveArm(0.87, 0.1, 1.07, 1.5);
+            ros::Duration(3.0).sleep();
             std_msgs::Float64 bin_cmd;
             bin_cmd.data = tfr_utilities::JointAngle::BIN_MAX;
             tfr_msgs::BinStateSrv query;
-            //TODO hook up to bin pots
-/////            ros::Rate rate(10);
-/////            while (!server.isPreemptRequested() && ros::ok())
-/////            {
-/////                ros::service::call("bin_state", query);
-/////                using namespace tfr_utilities;
-/////                if (JointAngle::BIN_MAX - query.response.state < JointAngle::ANGLE_TOLERANCE)
-/////                    break;
-/////                bin_publisher.publish(bin_cmd);
-/////                stopMoving();
-/////                rate.sleep();
-/////            }
-            
-            server.setSucceeded();
+            while (!server.isPreemptRequested() && ros::ok())
+            {
+                ros::service::call("bin_state", query);
+                using namespace tfr_utilities;
+                if (JointAngle::BIN_MAX -  query.response.state < 0.1)
+                    break;
+                bin_publisher.publish(bin_cmd);
+                ros::Duration(0.1).sleep();
+            }
+            if (server.isPreemptRequested())
+            {
+                ROS_INFO("Teleop Action Server: DUMP preempted");
+                server.setPreempted();
+                return;
+            }
+            else if (!server.isActive() || !ros::ok())
+            {
+                ROS_INFO("Teleop Action Server: DUMP preempted");
+                server.setAborted();
+                return;
+            }
+             server.setSucceeded();
         }
 
         /*
@@ -179,9 +196,11 @@ class Dumper
                  *
                  * This conforms to rep 103
                  * */
-                int sign = (estimate.relative_pose.pose.position.y < 0) ? -1 : 1;
+                int sign = (angle < 0) ? 1 : -1;
+                cmd.linear.x = 0;
                 cmd.angular.z = sign*constraints.getMaxAngVel();
             }
+            
             else
             {
                 cmd.linear.x = -1 * constraints.getMaxLinVel();

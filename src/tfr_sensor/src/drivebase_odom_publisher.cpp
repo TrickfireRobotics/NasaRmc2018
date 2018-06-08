@@ -25,11 +25,15 @@
 #include <tfr_msgs/ArduinoBReading.h>
 #include <tfr_msgs/SetOdometry.h>
 #include <tfr_msgs/PoseSrv.h>
+#include <geometry_msgs/Quaternion.h>
 #include <nav_msgs/Odometry.h>
 #include <std_srvs/Empty.h>
 #include <tf/transform_datatypes.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
+#include <tf2/convert.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Scalar.h>
 
 class DrivebaseOdometryPublisher
 {
@@ -51,6 +55,10 @@ class DrivebaseOdometryPublisher
             odometry_publisher = n.advertise<nav_msgs::Odometry>("/drivebase_odom", 15);
             set_odometry = n.advertiseService("set_drivebase_odometry", &DrivebaseOdometryPublisher::setOdometry, this);
             reset_odometry = n.advertiseService("reset_drivebase_odometry", &DrivebaseOdometryPublisher::resetOdometry, this);
+            angle.x = 0;
+            angle.y = 0;
+            angle.z = 0;
+            angle.w = 1;
         }
 
         ~DrivebaseOdometryPublisher() = default;
@@ -70,6 +78,7 @@ class DrivebaseOdometryPublisher
             tfr_msgs::ArduinoBReading reading_b;
             if (latest_arduino_a != nullptr)
                 reading_a = *latest_arduino_a;
+
             if (latest_arduino_b != nullptr)
                 reading_b = *latest_arduino_b;
 
@@ -87,20 +96,20 @@ class DrivebaseOdometryPublisher
             //message gives us velocity in meters/second from each individual
             //tread
             double v_l = -reading_a.tread_left_vel;
-            double v_r = -reading_b.tread_right_vel;
-
-
+            double v_r = reading_b.tread_right_vel;
 
             //basic differential kinematics to get combined velocities
             double v_ang = (v_r-v_l)/wheel_span;
             double v_lin = (v_r+v_l)/2;
-
+            
             //break into xy components and increment
             double d_angle = v_ang * d_t;
-            angle += d_angle;
+            rotateQuaternionByYaw(angle, d_angle);
 
-            double v_x = v_lin*cos(angle);
-            double v_y = v_lin*sin(angle);
+            // yaw (z-axis rotation)
+            auto yaw = quaternionToYaw(angle);
+            double v_x = v_lin*cos(yaw);
+            double v_y = v_lin*sin(yaw);
 
 
             double d_x = v_x * d_t;
@@ -120,7 +129,7 @@ class DrivebaseOdometryPublisher
             msg.pose.pose.position.x = x;
             msg.pose.pose.position.y = y;
             msg.pose.pose.position.z = 0;
-            msg.pose.pose.orientation = tf::createQuaternionMsgFromYaw(angle);
+            msg.pose.pose.orientation = angle;
             msg.pose.covariance = { 1e-1,    0,    0,    0,    0,    0,
                 0, 1e-1,    0,    0,    0,    0,
                 0,    0, 1e-1,    0,    0,    0,
@@ -158,9 +167,9 @@ class DrivebaseOdometryPublisher
         const double& wheel_span;
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
-        double angle; //angle of rotation around the z axis (radians)
-        const double MAX_XY_DELTA = 0.15;
-        const double MAX_THETA_DELTA = 0.13;
+        geometry_msgs::Quaternion angle; 
+        const double MAX_XY_DELTA = 0.25;
+        const double MAX_THETA_DELTA = 0.065;
         ros::Time t_0;
 
         //callback for publisher
@@ -191,19 +200,19 @@ class DrivebaseOdometryPublisher
             if (std::abs(dy) > MAX_XY_DELTA)
                 dy = (dy >= 0) ? MAX_XY_DELTA : -MAX_XY_DELTA;
             y += dy;
-            
-            auto siny = +2.0 * (request.pose.orientation.w * request.pose.orientation.z + request.pose.orientation.x * request.pose.orientation.y);
-            auto cosy = +1.0 - 2.0 * (request.pose.orientation.y * request.pose.orientation.y + request.pose.orientation.z * request.pose.orientation.z );  
-            auto new_ang = atan2(siny, cosy);
 
-            auto dth = new_ang - angle;
-            if (std::abs(dth) > MAX_THETA_DELTA)
-                dth = (dth >= 0) ? MAX_THETA_DELTA : -MAX_THETA_DELTA;
-            angle += dth;
-
-            std_srvs::Empty::Request req;
-            std_srvs::Empty::Response res;
-            ros::service::call("/move_base/clear_costmaps", req, res);
+            auto new_q = getTfQuaternion(request.pose.orientation);
+            auto old_q = getTfQuaternion(angle);
+            auto delta = new_q * old_q.inverse();
+            if (std::abs(delta.getZ()) > MAX_THETA_DELTA)
+            {
+                auto sign = ( delta.getZ() * delta.getW() >= 0)? 1 : -1;
+                tf2::Quaternion rotation{0.0, 0.0, 0.065 * sign, 0.998};
+                auto new_value = old_q * rotation;
+                angle = getStdQuaternion(new_value);
+            }
+            else
+                angle = request.pose.orientation;
             return true;
         }
 
@@ -213,13 +222,52 @@ class DrivebaseOdometryPublisher
         bool resetOdometry(tfr_msgs::SetOdometry::Request& request,
                 tfr_msgs::SetOdometry::Response& response)
         {
+            ROS_INFO("Drivebase Odometry Publisher: resetting drivebase odometry");
 
             x = request.pose.position.x;
             y = request.pose.position.y;
-            auto siny = +2.0 * (request.pose.orientation.w * request.pose.orientation.z + request.pose.orientation.x * request.pose.orientation.y);
-            auto cosy = +1.0 - 2.0 * (request.pose.orientation.y * request.pose.orientation.y + request.pose.orientation.z * request.pose.orientation.z );  
-            auto angle = atan2(siny, cosy);
+            angle = request.pose.orientation;
             return true;
+        }
+
+        tf2::Quaternion getTfQuaternion(geometry_msgs::Quaternion& q)
+        {
+            tf2::Quaternion q_0{q.x, q.y, q.z, q.w};
+            return q_0;
+        }
+
+        geometry_msgs::Quaternion getStdQuaternion(tf2::Quaternion& q_0)
+        {
+            geometry_msgs::Quaternion q;
+            q.x = q_0.getX();
+            q.y = q_0.getY();
+            q.z = q_0.getZ();
+            q.w = q_0.getW();
+            return q;
+        }
+
+        /*
+         * Quaternion to yaw
+         */
+        double quaternionToYaw(geometry_msgs::Quaternion& q)
+        {
+            // yaw (z-axis rotation)
+            double siny = +2.0 * (q.w * q.z + q.x * q.y);
+            double cosy = +1.0 - 2.0 * (q.y*q.y + q.z*q.z);  
+            double result = atan2(siny, cosy);
+            return result;
+        }
+
+        void rotateQuaternionByYaw(geometry_msgs::Quaternion& q, double yaw)
+        {
+            tf2::Quaternion q_0{q.x, q.y, q.z, q.w};
+            tf2::Quaternion q_1{};
+            q_1.setRPY(0, 0, yaw);
+            q_0 *= q_1;
+            q.x = q_0.getX();
+            q.y = q_0.getY();
+            q.z = q_0.getZ();
+            q.w = q_0.getW();
         }
 };
 

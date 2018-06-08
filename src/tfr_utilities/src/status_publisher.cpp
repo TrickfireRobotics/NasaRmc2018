@@ -1,8 +1,15 @@
 #include <status_publisher.h>
 
-StatusPublisher::StatusPublisher() :
+StatusPublisher::StatusPublisher(ros::NodeHandle &n) :
     com{n.advertise<tfr_msgs::SystemStatus>("com",5)} 
 {}
+
+//  mission control
+void StatusPublisher::status(const StatusCode &code, const float &data)  const
+{
+    ROS_INFO("%s" ,getStatusMessage(code,data).c_str());
+    missionControl(code,data);
+}
 
 // ROS_INFO visibility + mission control
 void StatusPublisher::info(const StatusCode &code, const float &data)  const

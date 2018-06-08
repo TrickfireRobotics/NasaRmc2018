@@ -7,22 +7,22 @@
       <geometry>
         <cylinder radius="${turntable_radius}" length="${turntable_height}" />
       </geometry>
-      <origin xyz="0 0 ${turntable_height/2}" />
+      <origin xyz="0 0 ${turntable_height/2}" rpy="0 0 ${pi}" />
     </visual>
     <collision>
       <geometry>
         <cylinder radius="${turntable_radius}" length="${turntable_height}" />
       </geometry>
-      <origin xyz="0 0 ${turntable_height/2}" />
+      <origin xyz="0 0 ${turntable_height/2}" rpy="0 0 ${pi}" />
     </collision>
   </link>
 
   <joint name="turntable_joint" type="revolute">
     <parent link="base_link" />
     <child link="turntable" />
-    <origin xyz="${base_length/2-turntable_radius} 0 ${drivebase_front_beam_height/2}" />
+    <origin xyz="${base_length/2-turntable_radius} 0 ${drivebase_front_beam_height/2}" rpy="0 0 ${pi}" />
     <axis xyz="0 0 1" />
-    <limit effort="1.0" velocity="1.0" lower="${-pi}" upper="${pi}" />
+    <limit effort="1.0" velocity="1.0" lower="${-1.1*pi}" upper="${1.1*pi}" />
   </joint>
   <transmission name="turntable_tran">
     <type>transmission_interface/SimpleTransmission</type>
@@ -151,15 +151,15 @@
   <link name="scoop">
     <visual>
       <geometry>
-        <box size="${scoop_diameter} ${scoop_width} ${scoop_diameter/2}" />
+        <box size="${scoop_length} ${scoop_width} ${scoop_diameter/2}" />
       </geometry>
-      <origin xyz="${scoop_diameter/2} 0 ${scoop_diameter/4}" />
+      <origin xyz="${scoop_length/2} 0 ${scoop_diameter/4}" />
     </visual>
     <collision>
       <geometry>
-        <box size="${scoop_diameter} ${scoop_width} ${scoop_diameter/2}" />
+        <box size="${scoop_length} ${scoop_width} ${scoop_diameter/2}" />
       </geometry>
-      <origin xyz="${scoop_diameter/2} 0 ${scoop_diameter/4}" />
+      <origin xyz="${scoop_length/2} 0 ${scoop_diameter/4}" />
     </collision>
   </link>
   <joint name="scoop_joint" type="revolute">

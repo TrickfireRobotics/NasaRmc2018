@@ -123,9 +123,8 @@ class MID:
 	## Initiate No Rotation procedure (not on MTi-G), 2 bytes
 	SetNoRotation = 0x22
 	
-        #NOTE COLLIN increased from 10 to 30 to avoid existing timeout issue 
 	## Some timeout related stuff
-	additionalTimeOutOffset = 0.030 # 6ms
+	additionalTimeOutOffset = 0.010 # 6ms
 
 
 def getName(cls, value):

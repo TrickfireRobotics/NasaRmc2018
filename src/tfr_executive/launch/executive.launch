@@ -1,21 +1,28 @@
 <launch>
-    <node name="clock_service" pkg="tfr_executive" type="clock_service" output="screen"/>
+    <node name="clock_service" pkg="tfr_executive" type="clock_service" output="screen">
+        <rosparam>
+            mission_time: 600
+            driving_time: 35 
+            dumping_time: 45
+            localization_time: 45
+        </rosparam>
+    </node>
 
     <node name="autnonomous_action_server" pkg="tfr_executive" type="autonomous_action_server" output="screen">
         <rosparam>
-            localization:  true
+            localization_to: false 
             navigation_to: true 
-            hole: false 
             digging: false 
-            navigation_from: true
+            localization_from: false 
+            navigation_from: false 
+            localization_finish: false 
             dumping: false 
         </rosparam>
     </node>
     <node name="teleop_action_server" pkg="tfr_executive" type="teleop_action_server" output="screen">
         <rosparam>
             linear_velocity: 0.35
-            angular_velocity: 0.9
+            angular_velocity: 0.8
         </rosparam>
-
     </node> 
 </launch>

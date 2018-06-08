@@ -35,14 +35,15 @@
 #include <tfr_utilities/control_code.h>
 #include <tfr_msgs/TeleopAction.h>
 #include <tfr_msgs/DiggingAction.h>
-#include <tfr_msgs/ArmMoveAction.h>
 #include <tfr_msgs/EmptySrv.h>
 #include <tfr_msgs/BinStateSrv.h>
 #include <tfr_msgs/ArmStateSrv.h>
 #include <tfr_msgs/DurationSrv.h>
+#include <tfr_utilities/arm_manipulator.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Float64.h>
+#include <tfr_msgs/ArmMoveAction.h>
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
 
@@ -69,7 +70,7 @@ class TeleopExecutive
                 boost::bind(&TeleopExecutive::processCommand, this, _1),
                 false},
             drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
-            trajectory_publisher{n.advertise<trajectory_msgs::JointTrajectory>("/arm_controller/command", 5)},
+            arm_manipulator{n},
             bin_publisher{n.advertise<std_msgs::Float64>("/bin_position_controller/command", 5)},
             digging_client{n, "dig"},
             arm_client{n, "move_arm"},
@@ -159,20 +160,10 @@ class TeleopExecutive
                         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
                         tfr_msgs::ArmStateSrv query;
                         ros::service::call("arm_state", query);
-                        trajectory_msgs::JointTrajectory trajectory;
-                        trajectory.header.stamp = ros::Time::now();
-                        trajectory.joint_names.resize(3);
-                        trajectory.points.resize(1);
-                        trajectory.points[0].positions.resize(3);
-                        trajectory.joint_names[0]="turntable_joint";
-                        trajectory.joint_names[1]="lower_arm_joint";
-                        trajectory.joint_names[2]="upper_arm_joint";
-                        trajectory.points[0].positions[0] = query.response.states[0];
-                        trajectory.points[0].positions[1] = query.response.states[1];
-                        trajectory.points[0].positions[2] = query.response.states[2];
-                        trajectory.points[0].time_from_start = ros::Duration(0.04);
-                        trajectory.points[0].positions[0] -= 0.01;
-                        trajectory_publisher.publish(trajectory);
+                        arm_manipulator.moveArm( query.response.states[0] - 0.03,
+                                  query.response.states[1],
+                                  query.response.states[2],
+                                  query.response.states[3]);
                         break;
                     }
 
@@ -181,20 +172,10 @@ class TeleopExecutive
                         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
                         tfr_msgs::ArmStateSrv query;
                         ros::service::call("arm_state", query);
-                        trajectory_msgs::JointTrajectory trajectory;
-                        trajectory.header.stamp = ros::Time::now();
-                        trajectory.joint_names.resize(3);
-                        trajectory.points.resize(1);
-                        trajectory.points[0].positions.resize(3);
-                        trajectory.joint_names[0]="turntable_joint";
-                        trajectory.joint_names[1]="lower_arm_joint";
-                        trajectory.joint_names[2]="upper_arm_joint";
-                        trajectory.points[0].positions[0] = query.response.states[0];
-                        trajectory.points[0].positions[1] = query.response.states[1];
-                        trajectory.points[0].positions[2] = query.response.states[2];
-                        trajectory.points[0].time_from_start = ros::Duration(0.04);
-                        trajectory.points[0].positions[0] += 0.01;
-                        trajectory_publisher.publish(trajectory);
+                        arm_manipulator.moveArm( query.response.states[0] + 0.03,
+                                  query.response.states[1],
+                                  query.response.states[2],
+                                  query.response.states[3]);
                         break;
                     }
 
@@ -231,6 +212,10 @@ class TeleopExecutive
                         drivebase_publisher.publish(move_cmd);
                         ROS_INFO("Teleop Action Server: Command Recieved, DUMP");
                         //all zeros by default
+                        arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.5);
+                        ros::Duration(3.0).sleep();
+                        arm_manipulator.moveArm(0.87, 0.1, 1.07, 1.5);
+                        ros::Duration(3.0).sleep();
                         std_msgs::Float64 bin_cmd;
                         bin_cmd.data = tfr_utilities::JointAngle::BIN_MAX;
                         tfr_msgs::BinStateSrv query;
@@ -285,54 +270,55 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::RESET_STARTING):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, RESET_STARTING");
-
                         //all zeros by default
                         drivebase_publisher.publish(move_cmd);
                         //first grab the current state of the arm
                         tfr_msgs::ArmStateSrv query;
                         ros::service::call("arm_state", query);
-                        tfr_msgs::ArmMoveGoal goal;
-                        //first we lift the arm up
-                        goal.pose.resize(4);
-                        goal.pose[0] = query.response.states[0];
-                        goal.pose[1] = tfr_utilities::JointAngle::ARM_LOWER_MIN;
-                        goal.pose[2] = tfr_utilities::JointAngle::ARM_UPPER_MIN;
-                        goal.pose[3] = tfr_utilities::JointAngle::ARM_SCOOP_MIN;
-
-                        arm_client.sendGoal(goal);
-
-                        //handle preemption
-                        while (!arm_client.getState().isDone())
-                        {
-                            if (server.isPreemptRequested() || ! ros::ok())
-                            {
-                                arm_client.cancelAllGoals();
-                                server.setPreempted();
-                                ROS_INFO("Teleop Action Server: arm reset preempted");
-                                return;
-                            }
-                            frequency.sleep();
-                        }
-                        
-                        goal.pose[0] = tfr_utilities::JointAngle::ARM_TURNTABLE_MIN;
-                        arm_client.sendGoal(goal);
-                        //handle preemption
-                        while (!arm_client.getState().isDone())
-                        {
-                            if (server.isPreemptRequested() || ! ros::ok())
-                            {
-                                arm_client.cancelAllGoals();
-                                server.setPreempted();
-                                ROS_INFO("Teleop Action Server: arm reset preempted");
-                                return;
-                            }
-                            frequency.sleep();
-                        }
+                        arm_manipulator.moveArm(query.response.states[0], 0.20, 1.0, 1.6);
+                        ros::Duration(5.0).sleep();
+                        arm_manipulator.moveArm(0, 0.20, 1.0, 1.6);
+                        ros::Duration(8.0).sleep();
+                        arm_manipulator.moveArm(0, 0.50, 1.0, 1.6);
+                        ros::Duration(2.0).sleep();
+                        arm_manipulator.moveArm(0, 0.60, 1.0, 1.6);
+                        ros::Duration(2.0).sleep();
+                        arm_manipulator.moveArm(0, 0.70, 1.0, 1.6);
+                        ros::Duration(2.0).sleep();
+                        arm_manipulator.moveArm(0, 0.80, 1.0, 1.6);
+                        ros::Duration(2.0).sleep();
+                        arm_manipulator.moveArm(0, 0.85, 1.0, 1.6);
+                        ros::Duration(2.0).sleep();
+                        arm_manipulator.moveArm(0, 0.90, 1.0, 1.6);
+                        ros::Duration(2.0).sleep();
 
                         ROS_INFO("Teleop Action Server: arm reset finished");
-
                         break;
                     }
+                case (tfr_utilities::TeleopCode::DRIVING_POSITION):
+                    {
+                        ROS_INFO("Teleop Action Server: Command Recieved, DRIVING_POSITION");
+                        //all zeros by default
+                        drivebase_publisher.publish(move_cmd);
+                        //first grab the current state of the arm
+                        arm_manipulator.moveArm(0, 0.50, 1.07, 1.6);
+                        ROS_INFO("Teleop Action Server: arm raise finished");
+                        break;
+                    }
+                case (tfr_utilities::TeleopCode::RAISE_ARM):
+                    {
+                        ROS_INFO("Teleop Action Server: Command Recieved, RAISE_ARM");
+                        tfr_msgs::ArmStateSrv query;
+                        ros::service::call("arm_state", query);
+                        //all zeros by default
+                        drivebase_publisher.publish(move_cmd);
+                        //first grab the current state of the arm
+                        arm_manipulator.moveArm(query.response.states[0], 0.10, 1.07, 1.6);
+                        ros::Duration(5.0).sleep();
+                        ROS_INFO("Teleop Action Server: arm raise finished");
+                        break;
+                    }
+
 
                 default:
                     {
@@ -351,11 +337,12 @@ class TeleopExecutive
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> digging_client;
         actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
         ros::Publisher drivebase_publisher;
-        ros::Publisher trajectory_publisher;
+        ArmManipulator arm_manipulator;
         ros::Publisher bin_publisher;
         DriveVelocity &drive_stats;
         //how often to check for preemption
         ros::Duration frequency;
+
 };
 
 

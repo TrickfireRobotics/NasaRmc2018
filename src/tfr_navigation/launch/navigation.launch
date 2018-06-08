@@ -2,8 +2,8 @@
     <node name="navigation_action_server" pkg="tfr_navigation" type="navigation_action_server" output="screen">
         <rosparam>
             height_adjustment: 0
-            safe_mining_distance: 3.5
-            finish_line: 1.25
+            safe_mining_distance: 3.6  
+            finish_line: 1.5
         </rosparam>
     </node>
     <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
@@ -14,5 +14,4 @@
         <rosparam file="$(find tfr_navigation)/params/global_costmap.yaml" command="load" />
         <rosparam file="$(find tfr_navigation)/params/planner.yaml" command="load" />
     </node>
-    <include file="$(find tfr_navigation)/launch/hole_broadcaster.launch"/>
 </launch>

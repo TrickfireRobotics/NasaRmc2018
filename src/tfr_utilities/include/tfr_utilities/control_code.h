@@ -19,8 +19,8 @@ namespace tfr_utilities
         static const float ARM_UPPER_MIN = 0.99;
         static const float ARM_SCOOP_MAX = 1.1;
         static const float ARM_SCOOP_MIN = -1.6;
-        static const float BIN_MAX = 0.785398;
-        static const float BIN_MIN = 0.0;
+        static const float BIN_MAX = 0.74;
+        static const float BIN_MIN = 0.01;
     }
 
 }

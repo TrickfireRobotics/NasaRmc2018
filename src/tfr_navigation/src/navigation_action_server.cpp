@@ -45,8 +45,9 @@ class Navigator
             rate{10},
             height_adjustment{height_adj},
             constraints{c},
-            server{n, "navigate", boost::bind(&Navigator::navigate, this, _1) ,false}, 
-            nav_stack{"move_base", true},
+            server{n, "navigate", boost::bind(&Navigator::navigate, this, _1) ,
+            false}, 
+            nav_stack{n, "move_base", true},
             bin_frame{bin_f}
         {
             ROS_DEBUG("Navigation server constructed %f", ros::Time::now().toSec());
@@ -99,8 +100,10 @@ class Navigator
 
 
             //test for completion
-            while (!nav_stack.getState().isDone())
+            while (true)
             {
+                ROS_INFO("%d %d", server.isPreemptRequested(), server.isActive());
+
                 //Deal with preemption or error
                 if (server.isPreemptRequested() || !ros::ok()) 
                 {
@@ -114,34 +117,18 @@ class Navigator
                     rate.sleep();
                 }
                 ROS_INFO("state %s", nav_stack.getState().toString().c_str());
+                if (nav_stack.getState().isDone())
+                    break;
             }
 
             if (nav_stack.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-            {
-                if (code == tfr_utilities::LocationCode::MINING)
-                {
-                    //drop the location of the hole for the return trip
-                    tfr_msgs::PoseSrv::Request request;
-                    request.pose.pose.position.x=
-                        nav_goal.target_pose.pose.position.x + 2.2;
-                    request.pose.pose.orientation.z=1;
-                    tfr_msgs::PoseSrv::Response response;
-                    while (!ros::service::call("localize_hole", request, response) 
-                            && !server.isPreemptRequested() && ros::ok() )
-                    {
-                        ROS_INFO("placing hole");
-                        rate.sleep();
-                    }
-                }
                 server.setSucceeded();
-            }
-            else 
-            {
-                nav_stack.cancelAllGoals();
+            else
                 server.setAborted();
-            }
+            
             ROS_INFO("Navigation server finished");
-        }        ros::NodeHandle& node;
+        }        
+        ros::NodeHandle& node;
         //NOTE delegate initialization of server to ctor
         actionlib::SimpleActionServer<tfr_msgs::NavigationAction> server;
         //NOTE delegate initialization of server to ctor
@@ -170,10 +157,12 @@ class Navigator
                 case(tfr_utilities::LocationCode::MINING):
                     nav_goal.target_pose.pose.position.x = constraints.get_safe_mining_distance();
                     nav_goal.target_pose.pose.position.z = height_adjustment;
+                    nav_goal.target_pose.pose.orientation.w = 1;
                     break;
                 case(tfr_utilities::LocationCode::DUMPING):
                     nav_goal.target_pose.pose.position.x = constraints.get_finish_line();
                     nav_goal.target_pose.pose.position.z = height_adjustment;
+                    nav_goal.target_pose.pose.orientation.z = 1;
                     break;
                 case(tfr_utilities::LocationCode::UNSET):
                     //leave it alone
@@ -182,11 +171,6 @@ class Navigator
                     ROS_WARN("location_code %u not recognized",
                             static_cast<uint8_t>(goal));
             }
-            //set relative rotation (none)
-            nav_goal.target_pose.pose.orientation.x = 0;
-            nav_goal.target_pose.pose.orientation.y = 0;
-            nav_goal.target_pose.pose.orientation.z = 0;
-            nav_goal.target_pose.pose.orientation.w = 1;
         }
 };
 

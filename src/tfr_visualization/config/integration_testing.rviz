@@ -8,7 +8,7 @@ Panels:
         - /TF1/Frames1
         - /Pose2
       Splitter Ratio: 0.5
-    Tree Height: 720
+    Tree Height: 359
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -100,8 +100,6 @@ Visualization Manager:
           Value: true
         front_right_slope_link:
           Value: true
-        hole:
-          Value: false
         kinect_depth_frame:
           Value: false
         kinect_depth_optical_frame:
@@ -124,6 +122,8 @@ Visualization Manager:
           Value: true
         scoop:
           Value: false
+        tilt_kinect_link:
+          Value: true
         tread_left_front_link:
           Value: true
         tread_left_link:
@@ -167,7 +167,8 @@ Visualization Manager:
               kinect_link:
                 kinect_depth_frame:
                   kinect_depth_optical_frame:
-                    {}
+                    tilt_kinect_link:
+                      {}
                 kinect_rgb_frame:
                   kinect_rgb_optical_frame:
                     {}
@@ -199,8 +200,7 @@ Visualization Manager:
               xsens_link:
                 {}
           bin_footprint:
-            hole:
-              {}
+            {}
       Update Interval: 0
       Value: true
     - Class: rviz/Image
@@ -585,7 +585,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 16.480238
+      Distance: 4.90078449
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -600,10 +600,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.144796759
+      Pitch: 0.204796776
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.03082323
+      Yaw: 1.68082261
     Saved: ~
 Window Geometry:
   Displays:

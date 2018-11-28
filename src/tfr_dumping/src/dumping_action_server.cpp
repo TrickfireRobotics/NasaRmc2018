@@ -101,9 +101,11 @@ class Dumper
             If the Dumping Sensor signals the position has been achieved, signal the Drivebase to stop moving.
             Signal the Bin Controller to dump collected material.
             When the Bin Controller signals it is done, signal Executive to indicate dumping complete.
-		 *  Pre:  The robot can detect the aruco board from its current position.
+			
+		 *  Pre:  The robot can detect the aruco board from its current position. 
 		 *  Post: The robot has dumped its material into the bin. The robot has signaled Executive a Finished signal.
 		 
+		 *  For testing, the subscribed topic should have mock information on for the aruco board.
 		    Because this method does not return a value and takes a non-valid goal, aruco and executive class stubs will be required in order to perform unit testing.
          */
 		 
@@ -222,6 +224,7 @@ class Dumper
         /*
          * back up slowwwwly we can't see
          * */
+		 // The comment above pretty well sums up this method.
         void moveBlind()
         {
             ROS_INFO("backing up blind");

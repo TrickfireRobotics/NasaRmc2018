@@ -308,9 +308,11 @@ class AutonomousExecutive
             server.setSucceeded();
         }
         /*
+        * yaw - angular motion (turning?)
         * PRECONDITOINS:
-        *
+        * 
         * POSTCONDITIONS: 
+        * If localized goal fails, server is aborted. 
         */
         void localize(bool set_odometry, double yaw)
         {

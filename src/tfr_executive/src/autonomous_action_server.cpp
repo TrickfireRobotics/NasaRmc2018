@@ -308,9 +308,9 @@ class AutonomousExecutive
             server.setSucceeded();
         }
         /*
-        * yaw - angular motion (turning?)
-        * PRECONDITOINS:
-        * 
+        * PRECONDITIONS:
+        * Localize accepts a boolean value for odomtry and a 
+        * double value for yaw (motion around axis)
         * POSTCONDITIONS: 
         * If localized goal fails, server is aborted. 
         */

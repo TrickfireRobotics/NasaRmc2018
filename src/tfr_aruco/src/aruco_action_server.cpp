@@ -38,8 +38,14 @@ class TFR_Aruco {
             params->cornerRefinementWinSize = 5;
         }
 
-        // This is the method that will be called when a client makes use
-        // of this server. The provided goal is the "input".
+        /* This is the method that will be called when a client makes use
+         * of this server. The provided goal is the "input".
+         * The input is the camera model with the camera intrinsics and the image itself.
+         * The image is transformed to a library compatible format followed by detection of
+         * markers in the image by the aruco library. The number of markers found is returned
+         * in the result. Additionally, if any markers were indeed found, the relative pose of
+         * the board is returned as well.
+         **/
         void execute(const tfr_msgs::ArucoGoalConstPtr& goal, Server* server)
         {
             if (server->isPreemptRequested() || !ros::ok())

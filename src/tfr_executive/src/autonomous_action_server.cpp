@@ -312,7 +312,8 @@ class AutonomousExecutive
         * Localize accepts a boolean value for odomtry and a 
         * double value for yaw (motion around axis)
         * POSTCONDITIONS: 
-        * If localized goal fails, server is aborted. 
+        * If localized goal fails, server is aborted. If 
+        * success the loclization is completed.
         */
         void localize(bool set_odometry, double yaw)
         {

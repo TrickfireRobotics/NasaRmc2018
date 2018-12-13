@@ -24,7 +24,12 @@
 #     ]
 # ]
 #
-# TODO: Document what each number in the digging state is for.
+# Here is what each of the values within a state is for:
+# state[0]: Turntable
+# state[1]: lower arm???
+# state[2]: upper arm???
+# state[3]: scoop???
+# state[4]: ???
 positions: [
     [[0.0, 0.1, 1.07, 1.62, 1.0], #zero position
     [3.05, 0.8, 1.07, -1.16, 1.0], #1a

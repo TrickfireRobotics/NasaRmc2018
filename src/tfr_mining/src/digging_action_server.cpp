@@ -44,6 +44,18 @@ public:
 
 private:
 
+	/*
+	 * Description:
+	 * Send the robot the number of seconds it is allowed to spend on digging. It will start digging and loop through predefined digging motions repeatedly. It will continue digging for up to (but not exceeding) the provided amount of time. Finally, the robot will move the digging arm back to a safe state.
+	 * If the current digging goal is cancelled, or if ROS is shutting down, the arm will be moved back into a safe state.
+	 * 
+	 * Pre: There must be accurate measurements of the position of the arm. (TODO: Where are these published to?) Digging can start while the arm is turned off-center, but ROS must be aware of this. In other words, as long as the position of the arm is not miscalibrated, it's ok.
+	 * 
+	 * Post: The arm will be in a centered, safe state.
+	 * 
+	 * Notes: ROS actionlib seemed to have a bug, and it would take as much as 10 seconds to cancel a digging goal.
+	 * 
+	 */
     void execute(const tfr_msgs::DiggingGoalConstPtr& goal)
     {
         ROS_INFO("Executing!");
@@ -51,7 +63,7 @@ private:
         ros::Time startTime = ros::Time::now();
         ros::Time endTime = startTime + goal->diggingTime;
         ROS_INFO("Starting at %d, ending at %d", startTime.sec, endTime.sec);
-
+		
         Client client("move_arm", true);
         ROS_DEBUG("Waiting for arm action server...");
         client.waitForServer();

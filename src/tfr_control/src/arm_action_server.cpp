@@ -53,8 +53,28 @@ private:
         digging_mutex.unlock();
     }
 
-    // This is the method that will be called when a client makes use
-    // of this server. The provided goal is the "input"
+   /*
+	* Description:
+	* Move the arm to a given position. MoveIt will check whether the goal
+	* position is one that is possible (e.g. it does not collide with the robot) 
+	* and will generate a plan (TODO: I believe this is a sequence of intermediate 
+	* positions) to move the robot to the goal position.
+	* 
+	* Precondition:
+	* You SHOULD be able to call this while the arm is in any position, as long 
+	* as MoveIt has an accurate 3d model of the robot, and accurately knows the 
+	* physical position that the robot is in.
+	* You should be able to pass any arm position goal to this method, even if it is 
+	* invalid. (e.g. it tells the arm to hit the robot, or tells an actuator to 
+	* extend beyond its limits.) MoveIt should fail to produce a plan in these cases.
+	* 
+	* Arguments: An ArmMove action. (a vector of 4 float64) Defined in tfr_messages/action/ArmMove.action.
+	* 
+	* Returns: Sets the arm action server as either completed/preempted/aborted.
+	*
+	* Postcondition: The arm should have moved to the given position, 
+	* or not moved if the planning failed.
+	*/
     void execute(const tfr_msgs::ArmMoveGoalConstPtr& goal)
     {
         ROS_INFO("Arm Action Server: Goal Recieved");

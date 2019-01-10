@@ -93,8 +93,22 @@ class Dumper
 
 
         /*
-         * The business logic of the action server.
+         Action
+            Verify position relative to the bin by signaling the ArUco system.
+            If the position is off, reposition and repeat step 1.
+            Otherwise, signal the dumping sensor to begin looking for high-fidelity position verification (the implementation of which has not yet been decided).
+            Signal the Drivebase to slowly back the rover, making angle corrections as needed.
+            If the Dumping Sensor signals the position has been achieved, signal the Drivebase to stop moving.
+            Signal the Bin Controller to dump collected material.
+            When the Bin Controller signals it is done, signal Executive to indicate dumping complete.
+			
+		 *  Pre:  The robot can detect the aruco board from its current position. 
+		 *  Post: The robot has dumped its material into the bin. The robot has signaled Executive a Finished signal.
+		 
+		 *  For testing, the subscribed topic should have mock information on for the aruco board.
+		    Because this method does not return a value and takes a non-valid goal, aruco and executive class stubs will be required in order to perform unit testing.
          */
+		 
         void dump(const tfr_msgs::EmptyGoalConstPtr &goal) 
         {  
             ROS_INFO("dumping action server started dumping procedure");
@@ -190,7 +204,7 @@ class Dumper
                  *
                  * How do we decide if we are going left or right?
                  * 
-                 * Well the estimate will return a pose describing displacement from our
+                 * We'll the estimate will return a pose describing displacement from our
                  * rear camera, a +y displacement means the center of the board is to the
                  * left(ccw), -y to the right (cw). 
                  *
@@ -210,6 +224,7 @@ class Dumper
         /*
          * back up slowwwwly we can't see
          * */
+		 // The comment above pretty well sums up this method.
         void moveBlind()
         {
             ROS_INFO("backing up blind");
@@ -249,6 +264,11 @@ class Dumper
         }
 };
 
+/* 
+ * 
+ * 
+ * 
+ */
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "dumping_action_server");

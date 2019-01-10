@@ -7,7 +7,8 @@
 #include <trajectory_msgs/JointTrajectory.h>
 
 /**
- * Collection of utility methods for arm
+ * Provides a simple method for moving the arm without MoveIt.
+ * This is a regular ole' class, just instantiate it and call moveArm.
  * */
 class ArmManipulator
 {
@@ -18,7 +19,17 @@ class ArmManipulator
         ArmManipulator& operator=(const ArmManipulator&) = delete;
         ArmManipulator(ArmManipulator&&)=delete;
         ArmManipulator& operator=(ArmManipulator&&)=delete;
-        void moveArm( const double& turnatble, const double& lower_arm, const double& upper_arm, const double& scoop);
+		
+		/**
+         * Moves the arm to the given position.
+		 * 
+		 * Notes: 
+		 *  - Careful what parameters are passed in, the arm could collide with the robot.
+		 * 
+		 *  - The method is not blocking, so the caller needs to wait for the arm to move.
+		 *    See digging_action_server.cpp for example.
+         * */
+        void moveArm( const double& turntable, const double& lower_arm, const double& upper_arm, const double& scoop);
     private:
         ros::Publisher trajectory_publisher;
         ros::Publisher scoop_trajectory_publisher;

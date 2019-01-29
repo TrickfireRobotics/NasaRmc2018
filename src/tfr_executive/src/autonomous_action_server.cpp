@@ -135,7 +135,15 @@ class AutonomousExecutive
          * ACTION COMPONENTS
          * - Goal: none
          * - Feedback: none
-         * - Result: none */ 
+         * - Result: none
+         * PRECONDITIONS:
+         * autonomousMission accepts a pointer to a goal. This goal can be in the
+         * form of an action that the robot does. I.E. digging, dumping, navigation
+         *
+         * POSTCONDITIONS:
+         * Upon successfully completing the goal sever will be set to succeed.
+         * Upon failure server will be set to aborted
+         */ 
         void autonomousMission(const tfr_msgs::EmptyGoalConstPtr &goal)
         {
             
@@ -299,7 +307,14 @@ class AutonomousExecutive
             ROS_INFO("Autonomous Action Server: AUTONOMOUS MISSION SUCCESS");
             server.setSucceeded();
         }
-        
+        /*
+        * PRECONDITIONS:
+        * Localize accepts a boolean value for odomtry and a 
+        * double value for yaw (motion around axis)
+        * POSTCONDITIONS: 
+        * If localized goal fails, server is aborted. If 
+        * success the loclization is completed.
+        */
         void localize(bool set_odometry, double yaw)
         {
             ROS_INFO("Autonomous Action Server: commencing localization");

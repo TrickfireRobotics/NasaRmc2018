@@ -1,4 +1,35 @@
 # Holds all of the positions for the test client to travel to, in order
+#
+# This contents of this file initializes the "positions" object on the ROS parameter server.
+# The "positions" object is accessed directly by new DiggingQueue instances.
+#
+# Here's an example of how "positions" gets parsed into objects by the DiggingQueue class:
+# [ # This is the DiggingQueue
+#     [ # This is a DiggingSet
+#         [0.0, 0.1, 1.07, 1.62, 1.0], # Each of these is a "state" within a DiggingSet
+#         [3.05, 0.8, 1.07, -1.16, 1.0], 
+#         [3.05, 1.0, 1.07, -1.16, 0.0], 
+#         [3.05, 0.9, 1.4, 1.06, 0.0],
+#         [3.05, 0.5, 1.4, 1.06, 1.0],
+#         [2.0, 0.5, 1.25, 1.06, 0.0], 
+#         [2.0, 0.5, 1.25, -1.0, 0.0]
+#     ],
+#     [ # This is the start of another DiggingSet
+#         [3.25, 0.8, 1.07, -1.16, 1.0], 
+#         [3.25, 1.0, 1.07, -1.16, 0.0],
+#         [3.25, 0.9, 1.4, 1.06, 0.0],
+#         [3.25, 0.5, 1.4, 1.06, 0.0],
+#         [2.0, 0.5, 1.25, 1.06, 0.0], 
+#         [2.0, 0.5, 1.25, -1.0, 0.0]
+#     ]
+# ]
+#
+# Here is what each of the values within a state is for:
+# state[0]: Turntable
+# state[1]: lower arm???
+# state[2]: upper arm???
+# state[3]: scoop???
+# state[4]: ???
 positions: [
     [[0.0, 0.1, 1.07, 1.62, 1.0], #zero position
     [3.05, 0.8, 1.07, -1.16, 1.0], #1a

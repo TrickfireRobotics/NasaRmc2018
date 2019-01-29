@@ -4,7 +4,7 @@ namespace tfr_mining
 {
     DiggingSet::DiggingSet() : states{}, time_estimate{0}
     {
-
+		
     }
 
     void DiggingSet::insertState(std::vector<double> state, double time)

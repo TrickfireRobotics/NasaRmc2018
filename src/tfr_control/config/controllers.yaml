@@ -1,13 +1,29 @@
 # ------------------------------------------------------------
 # This file holds the controller configurations for all controllers
 # on the robot.
-#
+# 
 # These are loaded into the controller layer by the  controller
 # manager at will, and the joints they describe need to match the hardware
 # layer
-#
+# 
 # The controller manager handles the upper level logic, and makes sure
 # the controllers do not conflict
+# 
+# Here is the benefit of having these controllers on the robot:
+# 
+# For one thing, these are PID controllers. Each controller has hand-calibrated
+# PID parameters attached to it, and these are used e.g. to maintain the robot 
+# in a certain position. 
+# 
+# Another thing these controllers do is implement a standard interface, as 
+# described by ros_control package. Other packages like MoveIt make use of 
+# these controllers to move the robot.
+# 
+# USAGE
+# To move the robot using these controllers, send the expected type of message
+# (e.g. a JointTrajectory message for a JointTrajectoryController) to the 
+# "/[controller name]/command" topic. See arm_manipulator.cpp for an example.
+#
 # ------------------------------------------------------------
 
 # Publish all joint states -----------------------------------

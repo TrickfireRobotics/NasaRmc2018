@@ -85,7 +85,8 @@ class Navigator
         /*
          *  Goal: 
          *      -uint8_t code corresponding to where we want to navigate. Goal list is
-         *      described in Navigation.action in the tfr_msgs package
+         *      described in Navigation.action in the tfr_msgs package and in
+         *      tfr_utilities/include/tfr_utilities/location_codes.h
          *  Feedback:
          *      -none
          * */
@@ -145,6 +146,18 @@ class Navigator
         //the constraints to the problem
         const GeometryConstraints &constraints;
 
+        /*
+         * Set the nav goal to position/orientation associated with
+         * the given location code with the reference frame of the dumping bin
+         * 
+         * pre: - bin_frame contains the frame id of the bin
+         *      - constraints .safe_mining_distance and .finish_line are both set
+         *      - height_adjustment is set
+         * 
+         * post: - nav_goal stamped with current time, reference set to bin, and
+         *         pose set to location indicated by location code
+         *
+         **/
         void initializeGoal( move_base_msgs::MoveBaseGoal& nav_goal, 
                 const tfr_utilities::LocationCode& goal)
         {
@@ -157,12 +170,12 @@ class Navigator
                 case(tfr_utilities::LocationCode::MINING):
                     nav_goal.target_pose.pose.position.x = constraints.get_safe_mining_distance();
                     nav_goal.target_pose.pose.position.z = height_adjustment;
-                    nav_goal.target_pose.pose.orientation.w = 1;
+                    nav_goal.target_pose.pose.orientation.w = 1; //No rotation
                     break;
                 case(tfr_utilities::LocationCode::DUMPING):
                     nav_goal.target_pose.pose.position.x = constraints.get_finish_line();
                     nav_goal.target_pose.pose.position.z = height_adjustment;
-                    nav_goal.target_pose.pose.orientation.z = 1;
+                    nav_goal.target_pose.pose.orientation.z = 1; //Face backwards to the bin
                     break;
                 case(tfr_utilities::LocationCode::UNSET):
                     //leave it alone

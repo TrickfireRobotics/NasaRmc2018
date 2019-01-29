@@ -38,7 +38,13 @@
 class DrivebaseOdometryPublisher
 {
     public:
-        DrivebaseOdometryPublisher(ros::NodeHandle &n, 
+	/********************************************
+	*Constructor
+	*Preconditions:
+	*Postconditions:ROS masternode will have an updated registry of who is 
+	*		publishing and who is subscribing to what topics
+	********************************************/
+	DrivebaseOdometryPublisher(ros::NodeHandle &n, 
                 const std::string& p_frame, 
                 const std::string& c_frame,
                 const double& wheel_sep) :
@@ -49,28 +55,35 @@ class DrivebaseOdometryPublisher
             y{},
             angle{},
             tf_broadcaster{}
-        {
-            arduino_a = n.subscribe("/sensors/arduino_a", 15, &DrivebaseOdometryPublisher::readArduinoA, this);
-            arduino_b = n.subscribe("/sensors/arduino_b", 15, &DrivebaseOdometryPublisher::readArduinoB, this);
-            odometry_publisher = n.advertise<nav_msgs::Odometry>("/drivebase_odom", 15);
-            set_odometry = n.advertiseService("set_drivebase_odometry", &DrivebaseOdometryPublisher::setOdometry, this);
-            reset_odometry = n.advertiseService("reset_drivebase_odometry", &DrivebaseOdometryPublisher::resetOdometry, this);
-            angle.x = 0;
-            angle.y = 0;
-            angle.z = 0;
-            angle.w = 1;
-        }
+    {
+		//get most current sensor infromation 
+        arduino_a = n.subscribe("/sensors/arduino_a", 15, &DrivebaseOdometryPublisher::readArduinoA, this);
+        arduino_b = n.subscribe("/sensors/arduino_b", 15, &DrivebaseOdometryPublisher::readArduinoB, this);
+		
+		//odometry_publisher: publish to the location of the base_footprint tracked by tread motion.
+        odometry_publisher = n.advertise<nav_msgs::Odometry>("/drivebase_odom", 15); 
+		
+		///set_drivebase_odometry : resets the basis of odometry to a new position
+        set_odometry = n.advertiseService("set_drivebase_odometry", &DrivebaseOdometryPublisher::setOdometry, this);
+        reset_odometry = n.advertiseService("reset_drivebase_odometry", &DrivebaseOdometryPublisher::resetOdometry, this);
+        angle.x = 0;
+        angle.y = 0;
+        angle.z = 0;
+        angle.w = 1;
+	}
 
-        ~DrivebaseOdometryPublisher() = default;
-        DrivebaseOdometryPublisher(const DrivebaseOdometryPublisher&) = delete;
-        DrivebaseOdometryPublisher& operator=(const DrivebaseOdometryPublisher&) = delete;
-        DrivebaseOdometryPublisher(DrivebaseOdometryPublisher&&) = delete;
-        DrivebaseOdometryPublisher& operator=(DrivebaseOdometryPublisher&) = delete;
+    ~DrivebaseOdometryPublisher() = default;
+    DrivebaseOdometryPublisher(const DrivebaseOdometryPublisher&) = delete;
+    DrivebaseOdometryPublisher& operator=(const DrivebaseOdometryPublisher&) = delete;
+    DrivebaseOdometryPublisher(DrivebaseOdometryPublisher&&) = delete;
+    DrivebaseOdometryPublisher& operator=(DrivebaseOdometryPublisher&) = delete;
 
-        /*
-         * Main business logic for the node, takes in readings from the arduino,
-         * and publishes them across the network.
-         * */
+        /*****************************************************************************************
+        * processOdometry: Main business logic for the node, takes in readings from the arduino,
+        * 		and publishes them across the network.
+		* Preconditions: is subscribed to recieve information from the sensors (tfr_msgs/ArduinoReading)
+		* Postconditions: Readings from the arduino are published across the network
+        *****************************************************************************************/
         void processOdometry()
         {
             //Grab the neccessary data
@@ -85,6 +98,7 @@ class DrivebaseOdometryPublisher
             //first we process the data
             auto t_1 = ros::Time::now();
             double d_t = (t_1 - t_0).toSec();
+			
             //if this is the first message we skip it to initialize time
             //properly
             if (!t_0.isValid())
@@ -149,6 +163,7 @@ class DrivebaseOdometryPublisher
                 0,    0,    0, 5e-2,    0,    0,
                 0,    0,    0,    0, 5e-2,    0,
                 0,    0,    0,    0,    0, 5e-2 };
+	//publish the message
             odometry_publisher.publish(msg);
         }
 
@@ -172,21 +187,33 @@ class DrivebaseOdometryPublisher
         const double MAX_THETA_DELTA = 0.065;
         ros::Time t_0;
 
-        //callback for publisher
-        void readArduinoA(const tfr_msgs::ArduinoAReadingConstPtr &msg)
-        {
-            latest_arduino_a = msg;
-        }
+	/********************************************************************************************
+	* readArduinoA: Get most current sensor infromation
+	* Preconditions: can subscribe to topic /arduino :(tfr_msgs/ArduinoReading)
+	* Postconditions: latest_arduino_a is updated with arduino from the /sensors/arduino_a topic 
+	**********************************************************************************************/
+     void readArduinoA(const tfr_msgs::ArduinoAReadingConstPtr &msg)
+     {
+     	latest_arduino_a = msg;
+     }
 
-        //callback for publisher
+	/********************************************************************************************
+	* readArduinoB: Get most current sensor infromation
+	* Preconditions: can subscribe to topic /arduino :(tfr_msgs/ArduinoReading)
+	* Postconditions: latest_arduino_b is updated with arduino from the /sensors/arduino_b topic
+	*********************************************************************************************/
         void readArduinoB(const tfr_msgs::ArduinoBReadingConstPtr &msg)
         {
             latest_arduino_b = msg;
         }
 
-        /*
-         * Set odometry from fiducial markers, provides smoothing
-         * */
+       
+	/******************************************************************************************************
+	* setOdometry: Set odometry from fiducial markers, provides smoothing
+	* Preconditions: can advertise to set_drivebase_odometry topic, can provide service to 
+	*				/set_drivebase_odometry : (tfr_msgs/SetOdometry)
+	* Postconditions: angle is updated with its new value, true is returned after the angle has been updated
+	*********************************************************************************************************/
         bool setOdometry(tfr_msgs::SetOdometry::Request& request,
                 tfr_msgs::SetOdometry::Response& response)
         {
@@ -216,9 +243,13 @@ class DrivebaseOdometryPublisher
             return true;
         }
 
-        /*
-         * Set odometry from fiducial markers, provides no smoothing
-         * */
+    /******************************************************************************************************
+	* setOdometry: Set odometry from fiducial markers, provides no smoothing
+	* Preconditions: can advertise to set_drivebase_odometry topic, can provide service to 
+	*				/set_drivebase_odometry : (tfr_msgs/SetOdometry)
+	* Postconditions: outputs message stating that odometry has been reset, angel has been reset based on position,
+	*				true is returned after angle has been updated
+	*********************************************************************************************************/
         bool resetOdometry(tfr_msgs::SetOdometry::Request& request,
                 tfr_msgs::SetOdometry::Response& response)
         {
@@ -229,13 +260,23 @@ class DrivebaseOdometryPublisher
             angle = request.pose.orientation;
             return true;
         }
-
+	
+	/***************************************************************************
+	* tf2::Quaternion getTfQuaternion: create a quaternion based on orientation
+	* Preconditions: can determin orientiation
+	* Postconditions: a quaternion value is returned
+	****************************************************************************/
         tf2::Quaternion getTfQuaternion(geometry_msgs::Quaternion& q)
         {
             tf2::Quaternion q_0{q.x, q.y, q.z, q.w};
             return q_0;
         }
 
+	/*************************************************************************************************
+	* geometry_msgs::Quaternion getStdQuaternion: create a quaternion based on a different quaternion
+	* Preconditions: quaternion parameter is initalized
+	* Postconditions: a quaternion value is returned
+	***************************************************************************************************/
         geometry_msgs::Quaternion getStdQuaternion(tf2::Quaternion& q_0)
         {
             geometry_msgs::Quaternion q;
@@ -246,9 +287,11 @@ class DrivebaseOdometryPublisher
             return q;
         }
 
-        /*
-         * Quaternion to yaw
-         */
+        /*************************************************************************
+         * quaternionToYaw: converts a quaterion value to a yaw (z-axis rotation)
+		 * Preconditions: quaternion parameter is initalized
+		 * Postconditions: yaw value is returned
+         *************************************************************************/
         double quaternionToYaw(geometry_msgs::Quaternion& q)
         {
             // yaw (z-axis rotation)
@@ -257,7 +300,12 @@ class DrivebaseOdometryPublisher
             double result = atan2(siny, cosy);
             return result;
         }
-
+		
+		/*************************************************************************
+         * rotateQuaternionByYaw: rotates a quaternion value by a yaw (z-axis rotation)
+		 * Preconditions: quaternion and yaw parameters are initalized
+		 * Postconditions: quaternion paramater is updated with the new values
+         *************************************************************************/
         void rotateQuaternionByYaw(geometry_msgs::Quaternion& q, double yaw)
         {
             tf2::Quaternion q_0{q.x, q.y, q.z, q.w};
@@ -274,9 +322,12 @@ class DrivebaseOdometryPublisher
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "drivebase_odometry_publisher");
+
+	//NodeHandle is the main access point to communications with the ROS system.
     ros::NodeHandle n;
     std::string parent_frame, child_frame;
-    double wheel_span, r;
+    double wheel_span, r; //wheel_span: the separation of the treads of the robot.
+			  //r is the rate: how quickly to publish hz.
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
     ros::param::param<std::string>("~child_frame", child_frame, "base_footprint");
     ros::param::param<double>("~wheel_span", wheel_span, 0.645);
@@ -285,7 +336,7 @@ int main(int argc, char **argv)
     ros::Rate rate(r);
     while(ros::ok())
     {
-        publisher.processOdometry();
+        publisher.processOdometry(); //arduino readings are published across the network
         ros::spinOnce();
         rate.sleep();
 

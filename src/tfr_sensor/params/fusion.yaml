@@ -1,11 +1,16 @@
 #This file represents the parameters for sensor fusion, it has not been tuned
 #yet or optinmized in any way, and is designed to be bare bones
+#go here for more detailed documentation - https://github.com/cra-ros-pkg/robot_localization/blob/kinetic-devel/params/ekf_template.yaml
 
 #We also have not delved into covariances at all, and this is still //TODO
+#We are getting information from fiducial_odom_publisher on covariances but we are not using it here.
+#IMU and drivebase_odom_publisher is also providing covariance information. 
 
+#This is the frequency in Hz, this outputs a position estimate. Every 1/5 of a second 
 #outputting at pretty low frequency
 frequency: 5 
 
+#These are all map variable definations for the kalman filter.
 #stock settings for robots without gps and no big hills
 odom_frame: odom
 base_link_frame: base_footprint
@@ -14,6 +19,7 @@ two_d_mode: true
 sensor_timeout: 0.5
 transform_timeout: 0.4
 
+#push all of this information to the transform node
 #this is the most reliable position we want to use so we want this to publish
 #tf, and no one else for the odom->base_footprint transform
 publish_tf: true
@@ -29,7 +35,10 @@ print_diagnostics: true
 #NOTE: I also don't do any outlier removal or thresholding, it doesn't play
 #well with fiducial odometry
     
+#The two trues are set of true for angular rotation (turning).  
+#The only reason he was using the sensor data in the IMU was to combate the accuracy in turning.   
 #basic 2d settings for xsens
+#This is messaging the change in yaw over time.
 imu0: /sensors/mti/sensor/imu
 imu0_config: [false, false, false,
               false,  false,  true,
@@ -45,6 +54,10 @@ imu0_remove_gravitational_acceleration: true
 #basic 2d configuration for the fiducial odom publisher we don't use it's
 #velocity, because it is very unreliable, and we get good velocity 
 #data from the imu's.
+#arm inputs from the aruco and navigational aid.
+#He is using the position for the x and the turning here.
+#It records x and y position because it can do that using geometry.
+#It records yaw because based off the position of the navigational marker, it has to know how it is facing. 
 odom0: /fiducial_odom
 odom0_config: [true,  true, false,
                false, false,  true,
@@ -55,6 +68,8 @@ odom0_differential:  false
 odom0_relative: false
 odom0_queue_size: 10
 
+#This is the drivebase controller. 
+#This is also mesuring the change in yaw over time to counteract error. 
 odom1: /drivebase_odom
 odom1_config: [true, true,  false,
                false, false,  true,

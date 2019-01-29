@@ -3,6 +3,9 @@
  * Node:    test_digging_client
  * 
  * Purpose: This is a test node to try calling the digging action server.
+ *          The test sends a "dig" action to the digging action server, then waits for
+ *          the user to press any key. When a key is pressed the digging action server
+ *          should cancel the digging action.
  * 
  *          This file includes <tfr_msgs/DiggingAction.h>, which is one of seven headers
  *          built by catkin from `tfr_msgs/action/Digging.action`:

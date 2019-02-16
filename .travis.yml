@@ -1,0 +1,36 @@
+
+sudo: required
+language: generic
+dist: xenial
+
+env:
+  global:
+    - ROS_CI_DESKTOP="`lsb_release -cs`"  # e.g. [precise|trusty|...]
+    - CI_SOURCE_PATH=$(pwd)
+    - ROSINSTALL_FILE=$CI_SOURCE_PATH/dependencies.rosinstall
+    - CATKIN_OPTIONS=$CI_SOURCE_PATH/catkin.options
+    - ROS_PARALLEL_JOBS='-j8 -l6'
+    # Set the python path manually to include /usr/-/python2.7/dist-packages
+    # as this is where apt-get installs python packages.
+    - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages:/usr/local/lib/python2.7/dist-packages
+    - ROS_DISTRO=kinetic
+
+################################################################################
+
+# Install system dependencies, namely a very barebones ROS setup.
+before_install:
+  - sudo sh -c "echo \"deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main\" > /etc/apt/sources.list.d/ros-latest.list"
+  - sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+  - sudo apt update -qq
+  - sudo apt install dpkg
+  - sudo apt install ros-kinetic-dektop-full
+  - bash NasaRmc2018_dependencies.sh
+  - sudo apt install -y python-catkin-pkg python-rosdep python-wstool ros-$ROS_DISTRO-ros-base
+  - source /opt/ros/$ROS_DISTRO/setup.bash
+  # Prepare rosdep to install dependencies.
+  - sudo rosdep init
+  - rosdep update
+
+# Create a catkin workspace with the package under integration.
+install:
+  - bash build_all
